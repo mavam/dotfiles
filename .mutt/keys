@@ -1,0 +1,45 @@
+# =============
+#  keybindings
+# =============
+
+# The command 'bind' binds the given key for the given map to the given
+# function. 
+# Valid maps are:
+#  'generic', 'alias', 'attach' 'browser', 'editor', 'index', 'compose',
+#  'pager', 'pgp', 'postpone' and 'mix'.
+# 
+# Valid Strings are:
+#  '\t', '<Tab>', '\t', '\n', '\e', '<esc>', '<up>', '<down>', '<left>',
+#  '<right>', '<pagedown>', '<pageup>', '<backspace>', '<delete>', '<insert>',
+#  '<enter>', '<home>', '<end>', '<Space>', '<F1{2,3,n}>' and '<f1{,2,3,n}>'.
+#
+
+# goto =INBOX
+macro	index   I	"<change-folder>!<enter>" "Go to =INBOX"
+macro	generic I	"<change-folder>!<enter>" "Go to =INBOX"
+macro	pager   I	"<change-folder>!<enter>" "Go to =INBOX"
+
+# reload .muttrc
+macro 	index	,R	"<enter-command>source ~/.muttrc<enter>"
+
+# rot13 display filter
+macro	pager	,r	"<enter-command>set display_filter = \"tr a-zA-Z n-za-mN-ZA-M\"<enter><exit><display-message><enter-command>unset display_filter<enter>" "rot13"
+
+macro	pager	,p	"!gpg --keyserver pgp.mit.edu --recv-key 0x" "get PGP key"
+
+# Mark all messages as read (aka. catchup)
+macro 	index 	,m 	"T \n;WN^t \n" "Mark all messages read"
+macro 	pager 	,m 	"T \n;WN^t \n" "Mark all messages read"
+
+# show only new / all messages
+macro	index	,n	"l~N\n" "Show only new messages"
+macro 	index	,a	"l~A\n" "Show all messages"
+
+# Saving the current message into SPAM folder:
+macro	index	S	"s=.Junk<enter>" "Save message as SPAM"
+macro	pager	S	"s=.Junk<enter>" "Save message as SPAM"
+
+# View URLs
+macro 	pager	\cu	"<pipe-entry>'urlview'<enter>" 'Follow links with urlview'
+
+# vim: ft=muttrc

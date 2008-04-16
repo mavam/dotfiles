@@ -1,0 +1,35 @@
+# ===============
+#  mailing-lists
+# ===============
+
+# lists <mailing-list>		- list you receive, but can't post
+# subscribe <mailing-list>	- list you receive and can post
+
+# berkeley
+subscribe inhouse@icsi.berkeley.edu
+subscribe net-sec@icsi.berkeley.edu
+# net.in.tum
+lists     lists.net.in.tum.de
+lists     mitarbeiter@in.tum.de
+subscribe net-local@net.in.tum.de
+subscribe devnull@net.in.tum.de
+# bro
+subscribe bro@bro-ids.org
+subscribe bro@icsi.berkeley.edu
+subscribe bro-dev@george.lbl.gov
+subscribe bro-lite@george.lbl.gov
+subscribe lbc@george.lbl.gov
+# mutt
+subscribe mutt-announce@mutt.org
+subscribe mutt-dev@mutt.org
+subscribe mutt-users@mutt.org
+# botnets
+subscribe botnets@whitestar.linuxbox.org
+# securityfocus
+subscribe ids@securityfocus.com
+subscribe pentest@securityfocus.com
+subscribe phishing@securityfocus.com
+# misc
+subscribe sidar@gi-fb-sicherheit.de
+
+# vim: ft=muttrc

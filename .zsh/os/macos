@@ -1,0 +1,20 @@
+# =========================
+#  MacOS specific settings
+# =========================
+
+# Integrate MacVIM
+alias gvim='/Applications/MacVim.app/Contents/MacOS/Vim -g'
+
+# Include MacTeX binaries.
+[[ -d /usr/texbin ]] && path=( $path /usr/texbin )
+
+# Include Apple's X11 binaries.
+[[ -d /usr/X11R6/bin ]] && path=( $path /usr/X11R6/bin )
+
+# Initialize fink.
+[[ -f /sw/bin/init.sh ]] && source /sw/bin/init.sh
+
+# Initialize MacPorts.
+[[ -d /opt/local ]] && path=( /opt/local/bin /opt/local/sbin $path )
+
+# vim: ft=zsh

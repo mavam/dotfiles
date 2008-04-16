@@ -1,0 +1,19 @@
+# ===========
+#  auto_view
+# ===========
+
+alternative_order text/enriched text/plain text application/postscript image/*
+
+auto_view text/html
+auto_view text/enriched 
+auto_view application/postscript 
+
+# archives
+auto_view application/zip
+auto_view application/x-gunzip 
+auto_view application/x-tar-gz
+
+# images
+auto_view image/gif 
+
+# vim: ft=muttrc

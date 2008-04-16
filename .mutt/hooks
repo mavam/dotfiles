@@ -1,0 +1,145 @@
+# =======
+#  hooks
+# =======
+
+#  ~A              all messages
+#  ~b EXPR         messages which contain EXPR in the message body
+#  ~B EXPR         messages which contain EXPR in the whole message
+#  ~c USER         messages carbon-copied to USER
+#  ~C EXPR         message is either to: or cc: EXPR
+#  ~D              deleted messages
+#  ~d [MIN]-[MAX]  messages with ``date-sent'' in a Date range
+#  ~E              expired messages
+#  ~e EXPR         message which contains EXPR in the ``Sender'' field
+#  ~F              flagged messages
+#  ~f USER         messages originating from USER
+#  ~g              cryptographically signed messages
+#  ~G              cryptographically encrypted messages
+#  ~h EXPR         messages which contain EXPR in the message header
+#  ~k              message contains PGP key material
+#  ~i ID           message which match ID in the ``Message-ID'' field
+#  ~L EXPR         message is either originated or received by EXPR
+#  ~l              message is addressed to a known mailing list
+#  ~m [MIN]-[MAX]  message in the range MIN to MAX *)
+#  ~n [MIN]-[MAX]  messages with a score in the range MIN to MAX *)
+#  ~N              new messages
+#  ~O              old messages
+#  ~p              message is addressed to you (consults $alternates)
+#  ~P              message is from you (consults $alternates)
+#  ~Q              messages which have been replied to
+#  ~R              read messages
+#  ~r [MIN]-[MAX]  messages with ``date-received'' in a Date range
+#  ~S              superseded messages
+#  ~s SUBJECT      messages having SUBJECT in the ``Subject'' field.
+#  ~T              tagged messages
+#  ~t USER         messages addressed to USER
+#  ~U              unread messages
+#  ~v              message is part of a collapsed thread.
+#  ~V              cryptographically verified messages
+#  ~x EXPR         messages which contain EXPR in the `References' field
+#  ~y EXPR         messages which contain EXPR in the `X-Label' field
+#  ~z [MIN]-[MAX]  messages with a size in the range MIN to MAX *)
+#  ~=              duplicated messages (see $duplicate_threads)
+
+# [default_hook] controls hooks 
+set default_hook="~f %s !~P | (~P ~C %s)"
+
+# -------------------------------------------
+# mbox-hook pattern mailbox
+# (save all "read" messages from pattern to mailbox)
+#
+
+# -------------------------------------------
+# send-hook regexp command
+# reply-hook regexp command
+# (execute command, if regexp matches recipients of the message)
+# (multiple regexp-matches are executed in the given order!)
+# (reply-hook is matched against message, I reply to)
+# (send-hook is matched against all messages (new and replies).
+#
+#set default_hook="~f %s | ~t %s" # Match From or To address by default
+#send-hook '~l' 'my_hdr From: Matthias Vallentin <mv@pi3.cc>'
+#send-hook '' 'set signature="/usr/games/fortune -s|"'
+
+# -------------------------------------------
+# save-hook regexp filename
+# (save all messages from regexp or addressed to regexp to filename)
+# (~L matches From, To, Cc, Sender)
+
+# -------------------------------------------
+# fcc-save-hook
+# (don't forget to set default_hook first!)
+#
+
+# -------------------------------------------
+# crypt-hook pattern keyid
+#
+
+# -------------------------------------------
+# iconv-hook charset local-charset
+# (define system specific name for a charset)
+#
+
+# -------------------------------------------
+# folder-hook pattern command
+# (pattern "." sets the default)
+# (command part has to be quoted "..." now)
+#
+folder-hook . 	'push \eV' 							# collapse all threads 
+folder-hook .	'set index_format="%4C %Z %{!%b %d} %-15.15F |%?M?#%4M&%5c? | %3N | %s"'
+
+# to expire old messages, press "d" after entering a folder iff mutt asks "tag-"
+folder-hook \.news.* 	'push T~r>1y!~F\n\;'			# 1 year
+folder-hook \.devnull 	'push T~r>6m!~F\n\;'			# 6 months
+folder-hook \.junk 		'push T~r>2m!~F\n\;'			# 2 months
+folder-hook \.spam 		'push T~r>1m!~F\n\;'			# 1 month 
+
+folder-hook \.sent/.*	'set index_format="%4C %Z %{!%b %d} %-15.15t |%?M?#%4M&%5c? | %3N | %s"'
+
+
+# -------------------------------------------
+# fcc-hook [!]regexp mailbox
+# (save sent message to mailbox if regexp matches (or not))
+#
+
+
+# -------------------------------------------
+# message-hook [!]pattern command
+# (exec command before displaying message, if pattern matches (or not))
+#
+
+
+# -------------------------------------------
+# account-hook pattern command
+# (change settings depending on IMAP/POP account)
+#
+
+
+# -------------------------------------------
+# append-hook, open-hook, close-hook
+# (support for compressed folders)
+# (only with compressed folders patch from 
+#  http://www.spinnaker.de/mutt/compressed/)
+#
+
+# gzip:
+#append-hook	\\.gz$	"gzip -c '%t' >> '%f'"
+#open-hook	\\.gz$	"gzip -cd '%f' > '%t'"
+#close-hook	\\.gz$	"gzip -c '%t' > '%f'"
+
+# bzip2:
+#open-hook	\\.bz2$	"bzip2 -cd '%f' > '%t'"
+#close-hook	\\.bz2$	"bzip2 -c '%t' > '%f'"
+# no appending possible with bzip2
+
+# PGP (compression and encryption of the folder):
+#open-hook  \\.pgp$ "pgp -f < %f > %t"
+#close-hook \\.pgp$ "pgp -fe roland@spinnaker.de < %t > %f"
+# no appending possible with pgp
+
+# PGP with IDEA only (compression and encryption of the folder):
+#open-hook  \\.idea$ "pgp -f < %f > %t"
+#close-hook \\.idea$ "pgp -cf < %t > %f"
+# no appending possible with pgp
+
+# vim: ft=muttrc

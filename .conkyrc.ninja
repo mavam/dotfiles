@@ -1,0 +1,120 @@
+#
+# .conkyrc 
+#
+
+# Layout 
+alignment top_left
+maximum_width 1000
+gap_x 12
+gap_y 12
+
+# Fork into background
+background no
+
+# Update interval in seconds
+update_interval 2.0
+
+# Visual 
+use_xft no
+#font snap
+font 6x10
+double_buffer yes
+own_window no
+own_window_hints below
+own_window_transparent no
+draw_shades no
+draw_outline no
+draw_borders no
+draw_graph_borders no
+stippled_borders 3
+border_margin 4
+border_width 1
+
+# Subtract file system buffers from used memory?
+no_buffers yes
+
+# number of cpu samples to average
+# set to 1 to disable averaging
+cpu_avg_samples 2
+
+# number of net samples to average
+# set to 1 to disable averaging
+net_avg_samples 2
+
+
+use_spacer yes
+
+
+
+# Allow each port monitor to track at least this many connections (if 0 or not set, default is 256)
+#min_port_monitor_connections 256
+
+# variable is given either in format $variable or in ${variable}. Latter
+# allows characters right after the variable and must be used in network
+# stuff because of an argument
+
+default_color lightgrey
+default_shade_color black
+default_outline_color green
+
+# stuff after 'TEXT' will be formatted on screen
+
+TEXT
+${color darkred}$nodename  -  $sysname $kernel on $machine  -  ${time %a,%e.%b.%g %H:%M:%S %Z}
+
+${color darkgreen}uptime: ${color green}$uptime   ${color darkgreen}load: ${color green}$loadavg
+${color darkgreen}processes: ${color green}$processes  ${color darkgreen}running: ${color green}$running_processes
+
+
+${color darkred}CPU
+ frequency: ${color red}$freq_dyn ${color darkred}MHz   temp: ${color red}${i2c 3-004c temp 2} ${color darkred}C
+ usage: ${color red}$cpu% ${color darkred}${cpubar 5,422} 
+ ${cpugraph 20,494 0000ff 00ff00} 
+
+${color #7f31a3}RAM usage:  $memperc% ${membar 5,325}  $mem/$memmax 
+swap usage: $swapperc% ${swapbar 5,325}  $swap/$swapmax 
+
+${color #4c51af}file systems: 
+ / ${fs_used /}/${fs_size /} ${fs_bar 5,403 /}
+ /home ${fs_used /home}/${fs_size /home} ${fs_bar 5,367 /home}
+ ${diskiograph 20,494 0000ff 00ff00} 
+ disk I/O: $diskio
+
+${color darkcyan}eth0
+ down:${color cyan} ${downspeed eth0} k/s${color darkcyan} ${offset 112}up: ${color cyan}${upspeed eth0} k/s
+ ${downspeedgraph eth0 20,200 0000ff 00ff00} ${upspeedgraph eth0 20,200 0000ff 00ff00}
+
+${color darkgreen}proc name         PID     CPU%   MEM%
+${color #ddaa00} ${top name 1} ${top pid 1} ${top cpu 1} ${top mem 1}
+${color lightgreen} ${top name 2} ${top pid 2} ${top cpu 2} ${top mem 2}
+${color lightgreen} ${top name 3} ${top pid 3} ${top cpu 3} ${top mem 3}
+${color lightgreen} ${top name 4} ${top pid 4} ${top cpu 4} ${top mem 4}
+${color lightgreen} ${top name 5} ${top pid 5} ${top cpu 5} ${top mem 5}
+
+${color darkgreen}mem usage
+${color #ddaa00} ${top_mem name 1} ${top_mem pid 1} ${top_mem cpu 1} ${top_mem mem 1}
+${color lightgreen} ${top_mem name 2} ${top_mem pid 2} ${top_mem cpu 2} ${top_mem mem 2}
+${color lightgreen} ${top_mem name 3} ${top_mem pid 3} ${top_mem cpu 3} ${top_mem mem 3}
+
+${color darkred}TCP inbound: ${color red}${tcp_portmon 1 32767 count}  ${color darkred}TCP outbound: ${color red}${tcp_portmon 32768 61000 count}  ${color darkred}total: ${color red}${tcp_portmon 1 65535 count}
+${color darkred}Outbound Connection ${alignr 200} Remote Service/Port${color darkcyan}
+ ${tcp_portmon 32768 61000 rhost 0} ${alignr 204} ${tcp_portmon 32768 61000 rservice 0}
+ ${tcp_portmon 32768 61000 rhost 1} ${alignr 204} ${tcp_portmon 32768 61000 rservice 1}
+ ${tcp_portmon 32768 61000 rhost 2} ${alignr 204} ${tcp_portmon 32768 61000 rservice 2}
+ ${tcp_portmon 32768 61000 rhost 3} ${alignr 204} ${tcp_portmon 32768 61000 rservice 3}
+ ${tcp_portmon 32768 61000 rhost 4} ${alignr 204} ${tcp_portmon 32768 61000 rservice 4}
+ ${tcp_portmon 32768 61000 rhost 5} ${alignr 204} ${tcp_portmon 32768 61000 rservice 5}
+ ${tcp_portmon 32768 61000 rhost 6} ${alignr 204} ${tcp_portmon 32768 61000 rservice 6}
+ ${tcp_portmon 32768 61000 rhost 7} ${alignr 204} ${tcp_portmon 32768 61000 rservice 7}
+
+${color darkred}Inbound Connection ${alignr 200} Local Service/Port${color darkcyan}
+ ${tcp_portmon 1 32767 rhost 0} ${alignr 200} ${tcp_portmon 1 32767 lservice 0}
+ ${tcp_portmon 1 32767 rhost 1} ${alignr 200} ${tcp_portmon 1 32767 lservice 1}
+ ${tcp_portmon 1 32767 rhost 2} ${alignr 200} ${tcp_portmon 1 32767 lservice 2}
+ ${tcp_portmon 1 32767 rhost 3} ${alignr 200} ${tcp_portmon 1 32767 lservice 3}
+
+${color #687b12}kernel
+${tail /var/log/kernel.log 18}
+
+${color darkgreen}system
+${tail /var/log/system.log 18}

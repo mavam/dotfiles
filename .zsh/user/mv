@@ -1,0 +1,57 @@
+# ==================================
+#  User specific zsh configuration 
+# ==================================
+
+# locale settings
+export LANG="en_US.UTF-8"
+
+# $BROPATH
+
+# Takes multiple arguments to create $BROPATH. The first argument must
+# contain the Bro build directory where the src/bro binary is located.
+function bro_setup
+{ 
+    export BRO="$1/src/bro"
+    export BROPATH="."
+    for i in "$@"; do
+        export BROPATH="${BROPATH}:${i}:${i}/policy:${i}/policy/local:${i}/policy/sigs:/usr/local/bro/lib/"
+    done
+    echo $BROPATH
+}
+
+# aliases
+alias shinobi='ssh mv@ifoo.cc -t screen -DR'
+
+# TeX inputs
+[[ -d ~/mv/code/texinputs ]] && export TEXINPUTS=.:~/mv/code/texinputs//:
+
+# Include my scripts
+script_path=~/mv/code/scripts
+[[ -d $script_path ]] && path=( $script_path $path )
+
+# Let keychain manage the agents
+function setup_agent
+{
+    local kc_bin
+
+    [[ -x $EPREFIX/usr/bin/keychain ]] && kc_bin=$EPREFIX/usr/bin/keychain
+    [[ -x $HOME/bin/keychain ]] && kc_bin=$HOME/bin/keychain
+
+	if [[ -n $kc_bin ]]; then
+        local ssh_keys
+        if [[ -n ~/.ssh/identities/*~*.pub ]]; then
+            ssh_keys=(~/.ssh/identities/*~*.pub)
+        fi
+
+        if [[ -n $ssh_keys ]]; then
+            $kc_bin -q --host fixed $ssh_keys
+            source ~/.keychain/fixed-sh
+        fi
+
+	fi
+}
+
+# Don't start agent(s) remotely.
+[[ -z "$SSH_CONNECTION" ]] && setup_agent
+
+# vim: ft=zsh 

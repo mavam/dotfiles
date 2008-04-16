@@ -1,0 +1,40 @@
+# =======================
+#  account configuration
+# =======================
+
+set realname="Matthias Vallentin"
+set from="Matthias Vallentin <vallentin@icsi.berkeley.edu>"
+set hostname="icsi.berkeley.edu"
+
+set certificate_file="~/.mutt/certificates"
+set signature="~/.mutt/sigs/priv" 
+set mbox_type=Maildir					# [mbox] mailbox type
+
+# 1) local config
+# ---------------
+#set spoolfile="~/Maildir" 				    # path to spoolfile / mailbox
+#set folder="~/Maildir"					    # [~/Mail] location of mailboxes
+#set record="~/Maildir/.sent/`date +%Y-%m`" # save outgoing messages
+#set postponed="~/Maildir/.postponed"	    # postponed messages mailbox
+
+# 2) IMAPS config
+# ---------------
+set imap_user="matthias.vallentin@gmail.com"
+set spoolfile="imaps://imap.gmail.com:993/INBOX"
+set folder="imaps://imap.gmail.com:993"
+set record="imaps://imap.gmail.com:993/[Gmail]/Sent Mail"
+set postponed="imaps://imap.gmail.com:993/[Gmail]/Drafts"
+
+# further imap settings
+set imap_check_subscribed		# automatically poll subscribed mailboxes for new mail
+unset imap_passive				# don't wait to enter mailbox manually
+#set imap_delim_chars
+#set imap_headers
+#set imap_home_namespace
+#set imap_keepalive
+#set imap_list_subscribed
+#set imap_pass
+#set imap_peek
+#set imap_servernoise
+
+# vim: ft=muttrc

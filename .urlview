@@ -1,0 +1,9 @@
+# URL regex.
+#REGEXP (((http|https|ftp|gopher)|mailto)[.:][^ >"\t]*|www\.[-a-z0-9.]+)[^ .,;\t>">\):]
+#REGEXP (((https?¦ftp¦gopher)://¦(mailto¦file¦news):)[^' <>"]+¦(www¦web¦w3).[-a-z0-9.]+)[^' .,;<>":] 
+
+
+# Command to invoke for selected URL.
+#COMMAND lynx %s
+COMMAND firefox %s
+#COMMAND url_handler.sh

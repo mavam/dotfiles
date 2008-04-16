@@ -1,0 +1,63 @@
+# =============
+#  zsh options
+# =============
+
+# init for new style completion (compsys)
+if [[ "$ZSH_VERSION" == (3.1|4)* ]]; then
+    autoload -U compinit
+    compinit -i                 # silently ignore insecure dirs/files
+else
+    print "Advanced completion system not found. Ignoring zstyle settings."
+    function zstyle { }
+fi  
+
+# ----------------
+#  man zshoptions
+# ----------------
+
+# all names are case insensitive and underscores are ignored. For
+# example, `allexport' is equivalent to `A__lleXP_ort'.
+
+# ----- changing directories -----
+setopt pushd_ignore_dups        # don't push copies of the same dir on the stack
+setopt pushd_minus              # reference stack entries with a '-'
+
+# ----- completion -----
+setopt complete_in_word         # cursors stays, completion from both ends
+setopt list_packed              # try  to  make the completion list smaller
+
+# ----- expansion and globbing -----
+setopt brace_ccl                # {a-z} brace expansion 
+setopt extended_glob            # http://zsh.dotsrc.org/Intro/intro_2.html#SEC2
+
+# ----- history -----
+HISTFILE=~/.zsh_history
+HISTSIZE=100000
+SAVEHIST=100000
+
+setopt hist_ignore_dups         # this will ignore _consecutive_ duplicates
+unsetopt hist_ignore_space      # don't add cmd to hist when first char is blank
+setopt append_history           # don't overwrite history
+setopt hist_reduce_blanks       # remove superfluous blanks 
+
+# ----- initialisation -----
+
+# ----- input/output -----
+setopt correct                  # try to correct the spelling of commands
+#setopt correct_all             # try to correct all spellings in a line
+unset interactive_comments      # allow comments even in interactive shells
+setopt short_loops              # allow the short forms of loop constructs
+
+# ----- job control -----
+unsetopt bg_nice                # don't run background jobs at lower priority
+setopt long_list_jobs           # list jobs in the long format by default
+
+# ----- prompting -----
+#setopt transient_rprompt       # remove any right prompt from display
+
+# ----- scripts and functions -----
+# ----- shell emulation -----
+# ----- shell state -----
+# ----- zle -----
+
+# vim: ft=zsh

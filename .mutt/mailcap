@@ -1,0 +1,31 @@
+# =========
+#  mailcap
+# =========
+
+text/html; 				w3m %s; nametemplate=%s.html
+text/html; 				w3m -dump %s; copiousoutput; nametemplate=%s.html
+text/html; 				lynx -dump %s; copiousoutput; nametemplate=%s.html
+text/*; 				view -Mf '%s' ; edit=vim -f '%s'; compose=vim -f '%s'; needsterminal
+
+# documents
+application/postscript; gv %s; test=test -n "$DISPLAY"
+application/postscript; ps2ascii %s; copiousoutput
+application/msword; 	wvText %s /dev/stdout; copiousoutput
+application/pdf; 		acroread %s; test=test -n "$DISPLAY"
+application/pdf; 		pdfcat '%s'; copiousoutput
+#application/octet-stream; octet-filter %s; %copiousoutput
+
+# images
+image/*; 				xv %s; edit=xpaint %s; test=test -n "$DISPLAY"
+image/*;        		anytopnm %s | pnmscale -xsize 80 -ysize 50 | ppmtopgm | pgmtopbm | pbmtoascii ; copiousoutput
+
+# archives
+application/x-gunzip;   gzcat; copiousoutput
+application/x-gzip; 	gunzip -c %s | tar -tf -;  copiousoutput
+application/gzip; 		gunzip -c %s | tar -tf -;  copiousoutput
+application/x-tar-gz; 	gunzip -c %s | tar -tf -;  copiousoutput
+application/x-tar; 		tar -tf %s; copiousoutput
+application/x-tgz; 		tar -ztf %s; copiousoutput
+
+# multimedia
+video/*; 				mplayer %s; test=test -n "$DISPLAY"

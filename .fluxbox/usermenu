@@ -1,0 +1,3 @@
+[submenu] (mv)
+	[exec]	(moneyplex)		{~/opt/moneyplex2007/start}
+[end]

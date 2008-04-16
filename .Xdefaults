@@ -1,0 +1,213 @@
+!--------------------------------------!
+!                                      !
+!             rxvt-unicode             !
+!                                      !
+!--------------------------------------!
+
+! Look similar to the Linux Console, with transparency
+URxvt.background: black
+URxvt.foreground: white
+!URxvt.cursorColor: red
+URxvt.shading: 30
+URxvt.tintColor: green
+urxvt.dynamicColors:  on
+URxvt.inheritPixmap: true
+URxvt.scrollBar: false
+URxvt.saveLines: 65535
+URxvt*urlLauncher: firefox
+
+URxvt.font: xft:terminus:autohint=false:antialias=false:size=10
+URxvt.boldFont: xft:terminus:style=Bold:autohint=false:antialias=false:size=10
+
+! Colors similar to Linux console
+URxvt.color0: rgb:0/0/0
+URxvt.color1: rgb:cc/00/00
+URxvt.color2: rgb:00/cc/00
+URxvt.color3: #bd5e01
+URxvt.color4: rgb:00/00/cc
+URxvt.color5: rgb:cc/00/cc
+URxvt.color6: rgb:00/cc/cc
+URxvt.color7: rgb:aa/aa/aa
+URxvt.color8: rgb:33/33/33
+URxvt.color9: rgb:ff/00/00
+URxvt.color10: rgb:00/ff/00
+URxvt.color11: rgb:ff/ff/00
+URxvt.color12: rgb:00/00/ff
+URxvt.color13: rgb:ff/00/ff
+URxvt.color14: rgb:00/ff/ff
+URxvt.color15: rgb:ff/ff/ff
+
+! Default URxvt colors
+!URxvt.color0: black
+!URxvt.color1: red3
+!URxvt.color2: green3
+!URxvt.color3: brown
+!URxvt.color4: blue3
+!URxvt.color5: magenta3
+!URxvt.color6: cyan3
+!URxvt.color7: gray90
+!URxvt.color8: gray30
+!URxvt.color9: red
+!URxvt.color10: green
+!URxvt.color11: yellow
+!URxvt.color12: blue
+!URxvt.color13: magenta
+!URxvt.color14: cyan
+!URxvt.color15: white 
+
+!--------------------------------------!
+!                                      !
+!                 aterm                !
+!                                      !
+!--------------------------------------!
+aterm*transparent: true
+!aterm*fading: 80
+aterm*shading: 60
+aterm*scrollBar: false
+aterm*saveLines: 10000 
+aterm*tintingType: true
+aterm*tinting: green
+!aterm*cursorColor: red
+aterm*geometry: 80x25
+!aterm*font: *-*-fixed-medium-r-normal--*-120-*-*-*-*-*
+!aterm*boldFont:*-*-fixed-bold-r-normal--*-*-120-*-*-*-*-*
+ 
+!colors
+aterm*background: black
+aterm*foreground: white
+!!black
+!aterm*color0:		#333333
+!aterm*color8:		#686868
+!!red
+!aterm*color1:		#CA5E5E
+!aterm*color9:		#FF595D
+!!green
+!aterm*color2:		#ABCB8D
+!aterm*color10:		#AFD78A
+!!yellow
+!aterm*color3:		#C48D62
+!aterm*color11:		#E0A765
+!!blue
+!aterm*color4:		#8CA0B0
+!aterm*color12:		#3D6A82
+!!magenta
+!aterm*color5:		#CC98E0
+!aterm*color13:		#E1A2DC
+!!cyan
+!aterm*color6:		#44CACF
+!aterm*color14:		#6CBFC4
+!!white
+!aterm*color7:		#E7E6DD
+!aterm*color15:		#F0EFE7 
+
+
+!--------------------------------------!
+!                                      !
+!                 xterm                !
+!                                      !
+!--------------------------------------!
+xterm*background: black
+xterm*foreground: white
+xterm*rightScrollBar: true
+xterm*saveLines: 10000 
+
+
+!--------------------------------------!
+!                                      !
+!                 xcalc                !
+!                                      !
+!--------------------------------------!
+xcalc*geometry: 200x275
+XCalc*Cursor: hand2
+XCalc*ShapeStyle: rectangle
+xcalc.ti.bevel.background: #111111
+xcalc.ti.bevel.screen.background: #000000
+xcalc.ti.bevel.screen.DEG.background: #000000
+xcalc.ti.bevel.screen.DEG.foreground: LightSeaGreen
+xcalc.ti.bevel.screen.GRAD.background: #000000
+xcalc.ti.bevel.screen.GRAD.foreground: LightSeaGreen
+xcalc.ti.bevel.screen.RAD.background: #000000
+xcalc.ti.bevel.screen.RAD.foreground: LightSeaGreen
+xcalc.ti.bevel.screen.INV.background: #000000
+xcalc.ti.bevel.screen.INV.foreground: Red
+xcalc.ti.bevel.screen.LCD.background: #000000
+xcalc.ti.bevel.screen.LCD.foreground: LightSeaGreen
+xcalc.ti.bevel.screen.LCD.shadowWidth: 0
+xcalc.ti.bevel.screen.M.background: #000000
+xcalc.ti.bevel.screen.M.foreground: LightSeaGreen
+xcalc.ti.bevel.screen.P.background: #000000
+xcalc.ti.bevel.screen.P.foreground: Yellow
+xcalc.ti.Command.foreground: White
+xcalc.ti.Command.background: #777777
+xcalc.ti.button5.background: Orange3
+xcalc.ti.button19.background: #611161
+xcalc.ti.button18.background: #611161
+xcalc.ti.button20.background: #611111
+xcalc.ti.button25.background: #722222
+xcalc.ti.button30.background: #833333
+xcalc.ti.button35.background: #944444
+xcalc.ti.button40.background: #a55555
+xcalc.ti.button22.background: #222262
+xcalc.ti.button23.background: #222262
+xcalc.ti.button24.background: #222272
+xcalc.ti.button27.background: #333373
+xcalc.ti.button28.background: #333373
+xcalc.ti.button29.background: #333373
+xcalc.ti.button32.background: #444484
+xcalc.ti.button33.background: #444484
+xcalc.ti.button34.background: #444484
+xcalc.ti.button37.background: #555595
+xcalc.ti.button38.background: #555595
+xcalc.ti.button39.background: #555595
+
+!--------------------------------------!
+!                                      !
+!               xfontsel               !
+!                                      !
+!--------------------------------------!
+!XFontSel*sampleText.background: TEXTBG
+XFontSel*menu*showUnselectable: false
+XFontSel*MenuButton.shadowWidth: 0
+XFontsel*Toggle*ToggleStyle: check
+XFontsel*MenuButton*Justify:    left
+XFontsel*MenuButton*MenuButtonStyle: select
+.xfontsel.pane.commandBox.quitButton.background: #777777
+.xfontsel.pane.commandBox.quitButton.foreground: snow
+.xfontsel.pane.commandBox.ownButton.background: orange3
+.xfontsel.pane.commandBox.ownButton.foreground: snow
+.xfontsel.pane.commandBox.countLabel.background: snow
+.xfontsel.pane.viewPort.sampleText.background: #777777
+.xfontsel.pane.viewPort.sampleText.foreground: snow
+.xfontsel.pane.fieldBox.field0.background: #777777
+.xfontsel.pane.fieldBox.field0.foreground: snow
+.xfontsel.pane.fieldBox.field1.background: #777777
+.xfontsel.pane.fieldBox.field1.foreground: snow
+.xfontsel.pane.fieldBox.field2.background: #777777
+.xfontsel.pane.fieldBox.field2.foreground: snow
+.xfontsel.pane.fieldBox.field3.background: #777777
+.xfontsel.pane.fieldBox.field3.foreground: snow
+.xfontsel.pane.fieldBox.field4.background: #777777
+.xfontsel.pane.fieldBox.field4.foreground: snow
+.xfontsel.pane.fieldBox.field5.background: #777777
+.xfontsel.pane.fieldBox.field5.foreground: snow
+.xfontsel.pane.fieldBox.field6.background: #777777
+.xfontsel.pane.fieldBox.field6.foreground: snow
+.xfontsel.pane.fieldBox.field7.background: #777777
+.xfontsel.pane.fieldBox.field7.foreground: snow
+.xfontsel.pane.fieldBox.field8.background: #777777
+.xfontsel.pane.fieldBox.field8.foreground: snow
+.xfontsel.pane.fieldBox.field9.background: #777777
+.xfontsel.pane.fieldBox.field9.foreground: snow
+.xfontsel.pane.fieldBox.field10.background: #777777
+.xfontsel.pane.fieldBox.field10.foreground: snow
+.xfontsel.pane.fieldBox.field11.background: #777777
+.xfontsel.pane.fieldBox.field11.foreground: snow
+.xfontsel.pane.fieldBox.field12.background: #777777
+.xfontsel.pane.fieldBox.field12.foreground: snow
+.xfontsel.pane.fieldBox.field13.background: #777777
+.xfontsel.pane.fieldBox.field13.foreground: snow
+.xfontsel.pane.fieldBox*foreground: #000000
+.xfontsel.pane.fieldBox.MenuButton.borderWidth: 1
+.xfontsel.pane.fieldBox.MenuButton.internalHeight: 1
+.xfontsel.pane.fieldBox.MenuButton.internalWidth: 2
+.xfontsel.pane.fieldBox.MenuButton.shapeStyle: rectangle

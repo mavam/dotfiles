@@ -1,0 +1,45 @@
+#
+# fluxbox startup-script
+#
+
+HOST=$(hostname -s)
+
+# Generate a fresh menu
+#fluxbox-generate_menu -kB -t urxvt -b firefox
+
+# Background
+# fbsetbg -c black
+/usr/bin/fbsetbg -c ~/.fluxbox/wallpapers/Solace_in_a_Shower.png
+
+# Turn off beeps
+[[ -x $(which xset 2> /dev/null) ]] && set -b
+ 
+# Increase the keyboard repeat-rate
+# xset r rate 195 35
+ 
+# Own fonts-dir
+xset +fp ~/.fonts
+
+# Key bindings
+xmodmap ~/.Xmodmap
+[[ -f ~/.Xmodmap.${HOST} ]] && xmodmap ~/.Xmodmap.${HOST}
+
+# Turn on transparency
+[[ -x $(which xcompmgr 2> /dev/null) ]] && xcompmgr &
+
+# Startup applications
+[[ -x $(which conky 2> /dev/null) ]] && conky -c ~/.conkyrc.${HOST} &
+#[[ -x $HOME/bin/ipager ]] && $HOME/bin/ipager &
+[[ -x $(which fbpager) ]] && fbpager -w &
+[[ -x $(which imwheel 2> /dev/null) ]] && imwheel -k -b "000089"
+
+[[ -x $(which numlockx 2> /dev/null) ]] && numlockx &
+#[[ -x $(which xscreensaver 2> /dev/null) ]] && xscreensaver &
+[[ -x $(which kbluetoothd 2> /dev/null) ]] && kbluetoothd &
+[[ -x $(which kmix 2> /dev/null) ]] && kmix &
+
+# Source host-specific stuff
+[[ -f ~/.fluxbox/startup.${HOST} ]] && source ~/.fluxbox/startup.${HOST}
+
+# Windowmanager is fluxbox
+exec fluxbox -log ~/.fluxbox/log

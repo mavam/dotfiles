@@ -1,0 +1,194 @@
+# =========
+#  formats
+# =========
+
+# [alias_format] the format of data displayed for the alias menu
+#  %a alias name
+#  %f flags - currently, a "d" for an alias marked for deletion
+#  %n index number
+#  %r address which alias expands to
+#  %t character which indicates if the alias is tagged for inclusion
+#set alias_format="%3n %t %-12 %r"
+set alias_format="%4n %2f %t %-10a   %r"
+
+# [attach_format] describes the format of the `attachment' menu
+#  %C   charset
+#  %c   requires charset conversion (n or c)
+#  %D   deleted flag
+#  %d   description
+#  %e   MIME content-transfer-encoding
+#  %f   filename
+#  %I   disposition (I=inline, A=attachment)
+#  %m   major MIME type
+#  %M   MIME subtype
+#  %n   attachment number
+#  %s   size
+#  %t   tagged flag
+#  %T   graphic tree characters
+#  %u   unlink (=to delete) flag
+#  %>X  right justify the rest of the string and pad with character "X"
+#  %|X  pad to the end of the line with character "X"
+#set attach_format="%u%D%I %t%4n %T%.40d%> [%.7m/%.10M, %.6e%?C?, %C?, %s] "
+#set attach_format=" %u%D%t%2n %T%.40d%> [%.7m/%.10M, %.6e, %s] "
+set attach_format=" %u%D%I %t%4n %T%.40d%> [%.7m/%.10M, %.6e%?C?, %C?, %s] "
+
+# [attribution] given to quoted text:
+#set attribution="* Thus spake %n (%a):"
+set attribution="On %d, %n wrote:"
+
+# [compose_format] format of the status line displayed in the Compose menu
+#  %a total number of attachments
+#  %h local hostname
+#  %l approximate size (in bytes) of the current message
+#  %v Mutt version string
+set compose_format="-- compose  [ approx. msg size: %l   Atts: %a ]%>-"  
+
+# [date_format] format of date printed by the '%d' sequence in ' $index_format'
+set date_format="!%a, %b %d, %Y at %I:%M:%S%p %Z"
+
+# [editor]
+set editor="vim +\`awk ' /^$/ {print i+2; exit} {i++}' %s\` +':set textwidth=77' +':set fenc=latin-1' %s"
+
+# [folder_format] customize the file browser display to your personal taste
+#  %C  current file number
+#  %d  date/time folder was last modified
+#  %f  filename
+#  %F  file permissions
+#  %g  group name (or numeric gid, if missing)
+#  %l  number of hard links
+#  %N  N if folder has new mail, blank otherwise
+#  %s  size in bytes
+#  %t  * if the file is tagged, blank otherwise
+#  %u  owner name (or numeric uid, if missing)
+#  %>X right justify the rest of the string and pad with character "X"
+#  %|X pad to the end of the line with character "X"
+#set folder_format="%N %F %2l %-8.8u %-8.8g %8s %d %f"
+set folder_format="%2C %t %N %F %2l %-8.8u %-8.8g %8s %d %f"
+
+# [forward_format] default subject when forwarding a message.
+#set forward_format="[%a: %s]"
+set forward_format="Fwd: %s"
+
+# [indent_string]
+set indent_string="> "
+
+# [index_format] customize the message index display
+#   %a address of the author
+#   %A reply-to address (if present; otherwise: address of author)
+#   %b filename of the original message folder (think mailBox)
+#   %B the list to which the letter was sent, or else the folder name
+#         (%b).
+#   %c number of characters (bytes) in the message
+#   %C current message number
+#   %d date and time of the message in the format specified by
+#         'date_format' converted to sender's time zone
+#   %D date and time of the message in the format specified by
+#         'date_format' converted to the local time zone
+#   %e current message number in thread
+#   %E number of messages in current thread
+#   %f entire From: line (address + real name)
+#   %F author name, or recipient name if the message is from you
+#   %g newsgroup name (if compiled with nntp support)
+#   %i message-id of the current message
+#   %l number of lines in the message (does not work with maildir, mh,
+#         and possibly IMAP folders)
+#   %L If an address in the To or CC header field matches an address
+#         defined by the users 'subscribe' command, this displays "To
+#         <list-name>", otherwise the same as %F.
+#   %m total number of message in the mailbox
+#   %M number of hidden messages if the thread is collapsed.
+#   %N message score
+#   %n author's real name (or address if missing)
+#   %O (_O_riginal save folder)  Where mutt would formerly have stashed
+#         the message: list name or recipient name if no list
+#   %s subject of the message
+#   %S status of the message (N/D/d/!/r/*)
+#   %t `to:' field (recipients)
+#   %T the appropriate character from the '$to_chars' string
+#   %u user (login) name of the author
+#   %v first name of the author, or the recipient if the message is
+#         from you
+#   %W name of organization of author ('organization:' field)
+#   %y 'x-label:' field, if present
+#   %Y 'x-label' field, if present, and (1) not at part of a thread
+#         tree, (2) at the top of a thread, or (3) 'x-label' is different
+#         from preceding message's 'x-label'.
+#   %Z message status flags
+#   %{fmt}
+#         the date and time of the message is converted to sender's time
+#         zone, and 'fmt'' is expanded by the library function
+#         'strftime'; a leading bang disables locales
+#   %[fmt]
+#         the date and time of the message is converted to the local time
+#         zone, and 'fmt' is expanded by the library function
+#         'strftime'; a leading bang disables locales
+#   %(fmt)
+#         the local date and time when the message was received. 'fmt'
+#         is expanded by the library function 'strftime'; a leading bang
+#         disables locales
+#   %<fmt>
+#         the current local time. 'fmt' is expanded by the library
+#         function 'strftime'; a leading bang disables locales.
+#   %>X
+#         right justify the rest of the string and pad with character "X"
+#   %|X
+#         pad to the end of the line with character "X"
+#
+# ---> see "hooks" as well!
+#set index_format="%4C %Z %{!%b %d} %-15.15F |%?M?#%4M&%5l? | %4c| %s %> %?N?|%3N|?"
+set index_format="%4C %Z %{!%b %d} %-15.15F |%?M?#%4M&%5c? | %3N | %s"
+
+# [mask] regular expression used in the file browser
+set mask="!^\\.[^.]"
+
+# [message_format] string displayed in attachment menu ["%s"]
+set message_format="%s"	 
+
+# [mix_entry_format] the format of remailer line on mixmaster selection screen
+# %n 	The running number on the menu.
+# %c 	Remailer capabilities.
+# %s 	The remailer's short name.
+# %a 	The remailer's e-mail address.
+#set mix_entry_format="%4n %c %-16s %a" 
+
+# [pager_format] format of the one-line message 'status' displayed before each
+# message in either the internal or an external pager
+#set pager_format="(Score: %N) %S [%C/%m] %s"
+##set pager_format="{Score: %N} %S [%C/%T] %n (%l) %s" 
+#set pager_format="{Score: %N } [%C/%m] %-18.18n %-50.50s %> %l lines (%c)"
+#set pager_format="[Status: %S] [Score: %N] [From: %f]"
+# set pager_format="(Score: %N) %S %C/%T?%n: %-20.20n %s"
+set pager_format="-%Z- %C/%m: %-20.20n   %s"
+
+# [quote_regexp] regular expression used in the internal-pager to determine
+# quoted sections *sigh* this catches raster too. why can't people just use a
+# standard, recognisable quote delimeter? Is is *so* hard? 
+#
+# set quote_regexp="^( {0,4}-?[>|:%]| {0,4}[a-z0-9]+[>|:%]+)+"
+# set quote_regexp="^ *[a-zA-Z]*[]>|}()%:=-][]>|}():=-]*"
+#set quote_regexp="^([A-Za-z ]+>|[]>:}][]>:|}-]*)"
+set quote_regexp="^([ \t]*[|>:}#])+"
+
+# [reply_regexp] regular expression used to recognize reply messages when
+# threading and replying
+set reply_regexp="^(re([\[0-9\]+])*|aw):[ \t]*"
+
+# [simple_search] into a real search pattern
+set simple_search="~f %s | ~s %s"
+#set simple_search="~f %s | ~C %s | ~s %s"
+
+# [smileys] The pager uses this variable to catch some common false positives of
+# '$quote_regexp', most notably smileys in the beginning of a line
+set smileys="(>From )|(:[-^]?[][)(><}{|/DP])"
+
+# [status_chars] controls chars used be the "%r" indicator ["-*%A"]
+set status_chars="-*%A"	
+
+# [status_format] format of the status line displayed in the index menu
+# mailbox
+set status_format="%_h:  [%r]  %f [total:%?M?%M/?%m%?n? new:%n?%?o? old:%o?%?d? del:%d?%?F? flag:%F?%?t? tag:%t?%?p? post:%p?%?b? inc:%b?%?l? %l?]       (%s/%S)%> [%P]   " 
+
+# [to_chars] character used to indicate mail addressed to yourself
+set to_chars=" +TCFL" 
+
+# vim: ft=muttrc

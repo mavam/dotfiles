@@ -1,0 +1,27 @@
+# =========
+#  scoring
+# =========
+ 
+# the scale is from 0 - 100
+ 
+set score_threshold_delete=0    # delete messages with score 0
+set score_threshold_flag=80     # auto-flag messages w/ score >= 80
+set score_threshold_read=5      # mark messages w/ score <= 5 as read
+
+# default scoring
+score '~A'							+10		# all messages start with score 10
+score '~g|~G'						+20		# PGP signed / encrypted messages
+score ~F							+20     # flagged mails are important
+score ~D							=0		# this is a deleted email
+score ~S							=0		# superseded messages
+
+score '~f @icsi.berkeley.edu'		+20		# icsi mails are ok
+score '~f @icir.org | -f @lbl.gov'	+20		# icir and lbl too
+
+# SPAM
+score '~='							-100	# all duplicates are killed
+score '~s "for sale"'				-100	# sale yout compter. moron..
+score '!~f@'						-100	# no mail address present?
+score "~f '^([^ <>@]+ ){5,}'"		-100	# realname consisting of >=5 tokens 
+
+# vim: ft=muttrc

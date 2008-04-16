@@ -1,0 +1,120 @@
+#compdef qatom qcheck qdepends qfile qgrep qimlate qlist qlop qsearch qsize quse
+
+# Author: baptux <baptiste.daroussin@gmail.com>
+#
+#
+local common_args PORTDIR
+var=PORTDIR
+[[ -z ${(P)var} && -r /etc/make.conf ]] &&
+local $var="`. /etc/make.conf 2>/dev/null; echo ${(P)var}`"
+[[ -z ${(P)var} && -r /etc/make.globals ]] &&
+local $var="`. /etc/make.globals 2>/dev/null; echo ${(P)var}`"
+common_args=(
+	{'(--verbose)-v','(-v)--verbose'}'[Make a lot of noise]' \
+	{'(--quiet)-q','(-q)--quiet'}'[Tighter output; suppress warnings]' \
+	{'(--nocolor)-C','(-C)--nocolor'}'[Do not output color]' \
+	{'(--help)-h','(-h)--help'}'[Print this help and exit]' \
+	{'(--version)-V','(-V)--version'}'[Print version and exit]' \
+)
+case $service in
+qcheck)
+	_arguments -s $common_args \
+	{'(--all)-a','(-a)--all'}'[List all packages]' \
+	{'(--update)-u','(-u)--update'}'[Update chksum and mtimes for packages]' \
+  '*:packages:_gentoo_packages installed'
+;;
+qdepends)
+	_arguments -s $common_args \
+	{'(--depend)-d','(-d)--depend'}'[Show DEPEND info (default)]' \
+	{'(--rdepend)-r','(-r)--rdepend'}'[Show RDEPEND info]' \
+	{'(--pdepend)-p','(-p)--pdepend'}'[Show PDEPEND info]' \
+	{'(--key)-k','(-k)--key'}'[User defined vdb key]' \
+	{'(--query)-Q','(-Q)--query'}'[Query reverse deps]' \
+	{'(--name-only)-N','(-N)--name-only'}'[Only show package name]' \
+	{'(--all)-a','(-a)--all'}'[Show all DEPEND info]' \
+  '*:packages:_gentoo_packages installed'
+;;
+qfile)
+  _arguments -s $common_args \
+	{'(--exact)-e','(-e)--exact'}'[Exact match]' \
+	'*:filename:_files'
+;;
+qgrep)
+  _arguments -s $common_args \
+	{'(--invert-match)-I','(-I)--invert-match'}'[Select non-matching lines]' \
+	{'(--ignore-case)-i','(-i)--ignore-case'}'[Ignore case distinctions]' \
+	{'(--with-filename)-H','(-H)--with-filename'}'[Print the filename for each match]' \
+	{'(--count)-c','(-c)--count'}'[Only print a count of matching lines per FILE]' \
+	{'(--regexp)-e','(-e)--regexp'}'[Use PATTERN as a regular expression]' \
+	'*:pattern::'
+;;
+qimlate)
+	local arches allarches arch
+	show_archs(){
+		arches=(${(f)"$(<$PORTDIR/profiles/arch.list)"})
+		allarches=($archs)
+		for arch in $arches;do
+			allarches=($allarches $arch)
+		done
+		_describe -t available-arches "arch" allarches 
+	}
+  _arguments -s $common_args \
+	'*:arch:show_archs'
+;;
+qlist)
+  _arguments -s $common_args \
+	{'(--installed)-I','(-I)--installed'}'[Just show installed packages]' \
+	{'(--slots)-S','(-S)--slots'}'[Display installed packages with slots]' \
+	{'(--umap)-U','(-U)--umap'}'[Display installed packages with flags used]' \
+	{'(--dups)-D','(-D)--dups'}'[Only show package dups]' \
+	{'(--exact)-e','(-e)--exact'}'[Exact match (only CAT/PN or PN without PV)]' \
+	{'(--all)-a','(-a)--all'}'[Show every installed package]' \
+	{'(--dir)-d','(-d)--dir'}'[Only show directories]' \
+	{'(--obj)-o','(-o)--obj'}'[Only show objects]' \
+	{'(--sym)-s','(-s)--sy'}'[Only show symlinks]' \
+	'*:packages:_gentoo_packages installed'
+;;
+qlop)
+  _arguments -s $common_args \
+	{'(--guage)-g','(-g)--guage'}'[Guage number of times a package has been merged]' \
+	{'(--time)-t','(-t)--time'}'[Calculate merge time for a specific package]' \
+	{'(--human)-H','(-H)--human'}'[Print seconds in human readable format (needs -t)]' \
+	{'(--list)-l','(-l)--list'}'[Show merge history]' \
+	{'(--unlist)-u','(-u)--unlist'}'[Show unmerge history]' \
+	{'(--sync)-s','(-s)--sync'}'[Show sync history]' \
+	{'(--current)-c','(-c)--current'}'[Show current emerging packages]' \
+	{'(--logfile)-f','(-f)--logfile'}'[Read emerge logfile instead of /var/log/emerge.log]:log:_files' \
+	'*:packages:_gentoo_packages available'
+;;
+qsearch)
+  _arguments -s $common_args \
+  {'(--all)-a','(-a)--all'}'[List the descriptions of every package in the cache]' \
+  {'(--cache)-c','(-c)--cache'}'[Use the portage cache]' \
+  {'(--search)-s','(-s)--search'}'[Regex search package basenames]' \
+  {'(--desc)-S','(-S)--desc'}'[Regex search package descriptions]' \
+  {'(--name-only)-N','(-N)--name-only'}'[Only show package name]' \
+  {'(--homepage)-H','(-H)--homepage'}'[Show homepage info]' \
+  '*:pattern::'
+;;
+qsize)
+  _arguments -s $common_args \
+	{'(--filesystem)-f','(-f)--filesystem'}'[Show size used on disk]' \
+	{'(--all)-a','(-a)--all'}'[Size all installed packages]' \
+	{'(--sum)-s','(-s)--sum'}'[Include a summary]' \
+	{'(--sum-only)-S','(-S)--sum-only'}'[Show just the summary]' \
+	{'(--megabyte)-m','(-m)--megabyte'}'[Display size in megabytes]' \
+	{'(--kilobyte)-k','(-k)--kilobyte'}'[Display size in kilobytes]' \
+	{'(--byte)-b','(-b)--byte'}'[Display size in bytes]' \
+	'*:packages:_gentoo_packages installed'
+;;
+quse)
+  _arguments -s $common_args \
+	{'(--exact)-e','(-e)--exact'}'[Show exact non regexp matching using strcmp]' \
+	{'(--all)-a','(-a)--all'}'[Show annoying things in IUSE]' \
+	{'(--keywords)-K','(-K)--keywords'}'[Use the KEYWORDS vs IUSE]' \
+	{'(--license)-L','(-L)--license'}'[Use the LICENSE vs IUSE]' \
+	{'(--describe)-D','(-D)--describe'}'[Describe the USE flag]' \
+  {'(--name-only)-N','(-N)--name-only'}'[Only show package name]' \
+	'*:use flag:_gentoo_packages useflag'
+;;
+esac

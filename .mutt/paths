@@ -1,0 +1,19 @@
+# ============
+#  mutt paths
+# ============
+
+set alias_file=~/.mutt/aliases 			# my aliases
+set mailcap_path="~/.mutt/mailcap" 		# path to the mailcap-file
+#set tmpdir="/tmp"						# path for mutt's tmp files
+
+unset display_filter 	# specify a command to filter messages [""]
+set header_cache="~/.mutt_hcache"
+set message_cachedir="~/.mutt_bcache"
+set print_command="muttprint -d -i ~/.mutt/misc/BabyTuX_color.eps -p LaserJet4050DN"
+#set query_command="mutt_vc_query -f ~/mv/docs/vcards.vcf '%s'"
+#set query_command="lbdbq '%s'"
+set sendmail="/usr/bin/esmtp"
+set sendmail_wait=0		# [0] secs to wait for process before giving up
+#set shell="" 			# command for spawning a subshell
+
+# vim: ft=muttrc

@@ -1,0 +1,55 @@
+# =========
+#  aliases
+# =========
+
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ......='cd ../../../../..'
+alias .......='cd ../../../../../..'
+
+case ${OS} in
+    freebsd|darwin)
+    [[ -z ${EPREFIX} ]] && alias ls='ls -G' || alias ls='ls --color=auto'
+    alias psa='ps -wwaxo user,ruser,pid,ppid,pri,pcpu,pmem,vsize,rss,tt,start,args'
+    alias psme='ps -U ${LOGNAME} -wwaxo user,ruser,pid,ppid,pri,pcpu,pmem,vsize,rss,tt,start,args'
+    alias psta='pstree -g2 -w' 
+    alias pstme='pstree -g2 -w -u${LOGNAME}'
+    ;;
+    linux-gnu)
+    alias ls='ls --color=auto'
+    alias grep='grep --colour=auto'
+    alias psa='ps -eo user,ruser,pid,ppid,pri,pcpu,pmem,vsize,rss,tt,start,args'
+    alias psme='psa | grep -E "^USER|${LOGNAME}"'
+    alias psta='pstree -aphlnu'
+    alias pstme='pstree -aphlnu ${LOGNAME}'
+    ;;
+esac
+alias la='ls -al'
+alias ll='ls -l'
+alias lh='ls -l'
+
+
+alias v="vim"
+alias vi="vim"
+
+# better directory stack handling (thx lbl)
+alias d='dirs -v'
+function pd { pushd $1 > /dev/null; dirs -v; }
+alias popd='popd > /dev/null; dirs -v'
+alias 1='pd'
+alias 2='pd -2'
+alias 3='pd -3'
+alias 4='pd -4'
+alias 5='pd -5'
+alias 6='pd -6'
+alias 7='pd -7'
+alias 8='pd -8'
+alias 9='pd -9'
+
+# general helper
+alias funcs='declare -f'
+alias dz='ls -al | sort | head -10'     
+
+# vim: ft=zsh

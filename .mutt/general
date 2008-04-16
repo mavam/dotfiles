@@ -1,0 +1,198 @@
+# =====================
+# general configuration
+# =====================
+ 
+# % less /usr/share/doc/mutt-<version>/manual.txt 
+# (6.3 Configuration variables)
+#
+# option	# [default] comment
+#
+# some options are commented because they appear first in later versions of mutt
+ 
+
+# ------------------
+#  general settings
+# ------------------
+unset abort_nosubject	# [ask-yes] abort composing when no subject is given 
+unset abort_unmodified	# [yes] abort composition if no changes were body made
+set allow_8bit 			# [yes] convert all 8bit data to 7bit before sending.
+unset allow_ansi		# [no] interpretation of ANSI color codes in messages
+unset arrow_cursor		# [no] indicate current entry in menus via ``->''
+unset ascii_chars		# [no] use plain ASCII when displaying menu trees
+unset askbcc			# [no] prompt for bcc recipients
+unset askcc				# [no] prompt for cc recipients
+set attach_sep="\n" 	# ["\n"] separator between attachments when operating
+set attach_split 		# [yes] operate on the attachments one by one
+unset autoedit			# [no] imediately begin editing message, skip send-menu
+set auto_tag			# [no] apply functions to all tagged messages
+set beep 				# [yes] beep when an error occurs
+set beep_new 			# [yes] beep whenever notifying you of new mail
+set bounce=ask-yes		# [ask-yes] confirm bouncing messages
+set bounce_delivered	# [yes] include Delivered-To headers when bouncing
+unset braille_friendly	# [no] place cursor at bol, even when arro_curs is unset
+set check_new			# [yes] only affects maildir and MH style mailboxes
+unset collapse_unread	# [yes] collapse a thread if it contains unread mail
+unset uncollapse_jump	# [no] jump to the next unread message when uncollapsed
+unset config_charset	# [""] recode cmds in rc files from this encoding
+unset confirmappend		# [yes] prompt when appending messages to a mailbox
+set confirmcreate 		# [yes] prompt when saving messages to a new mailbox
+set connect_timeout=30 	# [30] timeout a network connection (after n seconds)
+set copy				# [yes] save outgoing messages
+set delete=yes	 		# [ask-yes] ask me before delete
+set delete_untag 		# [yes] untag messages when marking them for deletion
+set digest_collapse 	# [yes] revattach menu will not show the subparts
+unset dsn_notify		# [""] the request for when notification is returned
+unset dsn_return		# [""] how much of your message is returned in DSN mail
+set duplicate_threads 	# [yes] show '=' if same message-id found
+set edit_headers		# [no] allow editing headers of outgoing messages
+unset encode_from		# [no] quoted-printable encode msgs containing "From "
+unset envelope_from_address # [""] try to derive the message's envelope sender 
+set escape="~" 			# [~] esc char to use for functions in the editor
+set fast_reply			# [no] skip prompt for recipients and subject 
+set fcc_attach			# [yes] save attachments on outgoing messages
+set fcc_clear			# [no] store FCCs unencrypted und unsigned
+set followup_to 		# [yes] generate a Followup-To header in replies
+unset force_name		# [no] similar to ````$save_name''''
+set forward_decode		# [yes] decode MIME to text/plain when forwarding
+set forward_edit		# [yes] automatically jump in editor when forwarding
+unset forward_quote		# [no] forwarded messaged in the body will be quoted
+set hdrs				# [yes] add user defined headers to new messages
+unset header			# [no] include the header in replies to the edit buffer
+set help				# [yes] help for the bindings for the major functions
+unset hidden_host		# [no] skip the host name part of ````$hostname''''
+unset hide_limited		# [no] show the presence of missing messages
+set hide_missing		# [yes] don't show missing messages in the thread tree
+set hide_thread_subject # [yes] don't show same subjects in the thread tree
+unset hide_top_limited	# [no] show missing messages at the top of threads
+set hide_top_missing	# [yes] don't show missing messages at the top of thrds
+set history=200			# [10] size of the string history buffer
+set honor_followup_to	# [yes] honor if Mail-Followup-To header
+unset ignore_list_reply_to # [no] set Reply-To to the same value as `To'
+unset implicit_autoview # [no] look for a mailcap entry with copiousoutput flag
+set include				# [ask-yes] include messages
+unset include_onlyfirst # [no] include only the first attachment of reply-msg
+unset keep_flagged		# [no] don't move flagged read messages
+set locale="C"			# ["C"] locale used by strftime(3) to format dates
+set mail_check=60		# [5] how often mutt should look for new mail
+set mailcap_sanitize	# [yes] restrict possible chars in mailcap
+set maildir_header_cache_verify # [yes] check if other programs modified maildir
+set header_cache_pagesize=16384 # ["16384"] header cache database page size
+unset maildir_trash		# [no] deleted messages will be saved 
+unset mark_old			# [yes] mark new unread messages as old 
+set markers				# [yes] display + at wrapped lines
+unset metoo				# [no] include myself when replying
+set menu_context=0		# [0] number of lines of context when scrolling 
+set menu_move_off		# [yes] bottom entry may move off the bottom
+set menu_scroll			# [no] scroll menus when moving across screen boundary
+unset meta_key			# [no] interpret keystrokes with the high bit as ESC
+set mh_purge			# [no] delete message instead of renaming
+set mime_forward=no		# [no] attach message as a seperate MIME part
+unset mime_forward_decode # [no] controls decoding of complex MIME message 
+set mime_forward_rest	# [yes] attach undecodable messages to new message
+set move=no				# [ask-no] move read messages from spool to $mbox
+set narrow_tree			# [no] make thread tree narrower for deeper threads
+set net_inc=5			# [10] large transfers update their progress every 'x'
+set pager="builtin" 	# ["builtin"] pager for messages 
+set pager_context=0		# [0] number of lines of context for next/previous page
+set pager_index_lines=8 # [0] number of lines of a mini-index when in pager
+set pager_stop			# [no] don't move to next message at end w/ next-page
+set pipe_split			# [no] pipe messages one by one
+set pipe_decode			# [no] weed headers and attempt to decode PGP/MIME first
+set pipe_sep="\n"		# ["\n"] seperator between messages when piping msgs
+unset post_indent_string # [""] append this string after message inclusion
+set postpone=ask-yes	# [ask-yes] save not send messsages
+unset preconnect		# [""] shell command if mutt fails to connect to server
+set print=ask-yes		# [ask-no] let mutt really print messages
+set print_decode		# [yes] decode message before passing it to print cmd
+set print_split			# [no] print cmd executed once for each msg printed
+unset prompt_after		# [yes] prompt for command when pager exits
+set quit=ask-yes		# [yes] quit mutt
+set read_inc=10			# [10] display which message mutt is currently on
+unset read_only			# [no] open all folders in read-only mode
+set recall=ask-yes		# [ask-yes] recall postponed messages when composing new
+unset reply_self		# [no] don't reply to the recipients in own messages
+set reply_to			# [ask-yes] use reply-to address 
+set resolve				# [yes] move cursor to next msg when modifying current
+unset reverse_alias		# [no] display the "personal" name from aliases
+unset reverse_name		# [no] From: built using the address where mail received
+set reverse_realname	# [yes] use address from incoming messages as-is
+unset rfc2047_parameters # [no] don't save =?iso-8859-1?Q?file=5F=E4=[...]Ezip?=
+unset save_address		# [no] take sender's full address when saving mail
+set save_empty			# [yes] don't delete empty mailboxes
+unset save_name			# [no] how copies of outgoing messages are saved
+set score				# [yes] turn scoring on
+set score_threshold_delete=-1 # [-1] msg <= val are marked for deletion
+set score_threshold_flag=9999 # [9999] msg > val are marked "flagged"
+set score_threshold_read=-1 # msg <= val are marked as read
+unset sig_dashes		# [yes] insert '-- ' before the 'signature'
+unset sig_on_top		# [no] include sig before any quoted text
+set smart_wrap			# [yes] wrap long lines at a word boundary
+set sleep_time=1		# [1] secs to pause while displaying info messages
+set status_on_top		# [no] status bar on the first line rather near bottom
+unset strict_threads	# [no] threading only with 'In-Reply-To' and 'Refs'
+set suspend				# [yes] stop when user suspends the mutt process
+unset text_flowed		# [no] generate text/plain; format=flowed attachments
+unset thread_received	# [no] use the date received to thread messages
+set thorough_search		# [no] decode headers and attachments before searching
+set tilde				# [no] pad blank lines in the pages with a `~'
+set timeout=10			# [600] secs to wait for a key pressed before checking 
+unset tunnel			# [""] open a pipe to a command instead of raw socket
+unset use_8bitmime		# [no] invoke $sendmail with the -B8BITMIME flag
+set use_domain			# [yes] qualify all local addresses with $hostname
+unset use_envelope_from # [no] use $envelope_from_address as envelope sender
+set use_from			# [yes] generate the 'From:' header when sending mails
+#set use_idn				# [yes] show you international domain names decoded
+set use_ipv6			# [yes]	look for IPv6 addrs of hosts to contact
+set user_agent=no		# [yes] add "User-Agent" header to outgoing messages
+unset visual			# [""] visual editor to invoke when ~v command is given
+unset wait_key			# [yes] ask to press a key after shell-escape commands
+set weed 				# [yes] weed headers when displaying, forwarding, ...
+set wrap_search 		# [yes] whether searches wrap around the end of mailbox
+set wrapmargin=1		# [0] margin remaining at the right side of terminal
+set write_inc=10		# [10] when writing a mailbox, indicate progress
+unset write_bcc			# [yes] write out the bcc header when preparing mails
+
+# ---------
+#  sorting
+# ---------
+
+# [sort] how to sort entries in the file browser
+# 	date or date-sent
+#	date-received
+#	from
+#	mailbox-order (unsorted)
+#	score
+#	size
+#	spam
+#	subject
+#	threads
+#	to
+# optionally use the reverse- prefix
+set sort=threads
+
+# [sort_alias] how to sort entries in the alias menu
+# 	address 	(sort alphabetically by email address)
+#	alias 		(sort alphabetically by alias name)
+#	unsorted	(leave in order specified in .muttrc)
+set sort_alias=alias	
+
+# [sort_aux] how threads are sorted in relation to other threads, how the
+# branches of the thread trees are sorted
+# 	same as `$sort`, except reverse == last
+set sort_aux=date
+
+# [sort_browser] how to sort entries in the file browser
+# 	alpha (alphabetically)
+#	date
+#	size
+#	unsorted
+# optionally use the reverse- prefix
+set sort_browser=alpha
+
+# [sort_re] useful when sorting be threads. changes heuristic mutt uses to
+# thread messages by subject. if set, only attach a msg as the child of another
+# msg by subject if the subject of the child msg starts with a substring
+# matchting the setting of $reply_regexp
+set sort_re=yes
+
+# vim: ft=muttrc

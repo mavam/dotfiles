@@ -1,0 +1,26 @@
+# ================
+#  zsh completion
+# ================
+
+# context string: ':completion:[function]:[completer]:[command]:[arg]' [tag]
+
+# menu selection
+#zstyle ':completion:*' menu select=10
+
+# prevent CVS files/directories from being completed
+zstyle ':completion:*:(all-|)files' ignored-patterns '(|*/)CVS'
+zstyle ':completion:*:cd:*' ignored-patterns '(*/)#CVS'
+
+# Process completion
+#zstyle ':completion:*:*:*:*:processes' menu yes select
+#zstyle ':completion:*:*:*:*:processes' force-list always
+zstyle ':completion:*:processes-names' command 'ps -e -o comm='
+zstyle ':completion:*:processes' command 'ps -au$USER'
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
+
+# ssh known hosts
+if [[ -f $HOME/.ssh/known_hosts ]] ; then
+	zstyle ':completion:*' hosts ${${${(f)"$(<$HOME/.ssh/known_hosts)"}%%\ *}%%,*}
+fi
+
+# vim: ft=zsh
