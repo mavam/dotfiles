@@ -89,6 +89,9 @@ if isdirectory(expand("$VIMRUNTIME/ftplugin"))
   filetype indent on
   set grepprg=grep\ -nH\ $*
 endif
+
+" Prevents Vim 7.0 from setting filetype to 'plaintex'
+let g:tex_flavor='latex'
 " }}}
 
 " {{{ Custom functions
