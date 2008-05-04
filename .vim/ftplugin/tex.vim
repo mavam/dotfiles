@@ -7,6 +7,12 @@ set sw=2
 " all the figure labels. Very useful!
 set iskeyword+=:
 
+" Prepend CTRL on Alt-key mappings: Alt-{B,C,L,I}
+"imap <C-M-b> <Plug>Tex_MathBF
+"imap <C-M-c> <Plug>Tex_MathCal
+"imap <C-M-l> <Plug>Tex_LeftRight
+"imap <C-M-i> <Plug>Tex_InsertItem
+
 let g:Tex_DefaultTargetFormat = 'pdf'
 
 let g:Tex_CompileRule_dvi = 'vimlatex latex --interaction=nonstopmode $*'

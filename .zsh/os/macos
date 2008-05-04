@@ -2,7 +2,7 @@
 #  MacOS specific settings
 # =========================
 
-# Integrate MacVIM
+# MacVIM alias.
 alias gvim='/Applications/MacVim.app/Contents/MacOS/Vim -g'
 
 # Include MacTeX binaries.
@@ -11,10 +11,10 @@ alias gvim='/Applications/MacVim.app/Contents/MacOS/Vim -g'
 # Include Apple's X11 binaries.
 [[ -d /usr/X11R6/bin ]] && path=( $path /usr/X11R6/bin )
 
-# Initialize fink.
-[[ -f /sw/bin/init.sh ]] && source /sw/bin/init.sh
-
 # Initialize MacPorts.
 [[ -d /opt/local ]] && path=( /opt/local/bin /opt/local/sbin $path )
+
+# Initialize fink.
+[[ -f /sw/bin/init.sh ]] && source /sw/bin/init.sh
 
 # vim: ft=zsh
