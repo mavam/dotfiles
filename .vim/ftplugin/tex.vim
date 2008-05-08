@@ -21,20 +21,23 @@ let g:Tex_CompileRule_pspdf = 'ps2pdf $*.ps'
 let g:Tex_CompileRule_dvipdf = 'dvipdfm $*.dvi'
 let g:Tex_CompileRule_pdf = 'vimlatex pdflatex --interaction=nonstopmode $*'
 
-let g:Tex_ViewRule_dvi = 'TeXniscope'
-let g:Tex_ViewRule_ps = 'Preview'
-let g:Tex_ViewRule_pdf = 'Skim'
+let g:Tex_TreatMacViewerAsUNIX = 1
+let g:Tex_ExecuteUNIXViewerInForeground = 1
+let g:Tex_ViewRule_dvi = 'texniscope'
+let g:Tex_ViewRule_ps = 'skim'
+let g:Tex_ViewRule_pdf = 'skim'
 
 let g:Tex_FormatDependency_ps  = 'dvi,ps'
 let g:Tex_FormatDependency_pspdf = 'dvi,ps,pspdf'
 let g:Tex_FormatDependency_dvipdf = 'dvi,dvipdf'
 
-"let g:Tex_IgnoredWarnings ='
-"            \"Underfull\n".
-"            \"Overfull\n".
-"            \"specifier changed to\n".
-"            \"You have requested\n".
-"            \"Missing number, treated as zero.\n".
-"            \"There were undefined references\n".
-"            \"Citation %.%# undefined\n".
-"            \"\oval, \circle, or \line size unavailable\n"'
+" TODO: more flexible way of enabling/disabling warnings.
+let g:Tex_IgnoredWarnings ='
+            \"Underfull\n".
+            \"Overfull\n".
+            \"specifier changed to\n".
+            \"You have requested\n".
+            \"Missing number, treated as zero.\n".
+            \"There were undefined references\n".
+            \"Citation %.%# undefined\n".
+            \"\oval, \circle, or \line size unavailable\n"'
