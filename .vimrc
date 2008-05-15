@@ -8,9 +8,9 @@ set background=dark     " syntax highlighting for a dark terminal background
 " {{{ General settings
 set ai                  " Always set auto-indenting on
 set backspace=2         " Allow backspacing over everything in insert mode
-set history=50          " keep 50 lines of command history
+set history=200         " lines of command history
 set incsearch           " jumps to search word as you type 
-set nocompatible        " Use Vim defaults (much better!)
+set nocompatible        " Use Vim defaults
 set modeline            " modelines at the {end,beginning} of a file are handy!
 set ruler               " Show the cursor position all the time
 
@@ -38,16 +38,31 @@ set textwidth=79        " textwidth
 set expandtab           " expand tabs to spaces
 " }}}
 
+"{{{ Spell settings
+set spelllang=en
+set spellfile=~/.vim/spellfile
+"}}}
+
 " {{{ Key bindings
-map ,/ :nohlsearch<CR>  " turn of highlight search
-map Q gq                " Don't use Ex mode, use Q for formatting
+
+" Function keys
+"===============
+" F1: Toggle hlsearch (highlight search matches).
+nmap <F1> :set hls!<CR>
+
+" F2: Toggle list (display unprintable characters).
+nnoremap <F2> :set list!<CR>
+
+" F3: Toggle expansion of tabs to spaces.
+nmap <F3> :set expandtab!<CR>
+
+" F4: Toggle past mode.
+set pastetoggle=<F4>
 
 "allow deleting selection without updating the clipboard (yank buffer)
 vnoremap x "_x
 vnoremap X "_X
 
-" pastetoggle
-set pastetoggle=<F7>
 " }}}
 
 " {{{ Folding settings
@@ -92,6 +107,9 @@ endif
 
 " Prevents Vim 7.0 from setting filetype to 'plaintex'
 let g:tex_flavor='latex'
+
+let g:html_tag_case = 'lowercase'
+
 " }}}
 
 " {{{ Custom functions
@@ -116,7 +134,6 @@ endfunction
 
 " {{{ Sourced files
 source ~/.vim/filetypes.vim
-"source ~/.vim/supertab.vim
 " }}}
 
 " vim: set fenc=utf-8 tw=80 sw=2 sts=2 et foldmethod=marker :

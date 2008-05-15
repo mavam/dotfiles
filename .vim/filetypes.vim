@@ -6,10 +6,10 @@ au FileType c,cpp set comments+=://
 " Additional plugins
 au FileType python       source ~/.vim/python.vim
 
-au BufRead,BufNewFile *.dox     set filetype=doxygen
-au BufRead,BufNewFile *.mail    set filetype=mail 
+au BufRead,BufNewFile *.dox     set filetype=doxygen spell
+au BufRead,BufNewFile *.mail    set filetype=mail spell
 au BufRead,BufNewFile *.bro     set filetype=bro
-au BufRead,BufNewFile *.wiki    set filetype=mediawiki
+au BufRead,BufNewFile *.wiki    set filetype=mediawiki spell
 
 " Transparent editing of gpg encrypted files.
 " By Wouter Hanegraaff <wouter@blub.net>
