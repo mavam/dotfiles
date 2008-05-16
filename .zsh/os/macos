@@ -11,10 +11,13 @@ alias gvim='/Applications/MacVim.app/Contents/MacOS/Vim -g'
 # Include Apple's X11 binaries.
 [[ -d /usr/X11R6/bin ]] && path=( $path /usr/X11R6/bin )
 
-# Initialize MacPorts.
-[[ -d /opt/local ]] && path=( /opt/local/bin /opt/local/sbin $path )
+# Initialize default MacPorts installations.
+if [[ -d /opt/local ]] ; then 
+    path=( /opt/local/bin /opt/local/sbin $path )
+    manpath=( /opt/local/share/man $manpath )
+fi
 
-# Initialize fink.
+# Initialize default Fink installations.
 [[ -f /sw/bin/init.sh ]] && source /sw/bin/init.sh
 
 # vim: ft=zsh

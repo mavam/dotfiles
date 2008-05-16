@@ -39,8 +39,17 @@ set expandtab           " expand tabs to spaces
 " }}}
 
 "{{{ Spell settings
-set spelllang=en
-set spellfile=~/.vim/spellfile
+set spelllang=en,de
+set spellfile=~/.vim/spellfile.add
+
+highlight clear SpellBad
+highlight SpellBad term=standout ctermfg=1 term=underline cterm=underline
+highlight clear SpellCap
+highlight SpellCap term=underline cterm=underline
+highlight clear SpellRare
+highlight SpellRare term=underline cterm=underline
+highlight clear SpellLocal
+highlight SpellLocal term=underline cterm=underline
 "}}}
 
 " {{{ Key bindings
