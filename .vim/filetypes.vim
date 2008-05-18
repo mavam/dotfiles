@@ -3,9 +3,6 @@ au FileType c,cpp set comments-=://
 au FileType c,cpp set comments+=:///
 au FileType c,cpp set comments+=://
 
-" Additional plugins
-au FileType python       source ~/.vim/python.vim
-
 au BufRead,BufNewFile *.dox     set filetype=doxygen spell
 au BufRead,BufNewFile *.mail    set filetype=mail spell
 au BufRead,BufNewFile *.bro     set filetype=bro
