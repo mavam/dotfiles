@@ -1,6 +1,97 @@
-# =========
-#  formats
-# =========
+# ---------------------------------------------------------------------------- #
+#                                    paths
+# ---------------------------------------------------------------------------- #
+
+set alias_file=~/.mutt/aliases
+set mailcap_path="~/.mutt/mailcap"
+set certificate_file=~/.mutt/certificates 
+
+set print_command="muttprint"
+set query_command="lbdbq '%s'"
+
+# Requires: mkdir -p ~/.mutt/cache/{headers,bodies}
+set header_cache="~/.mutt/cache/headers"
+set message_cachedir="~/.mutt/cache/bodies"
+
+
+# ---------------------------------------------------------------------------- #
+#                              general settings
+# ---------------------------------------------------------------------------- #
+
+unset abort_nosubject   # abort composing when no subject is given 
+unset abort_unmodified  # abort composition if no changes were body made
+#set auto_tag            # apply functions to all tagged messages
+#unset collapse_unread   # collapse a thread if it contains unread mail
+#unset confirmappend     # prompt when appending messages to a mailbox
+set delete=yes          # really delete messages when syncing a mailbox
+set edit_headers        # allow editing headers of outgoing messages
+set fast_reply          # skip prompt for recipients and subject 
+set history=200         # [10] size of the string history buffer
+set include             # include messages when replying
+set mail_check=60       # [5] how often mutt should look for new mail
+#set menu_scroll         # scroll menus when moving across screen boundary
+#set mime_forward=no     # attach message as a seperate MIME part
+set move=no             # move read messages from spool to $mbox
+set net_inc=5           # [10] large transfers update their progress every 'x'
+set pipe_split          # pipe messages one by one
+set pipe_decode         # weed headers and attempt to decode PGP/MIME first
+set print=ask-yes
+unset prompt_after      # prompt for command when pager exits
+set quit=ask-yes
+unset sig_dashes        # insert '-- ' before the 'signature'
+set thorough_search     # decode headers and attachments before searching
+set timeout=10          # [300]
+set wrapmargin=1        # [0] margin remaining at the right side of terminal
+
+
+# ---------------------------------------------------------------------------- #
+#                                   sorting
+# ---------------------------------------------------------------------------- #
+
+# [sort] how to sort entries in the file browser
+#   date or date-sent
+#   date-received
+#   from
+#   mailbox-order (unsorted)
+#   score
+#   size
+#   spam
+#   subject
+#   threads
+#   to
+# optionally use the reverse- prefix
+set sort=threads
+
+# [sort_alias] how to sort entries in the alias menu
+#   address     (sort alphabetically by email address)
+#   alias       (sort alphabetically by alias name)
+#   unsorted    (leave in order specified in .muttrc)
+set sort_alias=alias    
+
+# [sort_aux] how threads are sorted in relation to other threads, how the
+# branches of the thread trees are sorted
+#   same as `$sort`, except reverse == last
+set sort_aux=date
+
+# [sort_browser] how to sort entries in the file browser
+#   alpha (alphabetically)
+#   date
+#   size
+#   unsorted
+# optionally use the reverse- prefix
+set sort_browser=alpha
+
+# [sort_re] useful when sorting be threads. changes heuristic mutt uses to
+# thread messages by subject. if set, only attach a msg as the child of another
+# msg by subject if the subject of the child msg starts with a substring
+# matchting the setting of $reply_regexp
+set sort_re=yes
+
+
+# ---------------------------------------------------------------------------- #
+#                                   formats
+# ---------------------------------------------------------------------------- #
+
 
 # [alias_format] the format of data displayed for the alias menu
 #  %a alias name
@@ -47,7 +138,7 @@ set compose_format="-- compose  [ approx. msg size: %l   Atts: %a ]%>-"
 set date_format="!%a, %b %d, %Y at %I:%M:%S%p %Z"
 
 # [editor]
-set editor="vim +\`awk ' /^$/ {print i+2; exit} {i++}' %s\` +':set textwidth=77' +':set fenc=latin-1' %s"
+set editor="vim +\`awk ' /^$/ {print i+2; exit} {i++}' %s\` +':set textwidth=72' %s"
 
 # [folder_format] customize the file browser display to your personal taste
 #  %C  current file number
@@ -134,7 +225,8 @@ set indent_string="> "
 #   %|X
 #         pad to the end of the line with character "X"
 #
-# ---> see "hooks" as well!
+#
+# ---> index_format partakes in folder-hooks!
 #set index_format="%4C %Z %{!%b %d} %-15.15F |%?M?#%4M&%5l? | %4c| %s %> %?N?|%3N|?"
 set index_format="%4C %Z %{!%b %d} %-15.15F |%?M?#%4M&%5c? | %3N | %s"
 
@@ -142,13 +234,13 @@ set index_format="%4C %Z %{!%b %d} %-15.15F |%?M?#%4M&%5c? | %3N | %s"
 set mask="!^\\.[^.]"
 
 # [message_format] string displayed in attachment menu ["%s"]
-set message_format="%s"	 
+set message_format="%s"  
 
 # [mix_entry_format] the format of remailer line on mixmaster selection screen
-# %n 	The running number on the menu.
-# %c 	Remailer capabilities.
-# %s 	The remailer's short name.
-# %a 	The remailer's e-mail address.
+# %n    The running number on the menu.
+# %c    Remailer capabilities.
+# %s    The remailer's short name.
+# %a    The remailer's e-mail address.
 #set mix_entry_format="%4n %c %-16s %a" 
 
 # [pager_format] format of the one-line message 'status' displayed before each
@@ -182,7 +274,7 @@ set simple_search="~f %s | ~s %s"
 set smileys="(>From )|(:[-^]?[][)(><}{|/DP])"
 
 # [status_chars] controls chars used be the "%r" indicator ["-*%A"]
-set status_chars="-*%A"	
+set status_chars="-*%A" 
 
 # [status_format] format of the status line displayed in the index menu
 # mailbox
@@ -190,5 +282,80 @@ set status_format="%_h:  [%r]  %f [total:%?M?%M/?%m%?n? new:%n?%?o? old:%o?%?d? 
 
 # [to_chars] character used to indicate mail addressed to yourself
 set to_chars=" +TCFL" 
+
+# ---------------------------------------------------------------------------- #
+#                               crypto settings
+# ---------------------------------------------------------------------------- #
+
+set crypt_replysign          # automatically sign replies to signed msgs
+set crypt_replysignencrypted # automatically sign replies to encrypted msgs
+set pgp_autosign=yes
+set pgp_sign_as=0x37F34C16
+set pgp_replyencrypt=yes
+set pgp_timeout=3600
+
+# [pgp_entry_format] PGP key selection menu
+# %n    number
+# %k    key id
+# %u    user id
+# %a    algorithm
+# %l    key length
+# %f    flags
+# %c    capabilities
+# %t    trust/validity of the key-uid association
+# %[<s>]    date of the key where <s> is an strftime(3) expression
+set pgp_entry_format="%4n %t%f %4l/0x%k %-4a %2c %u"
+
+set pgp_good_sign="`gettext -d gnupg -s 'Good signature from "' | tr -d '"'`"
+
+# %p      Expands to PGPPASSFD=0 when a pass phrase is needed, to an empty
+#         string otherwise. Note: This may be used with a %? construct.
+# %f      Expands to the name of a file containing a message.
+# %s      Expands to the name of a file containing the signature part
+#                    of a multipart/signed attachment when verifying it.
+# %a      The value of $pgp_sign_as.
+# %r      One or more key IDs.
+
+#set pgp_getkeys_command
+set pgp_getkeys_command="/opt/local/bin/gpg --recv-keys %r 2> /dev/null"
+
+# decode application/pgp
+set pgp_decode_command="/opt/local/bin/gpg %?p?--passphrase-fd 0? --no-verbose --batch --output - %f"
+
+# verify a pgp/mime signature
+set pgp_verify_command="/opt/local/bin/gpg --no-verbose --batch --output - --verify %s %f"
+
+# decrypt a pgp/mime attachment
+set pgp_decrypt_command="/opt/local/bin/gpg --passphrase-fd 0 --no-verbose --batch --output - %f"
+
+# create a application/pgp signed (old-style) message
+# set pgp_clearsign_command="/opt/local/bin/gpg-2comp --no-verbose --batch  --output - --passphrase-fd 0 --armor --textmode --clearsign %?a?-u %a?  %f"
+set pgp_clearsign_command="/opt/local/bin/gpg --no-verbose --batch --output - --passphrase-fd 0 --armor --textmode --clearsign %?a?-u %a? %f"
+
+# create a pgp/mime signed attachment
+# set pgp_sign_command="/opt/local/bin/gpg-2comp --no-verbose --batch --output - --passphrase-fd 0 --armor --detach-sign --textmode %?a?-u %a? %f"
+set pgp_sign_command="/opt/local/bin/gpg --no-verbose --batch --output - --passphrase-fd 0 --armor --detach-sign --textmode %?a?-u %a? %f"
+
+# create a pgp/mime encrypted attachment
+set pgp_encrypt_only_command="pgpewrap /opt/local/bin/gpg -v --batch --output - --encrypt --textmode --armor --always-trust -- -r %r -- %f"
+
+# create a pgp/mime encrypted and signed attachment
+# set pgp_encrypt_sign_command="pgpewrap gpg-2comp --passphrase-fd 0 -v --batch --output - --encrypt --sign %?a?-u %a? --armor --always-trust -- -r %r -- %f"
+set pgp_encrypt_sign_command="pgpewrap gpg --passphrase-fd 0 -v --batch --output - --encrypt --sign %?a?-u %a? --armor --always-trust -- -r %r -- %f"
+
+# import a key into the public key ring
+set pgp_import_command="/opt/local/bin/gpg --no-verbose --import -v %f"
+
+# export a key from the public key ring
+set pgp_export_command="/opt/local/bin/gpg --no-verbose --export --armor %r"
+
+# verify a key
+set pgp_verify_key_command="/opt/local/bin/gpg --no-verbose --batch --fingerprint --check-sigs %r"
+
+# read in the public key ring
+set pgp_list_pubring_command="/opt/local/bin/gpg --no-verbose --batch --with-colons --list-keys %r"=20
+
+# read in the secret key ring
+set pgp_list_secring_command="/opt/local/bin/gpg --no-verbose --batch --with-colons --list-secret-keys %r"=20
 
 # vim: ft=muttrc

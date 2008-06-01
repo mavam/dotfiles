@@ -1,0 +1,65 @@
+# ---------------------------------------------------------------------------- #
+#                                  personal
+# ---------------------------------------------------------------------------- #
+set realname="Matthias Vallentin"
+set from=vallentin@icsi.berkeley.edu
+alternates '(matthias.vallentin@gmail.com)'
+set reverse_name=yes
+set reverse_realname=no
+
+set mail_check=60
+set pgp_sign_as="0x37F34C16"
+set signature=~/.mutt/sigs/priv
+set ssl_force_tls=yes
+
+unmy_hdr *
+my_hdr Reply-To: vallentin@icsi.berkeley.edu
+my_hdr X-GPG-Key: gpg --recv-keys --keyserver wwwkeys.eu.pgp.net 37F34C16
+my_hdr X-PGP-Fingerprint: AF0B 32F1 F6BC C2A4 4925  201A 9E73 C324 37F3 4C16
+
+
+# ---------------------------------------------------------------------------- #
+#                                    GMail
+# ---------------------------------------------------------------------------- #
+folder-hook 'Sent Mail' 'set index_format="%4C %Z %{!%b %d} %-15.15t |%?M?#%4M&%5c? | %3N | %s"'
+
+set imap_user = matthias.vallentin@gmail.com
+set smtp_url= smtps://matthias.vallentin@smtp.gmail.com
+set folder = imaps://imap.gmail.com:993
+set spoolfile = =INBOX
+set postponed = =[Gmail]/Drafts
+set mbox = "=[Gmail]/All Mail" # When exiting mutt, prompt to archive read msgs.
+unset record
+
+# Mailbox order
+mailboxes ! 
+mailboxes =[Gmail]/Starred =[Gmail]/Drafts 
+mailboxes =private
+mailboxes =UCB =ICSI =TUM =LBL
+mailboxes =news =health =shopping
+mailboxes =bro =logs
+mailboxes "=[Gmail]/Sent Mail" "=[Gmail]/All Mail" 
+
+# IMAP settings
+set imap_check_subscribed=yes
+set imap_idle=yes
+set imap_keepalive=300
+set imap_list_subscribed=yes
+unset imap_passive
+
+# Gmail web-interface navigation: You need the "noop" bind so that the line
+# editor accepts IMAP folders with spaces in their names. The gi, ga, gs and gd
+# shortcuts help get around the "navigation quirks" mentioned above too
+bind editor <space> noop
+macro index,pager y "<save-message>+[Gmail]/All Mail<enter><enter>" "Archive"
+macro index,pager d "<save-message>+[Gmail]/Trash<enter><enter>" "Trash"
+macro index gi "<change-folder>+INBOX<enter>" "Go to inbox"
+macro index ga "<change-folder>+[Gmail]/All Mail<enter>" "Go to all mail"
+macro index gs "<change-folder>+[Gmail]/Starred<enter>" "Go to starred messages"
+macro index gd "<change-folder>+[Gmail]/Drafts<enter>" "Go to drafts"
+
+# Gmail spam control
+macro index,pager S "<save-message>=[Gmail]/Spam<enter>" "Mark message as spam"
+macro index,pager H "<save-message>=!<enter>" "Mark message as ham"
+
+# vim: ft=muttrc

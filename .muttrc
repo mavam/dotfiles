@@ -1,27 +1,23 @@
-# =========
+#
 #  .muttrc
-# =========
+#
 
-push V 			# show version at startup
-reset all		# reset all variables to system defaults
-unhook *		# remove all hooks
-unscore *		# remove all scorings
-unlists *		# unsubscribe from all mailinglists
-unsubscribe *	# unsubscribe from all mailinglists
+push V          # show version at startup
+reset all       # reset all variables to system defaults
+unhook *        # remove all hooks
+unscore *       # remove all scorings
+unlists *       # unsubscribe from all mailinglists
+unsubscribe *   # unsubscribe from all mailinglists
 
 
-source ~/.mutt/account 		# account settings
-source ~/.mutt/aliases		# mail aliases
-source ~/.mutt/autoview		# autoview configuration
-source ~/.mutt/colors 		# color configuration
-source ~/.mutt/crypt 		# PGP, S/MIME and crypto settings
-source ~/.mutt/paths 		# paths and filenames
-source ~/.mutt/formats 		# formats
-source ~/.mutt/general 		# general mutt configuration
-source ~/.mutt/hooks 		# {save,send,folder,...}-hooks
-source ~/.mutt/headers 		# extra headers 
-source ~/.mutt/keys			# key bindings and macros
-source ~/.mutt/lists		# mailing list subscriptions
+source ~/.mutt/appearance
+source ~/.mutt/autoview
+source ~/.mutt/identities
+source ~/.mutt/hooks
+source ~/.mutt/keys
+source ~/.mutt/options
 
-# sidebar patch (use it when possible)
+# conditional sourcing
+source `FILE=$HOME/.mutt/aliases; if [ ! -f $FILE ]; then FILE=/dev/null;fi;echo "$FILE"`
+source `FILE=$HOME/.mutt/lists; if [ ! -f $FILE ]; then FILE=/dev/null;fi;echo "$FILE"`
 source `FILE=$HOME/.mutt/sidebar; if [ ! $(mutt -v | grep sidebar) ]; then FILE=/dev/null;fi;echo "$FILE"`

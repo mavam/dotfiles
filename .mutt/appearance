@@ -1,0 +1,140 @@
+# ---------------------------------------------------------------------------- #
+#                                  interface
+# ---------------------------------------------------------------------------- #
+unset help
+set pager_index_lines=8
+set pager_stop          # don't move to next message at end w/ next-page
+set narrow_tree
+
+# ---------------------------------------------------------------------------- #
+#                                   headers
+# ---------------------------------------------------------------------------- #
+
+ignore *
+unignore From: 
+unignore Return-Path: Sender: Reply-To:
+unignore To: Cc: Bcc:
+unignore Subject: 
+unignore Date: 
+unignore Organization: Organisation: 
+unignore User-Agent: X-Mailer:
+unignore X-Mailinglist: Posted-To:
+unignore X-Virus
+
+hdr_order From: \
+    Return-Path: Sender: Reply-To: \
+    Date: \
+    To: Cc: Bcc: \
+    Organization: Organisation: \
+    User-Agent: X-Mailer: \
+    Subject: 
+
+# ---------------------------------------------------------------------------- #
+#                                   colors
+# ---------------------------------------------------------------------------- #
+
+# object can be one of:
+#   * attachment
+#   * body         (match regexp in the body of messages)
+#   * bold         (hiliting bold patterns in the body of messages)
+#   * error        (error messages printed by Mutt)
+#   * header       (match regexp in the message header)
+#   * hdrdefault   (default color of the message header in the pager)
+#   * index        (match pattern in the message index)
+#   * indicator    (arrow or bar used to indicate the current item in a menu)
+#   * markers      (the '+' markers at beginning of wrapped lines in the pager)
+#   * message      (informational messages)
+#   * normal
+#   * quoted       (text matching $quote_regexp in the body of a message)
+#   * quoted{1..n} (higher levels of quoting)
+#   * search       (hiliting of words in the pager)
+#   * signature
+#   * status       (mode lines used to display info about mailbox or message)
+#   * tilde        (the '~' used to pad blank lines in the pager)
+#   * tree         (thread tree drawn in the message index and attachment menu)
+#   * underline    (hiliting underlined patterns in the body of messages)
+#
+#
+# foreground and background can be one of the following:
+# white, black, green, magenta, blue, cyan, yellow, red, default
+#
+# foreground can optionally be prefixed with the keyword bright to make the
+# foreground color boldfaced (e.g., brightred).
+
+# NOTE: ** The last matching rule wins! **
+
+# arrow or bar used to indicate the current item in a menu
+color indicator  brightyellow  blue
+# mode lines used to display info about the mailbox or message
+color status     black        cyan
+# thread tree drawn in the message index and attachment menu
+color tree       red          default
+# bold patterns in the body 
+color bold       white        default
+# error messages 
+color error      brightred    default
+# the ``+'' markers at the beginning of wrapped lines in the pager
+color markers    cyan         default
+# informational messages
+color message    brightyellow default
+
+color tilde      brightblue   default
+color attachment red          default
+color search     white        brightblue
+color signature  blue         default
+color underline  brightgreen  default
+
+color quoted     cyan        default
+color quoted1    yellow      default
+color quoted2    red         default
+color quoted3    brightred   default
+color quoted4    yellow      default
+color quoted5    cyan        default
+color quoted6    green       default
+color quoted7    brightcyan  default
+color quoted8    brightgreen default
+
+# message index-colors
+color index      green       default ~g # PGP signed
+color index      green       default ~k # GPG
+color index      brightgreen default ~G # PGP encrypted
+#color index      white       default  ~l # mailing lists
+#color index      default     default  ~p # mail to myself
+#color index      default     default  ~P # mail from myself
+color index      cyan        default ~Q # replied mails
+color index      yellow      default ~v # collapsed thread
+color index      brightwhite default ~O # old
+color index      brightwhite default ~N # new
+color index      blue        default ~D # deleted
+color index      blue        default ~= # duplicates
+color index      brightred   default ~F # flagged
+color index      black       yellow  ~T # tagged
+
+# header colors
+color header    red       default "."     # default
+color header    brightred default "^(From|Subject):"
+
+# custom body colors
+color body  magenta default "(finger|ftp|http|https|telnet)://[^ >]+"
+color body  magenta default "news:[^ \">\t\r\n]*"
+
+# GPG / PGP 
+color body  yellow       default "^gpg:.*"
+color body  brightyellow default "^gpg: WARNING.*"
+color body  green        default "^gpg: Good signature from.*"
+color body  green        default "^Verification successful"
+color body  white        red     "^gpg: Bad signature from.*"
+
+
+# mono terminal "colors"
+mono  normal     none
+mono  attachment bold
+mono  bold       bold
+mono  error      standout
+mono  indicator  reverse
+mono  markers    bold
+mono  message    bold
+mono  status     underline
+mono  tree       none
+
+# vim: ft=muttrc

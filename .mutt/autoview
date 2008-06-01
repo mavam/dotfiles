@@ -1,6 +1,6 @@
-# ===========
-#  auto_view
-# ===========
+#
+# auto_view
+#
 
 alternative_order text/enriched text/plain text application/postscript image/*
 
@@ -16,4 +16,4 @@ auto_view application/x-tar-gz
 # images
 auto_view image/gif 
 
-# vim: ft=muttrc
+# vim:ft=muttrc
