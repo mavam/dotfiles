@@ -25,7 +25,8 @@ folder-hook 'Sent Mail' 'set index_format="%4C %Z %{!%b %d} %-15.15t |%?M?#%4M&%
 
 set imap_user = matthias.vallentin@gmail.com
 set smtp_url= smtps://matthias.vallentin@smtp.gmail.com
-set folder = imaps://imap.gmail.com:993
+#set folder = imaps://imap.gmail.com:993
+set folder = ~/.gmail   # offlineimap
 set spoolfile = =INBOX
 set postponed = =[Gmail]/Drafts
 set mbox = "=[Gmail]/All Mail" # When exiting mutt, prompt to archive read msgs.
@@ -37,8 +38,11 @@ mailboxes =private
 mailboxes =UCB =ICSI =TUM =LBL
 mailboxes =news =health =shopping
 mailboxes =bro =logs
-mailboxes "=[Gmail]/Sent Mail" "=[Gmail]/All Mail" 
-mailboxes =[Gmail]/Starred =[Gmail]/Drafts 
+mailboxes =[Gmail]/Starred =[Gmail]/Drafts "=[Gmail]/Sent Mail" "=[Gmail]/All Mail" 
+mailboxes =[Gmail]/Spam =[Gmail]/Trash
+mailboxes =.devnull
+mailboxes =.list.pentest =.list.ids =.list.botnets =.list.wifisec
+mailboxes =.list.boost.users =.list.misc 
 
 # IMAP settings
 set imap_check_subscribed=yes

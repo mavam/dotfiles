@@ -57,14 +57,14 @@
 #
 
 # the tmp directory to use.
-tmpdir="$HOME/tmp/mutt_attach"
+tmpdir="$HOME/.mutt/tmp/mutt_attach"
 
 # the name of the debug file if debugging is turned on.
 debug_file=$tmpdir/debug
 
 # debug.  yes or no.  
 #debug="no"
-debug="yes"
+debug="no"
 
 type=$2
 open_with=$3
