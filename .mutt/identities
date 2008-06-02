@@ -28,8 +28,8 @@ set smtp_url= smtps://matthias.vallentin@smtp.gmail.com
 #set folder = imaps://imap.gmail.com:993
 set folder = ~/.gmail   # offlineimap
 set spoolfile = =INBOX
-set postponed = =[Gmail]/Drafts
-set mbox = "=[Gmail]/All Mail" # When exiting mutt, prompt to archive read msgs.
+set postponed = =[Gmail].Drafts
+set mbox = "=[Gmail].All Mail" # When exiting mutt, prompt to archive read msgs.
 unset record
 
 # Mailbox order
@@ -38,8 +38,8 @@ mailboxes =private
 mailboxes =UCB =ICSI =TUM =LBL
 mailboxes =news =health =shopping
 mailboxes =bro =logs
-mailboxes =[Gmail]/Starred =[Gmail]/Drafts "=[Gmail]/Sent Mail" "=[Gmail]/All Mail" 
-mailboxes =[Gmail]/Spam =[Gmail]/Trash
+mailboxes =[Gmail].Starred =[Gmail].Drafts "=[Gmail].Sent Mail" "=[Gmail].All Mail" 
+mailboxes =[Gmail].Spam =[Gmail].Trash
 mailboxes =.devnull
 mailboxes =.list.pentest =.list.ids =.list.botnets =.list.wifisec
 mailboxes =.list.boost.users =.list.misc 
@@ -55,15 +55,15 @@ unset imap_passive
 # editor accepts IMAP folders with spaces in their names. The gi, ga, gs and gd
 # shortcuts help get around the "navigation quirks" mentioned above too
 bind editor <space> noop
-macro index,pager y "<save-message>+[Gmail]/All Mail<enter><enter>" "Archive"
-macro index,pager d "<save-message>+[Gmail]/Trash<enter><enter>" "Trash"
+macro index,pager y "<save-message>+[Gmail].All Mail<enter><enter>" "Archive"
+macro index,pager d "<save-message>+[Gmail].Trash<enter><enter>" "Trash"
 macro index gi "<change-folder>+INBOX<enter>" "Go to inbox"
-macro index ga "<change-folder>+[Gmail]/All Mail<enter>" "Go to all mail"
-macro index gs "<change-folder>+[Gmail]/Starred<enter>" "Go to starred messages"
-macro index gd "<change-folder>+[Gmail]/Drafts<enter>" "Go to drafts"
+macro index ga "<change-folder>+[Gmail].All Mail<enter>" "Go to all mail"
+macro index gs "<change-folder>+[Gmail].Starred<enter>" "Go to starred messages"
+macro index gd "<change-folder>+[Gmail].Drafts<enter>" "Go to drafts"
 
 # Gmail spam control
-macro index,pager S "<save-message>=[Gmail]/Spam<enter>" "Mark message as spam"
+macro index,pager S "<save-message>=[Gmail].Spam<enter>" "Mark message as spam"
 macro index,pager H "<save-message>=!<enter>" "Mark message as ham"
 
 # vim: ft=muttrc

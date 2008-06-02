@@ -9,9 +9,10 @@ set certificate_file=~/.mutt/certificates
 set print_command="muttprint"
 set query_command="lbdbq '%s'"
 
+# (not required when using offlineimap)
 # Requires: mkdir -p ~/.mutt/cache/{headers,bodies}
-set header_cache="~/.mutt/cache/headers"
-set message_cachedir="~/.mutt/cache/bodies"
+#set header_cache="~/.mutt/cache/headers"
+#set message_cachedir="~/.mutt/cache/bodies"
 
 
 # ---------------------------------------------------------------------------- #
@@ -41,6 +42,7 @@ set quit=ask-yes
 unset sig_dashes        # insert '-- ' before the 'signature'
 set thorough_search     # decode headers and attachments before searching
 set timeout=10          # [300]
+unset wait_key          # Ask to press a key after shell-escape, pipes, etc.
 set wrapmargin=1        # [0] margin remaining at the right side of terminal
 
 
