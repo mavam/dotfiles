@@ -1,24 +1,16 @@
-# =======================
-#  sidebar configuration
-# =======================
-
 set sidebar_visible="yes"
 set sidebar_width=28
-
 set sidebar_delim='|'
 
 color sidebar_new yellow default
 
-bind index K 	sidebar-prev
-bind pager K 	sidebar-prev
-bind index J 	sidebar-next
-bind pager J 	sidebar-next
-bind index E 	sidebar-open
-bind pager E 	sidebar-open
+bind index,pager  K  sidebar-prev
+bind index,pager  J  sidebar-next
+bind index,pager  E  sidebar-open
 
 #macro index B ':toggle sidebar_visible^M'
 #macro pager B ':toggle sidebar_visible^M'
-macro index B 	'<enter-command>toggle sidebar_visible<enter><refresh>'
-macro pager B 	'<enter-command>toggle sidebar_visible<enter><redraw-screen>'
+macro index B   '<enter-command>toggle sidebar_visible<enter><refresh>'
+macro pager B   '<enter-command>toggle sidebar_visible<enter><redraw-screen>'
 
 # vim: ft=muttrc

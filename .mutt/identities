@@ -33,12 +33,12 @@ unset record
 
 # Mailbox order
 mailboxes ! 
-mailboxes =[Gmail]/Starred =[Gmail]/Drafts 
 mailboxes =private
 mailboxes =UCB =ICSI =TUM =LBL
 mailboxes =news =health =shopping
 mailboxes =bro =logs
 mailboxes "=[Gmail]/Sent Mail" "=[Gmail]/All Mail" 
+mailboxes =[Gmail]/Starred =[Gmail]/Drafts 
 
 # IMAP settings
 set imap_check_subscribed=yes

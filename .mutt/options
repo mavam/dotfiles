@@ -20,9 +20,9 @@ set message_cachedir="~/.mutt/cache/bodies"
 
 unset abort_nosubject   # abort composing when no subject is given 
 unset abort_unmodified  # abort composition if no changes were body made
-#set auto_tag            # apply functions to all tagged messages
-#unset collapse_unread   # collapse a thread if it contains unread mail
-#unset confirmappend     # prompt when appending messages to a mailbox
+set auto_tag            # apply functions to all tagged messages
+unset collapse_unread   # collapse a thread if it contains unread mail
+unset confirmappend     # prompt when appending messages to a mailbox
 set delete=yes          # really delete messages when syncing a mailbox
 set edit_headers        # allow editing headers of outgoing messages
 set fast_reply          # skip prompt for recipients and subject 
@@ -132,7 +132,7 @@ set attribution="On %d, %n wrote:"
 #  %h local hostname
 #  %l approximate size (in bytes) of the current message
 #  %v Mutt version string
-set compose_format="-- compose  [ approx. msg size: %l   Atts: %a ]%>-"  
+set compose_format="-- compose  [ approx. msg size: %l   attachments: %a ]%>-"  
 
 # [date_format] format of date printed by the '%d' sequence in ' $index_format'
 set date_format="!%a, %b %d, %Y at %I:%M:%S%p %Z"
@@ -157,7 +157,6 @@ set editor="vim +\`awk ' /^$/ {print i+2; exit} {i++}' %s\` +':set textwidth=72'
 set folder_format="%2C %t %N %F %2l %-8.8u %-8.8g %8s %d %f"
 
 # [forward_format] default subject when forwarding a message.
-#set forward_format="[%a: %s]"
 set forward_format="Fwd: %s"
 
 # [indent_string]
@@ -278,6 +277,32 @@ set status_chars="-*%A"
 
 # [status_format] format of the status line displayed in the index menu
 # mailbox
+# %b number of mailboxes with new mail *
+# %d number of deleted messages *
+# %h local hostname
+# %f the full pathname of the current mailbox
+# %F number of flagged messages *
+# %l size (in bytes) of the current mailbox *
+# %L size (in bytes) of the messages shown 
+#    (i.e., which match the current limit) *
+# %m the number of messages in the mailbox *
+# %M the number of messages shown (i.e., which match the current limit) *
+# %n number of new messages in the mailbox *
+# %o number of old unread messages
+# %p number of postponed messages *
+# %P percentage of the way through the index
+# %r modified/read-only/won't-write/attach-message indicator, according to
+#    $status_chars 
+# %s current sorting mode ( $sort)
+# %S current aux sorting method ( $sort_aux)
+# %t number of tagged messages *
+# %u number of unread messages *
+# %v Mutt version string
+# %V currently active limit pattern, if any *
+# %>X right justify the rest of the string and pad with "X"
+# %|X pad to the end of the line with "X"
+# 
+# * = can be optionally printed if nonzero
 set status_format="%_h:  [%r]  %f [total:%?M?%M/?%m%?n? new:%n?%?o? old:%o?%?d? del:%d?%?F? flag:%F?%?t? tag:%t?%?p? post:%p?%?b? inc:%b?%?l? %l?]       (%s/%S)%> [%P]   " 
 
 # [to_chars] character used to indicate mail addressed to yourself
@@ -287,11 +312,10 @@ set to_chars=" +TCFL"
 #                               crypto settings
 # ---------------------------------------------------------------------------- #
 
-set crypt_replysign          # automatically sign replies to signed msgs
-set crypt_replysignencrypted # automatically sign replies to encrypted msgs
-set pgp_autosign=yes
+set crypt_replysign=yes          # automatically sign replies to signed msgs
+set crypt_replysignencrypted=yes # automatically sign replies to encrypted msgs
+
 set pgp_sign_as=0x37F34C16
-set pgp_replyencrypt=yes
 set pgp_timeout=3600
 
 # [pgp_entry_format] PGP key selection menu
