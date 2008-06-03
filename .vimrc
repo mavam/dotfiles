@@ -34,8 +34,14 @@ set formatoptions=tcrqn " see :h 'fo-table for a detailed explanation
 set copyindent          " Copy the structure of existing indentation
 set shiftwidth=4        " tab indention 
 set tabstop=4           " number of spcaes for a tab
-set textwidth=79        " textwidth
+set textwidth=80        " textwidth
 set expandtab           " expand tabs to spaces
+
+" Indentation Tweaks.
+" e-s = do not indent if opening bracket is not first character in a line.
+" g0  = do not indent C++ scope declarations.
+" t0  = do not indent a function's return type declaration.
+set cino=e-s,g0,t0
 " }}}
 
 "{{{ Spell settings
