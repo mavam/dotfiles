@@ -11,23 +11,22 @@
 #
 
 # Reload .muttrc
-macro 	index	,R	"<enter-command>source ~/.muttrc<enter>"
+macro index         ,R  "<enter-command>source ~/.muttrc<enter>"
 
 # rot13 display filter
-macro	pager	,r	"<enter-command>set display_filter = \"tr a-zA-Z n-za-mN-ZA-M\"<enter><exit><display-message><enter-command>unset display_filter<enter>" "rot13"
+macro pager         ,r  "<enter-command>set display_filter = \"tr a-zA-Z n-za-mN-ZA-M\"<enter><exit><display-message><enter-command>unset display_filter<enter>" "rot13"
 
 # Fetch PGP keys.
-macro	pager	,p	"!gpg --keyserver pgp.mit.edu --recv-key 0x" "get PGP key"
+macro pager         ,p  "!gpg --keyserver pgp.mit.edu --recv-key 0x" "get PGP key"
 
 # Mark all messages as read (aka. catchup)
-macro 	index 	,m 	"T \n;WN^t \n" "Mark all messages read"
-macro 	pager 	,m 	"T \n;WN^t \n" "Mark all messages read"
+macro index,pager   ,m  "T \n;WN^t \n" "Mark all messages read"
 
 # Show only new / all messages
-macro	index	,n	"l~N\n" "Show only new messages"
-macro 	index	,a	"l~A\n" "Show all messages"
+macro index         ,n  "l~N\n" "Show only new messages"
+macro index         ,a  "l~A\n" "Show all messages"
 
 # View URLs
-macro 	pager	\cu	"<pipe-entry>'urlview'<enter>" 'Follow links with urlview'
+macro pager         \cu "<pipe-entry>'urlview'<enter>" 'Follow links with urlview'
 
 # vim: ft=muttrc

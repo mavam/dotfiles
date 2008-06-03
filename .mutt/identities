@@ -4,8 +4,10 @@
 set realname="Matthias Vallentin"
 set from=vallentin@icsi.berkeley.edu
 alternates '(matthias.vallentin@gmail.com)'
+
 set reverse_name=yes
 set reverse_realname=no
+set envelope_from
 
 set mail_check=60
 set pgp_sign_as="0x37F34C16"
@@ -38,11 +40,11 @@ mailboxes =private
 mailboxes =UCB =ICSI =TUM =LBL
 mailboxes =news =health =shopping
 mailboxes =bro =logs
-mailboxes =[Gmail].Starred =[Gmail].Drafts "=[Gmail].Sent Mail" "=[Gmail].All Mail" 
-mailboxes =[Gmail].Spam =[Gmail].Trash
 mailboxes =.devnull
 mailboxes =.list.pentest =.list.ids =.list.botnets =.list.wifisec
 mailboxes =.list.boost.users =.list.misc 
+mailboxes =[Gmail].Starred =[Gmail].Drafts "=[Gmail].Sent Mail"
+mailboxes =[Gmail].Spam =[Gmail].Trash "=[Gmail].All Mail" 
 
 # IMAP settings
 set imap_check_subscribed=yes

@@ -22,7 +22,6 @@ set query_command="lbdbq '%s'"
 unset abort_nosubject   # abort composing when no subject is given 
 unset abort_unmodified  # abort composition if no changes were body made
 set auto_tag            # apply functions to all tagged messages
-unset collapse_unread   # collapse a thread if it contains unread mail
 unset confirmappend     # prompt when appending messages to a mailbox
 set delete=yes          # really delete messages when syncing a mailbox
 set edit_headers        # allow editing headers of outgoing messages
