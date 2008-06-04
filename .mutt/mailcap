@@ -6,6 +6,7 @@ application/pdf; view_attachment %s pdf
 image/jpeg; view_attachment %s
 image/png; view_attachment %s
 image/gif; view_attachment %s
+image/tiff; view_attachment %s
 text/*; view -Mf '%s' ; edit=vim -f '%s'; compose=vim -f '%s'; needsterminal
 
 # unidentified

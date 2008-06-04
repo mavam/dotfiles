@@ -64,7 +64,7 @@ hdr_order From: \
 # NOTE: ** The last matching rule wins! **
 
 # arrow or bar used to indicate the current item in a menu
-color indicator  brightyellow  blue
+color indicator  brightwhite  blue
 # mode lines used to display info about the mailbox or message
 color status     black        cyan
 # thread tree drawn in the message index and attachment menu
@@ -115,8 +115,11 @@ color header    red       default "."     # default
 color header    brightred default "^(From|Subject):"
 
 # custom body colors
-color body  magenta default "(finger|ftp|http|https|telnet)://[^ >]+"
-color body  magenta default "news:[^ \">\t\r\n]*"
+color body  magenta     default "(finger|ftp|http|https|telnet)://[^ >]+"
+color body  magenta     default "news:[^ \">\t\r\n]*"
+color body  brightwhite default "(^|[[:space:]])\\*[^[:space:]]+\\*([[:space:]]|$)" # *Bold* text.
+color body  brightwhite default "(^|[[:space:]])_[^[:space:]]+_([[:space:]]|$)"     # _Underlined_ text.
+color body  brightwhite default "(^|[[:space:]])/[^[:space:]]+/([[:space:]]|$)"     # /Italic/ text.
 
 # GPG / PGP 
 color body  yellow       default "^gpg:.*"
