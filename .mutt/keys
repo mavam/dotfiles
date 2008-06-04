@@ -1,32 +1,90 @@
-# The command 'bind' binds the given key for the given map to the given
-# function. 
-# Valid maps are:
-#  'generic', 'alias', 'attach' 'browser', 'editor', 'index', 'compose',
-#  'pager', 'pgp', 'postpone' and 'mix'.
-# 
-# Valid Strings are:
-#  '\t', '<Tab>', '\t', '\n', '\e', '<esc>', '<up>', '<down>', '<left>',
-#  '<right>', '<pagedown>', '<pageup>', '<backspace>', '<delete>', '<insert>',
-#  '<enter>', '<home>', '<end>', '<Space>', '<F1{2,3,n}>' and '<f1{,2,3,n}>'.
 #
+# Key Bindings.
+# 
 
-# Reload .muttrc
-macro index         ,R  "<enter-command>source ~/.muttrc<enter>"
+# Generic.
+# The generic menu is not a real menu, but specifies common functions (such as
+# movement) available in all menus except for pager and editor. Changing
+# settings for this menu will affect the default bindings for all menus (except
+# as noted).
+bind generic "g"     first-entry
+bind generic "G"     last-entry
+bind generic <home>  first-entry
+bind generic <end>   last-entry
+bind generic <left>  previous-entry
+bind generic <right> next-entry
 
-# rot13 display filter
-macro pager         ,r  "<enter-command>set display_filter = \"tr a-zA-Z n-za-mN-ZA-M\"<enter><exit><display-message><enter-command>unset display_filter<enter>" "rot13"
+# Index.
+bind index  "h"     noop
+bind index  "z"     noop
+bind index  "Z"     noop
 
-# Fetch PGP keys.
-macro pager         ,p  "!gpg --keyserver pgp.mit.edu --recv-key 0x" "get PGP key"
+bind index  "g"     first-entry
+bind index  "G"     last-entry
+bind index  "\Cf"   next-page
+bind index  "\Cb"   previous-page
+bind index  "{"     previous-thread
+bind index  "}"     next-thread
+bind index  ",g"    group-reply
+bind index  ",z"    collapse-thread 
+bind index  ",Z"    collapse-all
+bind index  "zt"    current-top
+bind index  "zb"    current-bottom
+bind index  "zz"    current-middle
 
-# Mark all messages as read (aka. catchup)
-macro index,pager   ,m  "T \n;WN^t \n" "Mark all messages read"
+# Pager.
+bind pager  "g"      top
+bind pager  "G"      bottom
+bind pager  <home>   top
+bind pager  <end>    bottom
+bind pager  "\Cu"    half-up
+bind pager  "\Cd"    half-down
+bind pager  "\Cf"    next-page
+bind pager  "\Cb"    previous-page
+bind pager  "\Cj"    next-line
+bind pager  "\Ck"    previous-line
+bind pager  <up>     previous-line
+bind pager  <down>   next-line
+bind pager  "{"      previous-thread
+bind pager  "}"      next-thread
+bind pager  "["      previous-thread
+bind pager  "]"      next-thread
+bind pager  <left>   previous-undeleted
+bind pager  <right>  next-undeleted
+bind pager  "\Cp"    previous-undeleted
+bind pager  "\Cn"    next-undeleted
+bind pager  ",g"     group-reply
 
-# Show only new / all messages
-macro index         ,n  "l~N\n" "Show only new messages"
-macro index         ,a  "l~A\n" "Show all messages"
 
-# View URLs
-macro pager         \cu "<pipe-entry>'urlview'<enter>" 'Follow links with urlview'
+#
+# Macros.
+# 
+
+#Index.
+macro index,pager ",<F5>"   "<enter-command>source ~/.muttrc<enter>"             "Reload .muttrc"
+macro index,pager ",v"      "<pipe-message>vim +':set ft=mail' - <enter>"        "View the message in vim."
+macro index,pager ",V"      "<pipe-message>mvim +':set ft=mail' - <enter>"       "View the message in MacVim."
+macro index,pager "\'"      "<clear-flag>r"                                      "Mark as un-replied."
+
+macro index       ",R"      "<tag-pattern>~N<enter><tag-prefix>N<tag-prefix>t"   "Catch up (mark all as read)."
+macro index       ",N"      "<limit>~N<enter>"                                   "Limit display to new mail."
+macro index       ",U"      "<limit>~U<enter>"                                   "Limit display to unread mail."
+
+macro pager       "w"       "<enter-command>set invsmart_wrap invmarkers<enter>" "Toggle wrap stuff"
+macro pager       "\e1"     "<enter-command>set pager_index_lines=1<enter>"      "Set pager lines to 1"
+macro pager       "\e2"     "<enter-command>set pager_index_lines=2<enter>"      "Set pager liens to 2"
+macro pager       "\e3"     "<enter-command>set pager_index_lines=3<enter>"      "Set pager liens to 3"
+macro pager       "\e4"     "<enter-command>set pager_index_lines=4<enter>"      "Set pager liens to 4"
+macro pager       "\e5"     "<enter-command>set pager_index_lines=5<enter>"      "Set pager liens to 5"
+macro pager       "\e6"     "<enter-command>set pager_index_lines=6<enter>"      "Set pager liens to 6"
+macro pager       "\e7"     "<enter-command>set pager_index_lines=7<enter>"      "Set pager liens to 7"
+macro pager       "\e8"     "<enter-command>set pager_index_lines=8<enter>"      "Set pager liens to 8"
+macro pager       "\e9"     "<enter-command>set pager_index_lines=9<enter>"      "Set pager liens to 9"
+macro pager       "\e0"     "<enter-command>set pager_index_lines=0<enter>"      "Set pager liens to 0"
+macro pager       ",s"      "<pipe-message>lbdb-fetchaddr<enter>"                "Store address details in lbdb."
+macro pager       ",h"      "<pipe-message>mailhops<enter>"                      "View the path of the mail."
+macro pager       ",r"      "<enter-command>set display_filter = \"tr a-zA-Z n-za-mN-ZA-M\"<enter><exit><display-message><enter-command>unset display_filter<enter>" "ROT13 display filter"
+macro pager       ",p"      "!gpg --keyserver search.keyserver.net --recv-key "  "Get PGP key"
+macro pager         \cu     "<pipe-entry>'urlview'<enter>" 'Follow links with urlview'
 
 # vim: ft=muttrc
