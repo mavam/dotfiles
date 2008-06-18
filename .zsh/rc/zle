@@ -41,6 +41,7 @@ bindkey "^R" history-incremental-search-backward # C-r: search in $HISTFILE
 bindkey "^K" run-help					# C-k: man <...>
 
 # emacs compatibility
+bindkey "^Y" yank                       # C-y: Insert kill buffer contents
 bindkey "^N" down-history				# C-n: next command in history
 bindkey "^P" up-history					# C-p: prev command in history
 bindkey "^A" beginning-of-line			# C-a: jump to the beginning of line
