@@ -4,6 +4,7 @@ text/html; view_attachment %s html
 
 application/pdf; view_attachment %s pdf
 image/jpeg; view_attachment %s
+image/pjpeg; view_attachment %s
 image/png; view_attachment %s
 image/gif; view_attachment %s
 image/tiff; view_attachment %s

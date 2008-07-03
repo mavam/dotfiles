@@ -7,6 +7,9 @@ set sw=2
 " all the figure labels. Very useful!
 set iskeyword+=:
 
+" To err is human
+set spell
+
 " Prepend CTRL on Alt-key mappings: Alt-{B,C,L,I}
 "imap <C-M-b> <Plug>Tex_MathBF
 "imap <C-M-c> <Plug>Tex_MathCal
