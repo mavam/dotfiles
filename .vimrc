@@ -3,16 +3,18 @@ scriptencoding utf-8
 " {{{ Vim Look
 colorscheme koehler
 set background=dark     " syntax highlighting for a dark terminal background
+set ruler               " Show the cursor position all the time
 " }}}
 
 " {{{ General settings
-set ai                  " Always set auto-indenting on
+set autoindent          " Copy indent from current line when starting a new line
 set backspace=2         " Allow backspacing over everything in insert mode
 set history=200         " lines of command history
+set ignorecase          " Case-insensitive search
+set smartcase           " Override ignorecase when searching uppercase
 set incsearch           " jumps to search word as you type 
 set nocompatible        " Use Vim defaults
 set modeline            " modelines at the {end,beginning} of a file are handy!
-set ruler               " Show the cursor position all the time
 
 " low priority for these files in tab-completion
 set suffixes+=.info,.aux,.log,.dvi,.bbl,.out,.o,.lo
