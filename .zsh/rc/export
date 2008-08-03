@@ -1,6 +1,6 @@
-# =======================
-#  exports - environment
-# =======================
+##
+##  Environment
+##
 
 # Editor
 if [[ -x $(which vim) ]]; then
@@ -25,10 +25,8 @@ export RSYNC_RSH="ssh"
 
 
 ##
-## PROMPT
+##  Prompt
 ## 
-
-# have a look at http://aperiodic.net/phil/prompt/
 
 function set_prompt()
 { 
@@ -67,6 +65,7 @@ function set_prompt()
         export PROMPT="%(!.${redB}%m ${yellow}+.${col1}%n${redB}@${col1}%m) ${col2}%# ${none}" 
     fi
 
+    # Right-side prompt
     export RPROMPT="%(?..${red}%U%?%u${none}) ${col2}[%(!.${redB}.${col3})%35<..<%~${col2}]${none}"
 
 
@@ -78,4 +77,5 @@ function set_prompt()
 }
 
 set_prompt
+
 # vim: ft=zsh

@@ -4,6 +4,7 @@ scriptencoding utf-8
 colorscheme koehler
 set background=dark     " syntax highlighting for a dark terminal background
 set ruler               " Show the cursor position all the time
+"set statusline=%<%F%h%m%r%h%w%y\ %{strftime(\"%c\",getftime(expand(\"%:p\")))}% =\ lin:%l\,%L\ col:%c%V\ pos:%o\ ascii:%b\ %P
 " }}}
 
 " {{{ General settings

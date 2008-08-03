@@ -1,3 +1,7 @@
+##
+## Miscellaneous
+##
+
 watch=(notme)   # report login/logout events of all except ourself
 LOGCHECK=30     # time in seconds between checks for login/logout activity
 WATCHFMT='%n %a %l from %m at %t.'

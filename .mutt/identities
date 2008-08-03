@@ -2,8 +2,9 @@
 #                                  personal
 # ---------------------------------------------------------------------------- #
 set realname="Matthias Vallentin"
+set hostname = icsi.berkeley.edu
 set from=vallentin@icsi.berkeley.edu
-alternates '(matthias.vallentin@gmail.com)'
+alternates 'vallentin@icsi.berkeley.edu|(matthias.vallentin@gmail.com|(vallentin|mavam|mpm)@berkeley.edu)'
 
 set envelope_from=yes
 set reverse_name=yes
@@ -18,6 +19,13 @@ unmy_hdr *
 my_hdr Reply-To: vallentin@icsi.berkeley.edu
 my_hdr X-PGP-Fingerprint: AF0B 32F1 F6BC C2A4 4925  201A 9E73 C324 37F3 4C16
 
+# ---------------------------------------------------------------------------- #
+#                                     Cal                                    
+# ---------------------------------------------------------------------------- #
+
+#set from=vallentin@berkeley.edu
+#set smtp_url= smtps://mpm@calmail.berkeley.edu:465
+#set record = "=[Gmail].Sent Mail"
 
 # ---------------------------------------------------------------------------- #
 #                                    GMail
@@ -43,7 +51,8 @@ mailboxes =bro =logs
 mailboxes =.devnull
 mailboxes =.list.pentest =.list.ids =.list.botnets =.list.wifisec
 mailboxes =.list.sup-talk =.list.zsh-users
-mailboxes =.list.boost.users =.list.misc 
+mailboxes =.list.boost.users =.list.boost.spirit =.list.boost.langbinding =.list.boost.threads-devel
+mailboxes =.list.misc 
 mailboxes =[Gmail].Starred =[Gmail].Drafts "=[Gmail].Sent Mail"
 mailboxes =[Gmail].Spam =[Gmail].Trash "=[Gmail].All Mail" 
 

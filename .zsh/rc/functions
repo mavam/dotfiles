@@ -1,6 +1,6 @@
-# ==================
-#  custom functions
-# ==================
+## 
+##  Functions
+##
 
 function kernel()
 {
@@ -32,7 +32,7 @@ if [[ ! -x  $(which tree 2> /dev/null) ]]; then
 	}
 fi 
 
-# checks wheter a PCRE matches a value. 
+# checks whether a PCRE matches a value. 
 # synopsis: % regcheck '\^.{3} EUR' '500 EUR'
 function regcheck() 
 {
@@ -141,10 +141,9 @@ case $TERM in
 		;;
 esac     
 
-
-# SPECIAL FUNCTIONS
-# =================
-# The following functions, if defined, have special meaning to the shell.
+#
+# SPECIAL FUNCTIONS - have a special meaning to the shell
+#
 
 # executed whenever the current working directory is changed
 #chpwd() 

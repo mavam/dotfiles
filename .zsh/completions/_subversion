@@ -1,0 +1,258 @@
+#compdef svn svnadmin svnadmin-static=svnadmin
+
+_svn () {
+  local curcontext="$curcontext" state line expl ret=1
+
+  _arguments -C \
+    '(-)--help[print help information]' \
+    '(- *)--version[print client version information]' \
+    '1: :->cmds' \
+    '*:: :->args' && ret=0
+
+  if [[ -n $state ]] && (( ! $+_svn_cmds )); then
+    typeset -gHA _svn_cmds
+    _svn_cmds=(
+      ${=${(f)${${"$(LC_ALL=C _call_program commands svn help)"#l#*Available subcommands:}%%Subversion is a tool*}}/(#s)[[:space:]]#(#b)([a-z]##)[[:space:]]#(\([a-z, ?]##\))#/$match[1] :$match[1]${match[2]:+:${${match[2]//[(),]}// /:}}:}
+    )
+  fi
+
+  case $state in
+    cmds)
+      _wanted commands expl 'svn command' _svn_commands && ret=0
+    ;;
+    args)
+      local cmd args usage
+      typeset -gHA _cache_svn_status
+
+      cmd="${${(k)_svn_cmds[(R)*:$words[1]:*]}:-${(k)_svn_cmds[(i):$words[1]:]}}"
+      if (( $#cmd )); then
+        curcontext="${curcontext%:*:*}:svn-${cmd}:"
+
+        usage=${${(M)${(f)"$(LC_ALL=C _call_program options svn help $cmd)"}:#usage:*}#usage:*$cmd] }
+        args=(
+          ${=${${${(M)${(f)"$(LC_ALL=C _call_program options svn help $cmd)"##*Valid options:}:#* :*}%% #:*}/ ARG/:ARG:}/(#b)-([[:alpha:]]) \[--([a-z-]##)\](:ARG:)#/(--$match[2])-$match[1]$match[3] (-$match[1])--$match[2]$match[3]}
+        )
+
+        case $cmd in;
+          (add)
+            args+=(
+              '*:file:_files -g "*(^e:_svn_controlled:)"'
+            )
+          ;;
+          (commit)
+            args=(
+	      ${args/(#b)(*--file*):ARG:/$match[1]:file:_files}
+              '*:file:_files -g "*(e:_svn_status:)"'
+            )
+          ;;
+          (delete)
+            args+=(
+              '*:file:_files -g ".svn(/e:_svn_deletedfiles:)"'
+            )
+          ;;
+          (diff)
+            args+=(
+	      '*: : _alternative "files:file:_files -g \*\(e:_svn_status:\)" "urls:URL:_svn_urls"'
+	    )
+          ;;
+          (help)
+            args+=(
+              '*::sub command:_svn_commands'
+            )
+	  ;;
+	  (import)
+	    args+=(
+		'1:project directory or import location: _alternative "files:file:_files" "urls:URL:_svn_urls"'
+		'2:import location: _alternative "files:file:_files" "urls:URL:_svn_urls"'
+	    )
+          ;;
+          (log)
+            args+=(
+              '1: : _alternative "files:file:_files -g \*\(e:_svn_controlled:\)" "urls:URL:_svn_urls"'
+	      '*:file:_files -g "*(e:_svn_controlled:)"'
+            )
+          ;;
+	  (propget|propedit)
+	    args+=(
+		'1:property name:_svn_props'
+		'2:target: _alternative "files:file:_files" "urls:URL:_svn_urls"'
+	    )
+	  ;;
+	  (propset)
+	    args=(
+	    ':propname:(svn:ignore svn:keywords svn:executable svn:eol-style svn:mime-type svn:externals svn:needs-lock)'
+	    ${args/(#b)(*--file*):ARG:/$match[1]:file:_files}
+	    '*:path or url: _alternative "files:file:_files" "urls:URL:_svn_urls"'
+	    )
+	  ;;
+          (resolved)
+            args+=(
+              '*:file:_files -g "*(e:_svn_conflicts:)"'
+            )
+          ;;
+          (revert)
+            args+=(
+              '*:file:_files -g "(.svn|*)(/e:_svn_deletedfiles:,e:_svn_status:)"'
+            )
+          ;;
+          (*)
+            case $usage in
+              *(SRC|DST|TARGET|URL*PATH)*)
+                args+=(
+	          '*: : _alternative "files:file:_files" "urls:URL:_svn_urls"'
+	        )
+	      ;;
+              *URL*) args+=( ':URL:_svn_urls' ) ;;
+              *PATH*) args+=( '*:file:_files' ) ;;
+            esac
+          ;;
+        esac
+
+        _arguments "$args[@]" && ret=0
+
+      else
+        _message "unknown svn command: $words[1]"
+      fi
+    ;;
+  esac
+
+  return ret
+}
+
+_svnadmin () {
+  local curcontext="$curcontext" state line ret=1
+
+  _arguments -C \
+    '(-)--help[print help information]' \
+    '(- *)--version[print client version information]' \
+    '1: :->cmds' \
+    '*:: :->args' && ret=0
+
+  if [[ -n $state ]] && (( ! $+_svnadmin_cmds )); then
+    typeset -gHA _svnadmin_cmds
+    _svnadmin_cmds=(
+      ${=${(f)${${"$(LC_ALL=C _call_program commands svnadmin help)"#l#*Available subcommands:}}}/(#s)[[:space:]]#(#b)([-a-z]##)[[:space:]]#(\([a-z, ?]##\))#/$match[1] :$match[1]${match[2]:+:${${match[2]//[(),]}// /:}}:}
+    )
+  fi
+
+  case $state in
+    cmds)
+      _wanted commands expl 'svnadmin command' _svnadmin_commands && ret=0
+    ;;
+    args)
+      local cmd args usage
+
+      cmd="${${(k)_svnadmin_cmds[(R)*:$words[1]:*]}:-${(k)_svnadmin_cmds[(i):$words[1]:]}}"
+      if (( $#cmd )); then
+        curcontext="${curcontext%:*:*}:svnadmin-${cmd}:"
+
+        usage=${${(M)${(f)"$(LC_ALL=C _call_program options svnadmin help $cmd)"}:#$cmd: usage:*}#$cmd: usage: svnadmin $cmd }
+        args=(
+          ${=${${${(M)${(f)"$(LC_ALL=C _call_program options svnadmin help $cmd)"##*Valid options:}:#*:*}%% #:*}/ ARG/:ARG:}/(#b)-([[:alpha:]]) \[--([a-z-]##)\](:ARG:)#/(--$match[2])-$match[1]$match[3] (-$match[1])--$match[2]$match[3]}
+        )
+        if [[ $_svnadmin_subcmd_usage == *REPOS_PATH* ]]; then
+          args+=( ":path:_files -/" )
+        elif [[ $cmd = help ]]; then
+          args+=( "*:subcommand:_svnadmin_commands" )
+        fi
+
+        _arguments "$args[@]" && ret=0
+      else
+        _message "unknown svnadmin command: $words[1]"
+      fi
+    ;;
+  esac
+
+  return ret
+}
+
+(( $+functions[_svn_controlled] )) ||
+_svn_controlled() {
+  [[ -f ${(M)REPLY##*/}.svn/text-base/${REPLY##*/}.svn-base ]]
+}
+
+(( $+functions[_svn_conflicts] )) ||
+_svn_conflicts() {
+  [ -n $REPLY.(mine|r<->)(N[1]) ]
+}
+
+(( $+functions[_svn_deletedfiles] )) ||
+_svn_deletedfiles() {
+  # Typical usage would be _files -g '.svn(/e:_svn_deletedfiles:)'
+  local cont controlled
+  reply=( )
+  [[ $REPLY = (*/|).svn ]] || return
+  controlled=( $REPLY/text-base/*.svn-base(N:r:t) )
+  for cont in ${controlled}; do
+    [[ -e $REPLY:h/$cont ]] || reply+=( ${REPLY%.svn}$cont )
+  done
+}
+
+(( $+functions[_svn_status] )) ||
+_svn_status() {
+  local dir=$REPLY:h
+  local pat="${1:-([ADMR~]|?M)}"
+
+  if (( ! $+_cache_svn_status[$dir] )); then
+    _cache_svn_status[$dir]="$(_call_program files svn status -N $dir)"
+  fi
+
+  (( ${(M)#${(f)_cache_svn_status[$dir]}:#(#s)${~pat}*$REPLY} ))
+}
+
+(( $+functions[_svn_urls] )) ||
+_svn_urls() {
+  local expl remfiles remdispf remdispd suf ret=1
+
+  if [[ -prefix *: ]] && ! _urls &&
+      zstyle -T ":completion:${curcontext}:" remote-access
+  then
+    remfiles=( ${(f)"$(svn list $IPREFIX${PREFIX%%[^./][^/]#} 2>/dev/null)"} )
+    compset -P '*/'
+    compset -S '/*' || suf=file
+    remdispf=(${remfiles:#*/})
+    remdispd=(${(M)remfiles:#*/})
+    _tags files
+    while _tags; do
+      while _next_label files expl ${suf:-directory}; do
+        [[ -n $suf ]] && compadd "$@" "$expl[@]" -d remdispf $remdispf && ret=0
+        compadd ${suf:+-S/} "$@" "$expl[@]" -d remdispd \
+            ${remdispd%/} && ret=0
+      done
+      (( ret )) || return 0
+    done
+  else
+    compset -S '[^:]*'
+    _wanted url-schemas expl 'URL schema' compadd -S '' - \
+        file:// http:// https:// svn:// svn+ssh:// && ret=0
+  fi
+  
+  return ret
+}
+
+(( $+functions[_svn_commands] )) ||
+_svn_commands() {
+  compadd "$@" -k _svn_cmds || compadd "$@" ${(s.:.)_svn_cmds}
+}
+
+(( $+functions[_svnadmin_command] )) ||
+_svnadmin_commands() {
+  compadd "$@" -k _svnadmin_cmds || compadd "$@" ${(s.:.)_svnadmin_cmds}
+}
+
+(( $+functions[_svn_props] )) ||
+_svn_props() {
+  local properties
+
+  properties=( ${${(M)${(f)"$(svn proplist 2>/dev/null)"}:#  [^ ]*}#  } )
+  compadd "$@" -a properties && return 0
+}
+
+_subversion () {
+  case $service in
+    (svn) _svn "$@" ;;
+    (svnadmin) _svnadmin "$@" ;;
+  esac
+}
+
+_subversion "$@"

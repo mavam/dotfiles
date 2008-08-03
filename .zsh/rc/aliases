@@ -1,6 +1,6 @@
-# =========
-#  aliases
-# =========
+##
+##  Aliases
+##
 
 alias ..='cd ..'
 alias -g ...='../..'
@@ -11,30 +11,29 @@ alias -g .......='../../../../../..'
 
 case ${OS} in
     freebsd|darwin)
-    [[ -z ${EPREFIX} ]] && alias ls='ls -G' || alias ls='ls --color=auto'
     alias psa='ps -wwaxo user,ruser,pid,ppid,pri,pcpu,pmem,vsize,rss,tt,start,args'
     alias psme='ps -U ${LOGNAME} -wwaxo user,ruser,pid,ppid,pri,pcpu,pmem,vsize,rss,tt,start,args'
     alias psta='pstree -g2 -w' 
     alias pstme='pstree -g2 -w -u${LOGNAME}'
     ;;
     linux-gnu)
-    alias ls='ls --color=auto'
-    alias grep='grep --colour=auto'
     alias psa='ps -eo user,ruser,pid,ppid,pri,pcpu,pmem,vsize,rss,tt,start,args'
     alias psme='psa | grep -E "^USER|${LOGNAME}"'
     alias psta='pstree -aphlnu'
     alias pstme='pstree -aphlnu ${LOGNAME}'
     ;;
 esac
+
+alias ls='ls --color=auto'
 alias la='ls -al'
 alias ll='ls -l'
-alias lh='ls -l'
+alias lsa='ls -ld .*'
 
-
+alias grep='grep --colour=auto'
 alias v="vim"
 alias vi="vim"
 
-# better directory stack handling (thx lbl)
+# Better directory stack handling (thx lbl)
 alias d='dirs -v'
 function pd { pushd $1 > /dev/null; dirs -v; }
 alias popd='popd > /dev/null; dirs -v'

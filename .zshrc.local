@@ -1,6 +1,6 @@
-# ==================================
-#  User specific zsh configuration 
-# ==================================
+## 
+##  User specific Zsh configuration 
+##
 
 # locale settings
 export LANG="en_US.UTF-8"
@@ -20,7 +20,7 @@ function bro_setup
 }
 
 # aliases
-alias shinobi='ssh mv@ifoo.cc -t screen -DR'
+alias shinobi='ssh mv@vallentin.cc -t screen -DR'
 
 # TeX inputs
 [[ -d ~/code/texinputs ]] && export TEXINPUTS=.:~/code/texinputs//:

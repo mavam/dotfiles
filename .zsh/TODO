@@ -4,5 +4,4 @@
 
 # low priority
 * zle (bindings)
-* dircolors
 * promptcolors as array

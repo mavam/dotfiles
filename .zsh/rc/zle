@@ -1,6 +1,6 @@
-# ===========================
-#  zsh command line editing 
-# ===========================
+## 
+##  Command Line Editing 
+## 
 
 # To find out the keynames you can use
 #  % cat > /dev/null 
@@ -50,7 +50,7 @@ bindkey "^U" kill-whole-line			# C-u: kill whole line
 bindkey "f" forward-word				# Alt-f: forward word
 bindkey "b" backward-word				# Alt-b: backward word
 
-# misc
+# sudo current command line
 run-with-sudo() { LBUFFER="sudo $LBUFFER" }
 zle -N run-with-sudo
 bindkey "^Xs" run-with-sudo
@@ -67,5 +67,9 @@ bindkey "^Xf" insert-files
 autoload -U tetris 
 zle -N tetris
 bindkey "^Xt" tetris 
+
+# automatic URL quoting
+autoload -U url-quote-magic
+zle -N self-insert url-quote-magic
 
 # vim: ft=zsh

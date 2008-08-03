@@ -8,24 +8,10 @@ umask 022
 (( ${+OS} ))        || export OS="${OSTYPE%%[0-9.]*}"
 (( ${+OSVERSION} )) || export OSVERSION="${OSTYPE#$OS}"
 (( ${+OSMAJOR} ))   || export OSMAJOR="${OSVERSION%%.*}"
-(( ${+HOSTNAME} ))   || export HOSTNAME=$(uname -n)
+(( ${+HOSTNAME} ))  || export HOSTNAME=$(uname -n)
 
-# Prefixed portage
-if [[ -d ~/gentoo ]]; then
-    export EPREFIX=~/gentoo
-fi
-
-# Avoid duplicates in $PATH.
-typeset -U path
-
-# Respect gentoo and prefix environment.
-if [[ -e /etc/profile.env ]]; then 
-    source /etc/profile.env
-fi
-if [[ -n ${EPREFIX} ]]; then
-    source ${EPREFIX}/etc/profile.env
-    path=( $path $EPREFIX/usr/bin $EPREFIX/bin )
-fi
+# Automatically remove duplicates from these arrays
+typeset -U path cdpath fpath manpath
 
 # User path
 [[ -d ~/bin ]] && path=( ~/bin $path )
@@ -36,15 +22,13 @@ path=( $path /usr/local/bin /usr/bin /bin /usr/local/sbin /usr/sbin /sbin)
 # Function path
 fpath=(~/.zsh/completions $fpath)
 
+# Load the completion system
+autoload -U compinit
+compinit -u
 
 ##
 ##  Resource files
 ##
-
-# Source general files.
-for i in ~/.zsh/rc/*; do
-	source $i
-done
 
 # Source os specific files.
 case ${OS} in
@@ -52,8 +36,10 @@ case ${OS} in
     source ~/.zsh/os/macos
 esac
 
-# Source host specific files.
-[[ -f ~/.zsh/host/$(hostname -s) ]] && source ~/.zsh/host/$(hostname -s)
+# Source general files.
+for i in ~/.zsh/rc/*; do
+	source $i
+done
 
-# Source user specific files.
-[[ -f ~/.zsh/user/$(whoami) ]] && source ~/.zsh/user/$(whoami)
+# At last, source user specific files.
+[[ -f ~/.zsh.local ]] && source ~/.zshrc.local
