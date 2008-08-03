@@ -3,11 +3,6 @@
 ##
 
 alias ..='cd ..'
-alias -g ...='../..'
-alias -g ....='../../..'
-alias -g .....='../../../..'
-alias -g ......='../../../../..'
-alias -g .......='../../../../../..'
 
 case ${OS} in
     freebsd|darwin)

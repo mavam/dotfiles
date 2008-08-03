@@ -19,6 +19,9 @@ zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*:(all-|)files' ignored-patterns '(|*/)CVS'
 zstyle ':completion:*:cd:*' ignored-patterns '(*/)#CVS'
 
+# Ignore completion functions for unknown commands:
+zstyle ':completion:*:functions' ignored-patterns '_*'
+
 # Process completion
 #zstyle ':completion:*:*:*:*:processes' menu yes select
 #zstyle ':completion:*:*:*:*:processes' force-list always
@@ -31,5 +34,16 @@ zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;32'
 if [[ -f $HOME/.ssh/known_hosts ]] ; then
 	zstyle ':completion:*' hosts ${${${(f)"$(<$HOME/.ssh/known_hosts)"}%%\ *}%%,*}
 fi
+
+# Quickly change to parent directories
+rationalise-dot() {
+  if [[ $LBUFFER = *.. ]]; then
+    LBUFFER+=/..
+  else
+    LBUFFER+=.
+  fi
+}
+zle -N rationalise-dot
+bindkey . rationalise-dot
 
 # vim: ft=zsh
