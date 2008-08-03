@@ -8,4 +8,4 @@
 #COMMAND url_handler.sh
 
 # Using Mac OSX' default browser.
-COMMAND open %s     
+COMMAND open %s

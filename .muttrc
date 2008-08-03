@@ -9,15 +9,14 @@ unscore *       # remove all scorings
 unlists *       # unsubscribe from all mailinglists
 unsubscribe *   # unsubscribe from all mailinglists
 
-
 source ~/.mutt/appearance
 source ~/.mutt/autoview
-source ~/.mutt/identities
+source ~/.mutt/account
 source ~/.mutt/hooks
 source ~/.mutt/keys
 source ~/.mutt/options
 
-# conditional sourcing
+# Conditional sourcing
 source `FILE=$HOME/.mutt/aliases; if [ ! -f $FILE ]; then FILE=/dev/null;fi;echo "$FILE"`
 source `FILE=$HOME/.mutt/lists; if [ ! -f $FILE ]; then FILE=/dev/null;fi;echo "$FILE"`
 source `FILE=$HOME/.mutt/sidebar; if [ ! $(mutt -v | grep sidebar) ]; then FILE=/dev/null;fi;echo "$FILE"`

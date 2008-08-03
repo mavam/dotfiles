@@ -1,46 +1,30 @@
 # ---------------------------------------------------------------------------- #
-#                                  personal
+#                              personal constants
 # ---------------------------------------------------------------------------- #
 set realname="Matthias Vallentin"
 set hostname = icsi.berkeley.edu
-set from=vallentin@icsi.berkeley.edu
-alternates 'vallentin@icsi.berkeley.edu|(matthias.vallentin@gmail.com|(vallentin|mavam|mpm)@berkeley.edu)'
+alternates 'vallentin@icsi.berkeley.edu|matthias.vallentin@gmail.com|(vallentin|mavam|mpm)@berkeley.edu)'
 
-set envelope_from=yes
+unset envelope_from=yes
 set reverse_name=yes
 set reverse_realname=no
 
 set mail_check=60
 set pgp_sign_as="0x37F34C16"
 set signature=~/.mutt/sigs/priv
+
 set ssl_force_tls=yes
 
 unmy_hdr *
-my_hdr Reply-To: vallentin@icsi.berkeley.edu
 my_hdr X-PGP-Fingerprint: AF0B 32F1 F6BC C2A4 4925  201A 9E73 C324 37F3 4C16
-
-# ---------------------------------------------------------------------------- #
-#                                     Cal                                    
-# ---------------------------------------------------------------------------- #
-
-#set from=vallentin@berkeley.edu
-#set smtp_url= smtps://mpm@calmail.berkeley.edu:465
-#set record = "=[Gmail].Sent Mail"
 
 # ---------------------------------------------------------------------------- #
 #                                    GMail
 # ---------------------------------------------------------------------------- #
-set smtp_url= smtps://matthias.vallentin@smtp.gmail.com
-#set imap_user = matthias.vallentin@gmail.com
-#set folder = imaps://imap.gmail.com:993
 set folder = ~/.gmail   # offlineimap
 set spoolfile = =INBOX
 set postponed = =[Gmail].Drafts
 set mbox = "=[Gmail].All Mail" # When exiting mutt, prompt to archive read msgs.
-unset record
-
-# Display To: instead of From:
-folder-hook 'Sent Mail' 'set index_format="%4C %Z %{!%b %d} %-15.15t |%?M?#%4M&%5c? | %3N | %s"'
 
 # Mailbox order
 mailboxes ! 
@@ -49,18 +33,18 @@ mailboxes =UCB =ICSI =TUM =LBL
 mailboxes =news =health =shopping
 mailboxes =bro =logs
 mailboxes =.devnull
-mailboxes =.list.pentest =.list.ids =.list.botnets =.list.wifisec
+mailboxes =.list.pentest =.list.framework-hackers =.list.ids =.list.botnets =.list.wifisec
 mailboxes =.list.sup-talk =.list.zsh-users
 mailboxes =.list.boost.users =.list.boost.spirit =.list.boost.langbinding =.list.boost.threads-devel
 mailboxes =.list.misc 
 mailboxes =[Gmail].Starred =[Gmail].Drafts "=[Gmail].Sent Mail"
 mailboxes =[Gmail].Spam =[Gmail].Trash "=[Gmail].All Mail" 
 
-# IMAP settings
-#set imap_check_subscribed=yes
-#set imap_idle=yes
-#set imap_keepalive=300
-#set imap_list_subscribed=yes
-#unset imap_passive
+# ---------------------------------------------------------------------------- #
+#                               sender profiles
+# ---------------------------------------------------------------------------- #
+
+# Load the default profile.
+source ~/.mutt/profiles/cal
 
 # vim: ft=muttrc

@@ -1,7 +1,6 @@
-set default_hook="~f %s !~P | (~P ~C %s)"
+#set default_hook="~f %s !~P | (~P ~C %s)"
 
-folder-hook . 'push \eV' # collapse all threads 
-folder-hook . 'set index_format="%4C %Z %{!%b %d} %-15.15F |%?M?#%4M&%5c? | %3N | %s"'
+folder-hook . 'push <collapse-all>'
 
 #charset-hook US-ASCII     ISO-8859-1
 #charset-hook x-unknown    ISO-8859-1

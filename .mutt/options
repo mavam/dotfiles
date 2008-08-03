@@ -22,6 +22,7 @@ set query_command="lbdbq '%s'"
 unset abort_nosubject   # abort composing when no subject is given 
 unset abort_unmodified  # abort composition if no changes were body made
 set auto_tag            # apply functions to all tagged messages
+unset collapse_unread   # don't collapse threads containing unread messages
 unset confirmappend     # prompt when appending messages to a mailbox
 set delete=yes          # really delete messages when syncing a mailbox
 set edit_headers        # allow editing headers of outgoing messages
@@ -72,7 +73,7 @@ set sort_alias=alias
 # [sort_aux] how threads are sorted in relation to other threads, how the
 # branches of the thread trees are sorted
 #   same as `$sort`, except reverse == last
-set sort_aux=date
+set sort_aux=date-sent
 
 # [sort_browser] how to sort entries in the file browser
 #   alpha (alphabetically)
@@ -228,7 +229,7 @@ set indent_string="> "
 #
 # ---> index_format partakes in folder-hooks!
 #set index_format="%4C %Z %{!%b %d} %-15.15F |%?M?#%4M&%5l? | %4c| %s %> %?N?|%3N|?"
-set index_format="%4C %Z %{!%b %d} %-15.15F |%?M?#%4M&%5c? | %3N | %s"
+set index_format="%4C %Z %{!%b %d} |%?M?#%4M&%5c?| %-25.25F %s"
 
 # [mask] regular expression used in the file browser
 set mask="!^\\.[^.]"
@@ -304,7 +305,11 @@ set status_chars="-*%A"
 # %|X pad to the end of the line with "X"
 # 
 # * = can be optionally printed if nonzero
-set status_format="%_h:  [%r]  %f [total:%?M?%M/?%m%?n? new:%n?%?o? old:%o?%?d? del:%d?%?F? flag:%F?%?t? tag:%t?%?p? post:%p?%?b? inc:%b?%?l? %l?]       (%s/%S)%> [%P]   " 
+set status_format="%_h:  [%r]  %f [total:%?M?%M/?%m%?n? new:%n?%?o? old:%o?%?d? del:%d?%?F? flag:%F?%?t? tag:%t?%?p? post:%p?%?b? inc:%b?%?l? %l?]       (%s/%S)%> [profile: $my_profile] [%P]   " 
+
+# CAUTION: 
+# any changes of the status_format variable have to be propagated to
+# the sender profiles in ~/.mutt/profiles/
 
 # [to_chars] character used to indicate mail addressed to yourself
 set to_chars=" +TCFL" 

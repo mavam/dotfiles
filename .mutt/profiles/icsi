@@ -1,0 +1,12 @@
+set my_profile="icsi"
+set status_format="%_h:  [%r]  %f [total:%?M?%M/?%m%?n? new:%n?%?o? old:%o?%?d? del:%d?%?F? flag:%F?%?t? tag:%t?%?p? post:%p?%?b? inc:%b?%?l? %l?]       (%s/%S)%> [profile: $my_profile] [%P]   "
+
+set from=vallentin@icsi.berkeley.edu
+my_hdr Reply-To: vallentin@icsi.berkeley.edu
+
+set smtp_url=smtps://mpm@calmail.berkeley.edu:465
+set record="=[Gmail].Sent Mail"
+
+macro generic <F7> ':source ~/.mutt/profiles/gmail<enter>'
+
+# vim: ft=muttrc

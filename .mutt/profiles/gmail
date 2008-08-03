@@ -1,0 +1,12 @@
+set my_profile="gmail"
+set status_format="%_h:  [%r]  %f [total:%?M?%M/?%m%?n? new:%n?%?o? old:%o?%?d? del:%d?%?F? flag:%F?%?t? tag:%t?%?p? post:%p?%?b? inc:%b?%?l? %l?]       (%s/%S)%> [profile: $my_profile] [%P]   "
+
+set from=matthias.vallentin@gmail.com
+my_hdr Reply-To: matthias.vallentin@gmail.com
+
+set smtp_url=smtps://matthias.vallentin@smtp.gmail.com
+unset record
+
+macro generic <F7> ':source ~/.mutt/profiles/cal<enter>'
+
+# vim: ft=muttrc
