@@ -42,4 +42,4 @@ for i in ~/.zsh/rc/*; do
 done
 
 # At last, source user specific files.
-[[ -f ~/.zsh.local ]] && source ~/.zshrc.local
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
