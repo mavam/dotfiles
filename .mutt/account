@@ -5,7 +5,7 @@ set realname="Matthias Vallentin"
 set hostname = icsi.berkeley.edu
 alternates 'vallentin@icsi.berkeley.edu|matthias.vallentin@gmail.com|(vallentin|mavam|mpm)@berkeley.edu)'
 
-unset envelope_from=yes
+set envelope_from=yes
 set reverse_name=yes
 set reverse_realname=no
 
