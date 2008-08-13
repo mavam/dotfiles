@@ -19,7 +19,9 @@ case ${OS} in
     ;;
 esac
 
+# Mac requirement: sudo port install coreutils +with_default_names
 alias ls='ls --color=auto'
+
 alias la='ls -al'
 alias ll='ls -l'
 alias lsa='ls -ld .*'

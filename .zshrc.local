@@ -5,8 +5,6 @@
 # locale settings
 export LANG="en_US.UTF-8"
 
-# $BROPATH
-
 # Takes multiple arguments to create $BROPATH. The first argument must
 # contain the Bro build directory where the src/bro binary is located.
 function bro_setup
@@ -19,13 +17,13 @@ function bro_setup
     echo $BROPATH
 }
 
-# aliases
+# Local aliases.
 alias shinobi='ssh mv@vallentin.cc -t screen -DR'
 
-# TeX inputs
+# TeX inputs.
 [[ -d ~/code/texinputs ]] && export TEXINPUTS=.:~/code/texinputs//:
 
-# Include my scripts
+# Local scripts.
 script_path=~/code/scripts
 [[ -d $script_path ]] && path=( $script_path $path )
 
@@ -34,8 +32,8 @@ function setup_agent
 {
     local kc_bin
 
-    [[ -x $EPREFIX/usr/bin/keychain ]] && kc_bin=$EPREFIX/usr/bin/keychain
-    [[ -x $HOME/bin/keychain ]] && kc_bin=$HOME/bin/keychain
+    # Trust only ~/bin.
+    [[ -x ${HOME}/bin/keychain ]] && kc_bin=${HOME}/bin/keychain
 
 	if [[ -n $kc_bin ]]; then
         local ssh_keys
@@ -47,11 +45,10 @@ function setup_agent
             $kc_bin -q --host fixed $ssh_keys
             source ~/.keychain/fixed-sh
         fi
-
 	fi
 }
 
-# Don't start agent(s) remotely.
-[[ -z "$SSH_CONNECTION" ]] && setup_agent
+# Don't start agent(s) as root or remotely.
+[[ ${UID} != 0 && -z "${SSH_CONNECTION}" ]] && setup_agent
 
 # vim: ft=zsh 
