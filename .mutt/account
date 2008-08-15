@@ -1,9 +1,9 @@
 # ---------------------------------------------------------------------------- #
-#                              personal constants
+#                              Personal constants
 # ---------------------------------------------------------------------------- #
 set realname="Matthias Vallentin"
-set hostname = icsi.berkeley.edu
-alternates 'vallentin@icsi.berkeley.edu|matthias.vallentin@gmail.com|(vallentin|mavam|mpm)@berkeley.edu)'
+set hostname=icsi.berkeley.edu
+alternates '(vallentin@icsi.berkeley.edu|matthias.vallentin@gmail.com|(vallentin|mavam|mpm)@berkeley.edu)'
 
 set envelope_from=yes
 set reverse_name=yes
@@ -11,7 +11,6 @@ set reverse_realname=no
 
 set mail_check=60
 set pgp_sign_as="0x37F34C16"
-set signature=~/.mutt/sigs/priv
 
 set ssl_force_tls=yes
 
@@ -21,10 +20,10 @@ my_hdr X-PGP-Fingerprint: AF0B 32F1 F6BC C2A4 4925  201A 9E73 C324 37F3 4C16
 # ---------------------------------------------------------------------------- #
 #                                    GMail
 # ---------------------------------------------------------------------------- #
-set folder = ~/.gmail   # offlineimap
-set spoolfile = =INBOX
-set postponed = =[Gmail].Drafts
-set mbox = "=[Gmail].All Mail" # When exiting mutt, prompt to archive read msgs.
+set folder=~/.gmail   # offlineimap
+set spoolfile==INBOX
+set postponed==[Gmail].Drafts
+set mbox="=[Gmail].All Mail" # When exiting mutt, prompt to archive read msgs.
 
 # Mailbox order
 mailboxes ! 
@@ -41,7 +40,7 @@ mailboxes =[Gmail].Starred =[Gmail].Drafts "=[Gmail].Sent Mail"
 mailboxes =[Gmail].Spam =[Gmail].Trash "=[Gmail].All Mail" 
 
 # ---------------------------------------------------------------------------- #
-#                               sender profiles
+#                               Sender profiles
 # ---------------------------------------------------------------------------- #
 
 # Load the default profile.
