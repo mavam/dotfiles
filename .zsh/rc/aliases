@@ -19,14 +19,13 @@ case ${OS} in
     ;;
 esac
 
-# Mac requirement: sudo port install coreutils +with_default_names
+# Requires the GNU versions.
+alias grep='grep --colour=auto'
 alias ls='ls --color=auto'
-
 alias la='ls -al'
 alias ll='ls -l'
 alias lsa='ls -ld .*'
 
-alias grep='grep --colour=auto'
 alias v="vim"
 alias vi="vim"
 

@@ -8,12 +8,15 @@
 #zstyle ':completion:*' menu select=10
 
 # Colorize completion
-if [[ -f ~/.dir_colors ]] ;then 
-    eval $(dircolors -b ~/.dir_colors)
-else
-    eval $(dircolors -b)
+_dircolors=$(which dircolors) || _dircolors=$(which gdircolors)
+if [[ -x ${_dircolors} ]]; then
+    if [[ -f ~/.dir_colors ]]; then 
+        eval $(${_dircolors} -b ~/.dir_colors)
+    else
+        eval $(${_dircolors} -b)
+    fi
+    zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 fi
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
 # prevent CVS files/directories from being completed
 zstyle ':completion:*:(all-|)files' ignored-patterns '(|*/)CVS'
@@ -31,7 +34,7 @@ zstyle ':completion:*:*:kill:*' menu yes select
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;32'
 
 # SSH known hosts
-if [[ -f $HOME/.ssh/known_hosts ]] ; then
+if [[ -f ${HOME}/.ssh/known_hosts ]] ; then
 	zstyle ':completion:*' hosts ${${${(f)"$(<$HOME/.ssh/known_hosts)"}%%\ *}%%,*}
 fi
 

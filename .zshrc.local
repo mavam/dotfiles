@@ -2,7 +2,7 @@
 ##  User specific Zsh configuration 
 ##
 
-# locale settings
+# locale
 export LANG="en_US.UTF-8"
 
 # Takes multiple arguments to create $BROPATH. The first argument must
@@ -24,11 +24,10 @@ alias shinobi='ssh mv@vallentin.cc -t screen -DR'
 [[ -d ~/code/texinputs ]] && export TEXINPUTS=.:~/code/texinputs//:
 
 # Local scripts.
-script_path=~/code/scripts
-[[ -d $script_path ]] && path=( $script_path $path )
+[[ -d ~/code/scripts ]] && path=( ~/code/scripts $path )
 
 # Let keychain manage the agents
-function setup_agent
+function _setup_agent
 {
     local kc_bin
 
@@ -49,6 +48,6 @@ function setup_agent
 }
 
 # Don't start agent(s) as root or remotely.
-[[ ${UID} != 0 && -z "${SSH_CONNECTION}" ]] && setup_agent
+[[ ${UID} != 0 && -z "${SSH_CONNECTION}" ]] && _setup_agent
 
 # vim: ft=zsh 
