@@ -10,7 +10,7 @@ umask 022
 (( ${+OSMAJOR} ))   || export OSMAJOR="${OSVERSION%%.*}"
 (( ${+HOSTNAME} ))  || export HOSTNAME=$(uname -n)
 
-# Automatically remove duplicates from these arrays
+# Automatically remove duplicates from these arrays.
 typeset -U path cdpath fpath manpath
 
 # User path

@@ -40,7 +40,7 @@
 # - m_evolution  search in the Ximan Evolution addressbook.
 # - m_vcf        search a vcard (according to RFC2426) file.
 
-METHODS="m_osx_addressbook"
+METHODS="m_osx_addressbook m_inmail"
 
 
 #
@@ -65,8 +65,8 @@ METHODS="m_osx_addressbook"
 # not exist) prepended before the file name. Absolute file names
 # (beginning with /) will be taken direct.
 #
-#MUTT_DIRECTORY="$HOME/.mutt"
-#MUTTALIAS_FILES=".muttrc .mail_aliases muttrc aliases"
+MUTT_DIRECTORY="$HOME/.mutt"
+MUTTALIAS_FILES=".muttrc .mail_aliases muttrc aliases"
 
 
 # - m_pine	search pine addressbook files for aliases:
