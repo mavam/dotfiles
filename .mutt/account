@@ -3,7 +3,7 @@
 # ---------------------------------------------------------------------------- #
 set realname="Matthias Vallentin"
 set hostname=icsi.berkeley.edu
-alternates '(vallentin@icsi.berkeley.edu|matthias.vallentin@gmail.com|(vallentin|mavam|mpm)@berkeley.edu)'
+alternates '(vallentin@icsi.berkeley.edu|matthias.vallentin@gmail.com|(vallentin|mavam|mpm)@berkeley.edu|mavam@eecs.berkeley.edu)'
 
 set envelope_from=yes
 set reverse_name=yes
@@ -27,7 +27,7 @@ set mbox="=[Gmail].All Mail" # When exiting mutt, prompt to archive read msgs.
 
 # Mailbox order
 mailboxes ! 
-mailboxes =private
+mailboxes =private "=bay area"
 mailboxes =UCB =ICSI =TUM =LBL
 mailboxes =news =health =shopping
 mailboxes =bro =logs
