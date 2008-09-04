@@ -1,3 +1,4 @@
 set editor=mvim
+set guioptions+=b
 
 " vim: ft=vimperator
