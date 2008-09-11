@@ -2,12 +2,7 @@
 ##  Aliases
 ##
 
-alias ..='cd ..'
-alias -g ...='../..'
-alias -g ....='../../..'
-alias -g .....='../../../..'
-alias -g ......='../../../../..'
-
+# Processes
 case ${OS} in
     freebsd|darwin)
     alias psa='ps -wwaxo user,ruser,pid,ppid,pri,pcpu,pmem,vsize,rss,tt,start,args'
@@ -23,20 +18,22 @@ case ${OS} in
     ;;
 esac
 
-# Requires the GNU versions.
-alias grep='grep --colour=auto'
-alias ls='ls --color=auto'
+# Vim
+alias v="vim"
+alias vi="vim"
+alias m="mvim"
+
+# Directory listings
+alias ls='ls --color=auto'  # GNU version only
 alias la='ls -al'
 alias ll='ls -l'
 alias lsa='ls -ld .*'
 
-alias v="vim"
-alias vi="vim"
-
+# Directory navigation
+alias ..='cd ..'
 alias d='dirs -v'
 function pu { pushd $1 > /dev/null; dirs -v; }
 alias po='popd > /dev/null; dirs -v'
-
 alias 1='pu'
 alias 2='pu -2'
 alias 3='pu -3'
@@ -47,8 +44,8 @@ alias 7='pu -7'
 alias 8='pu -8'
 alias 9='pu -9'
 
-# general helper
+# Misc
+alias grep='grep --colour=auto' # GNU version only
 alias funcs='declare -f'
-alias dz='ls -al | sort | head -10'     
 
 # vim: ft=zsh
