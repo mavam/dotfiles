@@ -1,14 +1,21 @@
+# HTML
 text/html; w3m -v -F -T text/html %s; nametemplate=%s.html; needsterminal ; copiousoutput
 text/html; lynx -dump %s; copiousoutput; nametemplate=%s.html
-text/html; view_attachment %s html
+text/html; open '%s'
 
-application/pdf; view_attachment %s pdf
-image/jpeg; view_attachment %s
-image/pjpeg; view_attachment %s
-image/png; view_attachment %s
-image/gif; view_attachment %s
-image/tiff; view_attachment %s
+# PS/PDF
+application/pdf; open -a Skim '%s'
+application/postscript; open -a Skim '%s'
+
+# Pictures
+image/jpeg; open '%s'
+image/pjpeg; open '%s'
+image/png; open '%s'
+image/gif; open '%s'
+image/tiff; open '%s'
+
+# Text
 text/*; view -Mf '%s' ; edit=vim -f '%s'; compose=vim -f '%s'; needsterminal
 
-# unidentified
-application/octet-stream; view_attachment %s "-"
+# Unidentified
+application/octet-stream; open '%s'

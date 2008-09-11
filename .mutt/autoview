@@ -2,11 +2,11 @@
 # auto_view
 #
 
-alternative_order text/enriched text/plain text application/postscript image/*
+alternative_order text/enriched text/plain text image/*
 
 auto_view text/html
 auto_view text/enriched 
-auto_view application/postscript 
+#auto_view application/postscript 
 
 # archives
 auto_view application/zip
