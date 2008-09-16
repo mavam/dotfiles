@@ -1,0 +1,24 @@
+[general]
+metadata = ~/.offlineimap
+accounts = GMail
+maxsyncaccounts = 1
+
+[Account GMail]
+localrepository = Local
+remoterepository = Remote
+autorefresh = 5
+quick = 10
+
+[Repository Local]
+type = Maildir
+localfolders = ~/.gmail
+sep = .
+restoreatime = no
+
+[Repository Remote]
+type = IMAP
+ssl = yes
+remotehost = imap.gmail.com
+remoteuser = matthias.vallentin@gmail.com
+maxconnections = 1
+realdelete = no
