@@ -1,0 +1,16 @@
+include common
+
+# Additional paths to synchronize.
+path = code
+path = docs/cv
+path = docs/software/mavam.keylayout
+path = docs/templates
+path = docs/vault.kdb
+path = presentations
+path = publications
+
+path = work/ucb             # aka 'ucb'
+path = Desktop/print        # aka 'print'
+
+
+# vim: ft=sh

@@ -1,0 +1,16 @@
+# Roots of the synchronisation.
+root = /Users/mavam
+root = ssh://login.icsi.berkeley.edu/mavam
+
+# If any new preferences are added by Unison (e.g. 'ignore' preferences
+# added via the graphical UI), then store them in the file 'common'
+# rather than in the top-level preference file
+addprefsto = common
+
+# Skip asking for confirmations on non-conflicting changes.
+auto = true
+
+# Disable file logging.
+log = false
+
+# vim: ft=sh
