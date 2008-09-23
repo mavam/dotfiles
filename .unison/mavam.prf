@@ -9,8 +9,8 @@ path = docs/vault.kdb
 path = presentations
 path = publications
 
-path = work/ucb             # aka 'ucb'
-path = Desktop/print        # aka 'print'
+path = work/ucb
+path = Desktop/print
 
 
 # vim: ft=sh
