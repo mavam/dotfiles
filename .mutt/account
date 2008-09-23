@@ -44,6 +44,6 @@ mailboxes =[Gmail].Spam =[Gmail].Trash "=[Gmail].All Mail"
 # ---------------------------------------------------------------------------- #
 
 # Load the default profile.
-source ~/.mutt/profiles/cal
+source ~/.mutt/profiles/icir
 
 # vim: ft=muttrc
