@@ -12,6 +12,6 @@ set smtp_url=smtps://matthias.vallentin@smtp.gmail.com
 unset record
 
 # Next profile.
-macro generic <F7> ':source ~/.mutt/profiles/cal<enter>'
+macro generic <F7> ':source ~/.mutt/profiles/icir<enter>'
 
 # vim: ft=muttrc

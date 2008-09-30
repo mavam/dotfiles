@@ -5,7 +5,7 @@ set my_profile="cal"
 set status_format="%_h:  [%r]  %f [total:%?M?%M/?%m%?n? new:%n?%?o? old:%o?%?d? del:%d?%?F? flag:%F?%?t? tag:%t?%?p? post:%p?%?b? inc:%b?%?l? %l?]       (%s/%S)%> [profile: $my_profile] [%P]   "
 
 set from=vallentin@berkeley.edu
-set signature=~/.mutt/sigs/priv
+set signature=~/.mutt/sigs/cal
 my_hdr Reply-To: Matthias Vallentin <vallentin@berkeley.edu>
 
 set smtp_url=smtps://mpm@calmail.berkeley.edu:465
