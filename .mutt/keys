@@ -34,20 +34,17 @@ bind generic <right> next-entry
 # spaces in their names. 
 bind editor <space> noop
 
-# Index and Pager
 bind index,pager  "["     previous-thread
 bind index,pager  "]"     next-thread
 bind index,pager  "{"     previous-subthread
 bind index,pager  "}"     next-subthread
-bind index,pager  "\Cf"   next-page
-bind index,pager  "\Cb"   previous-page
 bind index,pager  ",g"    group-reply
+bind index,pager  "\Cp"   half-up
+bind index,pager  "\Cn"   half-down
 
-# Index.
 bind index  "h"     noop
 bind index  "z"     noop
 bind index  "Z"     noop
-
 bind index  "g"     first-entry
 bind index  "G"     last-entry
 bind index  ",z"    collapse-thread 
@@ -55,16 +52,13 @@ bind index  ",Z"    collapse-all
 bind index  "zt"    current-top
 bind index  "zb"    current-bottom
 bind index  "zz"    current-middle
-bind index  "\Cp"   half-up
-bind index  "\Cn"   half-down
 
-# Pager.
 bind pager  "g"     top
 bind pager  "G"     bottom
 bind pager  <home>  top
 bind pager  <end>   bottom
-bind pager  "\Cu"   half-up
-bind pager  "\Cd"   half-down
+bind pager  "\Cf"   next-page
+bind pager  "\Cb"   previous-page
 bind pager  "\Cj"   next-line
 bind pager  "\Ck"   previous-line
 bind pager  <up>    previous-line
@@ -77,15 +71,16 @@ bind pager  <right> next-undeleted
 # Macros.
 # 
 
-# Index.
 macro index,pager ",<F5>"   "<enter-command>source ~/.muttrc<enter>"             "Reload .muttrc"
-macro index,pager ",v"      "<pipe-message>vim +':set ft=mail' - <enter>"        "View the message in vim."
-macro index,pager ",V"      "<pipe-message>mvim +':set ft=mail' - <enter>"       "View the message in MacVim."
-macro index,pager "\'"      "<clear-flag>r"                                      "Mark as un-replied."
+macro index,pager ",v"      "<pipe-message>vim +':set ft=mail' - <enter>"        "View the message in vim"
+macro index,pager ",V"      "<pipe-message>mvim +':set ft=mail' - <enter>"       "View the message in MacVim"
+macro index,pager "\'"      "<clear-flag>r"                                      "Mark as un-replied"
 
-macro index       ",r"      "<tag-pattern>~U<enter><clear-flag>N<clear-flag>*"   "Catch up (mark all as read)."
-macro index       ",n"      "<limit>~N<enter>"                                   "Limit display to new mail."
-macro index       ",u"      "<limit>~U<enter>"                                   "Limit display to unread mail."
+macro index       ",r"      "<read-thread><previous-undeleted><next-new-then-unread>" "Mark current thread as read and go to next unread message"
+macro index       ",R"      "<tag-pattern>~U<enter><clear-flag>N<clear-flag>*"   "Catch up (mark all as read)"
+macro index       ",n"      "<limit>~N<enter>"                                   "Limit display to new mail"
+macro index       ",u"      "<limit>~U<enter>"                                   "Limit display to unread mail"
+macro index       ",a"      "<limit>all<enter>"                                  "Reset disply limit to all mail"
 
 macro pager       "w"       "<enter-command>set invsmart_wrap invmarkers<enter>" "Toggle wrap stuff"
 macro pager       "\e1"     "<enter-command>set pager_index_lines=1<enter>"      "Set pager lines to 1"
@@ -98,27 +93,18 @@ macro pager       "\e7"     "<enter-command>set pager_index_lines=7<enter>"     
 macro pager       "\e8"     "<enter-command>set pager_index_lines=8<enter>"      "Set pager liens to 8"
 macro pager       "\e9"     "<enter-command>set pager_index_lines=9<enter>"      "Set pager liens to 9"
 macro pager       "\e0"     "<enter-command>set pager_index_lines=0<enter>"      "Set pager liens to 0"
-macro pager       ",s"      "<pipe-message>lbdb-fetchaddr<enter>"                "Store address details in lbdb."
-macro pager       "H"       "<pipe-message>mailhops<enter>"                      "View the path of the mail."
+macro pager       ",s"      "<pipe-message>lbdb-fetchaddr<enter>"                "Store address details in lbdb"
+macro pager       "H"       "<pipe-message>mailhops<enter>"                      "View the path of the mail"
 macro pager       ",r"      "<enter-command>set display_filter = \"tr a-zA-Z n-za-mN-ZA-M\"<enter><exit><display-message><enter-command>unset display_filter<enter>" "ROT13 display filter"
 macro pager       ",p"      "<pipe-entry>gpg --keyserver search.keyserver.net --recv-key <enter>"  "Get PGP key"
 macro pager       "\cu"     "<pipe-entry>'urlview'<enter>"                       "Follow links with urlview"
 
 # GMail.
-macro index,pager "y"       "<save-message>+[Gmail].All Mail<enter><enter>" "Archive"
-macro index,pager "d"       "<save-message>+[Gmail].Trash<enter><enter>" "Trash"
-macro index,pager "S"       "<save-message>=[Gmail].Spam<enter>" "Mark message as spam"
-macro index,pager ",h"       "<save-message>!<enter>" "Mark message as ham"
-
-macro index,pager ",1"      "<change-folder>!<enter>"
-macro index,pager ",2"      "<change-folder>=private<enter>"
-macro index,pager ",3"      "<change-folder>=UCB<enter>"
-macro index,pager ",4"      "<change-folder>=ICSI<enter>"
-macro index,pager ",5"      "<change-folder>=news<enter>"
-macro index,pager ",6"      "<change-folder>=health<enter>"
-macro index,pager ",7"      "<change-folder>=shopping<enter>"
-macro index       "I"       "<change-folder>=INBOX<enter>" "Go to INBOX"
-macro index       ",s"      "<change-folder>=[Gmail].Starred<enter>" "Go to Starred Messages"
-macro index       ",d"      "<change-folder>=[Gmail].Drafts<enter>" "Go to Drafts"
+folder-hook .   'bind  index,pager "y"   noop'
+folder-hook "!" 'macro index,pager "y"  "<delete-message>"                  "Remove INBOX label, i.e. archive"'
+macro index,pager "d"       "<save-message>+[Gmail].Trash<enter><enter>"    "Trash"
+macro index,pager "S"       "<save-message>=[Gmail].Spam<enter>"            "Mark message as spam"
+macro index,pager ",h"      "<save-message>!<enter>"                        "Mark message as ham"
+macro index,pager "I"       "<change-folder>!<enter>"
 
 # vim: ft=muttrc
