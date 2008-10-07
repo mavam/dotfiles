@@ -2,17 +2,10 @@
 
 folder-hook . 'push <collapse-all>'
 
-#charset-hook US-ASCII     ISO-8859-1
-#charset-hook x-unknown    ISO-8859-1
-#charset-hook windows-1250 CP1250
-#charset-hook windows-1251 CP1251
-#charset-hook windows-1252 CP1252
-#charset-hook windows-1253 CP1253
-#charset-hook windows-1254 CP1254
-#charset-hook windows-1255 CP1255
-#charset-hook windows-1256 CP1256
-#charset-hook windows-1257 CP1257
-#charset-hook windows-1258 CP1258
+send-hook .                                       'source ~/.mutt/profiles/icir'
+send-hook '~t net-sec'                            'source ~/.mutt/profiles/icsi'
+send-hook '~t .*@lists\.boost\.org'               'source ~/.mutt/profiles/icsi'
+send-hook '~t spirit-.*@lists\.sourceforge\.net'  'source ~/.mutt/profiles/icsi'
 
 # ---------------------------------------------------------------------------- #
 #                                    help
