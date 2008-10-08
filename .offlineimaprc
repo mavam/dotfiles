@@ -1,4 +1,5 @@
 [general]
+pythonfile=~/.offlineimap.py
 metadata = ~/.offlineimap
 accounts = GMail
 maxsyncaccounts = 1
@@ -22,3 +23,5 @@ remotehost = imap.gmail.com
 remoteuser = matthias.vallentin@gmail.com
 maxconnections = 1
 realdelete = no
+foldersort = prio_cmp
+folderfilter = lambda folder: re.search(filter_pattern, folder)
