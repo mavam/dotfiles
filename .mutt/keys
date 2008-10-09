@@ -93,21 +93,23 @@ macro pager       "\e7"     "<enter-command>set pager_index_lines=7<enter>"     
 macro pager       "\e8"     "<enter-command>set pager_index_lines=8<enter>"      "Set pager liens to 8"
 macro pager       "\e9"     "<enter-command>set pager_index_lines=9<enter>"      "Set pager liens to 9"
 macro pager       "\e0"     "<enter-command>set pager_index_lines=0<enter>"      "Set pager liens to 0"
-macro pager       ",s"      "<pipe-message>lbdb-fetchaddr<enter>"                "Store address details in lbdb"
-macro pager       "H"       "<pipe-message>mailhops<enter>"                      "View the path of the mail"
-macro pager       ",r"      "<enter-command>set display_filter = \"tr a-zA-Z n-za-mN-ZA-M\"<enter><exit><display-message><enter-command>unset display_filter<enter>" "ROT13 display filter"
-macro pager       ",p"      "<pipe-entry>gpg --keyserver search.keyserver.net --recv-key <enter>"  "Get PGP key"
-macro pager       "\cu"     "<pipe-entry>'urlview'<enter>"                       "Follow links with urlview"
 
 # Mairix search
 macro generic ",/" "<enter-command>set my_search = \`~/.mutt/scripts/mutt-mairix.sh\`<return><enter-command>push \$my_search<return>"
 
 # GMail
 folder-hook .   'bind  index,pager "y"   noop'
-folder-hook "!" 'macro index,pager "y"  "<delete-message>"                  "Remove INBOX label, i.e. archive"'
-macro index,pager "d"       "<save-message>+[Gmail].Trash<enter><enter>"    "Trash"
-macro index,pager "S"       "<save-message>=[Gmail].Spam<enter>"            "Mark message as spam"
-macro index,pager ",h"      "<save-message>!<enter>"                        "Mark message as ham"
-macro index,pager "I"       "<change-folder>!<enter>"
+folder-hook "!" 'macro index,pager "y"  "<delete-message>"          "Remove INBOX label, i.e. archive message"'
+macro index,pager "d"       "<save-message>=trash<enter><enter>"    "Trash"
+macro index,pager "S"       "<save-message>=spam<enter>"            "Mark message as spam"
+macro index,pager ",h"      "<save-message>!<enter>"                "Mark message as ham"
+macro index,pager "I"       "<change-folder>!<enter>"               "Go to INBOX"
+
+# Extras
+macro pager       ",s"      "<pipe-message>lbdb-fetchaddr<enter>"                "Store address details in lbdb"
+macro pager       "H"       "<pipe-message>mailhops<enter>"                      "View the path of the mail"
+macro pager       ",p"      "<pipe-entry>gpg --keyserver search.keyserver.net --recv-key <enter>"  "Get PGP key"
+macro pager       "\cu"     "<pipe-entry>'urlview'<enter>"                       "Follow links with urlview"
+macro pager       ",r"      "<enter-command>set display_filter = \"tr a-zA-Z n-za-mN-ZA-M\"<enter><exit><display-message><enter-command>unset display_filter<enter>" "ROT13 display filter"
 
 # vim: ft=muttrc

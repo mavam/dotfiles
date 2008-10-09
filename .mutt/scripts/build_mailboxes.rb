@@ -9,9 +9,7 @@ ORDER = %w{
     drafts
     flagged
     private
-    bay-area
     health
-    news
     .list.boost
     .list.boost.spirit
     .list.zsh-users
@@ -30,17 +28,16 @@ ORDER = %w{
     TUM
     bro
     logs
+    bay-area
     money
+    news
     shopping
     spam
     trash
     sent
 }
 
-# Discard the following mailboxes
-REJECT = /^(\.){1,2}$/i
-
 dirs = Dir.entries(MAILDIR)
 mboxes = dirs.sort_by {|dir| ORDER.index(dir) || dirs.index(dir) + ORDER.size} 
 
-puts mboxes.reject {|dir| dir[REJECT]}.map {|mbox| "\"=#{mbox}\""}.join(' ')
+puts mboxes.reject {|box| box[/^(\.){1,2}$/]}.map {|box| "\"=#{box}\""}.join(' ')
