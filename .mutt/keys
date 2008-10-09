@@ -99,7 +99,10 @@ macro pager       ",r"      "<enter-command>set display_filter = \"tr a-zA-Z n-z
 macro pager       ",p"      "<pipe-entry>gpg --keyserver search.keyserver.net --recv-key <enter>"  "Get PGP key"
 macro pager       "\cu"     "<pipe-entry>'urlview'<enter>"                       "Follow links with urlview"
 
-# GMail.
+# Mairix search
+macro generic ",/" "<enter-command>set my_search = \`~/.mutt/scripts/mutt-mairix.sh\`<return><enter-command>push \$my_search<return>"
+
+# GMail
 folder-hook .   'bind  index,pager "y"   noop'
 folder-hook "!" 'macro index,pager "y"  "<delete-message>"                  "Remove INBOX label, i.e. archive"'
 macro index,pager "d"       "<save-message>+[Gmail].Trash<enter><enter>"    "Trash"

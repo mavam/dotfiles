@@ -22,22 +22,10 @@ my_hdr X-PGP-Fingerprint: AF0B 32F1 F6BC C2A4 4925  201A 9E73 C324 37F3 4C16
 # ---------------------------------------------------------------------------- #
 set folder=~/.gmail   # offlineimap
 set spoolfile==INBOX
-set postponed==[Gmail].Drafts
+set postponed==drafts
 
-# Mailbox order
-mailboxes ! 
-mailboxes =private "=bay area"
-mailboxes =UCB =EECS =ICSI =TUM =LBL
-mailboxes =money =shopping
-mailboxes =news =health 
-mailboxes =bro =logs
-mailboxes =.list.boost =.list.boost.spirit
-mailboxes =.devnull
-mailboxes =.list.zsh-users =.list.sup-talk 
-mailboxes =.list.pentest =.list.metasploit =.list.ids =.list.botnets =.list.wifisec
-mailboxes =.list.misc 
-mailboxes =[Gmail].Starred =[Gmail].Drafts "=[Gmail].Sent Mail"
-mailboxes =[Gmail].Spam =[Gmail].Trash "=[Gmail].All Mail" 
+# Generate mailboxes
+mailboxes `~/.mutt/scripts/build_mailboxes.rb`
 
 # ---------------------------------------------------------------------------- #
 #                               Sender profiles

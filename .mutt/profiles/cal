@@ -9,7 +9,7 @@ set signature=~/.mutt/sigs/cal
 my_hdr Reply-To: Matthias Vallentin <vallentin@berkeley.edu>
 
 set smtp_url=smtps://mpm@calmail.berkeley.edu:465
-set record="=[Gmail].Sent Mail"
+set record="=sent"
 
 # Next profile.
 macro generic <F7> ':source ~/.mutt/profiles/icsi<enter>'

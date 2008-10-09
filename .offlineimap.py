@@ -2,7 +2,7 @@
 
 import os, os.path, re
 
-prioritized = ['INBOX', '.list.boost']
+prioritized = ['INBOX', 'drafts', 'sent', 'flagged']
 
 def prio_cmp(x, y):
    for prefix in prioritized:
