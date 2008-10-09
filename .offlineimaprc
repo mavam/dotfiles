@@ -24,7 +24,7 @@ remoteuser = matthias.vallentin@gmail.com
 maxconnections = 1
 realdelete = no
 foldersort = prio_cmp
-nametrans = lambda folder: re.sub('^bay area$', 'bay-area', re.sub('.*Spam$', 'spam', re.sub('.*Drafts$', 'drafts', re.sub('.*Sent Mail$', 'sent', re.sub('.*Starred$', 'flagged', re.sub('.*Trash$', 'trash', folder))))))
+nametrans = lambda folder: re.sub('^bay area$', 'bay-area', re.sub('.*Spam$', 'spam', re.sub('.*Drafts$', 'drafts', re.sub('.*Sent Mail$', 'sent', re.sub('.*Starred$', 'flagged', re.sub('.*Trash$', 'trash', re.sub('.*All Mail$', 'universe', folder)))))))
 folderfilter = lambda folder: re.search(filter_pattern, folder)
 
-# vim: ft=cfg, tw=0
+# vim: ft=cfg tw=0

@@ -7,14 +7,11 @@ MAILDIR = "#{ENV['HOME']}/.gmail"
 ORDER = %w{
     INBOX
     drafts
-    sent
     flagged
     private
     bay-area
-    money
-    shopping
-    news
     health
+    news
     .list.boost
     .list.boost.spirit
     .list.zsh-users
@@ -33,8 +30,11 @@ ORDER = %w{
     TUM
     bro
     logs
+    money
+    shopping
     spam
     trash
+    sent
 }
 
 # Discard the following mailboxes

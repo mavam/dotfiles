@@ -1,4 +1,4 @@
 base=${HOME}/.gmail
-maildir=*All Mail
+maildir=universe
 mfolder=${HOME}/.mairix/search
 database=${HOME}/.mairix/database
