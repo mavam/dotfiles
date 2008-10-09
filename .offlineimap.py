@@ -21,6 +21,6 @@ mobile = os.environ['HOSTNAME'] != 'shogun'
 #    pattern = '(INBOX|list.*)' if mobile else '.*'
 filter_pattern = ''
 if mobile:
-    filter_pattern = '(INBOX|Drafts|list.*)' 
+    filter_pattern = '(INBOX|drafts|list.*)' 
 else:
     filter_pattern = '.*'

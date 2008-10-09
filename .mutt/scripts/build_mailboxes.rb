@@ -38,7 +38,7 @@ ORDER = %w{
 }
 
 # Discard the following mailboxes
-REJECT = /^(\.){1,2}$|apple/i
+REJECT = /^(\.){1,2}$/i
 
 dirs = Dir.entries(MAILDIR)
 mboxes = dirs.sort_by {|dir| ORDER.index(dir) || dirs.index(dir) + ORDER.size} 
