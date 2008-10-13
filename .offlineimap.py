@@ -17,10 +17,8 @@ def prio_cmp(x, y):
    return cmp(x, y)
 
 mobile = os.environ['HOSTNAME'] != 'shogun'
-# TODO: python 2.5 only :/
-#    pattern = '(INBOX|list.*)' if mobile else '.*'
 filter_pattern = ''
 if mobile:
-    filter_pattern = '(INBOX|drafts|sent|flagged|list.*)' 
+    filter_pattern = '(INBOX|.*(Drafts|Sent Mail|Starred)|list.*)' 
 else:
     filter_pattern = '.*'
