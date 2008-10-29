@@ -6,10 +6,9 @@ MAILDIR = "#{ENV['HOME']}/.gmail"
 # Order of mailboxes (if available).
 ORDER = %w{
     INBOX
+    sent
     drafts
     flagged
-    private
-    health
     .list.boost
     .list.boost.spirit
     .list.zsh-users
@@ -21,6 +20,8 @@ ORDER = %w{
     .list.botnets
     .list.misc
     .devnull
+    health
+    private
     EECS
     UCB
     ICSI
@@ -34,7 +35,6 @@ ORDER = %w{
     shopping
     spam
     trash
-    sent
 }
 
 dirs = Dir.entries(MAILDIR)
