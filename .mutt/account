@@ -3,7 +3,7 @@
 # ---------------------------------------------------------------------------- #
 set realname="Matthias Vallentin"
 set hostname=icsi.berkeley.edu
-alternates '(vallentin@(icsi.berkeley.edu|icir.org)|matthias.vallentin@gmail.com|(vallentin|mavam|mpm)@berkeley.edu|mavam@eecs.berkeley.edu)'
+alternates '(vallentin?@(icsi.berkeley.edu|icir.org)|matthias.vallentin@gmail.com|(vallentin|mavam|mpm)@berkeley.edu|mavam@eecs.berkeley.edu)'
 
 set envelope_from=yes
 set reverse_name=yes
