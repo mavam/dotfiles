@@ -11,7 +11,7 @@ path = presentations
 path = publications
 
 path = work/ucb
-path = Desktop/print
+path = Desktop/share
 
 
 # vim: ft=sh

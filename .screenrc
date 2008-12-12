@@ -14,7 +14,7 @@ defutf8             on
 autodetach          on      # Automatically detach on hangup.
 bufferfile          $HOME/.screen_exchange
 crlf                off     # Select line break behavior for copying CR/LF.
-deflogin            off     # Select default utmp logging behavior.
+#deflogin            off     # Select default utmp logging behavior.
 defscrollback       10000   # Set default lines of scrollback.
 hardcopy_append     off
 multiuser           off
@@ -32,7 +32,7 @@ caption splitonly
 caption string "%{= kr}%n %t"
 
 # hardstatus line
-hardstatus alwayslastline "%{= kr}%?%-Lw%?%{= kc}%n*%f %t%?(%u)%?%{= kr}%?%+Lw%?  %=%{= kR}|%{= kc}%l%{= kR}|%{= kc}%c:%s%{= kR}|%{= kc}${HOSTSHORT}%{= kR}|"
+hardstatus alwayslastline "%{= kr}%?%-Lw%?%{= kc}%n*%f %t%?(%u)%?%{= kr}%?%+Lw%?  %=%{= kR}|%{= kc}%l%{= kR}|%{= kc}%c:%s%{= kR}|%{= kc}${HOSTNAME}%{= kR}|"
 
 # highlighting color
 sorendition    YK
