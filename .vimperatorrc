@@ -1,4 +1,16 @@
 set editor=mvim
+
+" Add bookmarks toolbar.
 set guioptions+=B
+
+" Completion priority
+" bookmarks, suggestions, awesome bar
+set complete=bSl
+
+" Show completions automatically
+set wildoptions=auto
+
+" Always open pages in a new tab
+set newtab=all
 
 " vim: ft=vimperator
