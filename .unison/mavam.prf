@@ -8,9 +8,8 @@ path = docs/software/mavam.keylayout
 path = docs/templates
 path = presentations
 path = publications
-
+path = work/icsi
 path = work/ucb
 path = Desktop/share
-
 
 # vim: ft=sh
