@@ -4,8 +4,8 @@ set editor=mvim
 set guioptions+=B
 
 " Completion priority
-" bookmarks, suggestions, awesome bar
-set complete=bSl
+" bookmarks, awesome bar, suggestions
+set complete=blS
 
 " Show completions automatically
 set wildoptions=auto
