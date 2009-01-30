@@ -26,9 +26,6 @@ vbell               off     # I like it beeping.
 #shell              -$SHELL
 shell               $SHELL
 
-# Don't you want to start programs which need $DISPLAY?
-setenv DISPLAY ''
-
 sorendition    YR   # Highlighting color
 
 caption splitonly
@@ -76,10 +73,18 @@ bind ^\     # default: quit
 bind \\     # default: quit
 bind h      # default: hardcopy
 
-bind ^k kill            # kill the current window
-bind x remove           # kill the current region
-bind L lockscreen       # lock this session
-bind ' ' split          # create a new region
+# ...and use them judiciously
+bind T   title          # change screen title (alias for A)
+bind Q   quit           # quit screen
+bind .   other          # switch to last window displayed
+bind ,   displays       # tabular listing of all connected frontends
+bind \"  select         # choose your weapon (can be a string as well!)
+bind \'  windowlist -b  # scroll through list of all windows
+bind x   kill           # kill the current window
+bind L   lockscreen     # lock this session
+bind \\  split          # create a new region
+bind |   remove         # remove current region
+bind ' ' screen 1       # create a new window (numbering starts at 1)
 
 # Window numbering starts at 1, not 0
 bind c screen 1
