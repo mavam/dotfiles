@@ -121,26 +121,6 @@ function beer()
 	print "          ~~----~~"
 }
 
-# active command as title in terminals
-case $TERM in
-	xterm*|rxvt*)
-		function title() 
-		{ 
-			print -nP '\e]0;'$*'\a'
-		}
-		;;
-	screen)
-		function title() 
-		{
-			print -nPR $'\033k'$1$'\033'\\
-			print -nPR $'\033]0;'$2$'\a'
-		}
-		;;
-	*) 
-		function title() {}
-		;;
-esac     
-
 # Remote screen - saves SSH environment variables before running screen.
 function rscreen()
 {
@@ -183,6 +163,26 @@ function fixssh()
 #{
 #	[[ -t 1 ]] || return	# we don't want to print in the middle of a script
 #}
+
+# active command as title in terminals
+case $TERM in
+	xterm*|rxvt*)
+		function title() 
+		{ 
+			print -nP '\e]0;'$*'\a'
+		}
+		;;
+	screen)
+		function title() 
+		{
+			print -nPR $'\033k'$1$'\033'\\
+			print -nPR $'\033]0;'$2$'\a'
+		}
+		;;
+	*) 
+		function title() {}
+		;;
+esac     
 
 # executed before each prompt
 precmd()
