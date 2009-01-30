@@ -19,17 +19,17 @@ hardcopy_append     on
 multiuser           off
 silencewait         15      # Default timeout to trigger an inactivity notify
 startup_message     off
-vbell               off     # Use visual bell
-zombie              cr      # Keep dead windows around until I tell them to die.
-verbose on                  # ...and show the command for the windows when
-                            # they're resurrected.
+vbell               off     # I like it beeping.
+#zombie              cr      # Keep dead windows until I tell them to die.
  
 # Prepending a '-' character starts the shell as a login shell.
 #shell              -$SHELL
 shell               $SHELL
 
-# highlighting color
-sorendition    YR
+# Don't you want to start programs which need $DISPLAY?
+setenv DISPLAY ''
+
+sorendition    YR   # Highlighting color
 
 caption splitonly
 caption string "%{=u dr}%n %t"
@@ -39,8 +39,7 @@ hardstatus string "%{= kr}%?%-Lw%?%{= ky}%n*%f %t%?(%u)%?%{= kr}%?%+Lw%?  %=%{= 
 
 activity        "%c activity -> %n%f %t"
 bell_msg        "%c bell -> %n%f %t^G"
-vbell_msg       " *beep* "
-pow_detach_msg  " Bye bye..."
+pow_detach_msg  "Bye bye..."
 
 
 # -------------
@@ -60,7 +59,7 @@ bindkey -k k9 select 9
 bindkey -k k; select 10
 bindkey -k F1 select 11
 bindkey -k F2 select 12
-# windows 13-24 are Shift-Fn.  May not work in all terminals.
+# Windows 13-24 are Shift-Fn. May not work in all terminals.
 bindkey -k F3 select 13
 bindkey -k F4 select 14
 bindkey -k F5 select 15
@@ -79,14 +78,14 @@ bind h      # default: hardcopy
 
 bind ^k kill            # kill the current window
 bind x remove           # kill the current region
-bind X lockscreen       # lock this terminal
+bind L lockscreen       # lock this session
+bind ' ' split          # create a new region
 
 # Window numbering starts at 1, not 0
 bind c screen 1
 bind 0 select 10
 
-# select works on window names, too. This gives me the first window with a free
-# shell.
+# Jump to the first window with a free shell (select works on window names, too)
 bind s select zsh
 
 # Login toggle is too close to screen redraw.  How about explicitly setting
@@ -114,19 +113,12 @@ bindkey "^[[5;2~" eval "copy" "stuff ^u"
 bindkey -m "^[[5;2~" stuff ^u
 bindkey -m "^[[6;2~" stuff ^d
 
-# ------
-#  MISC
-# ------
-
 # Yet another hack:
 # Prepend/append register [/] to the paste if ^a^] is pressed.
 # This lets me have autoindent mode in vi.
 register [ "\033:se noai\015a"
 register ] "\033:se ai\015a"
 bind ^] paste [.]
-
-# Don't you want to start programs which need a DISPLAY ?
-# setenv DISPLAY ''
 
 
 # ---------
