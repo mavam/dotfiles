@@ -10,40 +10,65 @@ escape ``
 #  SETTINGS
 # ----------
  
+defscrollback       30000   # Set default lines of scrollback.
 defutf8             on
-autodetach          on      # Automatically detach on hangup.
+autodetach          on      # Automatically detach on hangup. Never change this!
 bufferfile          ${HOME}/.screen_exchange
 crlf                off     # Select line break behavior for copying CR/LF.
-#deflogin            off     # Select default utmp logging behavior.
-defscrollback       30000   # Set default lines of scrollback.
-hardcopy_append     off
+hardcopy_append     on
 multiuser           off
 silencewait         15      # Default timeout to trigger an inactivity notify
 startup_message     off
 vbell               off     # Use visual bell
-
+zombie              cr      # Keep dead windows around until I tell them to die.
+verbose on                  # ...and show the command for the windows when
+                            # they're resurrected.
+ 
 # Prepending a '-' character starts the shell as a login shell.
 #shell              -$SHELL
 shell               $SHELL
 
-# caption
-caption splitonly
-caption string "%{= kr}%n %t"
-
-# hardstatus line
-hardstatus alwayslastline "%{= kr}%?%-Lw%?%{= kc}%n*%f %t%?(%u)%?%{= kr}%?%+Lw%?  %=%{= kR}|%{= kc}%l%{= kR}|%{= kc}%c:%s%{= kR}|%{= kc}%H%{= kR}|"
-
 # highlighting color
-sorendition    YK
+sorendition    YR
 
-activity        '*knock* *knock* Wake up ... window %n'
-bell_msg        '*knock* *knock* Follow the white rabbit in window %n'
-pow_detach_msg  'Bye bye...'
+caption splitonly
+caption string "%{=u dr}%n %t"
+
+hardstatus alwayslastline
+hardstatus string "%{= kr}%?%-Lw%?%{= ky}%n*%f %t%?(%u)%?%{= kr}%?%+Lw%?  %=%{= kR}|%{= ky}%l%{= kR}|%{= ky}%c:%s%{= kR}|%{= ky}%H%{= kR}|"
+
+activity        "%c activity -> %n%f %t"
+bell_msg        "%c bell -> %n%f %t^G"
+vbell_msg       " *beep* "
+pow_detach_msg  " Bye bye..."
 
 
 # -------------
 #  KEYBINDINGS
 # -------------
+
+# Use the function keys to switch among windows.
+bindkey -k k1 select 1
+bindkey -k k2 select 2
+bindkey -k k3 select 3
+bindkey -k k4 select 4
+bindkey -k k5 select 5
+bindkey -k k6 select 6
+bindkey -k k7 select 7
+bindkey -k k8 select 8
+bindkey -k k9 select 9
+bindkey -k k; select 10
+bindkey -k F1 select 11
+bindkey -k F2 select 12
+# windows 13-24 are Shift-Fn.  May not work in all terminals.
+bindkey -k F3 select 13
+bindkey -k F4 select 14
+bindkey -k F5 select 15
+bindkey -k F6 select 16
+bindkey -k F7 select 17
+bindkey -k F8 select 18
+bindkey -k F9 select 19
+bindkey -k FA select 20
 
 # Let's remove some dangerous key bindings...
 bind k      # default: kill
@@ -52,11 +77,23 @@ bind ^\     # default: quit
 bind \\     # default: quit
 bind h      # default: hardcopy
 
-# ...and make them better.
-bind 'K' kill
-
+bind ^k kill            # kill the current window
 bind x remove           # kill the current region
 bind X lockscreen       # lock this terminal
+
+# Window numbering starts at 1, not 0
+bind c screen 1
+bind 0 select 10
+
+# select works on window names, too. This gives me the first window with a free
+# shell.
+bind s select zsh
+
+# Login toggle is too close to screen redraw.  How about explicitly setting
+# login state, anyway?
+bind L
+bind I login on
+bind O login off
 
 # Resize the current region. The space will be removed from or added to 
 # the region below or if there's not enough space from the region above.
@@ -64,6 +101,18 @@ bind = resize =
 bind + resize +3
 bind - resize -3
 
+# Use vi-style binding to move around regions.
+bind j focus down
+bind k focus up
+bind J focus bottom
+bind K focus top
+
+# Make shift-PgUp and shift-PgDn work like they do in xterm.  (Note that this
+# requires xterm to be configured to pass those keys through, and not try to
+# act on them itself.)
+bindkey "^[[5;2~" eval "copy" "stuff ^u"
+bindkey -m "^[[5;2~" stuff ^u
+bindkey -m "^[[6;2~" stuff ^d
 
 # ------
 #  MISC
@@ -83,9 +132,9 @@ bind ^] paste [.]
 # ---------
 #  STARTUP
 # ---------
-screen 0 $SHELL
-screen 1 $SHELL
-screen 2 $SHELL
+
+# Launch at least one window to start counting by 1.
+screen 1
 
 
 # -----------------
