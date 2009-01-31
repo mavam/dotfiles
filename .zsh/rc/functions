@@ -4,51 +4,51 @@
 
 function kernel()
 {
-	printf 'GET /kdist/finger_banner HTTP1.0\n\n' | nc www.kernel.org 80 \
-	| grep latest
+    printf 'GET /kdist/finger_banner HTTP1.0\n\n' | nc www.kernel.org 80 \
+    | grep latest
 }
 
 function http_header()
 {
-	# This is zsh but still no gnu echoism ;P
-	if [[ $2 != "" ]] { port=$2 } else { port=80 }
-	if [[ $3 != "" ]] { vhost="$3" } else { vhost=$1 }
+    # This is zsh but still no gnu echoism ;P
+    if [[ $2 != "" ]] { port=$2 } else { port=80 }
+    if [[ $3 != "" ]] { vhost="$3" } else { vhost=$1 }
 
-	printf "HEAD /$4 HTTP/1.1\\nHost: $vhost\nConnection: close\n\n" \
-	| nc $1 $port
+    printf "HEAD /$4 HTTP/1.1\\nHost: $vhost\nConnection: close\n\n" \
+    | nc $1 $port
 }     
 
 # search for todos from here on
 function todo() 
 {
-	grep -ir TODO *
+    grep -ir TODO *
 } 
 
 # display current directory as a 'tree'.
 if [[ ! -x  $(which tree 2> /dev/null) ]]; then
-	function tree() 
-	{ 
-		find . | sed -e 's/[^\/]*\//|----/g' -e 's/---- |/    |/g' | less
-	}
+    function tree() 
+    { 
+        find . | sed -e 's/[^\/]*\//|----/g' -e 's/---- |/    |/g' | less
+    }
 fi 
 
 # checks whether a PCRE matches a value. 
 # synopsis: % regcheck '\^.{3} EUR' '500 EUR'
 function regcheck() 
 {
-	if [[ -n $(zmodload -i zsh/pcre) ]]; then
-		if [[ -z $2 ]]; then
-			pcre_compile $1 
-			pcre_match $2 && echo "regex matches" || echo "regex does not match"
-		else
-			echo "usage: $0 <regex> <match-string>"
-		fi
-	fi
+    if [[ -n $(zmodload -i zsh/pcre) ]]; then
+        if [[ -z $2 ]]; then
+            pcre_compile $1 
+            pcre_match $2 && echo "regex matches" || echo "regex does not match"
+        else
+            echo "usage: $0 <regex> <match-string>"
+        fi
+    fi
 }
 
-# synopsis: findpids [prog]	(slightly adapted keychain version)
+# synopsis: findpids [prog] (slightly adapted keychain version)
 function findpids() {
-	me=$(whoami) || return 1
+    me=$(whoami) || return 1
     unset fp_psout
 
     # Different systems require different invocations of ps.  Try to generalize
@@ -59,7 +59,7 @@ function findpids() {
     # Try systems where we know what to do first
     case "$OSTYPE" in
         AIX|*bsd*|*BSD*|CYGWIN|darwin*|Linux|OSF1)
-			fp_psout=`ps x 2>/dev/null` ;;      # BSD syntax
+            fp_psout=`ps x 2>/dev/null` ;;      # BSD syntax
         HP-UX)
             fp_psout=`ps -u $me 2>/dev/null` ;; # SysV syntax
         SunOS)
@@ -83,13 +83,13 @@ function findpids() {
     # Ignore defunct ssh-agents (bug 28599)
     if [ -n "$fp_psout" ]; then
         echo "$fp_psout" | \
-		awk "BEGIN{IGNORECASE=1} /defunct/{next} /$1/{print \$1}" | xargs
+        awk "BEGIN{IGNORECASE=1} /defunct/{next} /$1/{print \$1}" | xargs
         return 0
     fi
 
-	# If none worked, we're stuck
-	error "Unable to use \"ps\" to scan for $1 processes"
-	return 1
+    # If none worked, we're stuck
+    error "Unable to use \"ps\" to scan for $1 processes"
+    return 1
 }
 
 # display colors
@@ -111,14 +111,14 @@ function _cols()
 # thirsty ?
 function beer()
 {
-	print "         _.._..,_,_"        
-	print "        (          )"
-	print "         ]~,\"-.-~~["        
-	print "       .=])' (;  ([    Prost!"
-	print "       | ]:: '    ["
-	print "       '=]): .)  (["
-	print "         |:: '    |"
-	print "          ~~----~~"
+    print "         _.._..,_,_"        
+    print "        (          )"
+    print "         ]~,\"-.-~~["        
+    print "       .=])' (;  ([    Prost!"
+    print "       | ]:: '    ["
+    print "       '=]): .)  (["
+    print "         |:: '    |"
+    print "          ~~----~~"
 }
 
 # Remote screen - saves SSH environment variables before running screen.
@@ -161,43 +161,53 @@ function fixssh()
 # executed whenever the current working directory is changed
 #chpwd() 
 #{
-#	[[ -t 1 ]] || return	# we don't want to print in the middle of a script
+#   [[ -t 1 ]] || return    # we don't want to print in the middle of a script
 #}
 
 # active command as title in terminals
 case $TERM in
-	xterm*|rxvt*)
-		function title() 
-		{ 
-			print -nP '\e]0;'$*'\a'
-		}
-		;;
-	screen)
-		function title() 
-		{
-			print -nPR $'\033k'$1$'\033'\\
-			print -nPR $'\033]0;'$2$'\a'
-		}
-		;;
-	*) 
-		function title() {}
-		;;
+    xterm*|rxvt*)
+        function title() 
+        { 
+            print -nP '\e]0;'$*'\a'
+        }
+        ;;
+    screen)
+        function title() 
+        {
+            print -nPR $'\033k'$1$'\033'\\
+            print -nPR $'\033]0;'$2$'\a'
+        }
+        ;;
+    *) 
+        function title() {}
+        ;;
 esac     
 
-# executed before each prompt
+# Executed before each prompt.
 precmd()
 {
-	title "zsh:%20<..<%3~%<<"	# current dir in title
+#case $TERM in
+#    xterm*|rxvt*)
+#        # Show current dir in terminal title.
+#        title "zsh:%20<..<%3~%<<"
+#        ;;
+#    screen)
+#        # Show hostname up to the first dot.
+#        title "%m"  
+#        ;;
+#esac     
+        title "%20<..<%3~%<<"
 }
 
-# executed just after a command has been read and is about to be executed
+# Executed just after a command has been read and is about to be executed.
 preexec() 
 {
-	emulate -L zsh
+    emulate -L zsh
     local -a cmd; cmd=(${(z)1})
 
-	title $cmd[1]:t "$cmd[2,-1]"
-	#title %n@%m$cmd[1]:t "$cmd[2,-1]"
+    title $cmd[1]:t $cmd[2,-1]
+    #title %n@%m$cmd[1]:t $cmd[2,-1]
 }
 
 # vim: ft=zsh
