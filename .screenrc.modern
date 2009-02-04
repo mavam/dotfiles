@@ -1,0 +1,7 @@
+# Load basic screen settings
+source .screenrc
+
+bind |   split
+bind \\  split -v
+
+#vim: ft=screen
