@@ -108,7 +108,7 @@ function _cols()
         done
 }
 
-# thirsty ?
+# Thirsty ?
 function beer()
 {
     print "         _.._..,_,_"        
@@ -121,8 +121,18 @@ function beer()
     print "          ~~----~~"
 }
 
-# Remote screen - saves SSH environment variables before running screen.
-function rscreen()
+# Launch a screen with a different configuration file depending on which version
+# the OS provides. Newer versions of screen support vertical split, layouts, ...
+function s()
+{
+    version=${$(screen -v)[(w)3]%.*}
+    [[ $(($version)) -ge 4.01 ]] && screen -c ~/.screenrc.modern || screen
+}
+
+# Saves SSH environment variables in a file. Use this function to save the
+# SSH environment in order to restore it later inside screen windows using
+# 'fixssh' (see below)
+function grabssh()
 {
     prefix="${HOME}/.screen"
     file="ssh-session-vars"
@@ -139,8 +149,6 @@ function rscreen()
             s/^/export /'
         done 1> "${prefix}/${file}"
     fi
-
-    screen ${@}
 }
 
 # Restores SSH environment variables to reinstate SSH agent-forwarding.
@@ -154,17 +162,16 @@ function fixssh()
 }
 
 
-#
 # SPECIAL FUNCTIONS - have a special meaning to the shell
-#
+# -------------------------------------------------------
 
-# executed whenever the current working directory is changed
+# Executed whenever the current working directory is changed
 #chpwd() 
 #{
 #   [[ -t 1 ]] || return    # we don't want to print in the middle of a script
 #}
 
-# active command as title in terminals
+# Helper function to set the shell title.
 case $TERM in
     xterm*|rxvt*)
         function title() 
