@@ -68,6 +68,7 @@ bindkey -k FA select 20
 
 # Let's remove some dangerous key bindings...
 bind k      # default: kill
+bind ^K     # default: kill
 bind .      # default: dumptermcap
 bind ^\     # default: quit
 bind \\     # default: quit
