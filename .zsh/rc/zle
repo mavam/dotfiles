@@ -37,18 +37,28 @@ bindkey "^[[B" down-line-or-search		# down arrow: fwd-history-search
 bindkey "^[e" expand-cmd-path			# C-e for expanding path of typed cmd
 bindkey " " magic-space					# do history expansion on space
 bindkey "^@" push-line					# C-<space> push line on buffer stack
-bindkey "^R" history-incremental-search-backward # C-r: search in $HISTFILE 
-bindkey "^K" run-help					# C-k: man <...>
+bindkey "^r" history-incremental-search-backward # C-r: search in $HISTFILE 
+bindkey "^k" run-help					# C-k: man <...>
 
 # emacs compatibility
-bindkey "^Y" yank                       # C-y: Insert kill buffer contents
-bindkey "^N" down-history				# C-n: next command in history
-bindkey "^P" up-history					# C-p: prev command in history
-bindkey "^A" beginning-of-line			# C-a: jump to the beginning of line
-bindkey "^E" end-of-line				# C-e: jump to end of line
-bindkey "^U" kill-whole-line			# C-u: kill whole line
+bindkey "^y" yank                       # C-y: Insert kill buffer contents
+bindkey "^n" down-history				# C-n: next command in history
+bindkey "^p" up-history					# C-p: prev command in history
+bindkey "^a" beginning-of-line			# C-a: jump to the beginning of line
+bindkey "^e" end-of-line				# C-e: jump to end of line
+bindkey "^u" kill-whole-line			# C-u: kill whole line
 bindkey "f" forward-word				# Alt-f: forward word
 bindkey "b" backward-word				# Alt-b: backward word
+
+magic-space-rationalise-dot() {
+    case "$KEYS" in
+        (" ") zle .magic-space "$@" ;;
+        ( . ) [[ $LBUFFER = *.. ]] && LBUFFER+=/. ;&
+        ( * ) zle .self-insert "$@" ;;
+    esac
+}
+zle -N magic-space magic-space-rationalise-dot
+bindkey "." magic-space
 
 # sudo current command line
 run-with-sudo() { LBUFFER="sudo $LBUFFER" }

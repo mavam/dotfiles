@@ -4,9 +4,6 @@
 
 # context string: ':completion:[function]:[completer]:[command]:[arg]' [tag]
 
-# menu selection
-#zstyle ':completion:*' menu select=10
-
 # Finds the correct version of dircolors with appropriate arguments.
 dircolors_string()
 {
@@ -38,6 +35,9 @@ dircolors_string()
 dircolors_string
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
+# menu selection
+#zstyle ':completion:*' menu select=10
+
 # prevent CVS files/directories from being completed
 zstyle ':completion:*:(all-|)files' ignored-patterns '(|*/)CVS'
 zstyle ':completion:*:cd:*' ignored-patterns '(*/)#CVS'
@@ -55,18 +55,7 @@ zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;32'
 
 # SSH known hosts
 if [[ -f ${HOME}/.ssh/known_hosts ]] ; then
-	zstyle ':completion:*' hosts ${${${(f)"$(<$HOME/.ssh/known_hosts)"}%%\ *}%%,*}
+  zstyle ':completion:*' hosts ${${${(f)"$(<$HOME/.ssh/known_hosts)"}%%\ *}%%,*}
 fi
-
-# Quickly change to parent directories
-rationalise-dot() {
-  if [[ $LBUFFER = *.. ]]; then
-    LBUFFER+=/..
-  else
-    LBUFFER+=.
-  fi
-}
-zle -N rationalise-dot
-bindkey . rationalise-dot
 
 # vim: ft=zsh
