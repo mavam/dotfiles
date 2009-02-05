@@ -28,7 +28,7 @@ dircolors_string()
 
             # Newer versions support more keywords.
             local version=${${${(f)"$($dc --version)"}[1]}[(w)-1]}
-            [[ $version > 6.0 && -f "$color_file.modern" ]] && file+="modern"
+            [[ $version > 6.0 && -f "$color_file.modern" ]] && file+=".modern"
         fi
     fi
 
