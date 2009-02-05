@@ -435,6 +435,7 @@ compiler-output-customization	latex-suite.txt	/*compiler-output-customization*
 compiler-rules	latex-suite.txt	/*compiler-rules*
 compiling-multiple	latex-suite.txt	/*compiling-multiple*
 completion-window-preferences	latex-suite.txt	/*completion-window-preferences*
+cs	surround.txt	/*cs*
 custom-macros-menu	latex-suite.txt	/*custom-macros-menu*
 custom-packages	latex-suite.txt	/*custom-packages*
 customize-alt-key-maps	latex-suite.txt	/*customize-alt-key-maps*
@@ -457,6 +458,7 @@ disable-HTML-macros	HTML.txt	/*disable-HTML-macros*
 disable-HTML-mappings	HTML.txt	/*disable-HTML-mappings*
 displaymath	latexhelp.txt	/*displaymath*
 draft	latexhelp.txt	/*draft*
+ds	surround.txt	/*ds*
 editing-folding	latex-suite.txt	/*editing-folding*
 empty	latexhelp.txt	/*empty*
 enabling-searching	latex-suite.txt	/*enabling-searching*
@@ -805,6 +807,8 @@ i_;tt	HTML.txt	/*i_;tt*
 i_;tx	HTML.txt	/*i_;tx*
 i_;ul	HTML.txt	/*i_;ul*
 i_;un	HTML.txt	/*i_;un*
+i_CTRL-G_S	surround.txt	/*i_CTRL-G_S*
+i_CTRL-G_s	surround.txt	/*i_CTRL-G_s*
 i_html-<Tab>	HTML.txt	/*i_html-<Tab>*
 i_html-CTRL-I	HTML.txt	/*i_html-CTRL-I*
 i_html-tab	HTML.txt	/*i_html-tab*
@@ -1492,6 +1496,14 @@ sub-sup	latexhelp.txt	/*sub-sup*
 subscripts	latexhelp.txt	/*subscripts*
 superscripts	latexhelp.txt	/*superscripts*
 supporting-packages	latex-suite.txt	/*supporting-packages*
+surround	surround.txt	/*surround*
+surround-author	surround.txt	/*surround-author*
+surround-customizing	surround.txt	/*surround-customizing*
+surround-issues	surround.txt	/*surround-issues*
+surround-mappings	surround.txt	/*surround-mappings*
+surround-replacements	surround.txt	/*surround-replacements*
+surround-targets	surround.txt	/*surround-targets*
+surround.txt	surround.txt	/*surround.txt*
 tab'	latexhelp.txt	/*tab'*
 tab+	latexhelp.txt	/*tab+*
 tab-	latexhelp.txt	/*tab-*
@@ -1633,4 +1645,9 @@ v_html-CTRL-I	HTML.txt	/*v_html-CTRL-I*
 v_html-tab	HTML.txt	/*v_html-tab*
 verbatim	latexhelp.txt	/*verbatim*
 verse	latexhelp.txt	/*verse*
+vs	surround.txt	/*vs*
 why-IMAP	latex-suite.txt	/*why-IMAP*
+yS	surround.txt	/*yS*
+ySS	surround.txt	/*ySS*
+ys	surround.txt	/*ys*
+yss	surround.txt	/*yss*
