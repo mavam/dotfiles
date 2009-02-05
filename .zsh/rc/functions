@@ -2,31 +2,36 @@
 ##  Functions
 ##
 
-function kernel()
+kernel()
 {
     printf 'GET /kdist/finger_banner HTTP1.0\n\n' | nc www.kernel.org 80 \
     | grep latest
 }
 
-function http_header()
+http_header()
 {
-    # This is zsh but still no gnu echoism ;P
-    if [[ $2 != "" ]] { port=$2 } else { port=80 }
-    if [[ $3 != "" ]] { vhost="$3" } else { vhost=$1 }
+    local port=80
+    local vhost=$1
+
+    [[ -n $2 ]] && port=$2
+    [[ -n $3 ]] && vhost=$3
+
+    print $port
+    print $vhost
 
     printf "HEAD /$4 HTTP/1.1\\nHost: $vhost\nConnection: close\n\n" \
     | nc $1 $port
 }     
 
-# search for todos from here on
-function todo() 
+# Search recursively for todo items.
+todo() 
 {
-    grep -ir TODO *
+    grep -ir todo *
 } 
 
-# display current directory as a 'tree'.
+# Define a custom tree command if it doesn't exist.
 if [[ ! -x  $(which tree 2> /dev/null) ]]; then
-    function tree() 
+    tree() 
     { 
         find . | sed -e 's/[^\/]*\//|----/g' -e 's/---- |/    |/g' | less
     }
@@ -34,7 +39,7 @@ fi
 
 # checks whether a PCRE matches a value. 
 # synopsis: % regcheck '\^.{3} EUR' '500 EUR'
-function regcheck() 
+regcheck() 
 {
     if [[ -n $(zmodload -i zsh/pcre) ]]; then
         if [[ -z $2 ]]; then
@@ -47,14 +52,14 @@ function regcheck()
 }
 
 # synopsis: findpids [prog] (slightly adapted keychain version)
-function findpids() {
-    me=$(whoami) || return 1
+findpids() {
+    local me=$(whoami) || return 1
     unset fp_psout
 
     # Different systems require different invocations of ps.  Try to generalize
     # the best we can.  The only requirement is that the agent command name
     # appears in the line, and the PID is the first item on the line.
-    [ -n "$OSTYPE" ] || return 1
+    [[ -n "$OSTYPE" ]] || return 1
 
     # Try systems where we know what to do first
     case "$OSTYPE" in
@@ -73,15 +78,15 @@ function findpids() {
 
     # If we didn't get a match above, try a list of possibilities...
     # The first one will probably fail on systems supporting only BSD syntax.
-    if [ -z "$fp_psout" ]; then
+    if [[ -z "$fp_psout" ]]; then
         fp_psout=`UNIX95=1 ps -u $me -o pid,comm 2>/dev/null | grep '^ *[0-9]'`
-        [ -z "$fp_psout" ] && fp_psout=`ps x 2>/dev/null`
+        [[ -z "$fp_psout" ]] && fp_psout=`ps x 2>/dev/null`
     fi
 
     # Return the list of pids; ignore case for Cygwin.
     # Check only 8 characters since Solaris truncates at that length.
     # Ignore defunct ssh-agents (bug 28599)
-    if [ -n "$fp_psout" ]; then
+    if [[ -n "$fp_psout" ]]; then
         echo "$fp_psout" | \
         awk "BEGIN{IGNORECASE=1} /defunct/{next} /$1/{print \$1}" | xargs
         return 0
@@ -93,23 +98,23 @@ function findpids() {
 }
 
 # display colors
-function _cols()
+_cols()
 {
-        esc="\033["
-        print "\t 40\t 41\t 42\t 43\t 44\t 45\t 46\t 47"
-        for fore in 30 31 32 33 34 35 36 37; do
-                line1="$fore  "
-                line2="    "
-                for back in 40 41 42 43 44 45 46 47; do
-                        line1="${line1}${esc}${back};${fore}m Normal  ${esc}0m"
-                        line2="${line2}${esc}${back};${fore};1m Bold    ${esc}0m"
-                done
-                print "$line1\n$line2"
+    local esc="\033["
+    print "\t 40\t 41\t 42\t 43\t 44\t 45\t 46\t 47"
+    for fore in 30 31 32 33 34 35 36 37; do
+        local line1="$fore  "
+        local line2="    "
+        for back in 40 41 42 43 44 45 46 47; do
+            local line1="${line1}${esc}${back};${fore}m Normal  ${esc}0m"
+            local line2="${line2}${esc}${back};${fore};1m Bold    ${esc}0m"
         done
+        print "$line1\n$line2"
+    done
 }
 
 # Thirsty ?
-function beer()
+beer()
 {
     print "         _.._..,_,_"        
     print "        (          )"
@@ -123,24 +128,27 @@ function beer()
 
 # Launch a screen with a different configuration file depending on which version
 # the OS provides. Newer versions of screen support vertical split, layouts, ...
-function s()
+s()
 {
-    version=${$(screen -v)[(w)3]%.*}
-    [[ $(($version)) -ge 4.01 ]] && screen -c ~/.screenrc.modern || screen
+    local version=${$(screen -v)[(w)3]%.*}
+    local screenrc="$HOME/.screenrc.modern"
+
+    [[ $(($version)) -ge 4.01 ]] && screen -c $screenrc || screen
 }
 
 # Saves SSH environment variables in a file. Use this function to save the
 # SSH environment in order to restore it later inside screen windows using
-# 'fixssh' (see below)
-function grabssh()
+# 'ssh-fix' (see below)
+ssh-grab()
 {
-    prefix="${HOME}/.screen"
-    file="ssh-session-vars"
+    local prefix="${HOME}/.screen"
+    local file="ssh-session-vars"
 
     if [[ -n "${SSH_CLIENT}" ]] ; then
         mkdir -m 700 -p ${prefix}
 
         # Variables to save
+        local -a ssh_vars
         ssh_vars=(SSH_CLIENT SSH_TTY SSH_AUTH_SOCK SSH_CONNECTION DISPLAY)
 
         for x in ${ssh_vars} ; do
@@ -152,11 +160,11 @@ function grabssh()
 }
 
 # Restores SSH environment variables to reinstate SSH agent-forwarding.
-function fixssh()
+ssh-fix()
 {
-    prefix="${HOME}/.screen"
-    file="ssh-session-vars"
-    fullpath="${prefix}/${file}"
+    local prefix="${HOME}/.screen"
+    local file="ssh-session-vars"
+    local fullpath="${prefix}/${file}"
 
     [[ -f ${fullpath} ]] && source ${fullpath}
 }
@@ -165,45 +173,40 @@ function fixssh()
 # SPECIAL FUNCTIONS - have a special meaning to the shell
 # -------------------------------------------------------
 
-# Executed whenever the current working directory is changed
-#chpwd() 
-#{
-#   [[ -t 1 ]] || return    # we don't want to print in the middle of a script
-#}
-
 # Helper function to set the shell title.
 case $TERM in
     xterm*|rxvt*)
-        function title() 
+        title() 
         { 
             print -nP '\e]0;'$*'\a'
         }
         ;;
     screen)
-        function title() 
+        title() 
         {
             print -nPR $'\033k'$1$'\033'\\
             print -nPR $'\033]0;'$2$'\a'
         }
         ;;
     *) 
-        function title() {}
+        title() {}
         ;;
 esac     
+
+# Redefines precmd() to show static title.
+static-title()
+{
+    eval "
+        precmd()
+        {
+            title ${(q)@} # expanded with quoting
+        }
+    "
+}
 
 # Executed before each prompt.
 precmd()
 {
-#case $TERM in
-#    xterm*|rxvt*)
-#        # Show current dir in terminal title.
-#        title "zsh:%20<..<%3~%<<"
-#        ;;
-#    screen)
-#        # Show hostname up to the first dot.
-#        title "%m"  
-#        ;;
-#esac     
         title "%20<..<%3~%<<"
 }
 
@@ -211,7 +214,8 @@ precmd()
 preexec() 
 {
     emulate -L zsh
-    local -a cmd; cmd=(${(z)1})
+    local -a cmd
+    cmd=(${(z)1})
 
     title $cmd[1]:t $cmd[2,-1]
     #title %n@%m$cmd[1]:t $cmd[2,-1]
