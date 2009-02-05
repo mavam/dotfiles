@@ -7,16 +7,36 @@
 # menu selection
 #zstyle ':completion:*' menu select=10
 
-# Colorize completion
-_dircolors=$(which dircolors) || _dircolors=$(which gdircolors)
-if [[ -x ${_dircolors} ]]; then
-    if [[ -f ~/.dir_colors ]]; then 
-        eval $(${_dircolors} -b ~/.dir_colors)
-    else
-        eval $(${_dircolors} -b)
+# Finds the correct version of dircolors with appropriate arguments.
+dircolors_string()
+{
+    local cmd=""
+    local color_file="$HOME/.dir_colors"
+    local dc=$(which dircolors 2> /dev/null)
+    local gdc=$(which gdircolors 2> /dev/null)
+
+    if [[ -x $dc ]]; then
+        cmd=$dc 
+    elif [[ -x $gdc ]]; then
+        cmd=$gdc
     fi
-    zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
-fi
+
+    local file=""
+    if [[ -n $cmd ]]; then
+        if [[ -f $color_file ]]; then 
+            file=$color_file
+
+            # Newer versions support more keywords.
+            local version=${${${(f)"$($dc --version)"}[1]}[(w)-1]}
+            [[ $version > 6.0 && -f "$color_file.modern" ]] && file+="modern"
+        fi
+    fi
+
+    eval $($cmd -b $file)
+}
+
+dircolors_string
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
 # prevent CVS files/directories from being completed
 zstyle ':completion:*:(all-|)files' ignored-patterns '(|*/)CVS'

@@ -61,7 +61,7 @@ TERM xterm-debian
 # 40=black 41=red 42=green 43=yellow 44=blue 45=magenta 46=cyan 47=white
 #NORMAL 00 # no color code at all
 #FILE 00 # regular file: use no color at all
-#RESET 0 # INCOMPATIBLE WITH OLDER VERSIONS
+RESET 0 # reset to "normal" color
 DIR 01;36 # directory
 LINK 01;35 # symbolic link. (If you set this to 'target' instead of a
  # numerical value, the color is as for the file pointed to.)
@@ -73,9 +73,9 @@ CHR 40;33;01 # character device driver
 ORPHAN 40;31;01 # symlink to nonexistent file, or non-stat'able file
 SETUID 37;41 # file that is setuid (u+s)
 SETGID 30;43 # file that is setgid (g+s)
-#STICKY_OTHER_WRITABLE 30;42 # INCOMPATIBLE WITH OLDER VERSIONS
-#OTHER_WRITABLE 36;42 # INCOMPATIBLE WITH OLDER VERSIONS
-#STICKY 37;44 # INCOMPATIBLE WITH OLDER VERSIONS
+STICKY_OTHER_WRITABLE 30;42 # dir that is sticky and other-writable (+t,o+w)
+OTHER_WRITABLE 36;42 # dir that is other-writable (o+w) and not sticky
+STICKY 37;44 # dir with the sticky bit set (+t) and not other-writable
 # This is for files with execute permission:
 EXEC 01;32
 # List any file extensions like '.gz' or '.tar' that you would like ls
