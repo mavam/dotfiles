@@ -12,6 +12,7 @@ ORDER = %w{
     .list.boost
     .list.boost.spirit
     .list.zsh-users
+    .list.screen
     .list.sup-talk
     .list.pentest
     .list.metasploit
