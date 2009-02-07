@@ -133,7 +133,11 @@ s()
     local version=${$(screen -v)[(w)3]%.*}
     local screenrc="$HOME/.screenrc.modern"
 
-    [[ $(($version)) -ge 4.01 ]] && screen -c $screenrc || screen
+    if [[ $(($version)) -ge 4.01 ]]; then 
+        screen -c $screenrc $@ 
+    else 
+        screen $@
+    fi
 }
 
 # Saves SSH environment variables in a file. Use this function to save the
