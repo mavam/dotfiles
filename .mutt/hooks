@@ -8,6 +8,7 @@ send-hook   net-sec@icsi\.berkeley\.edu         'source ~/.mutt/profiles/icsi'
 send-hook   bro-dev@george\.lbl\.gov            'source ~/.mutt/profiles/icsi'
 send-hook   fastbit-users@hpcrdm\.lbl\.gov      'source ~/.mutt/profiles/icsi'
 send-hook   @lists.*                            'source ~/.mutt/profiles/icsi'
+send-hook   boost-cmake@lists\.boost\.org       'source ~/.mutt/profiles/icir'
 
 # ---------------------------------------------------------------------------- #
 #                                    help
