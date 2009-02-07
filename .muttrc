@@ -15,6 +15,7 @@ source ~/.mutt/account
 source ~/.mutt/hooks
 source ~/.mutt/keys
 source ~/.mutt/options
+source ~/.mutt/mailinglists
 
 # Conditional sourcing
 source `FILE=$HOME/.mutt/aliases; if [ ! -f $FILE ]; then FILE=/dev/null;fi;echo "$FILE"`
