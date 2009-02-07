@@ -113,6 +113,16 @@ _cols()
     done
 }
 
+# Prints out lines that are common among $# files.
+intersection()
+{
+    case $# in
+        (0) true;;
+        (2) sort -u "$1"; sort -u "$2";;
+        (*) sort -u "$1"; shift; intersection "$@";;
+    esac | sort | uniq -d
+} 
+
 # Thirsty ?
 beer()
 {
