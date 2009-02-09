@@ -2,10 +2,12 @@ lists       lists.boost.org
 lists       net-sec@icsi.berkeley.edu
 lists       bro-dev@george.lbl.gov
 lists       fastbit-users@hpcrdm.lbl.gov
+lists       screen-users@gnu.org
 
 subscribe   lists.boost.org
 subscribe   net-sec@icsi.berkeley.edu
 subscribe   bro-dev@george.lbl.gov
 subscribe   fastbit-users@hpcrdm.lbl.gov
+subscribe   screen-users@gnu.org
 
 # vim: ft=muttrc

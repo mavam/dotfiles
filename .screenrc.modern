@@ -5,6 +5,7 @@ source ${HOME}/.screenrc
 layout new              # create at least one default layout.
 bind l command -c layout
 bind -c layout ' '  layout new
+bind -c layout x    layout remove
 bind -c layout p    layout prev
 bind -c layout n    layout next
 bind -c layout 0    layout select 0
