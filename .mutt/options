@@ -43,7 +43,6 @@ unset sig_dashes        # insert '-- ' before the 'signature'
 set thorough_search     # decode headers and attachments before searching
 set timeout=10          # [300]
 unset wait_key          # Ask to press a key after shell-escape, pipes, etc.
-set wrapmargin=1        # [0] margin remaining at the right side of terminal
 
 
 # ---------------------------------------------------------------------------- #
