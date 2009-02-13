@@ -2,9 +2,11 @@
 #                                  interface
 # ---------------------------------------------------------------------------- #
 unset help
+set display_filter="par 72gqr"
 set pager_index_lines=8
 set pager_stop          # don't move to next message at end w/ next-page
 set narrow_tree
+set wrapmargin=1        # [0] margin remaining at the right side of terminal
 
 # ---------------------------------------------------------------------------- #
 #                                   headers
