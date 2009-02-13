@@ -184,11 +184,11 @@ ssh-fix()
 }
 
 
-# First creates an empty array variable "show", then assigns to it the glob
-# expansion (toggled on by `~') of its arguments ($*).  The alias inserts
-# "noglob" so that any glob pattern given on the command line has its expansion
-# delayed until $~* in the function.  In conjunction with CSH_NULL_GLOB, when
-# the glob fails, this produces
+# Assign a glob expression to a variable. First creates an empty array variable
+# "show", then assigns to it the glob expansion (toggled on by `~') of its
+# arguments ($*).  The alias inserts "noglob" so that any glob pattern given on
+# the command line has its expansion delayed until $~* in the function.  In
+# conjunction with CSH_NULL_GLOB, when the glob fails, this produces
 #     zsh: no match
 # *after* emptying the previous value of $show.
 show()

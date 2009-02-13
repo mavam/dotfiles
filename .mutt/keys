@@ -71,16 +71,25 @@ bind pager  <right> next-undeleted
 # Macros.
 # 
 
+# Mairix search
+macro generic     ",/"      "<enter-command>set my_search = \`~/.mutt/scripts/mutt-mairix.sh\`<return><enter-command>push \$my_search<return>"
+
 macro index,pager ",<F5>"   "<enter-command>source ~/.muttrc<enter>"             "Reload .muttrc"
 macro index,pager ",v"      "<pipe-message>vim +':set ft=mail' - <enter>"        "View the message in vim"
 macro index,pager ",V"      "<pipe-message>mvim +':set ft=mail' - <enter>"       "View the message in MacVim"
 macro index,pager "\'"      "<clear-flag>r"                                      "Mark as un-replied"
+macro index,pager ",r"      "<read-thread><previous-undeleted><next-new-then-unread>" "Mark current thread as read and go to next unread message"
 
-macro index       ",r"      "<read-thread><previous-undeleted><next-new-then-unread>" "Mark current thread as read and go to next unread message"
 macro index       ",R"      "<tag-pattern>~U<enter><clear-flag>N<clear-flag>*"   "Catch up (mark all as read)"
 macro index       ",n"      "<limit>~N<enter>"                                   "Limit display to new mail"
 macro index       ",u"      "<limit>~U<enter>"                                   "Limit display to unread mail"
 macro index       ",a"      "<limit>all<enter>"                                  "Reset disply limit to all mail"
+
+macro pager       ",s"      "<pipe-message>lbdb-fetchaddr<enter>"                "Store address details in lbdb"
+macro pager       "H"       "<pipe-message>mailhops<enter>"                      "View the path of the mail"
+macro pager       ",p"      "<pipe-entry>gpg --keyserver search.keyserver.net --recv-key <enter>"  "Get PGP key"
+macro pager       "\cu"     "<pipe-entry>urlview<enter>"                         "Follow links with urlview"
+macro pager       ",f"      "<enter-command>set display_filter=~/.mutt/scripts/message-format.pl<enter><exit><display-message><enter-command>unset display_filter<enter>" "Pretty-print message via par"
 
 macro pager       "w"       "<enter-command>set invsmart_wrap invmarkers<enter>" "Toggle wrap stuff"
 macro pager       "\e1"     "<enter-command>set pager_index_lines=1<enter>"      "Set pager lines to 1"
@@ -94,9 +103,6 @@ macro pager       "\e8"     "<enter-command>set pager_index_lines=8<enter>"     
 macro pager       "\e9"     "<enter-command>set pager_index_lines=9<enter>"      "Set pager liens to 9"
 macro pager       "\e0"     "<enter-command>set pager_index_lines=0<enter>"      "Set pager liens to 0"
 
-# Mairix search
-macro generic ",/" "<enter-command>set my_search = \`~/.mutt/scripts/mutt-mairix.sh\`<return><enter-command>push \$my_search<return>"
-
 # GMail
 folder-hook .   'bind  index,pager "y"   noop'
 folder-hook "!" 'macro index,pager "y"  "<delete-message>"          "Remove INBOX label, i.e. archive message"'
@@ -104,12 +110,5 @@ macro index,pager "d"       "<save-message>=trash<enter><enter>"    "Trash"
 macro index,pager "S"       "<save-message>=spam<enter>"            "Mark message as spam"
 macro index,pager ",h"      "<save-message>!<enter>"                "Mark message as ham"
 macro index,pager "I"       "<change-folder>!<enter>"               "Go to INBOX"
-
-# Extras
-macro pager       ",s"      "<pipe-message>lbdb-fetchaddr<enter>"                "Store address details in lbdb"
-macro pager       "H"       "<pipe-message>mailhops<enter>"                      "View the path of the mail"
-macro pager       ",p"      "<pipe-entry>gpg --keyserver search.keyserver.net --recv-key <enter>"  "Get PGP key"
-macro pager       "\cu"     "<pipe-entry>'urlview'<enter>"                       "Follow links with urlview"
-macro pager       ",r"      "<enter-command>set display_filter = \"tr a-zA-Z n-za-mN-ZA-M\"<enter><exit><display-message><enter-command>unset display_filter<enter>" "ROT13 display filter"
 
 # vim: ft=muttrc

@@ -1,13 +1,24 @@
-lists       lists.boost.org
-lists       net-sec@icsi.berkeley.edu
-lists       bro-dev@george.lbl.gov
-lists       fastbit-users@hpcrdm.lbl.gov
-lists       screen-users@gnu.org
+# EECS
+lists       ((soda|(ee)?cs)-.*|help)@(ee)?cs.berkeley.edu
+lists       lists.(eecs.)?berkeley.edu
+subscribe   secreadgroup@lists.berkeley.edu
 
-subscribe   lists.boost.org
-subscribe   net-sec@icsi.berkeley.edu
+# ICSI/ICIR/LBL/Bro
+lists       (inhouse|seminars)@icsi.berkeley.edu
+lists       (bro-tracker)@icsi.berkeley.edu
 subscribe   bro-dev@george.lbl.gov
 subscribe   fastbit-users@hpcrdm.lbl.gov
+subscribe   net-sec@icsi.berkeley.edu
+
+# Tools
+subscribe   lists.boost.org
 subscribe   screen-users@gnu.org
+subscribe   sup-talk@rubyforge.org
+subscribe   zsh-users@sunsite.dk
+
+# Security
+subscribe   (focus-ids|pen-test|wifisec)@securityfocus.com
+subscribe   framework-hackers@spool.metasploit.com
+subscribe   botnets@whitestar.linuxbox.org
 
 # vim: ft=muttrc
