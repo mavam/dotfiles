@@ -12,12 +12,13 @@ subscribe   net-sec@icsi.berkeley.edu
 
 # Tools
 subscribe   lists.boost.org
+subscribe   spirit-(general|devel)@lists.sourceforge.net
 subscribe   screen-users@gnu.org
 subscribe   sup-talk@rubyforge.org
 subscribe   zsh-users@sunsite.dk
 
 # Security
-subscribe   (focus-ids|pen-test|wifisec)@securityfocus.com
+subscribe   (focus-ids|pen-test|wifisec)@(lists.)?securityfocus.com
 subscribe   framework-hackers@spool.metasploit.com
 subscribe   botnets@whitestar.linuxbox.org
 

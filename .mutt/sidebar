@@ -2,7 +2,7 @@ set sidebar_visible="yes"
 set sidebar_width=28
 set sidebar_delim='|'
 
-color sidebar_new cyan black
+color sidebar_new yellow black
 
 bind index,pager  K  sidebar-prev
 bind index,pager  J  sidebar-next
