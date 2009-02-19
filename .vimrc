@@ -48,8 +48,10 @@ set cino=e-s,g0,t0
 " }}}
 
 "{{{ Spell settings
-set spelllang=en,de
-set spellfile=~/.vim/spellfile.add
+if v:version >= 700
+  set spelllang=en,de
+  set spellfile=~/.vim/spellfile.add
+endif
 
 highlight clear SpellBad
 highlight SpellBad term=standout ctermfg=1 term=underline cterm=underline
