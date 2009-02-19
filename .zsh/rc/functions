@@ -208,7 +208,7 @@ case $TERM in
     xterm*|rxvt*)
         title() 
         { 
-            print -nP '\e]0;'$*'\a'
+            print -Pn "\e]0;"; print -n "${(q)*}\a"
         }
         ;;
     screen)
@@ -226,18 +226,16 @@ esac
 # Redefines precmd() to show static title.
 static-title()
 {
-    eval "
-        precmd()
-        {
-            title ${(q)@} # expanded with quoting
-        }
-    "
+    unfunction precmd
+    unfunction preexec
+    title ${(q)@}
 }
 
 # Executed before each prompt.
 precmd()
 {
-        title "%20<..<%3~%<<"
+    title ${(q)*}
+    #title "%20<..<%3~%<<"
 }
 
 # Executed just after a command has been read and is about to be executed.
