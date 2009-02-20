@@ -4,6 +4,9 @@
 
 # context string: ':completion:[function]:[completer]:[command]:[arg]' [tag]
 
+zstyle ':completion::complete:*' use-cache on
+zstyle ':completion::complete:*' cache-path $HOME/.zsh/cache/$HOST
+
 # Finds the correct version of dircolors with appropriate arguments.
 dircolors_string()
 {
@@ -35,27 +38,43 @@ dircolors_string()
 dircolors_string
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
-# menu selection
-#zstyle ':completion:*' menu select=10
+# Match uppercase from lowercase.
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
-# prevent CVS files/directories from being completed
+# List of completers to use.
+zstyle ':completion:*::::' completer _expand _complete _ignored _approximate
+
+# Prevent CVS files/directories from being completed.
 zstyle ':completion:*:(all-|)files' ignored-patterns '(|*/)CVS'
 zstyle ':completion:*:cd:*' ignored-patterns '(*/)#CVS'
-
-# Ignore completion functions for unknown commands:
-zstyle ':completion:*:functions' ignored-patterns '_*'
+# Ignore completion functions for unknown commands.
+zstyle ':completion:*:functions' ignored-patterns '(_*|prec(cmd|exec))'
 
 # Process completion
 #zstyle ':completion:*:*:*:*:processes' menu yes select
 #zstyle ':completion:*:*:*:*:processes' force-list always
 zstyle ':completion:*:processes-names' command 'ps -e -o comm='
-zstyle ':completion:*:processes' command 'ps -au$USER'
+zstyle ':completion:*:processes' command 'ps -aU$USER'
 zstyle ':completion:*:*:kill:*' menu yes select
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;32'
 
-# SSH known hosts
+# SSH 
 if [[ -f ${HOME}/.ssh/known_hosts ]] ; then
   zstyle ':completion:*' hosts ${${${(f)"$(<$HOME/.ssh/known_hosts)"}%%\ *}%%,*}
 fi
+zstyle ':completion:*:scp:*' tag-order \
+    'hosts:-host hosts:-domain:domain hosts:-ipaddr:IP\ address *'
+zstyle ':completion:*:scp:*' group-order \
+    users files all-files hosts-domain hosts-host hosts-ipaddr
+zstyle ':completion:*:ssh:*' tag-order \
+    users 'hosts:-host hosts:-domain:domain hosts:-ipaddr:IP\ address *'
+zstyle ':completion:*:ssh:*' group-order \
+    hosts-domain hosts-host users hosts-ipaddr
+zstyle ':completion:*:(ssh|scp):*:hosts-host' ignored-patterns \
+    '*.*' loopback localhost
+zstyle ':completion:*:(ssh|scp):*:hosts-ipaddr' ignored-patterns \
+    '^<->.<->.<->.<->' '127.0.0.<->'
+zstyle ':completion:*:(ssh|scp):*:users' ignored-patterns \
+    '_*' adm bin daemon halt lp named shutdown sync 
 
 # vim: ft=zsh

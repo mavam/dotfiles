@@ -3,7 +3,9 @@
 # =========================
 
 # MacVIM alias.
-alias gvim='/Applications/MacVim.app/Contents/MacOS/Vim -g'
+if [[ -d /Applications/MacVim.app ]]; then
+    alias gvim='/Applications/MacVim.app/Contents/MacOS/Vim -g'
+fi
 
 # Include MacTeX binaries.
 [[ -d /usr/texbin ]] && path=( $path /usr/texbin )
