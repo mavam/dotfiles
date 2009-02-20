@@ -12,8 +12,8 @@ dircolors_string()
 {
     local cmd=""
     local color_file="$HOME/.dir_colors"
-    local dc=$(which dircolors 2> /dev/null)
-    local gdc=$(which gdircolors 2> /dev/null)
+    local dc=$(which dircolors > /dev/null 2>&1)
+    local gdc=$(which gdircolors > /dev/null 2>&1)
 
     if [[ -x $dc ]]; then
         cmd=$dc 
@@ -21,18 +21,27 @@ dircolors_string()
         cmd=$gdc
     fi
 
+
     local file=""
     if [[ -n $cmd ]]; then
         if [[ -f $color_file ]]; then 
             file=$color_file
 
+            # The file suffix for a second ~/.dir_colors file supporting newer
+            # commands.
+            local suffix='modern'
+
             # Newer versions support more keywords.
             local version=${${${(f)"$($dc --version)"}[1]}[(w)-1]}
-            [[ $version > 6.0 && -f "$color_file.modern" ]] && file+=".modern"
+            [[ $version > 6.0 && -f "$color_file.$suffix" ]] && file+=".$suffix"
         fi
+
+        eval $($cmd -b $file)
+    else
+        # TODO. No (g)dircolors available.
+        
     fi
 
-    eval $($cmd -b $file)
 }
 
 dircolors_string

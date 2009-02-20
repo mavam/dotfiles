@@ -2,15 +2,17 @@
 ##  Aliases
 ##
 
-# Processes
+# OS-specific aliases
 case ${OS} in
     freebsd|darwin)
+    alias ls='ls -G'
     alias psa='ps -wwaxo user,ruser,pid,ppid,pri,pcpu,pmem,vsize,rss,tt,start,args'
     alias psme='ps -U ${LOGNAME} -wwaxo user,ruser,pid,ppid,pri,pcpu,pmem,vsize,rss,tt,start,args'
     alias psta='pstree -g2 -w' 
     alias pstme='pstree -g2 -w -u${LOGNAME}'
     ;;
     linux-gnu)
+    alias ls='ls --color=auto'
     alias psa='ps -eo user,ruser,pid,ppid,pri,pcpu,pmem,vsize,rss,tt,start,args'
     alias psme='psa | grep -E "^USER|${LOGNAME}"'
     alias psta='pstree -aphlnu'
@@ -24,7 +26,6 @@ alias vi="vim"
 alias m="mvim"
 
 # Directory listings
-alias ls='ls --color=auto'  # GNU version only
 alias la='ls -al'
 alias ll='ls -l'
 alias lsa='ls -ld .*'
