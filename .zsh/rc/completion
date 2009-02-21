@@ -32,7 +32,7 @@ dircolors_string()
             local suffix='modern'
 
             # Newer versions support more keywords.
-            local version=${${${(f)"$($dc --version)"}[1]}[(w)-1]}
+            local version=${${${(f)"$($cmd --version)"}[1]}[(w)-1]}
             [[ $version > 6.0 && -f "$color_file.$suffix" ]] && file+=".$suffix"
         fi
 
