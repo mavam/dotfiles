@@ -3,12 +3,12 @@
 ##
 
 # Editor
-if [[ -x $(which vim) ]]; then
+if [[ -x $(which vim > /dev/null 2>&1) ]]; then
     export EDITOR="vim"
     export VISUAL="${EDITOR}"
     export VIMRELEASE="$(print ${${$(vim --version)[5]}:gs/.//})"
 else
-    if [[ -x $(which vi) ]]; then
+    if [[ -x $(which vi > /dev/null 2>&1) ]]; then
         export EDITOR="vi"
     fi
 fi
