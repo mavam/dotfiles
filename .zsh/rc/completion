@@ -12,8 +12,8 @@ dircolors_string()
 {
     local cmd=""
     local color_file="$HOME/.dir_colors"
-    local dc=$(which dircolors > /dev/null 2>&1)
-    local gdc=$(which gdircolors > /dev/null 2>&1)
+    local dc=$(which dircolors 2> /dev/null)
+    local gdc=$(which gdircolors 2> /dev/null)
 
     if [[ -x $dc ]]; then
         cmd=$dc 

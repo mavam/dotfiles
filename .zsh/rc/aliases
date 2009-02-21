@@ -25,15 +25,14 @@ alias v="vim"
 alias vi="vim"
 alias m="mvim"
 
-# Directory listings
+# Directories
+[[ -x $(which gls 2> /dev/null) ]] && alias ls='gls --color=auto'   # prefer GNU
 alias la='ls -al'
 alias ll='ls -l'
 alias lsa='ls -ld .*'
-
-# Directory navigation
 alias ..='cd ..'
 alias d='dirs -v'
-function pu { pushd $1 > /dev/null; dirs -v; }
+pu() { pushd $1 > /dev/null; dirs -v; }
 alias po='popd > /dev/null; dirs -v'
 alias 1='pu'
 alias 2='pu -2'
