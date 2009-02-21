@@ -2,6 +2,11 @@ include common
 
 # Additional paths to synchronize.
 path = .lbdb
+path = .ssh/config
+path = .ssh/identities
+path = .vim/spell
+path = .vim/spellfile.add
+path = .vim/spellfile.add.spl
 path = code
 path = docs/cv
 path = docs/software/mavam.keylayout
