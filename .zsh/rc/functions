@@ -30,7 +30,7 @@ todo()
 } 
 
 # Define a custom tree command if it doesn't exist.
-if [[ ! -x  $(which tree 2> /dev/null) ]]; then
+if [[ ! -x  $(whence -p tree) ]]; then
     tree() 
     { 
         find . | sed -e 's/[^\/]*\//|----/g' -e 's/---- |/    |/g' | less

@@ -26,7 +26,7 @@ alias vi="vim"
 alias m="mvim"
 
 # Directories
-[[ -x $(which gls 2> /dev/null) ]] && alias ls='gls --color=auto'   # prefer GNU
+[[ -x $(whence -p gls) ]] && alias ls='gls --color=auto'   # prefer GNU
 alias la='ls -al'
 alias ll='ls -l'
 alias lsa='ls -ld .*'
