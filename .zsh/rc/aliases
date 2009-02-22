@@ -5,18 +5,22 @@
 # OS-specific aliases
 case ${OS} in
     freebsd|darwin)
-    alias ls='ls -G'
-    alias psa='ps -wwaxo user,ruser,pid,ppid,pri,pcpu,pmem,vsize,rss,tt,start,args'
-    alias psme='ps -U ${LOGNAME} -wwaxo user,ruser,pid,ppid,pri,pcpu,pmem,vsize,rss,tt,start,args'
-    alias psta='pstree -g2 -w' 
-    alias pstme='pstree -g2 -w -u${LOGNAME}'
+        alias ls='ls -G'
+        alias grep='grep --colour=auto'
+        alias psa='ps -wwaxo user,ruser,pid,ppid,pri,pcpu,pmem,vsize,rss,tt,start,args'
+        alias psme='ps -U ${LOGNAME} -wwaxo user,ruser,pid,ppid,pri,pcpu,pmem,vsize,rss,tt,start,args'
+        alias psta='pstree -g2 -w' 
+        alias pstme='pstree -g2 -w -u${LOGNAME}'
     ;;
     linux-gnu)
-    alias ls='ls --color=auto'
-    alias psa='ps -eo user,ruser,pid,ppid,pri,pcpu,pmem,vsize,rss,tt,start,args'
-    alias psme='psa | grep -E "^USER|${LOGNAME}"'
-    alias psta='pstree -aphlnu'
-    alias pstme='pstree -aphlnu ${LOGNAME}'
+        alias ls='ls --color=auto'
+        alias grep='grep --colour=auto'
+        alias psa='ps -eo user,ruser,pid,ppid,pri,pcpu,pmem,vsize,rss,tt,start,args'
+        alias psme='psa | grep -E "^USER|${LOGNAME}"'
+        alias psta='pstree -aphlnu'
+        alias pstme='pstree -aphlnu ${LOGNAME}'
+    solaris)
+        alias grep='ggrep --colour=auto'
     ;;
 esac
 
@@ -26,7 +30,7 @@ alias vi="vim"
 alias m="mvim"
 
 # Directories
-[[ -x $(whence -p gls) ]] && alias ls='gls --color=auto'   # prefer GNU
+[[ -x $(whence -p gls) ]] && alias ls='gls --color=auto'  # prefer GNU version.
 alias la='ls -al'
 alias ll='ls -l'
 alias lsa='ls -ld .*'
@@ -45,7 +49,6 @@ alias 8='pu -8'
 alias 9='pu -9'
 
 # Misc
-alias grep='grep --colour=auto' # GNU version only
 alias funcs='declare -f'
 
 # vim: ft=zsh
