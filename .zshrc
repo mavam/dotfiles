@@ -39,7 +39,9 @@ path=(
     /usr/local/sbin
     /usr/sbin
     /sbin
-    /usr/X11R6/bin
+    /usr/X11R6/bin      # X11
+    /usr/ucb            # SunOS
+    /usr/sww/bin        # SunOS
 )
 clean-path path
 

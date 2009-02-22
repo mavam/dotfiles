@@ -33,7 +33,7 @@ dircolors_string()
 
             # Newer versions support more keywords.
             local version=${${${(f)"$($cmd --version)"}[1]}[(w)-1]}
-            [[ $version > 6.0 && -f "$color_file.$suffix" ]] && file+=".$suffix"
+            [[ $version > 6.7 && -f "$color_file.$suffix" ]] && file+=".$suffix"
         fi
 
         eval $($cmd -b $file)

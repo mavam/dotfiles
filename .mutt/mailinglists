@@ -14,7 +14,7 @@ subscribe   net-sec@icsi.berkeley.edu
 # Tools
 subscribe   lists.boost.org
 subscribe   spirit-(general|devel)@lists.sourceforge.net
-subscribe   screen-users@gnu.org
+subscribe   screen-(users|devel)@gnu.org
 subscribe   sup-talk@rubyforge.org
 subscribe   zsh-users@sunsite.dk
 
