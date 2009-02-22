@@ -11,7 +11,7 @@ case ${OS} in
         alias psme='ps -U ${LOGNAME} -wwaxo user,ruser,pid,ppid,pri,pcpu,pmem,vsize,rss,tt,start,args'
         alias psta='pstree -g2 -w' 
         alias pstme='pstree -g2 -w -u${LOGNAME}'
-    ;;
+        ;;
     linux-gnu)
         alias ls='ls --color=auto'
         alias grep='grep --colour=auto'
@@ -19,9 +19,10 @@ case ${OS} in
         alias psme='psa | grep -E "^USER|${LOGNAME}"'
         alias psta='pstree -aphlnu'
         alias pstme='pstree -aphlnu ${LOGNAME}'
+        ;;
     solaris)
         alias grep='ggrep --colour=auto'
-    ;;
+        ;;
 esac
 
 # Vim
