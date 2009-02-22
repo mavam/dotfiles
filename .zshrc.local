@@ -17,8 +17,6 @@ if whence locale > /dev/null; then
     fi
 fi
 
-export LANG="en_US.UTF-8"
-
 # Takes multiple arguments to create $BROPATH. The first argument must
 # contain the Bro build directory where the src/bro binary is located.
 function bro_setup
