@@ -18,7 +18,8 @@ set nocompatible        " Use Vim defaults
 set modeline            " modelines at the {end,beginning} of a file are handy!
 
 " low priority for these files in tab-completion
-set suffixes+=.info,.aux,.log,.dvi,.bbl,.out,.o,.lo
+set suffixes+=.aux,.bbl,.blg,.dvi,.log,.pdf     " LaTeX
+set suffixes+=.info,.out,.o,.lo
 
 " When displaying line numbers, don't use an annoyingly wide number column. This
 " doesn't enable line numbers -- :set number will do that. The value given is a

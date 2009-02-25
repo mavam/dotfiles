@@ -1,21 +1,22 @@
 # HTML
-text/html; w3m -v -F -T text/html %s; nametemplate=%s.html; needsterminal ; copiousoutput
+text/html; elinks -dump %s; copiousoutput
+text/html; w3m -v -F -T text/html %s; copiousoutput; nametemplate=%s.html
 text/html; lynx -dump %s; copiousoutput; nametemplate=%s.html
-text/html; open '%s'
+text/html; ~/.mutt/scripts/view_attachment.sh %s
 
 # PS/PDF
-application/pdf; open -a Skim '%s'
-application/postscript; open -a Skim '%s'
+document/pdf; ~/.mutt/scripts/view_attachment.sh %s pdf
+application/pdf; ~/.mutt/scripts/view_attachment.sh %s pdf
+application/postscript; ~/.mutt/scripts/view_attachment.sh %s pdf
 
-# Pictures
-image/jpeg; open '%s'
-image/pjpeg; open '%s'
-image/png; open '%s'
-image/gif; open '%s'
-image/tiff; open '%s'
+# Multimedia
+image/*; ~/.mutt/scripts/view_attachment.sh %s
+video/*; ~/.mutt/scripts/view_attachment.sh %s
 
 # Text
 text/*; view -Mf '%s' ; edit=vim -f '%s'; compose=vim -f '%s'; needsterminal
 
 # Unidentified
-application/octet-stream; open '%s'
+mime_lookup application/octet-stream
+application/*; ~/.mutt/scripts/view_attachment %s
+application/octet-stream; ~/.mutt/scripts/view_attachment %s
