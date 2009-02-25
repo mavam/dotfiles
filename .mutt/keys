@@ -103,10 +103,18 @@ macro pager       "\e8"     "<enter-command>set pager_index_lines=8<enter>"     
 macro pager       "\e9"     "<enter-command>set pager_index_lines=9<enter>"      "Set pager liens to 9"
 macro pager       "\e0"     "<enter-command>set pager_index_lines=0<enter>"      "Set pager liens to 0"
 
+#
 # GMail
+# 
+
+# Archiving only in INBOX.
 folder-hook .   'bind  index,pager "y"   noop'
-folder-hook "!" 'macro index,pager "y"  "<delete-message>"          "Remove INBOX label, i.e. archive message"'
-macro index,pager "d"       "<save-message>=trash<enter><enter>"    "Trash"
+folder-hook "!" 'macro index,pager "y" "<delete-message>" "Remove INBOX label, i.e., archive message"'
+
+# Trash management.
+folder-hook . 'macro index,pager "d" "<save-message>=trash<enter><enter>" "Move message to trash"'
+folder-hook "=trash" 'bind index,pager "d" delete-message'
+
 macro index,pager "S"       "<save-message>=spam<enter>"            "Mark message as spam"
 macro index,pager ",h"      "<save-message>!<enter>"                "Mark message as ham"
 macro index,pager "I"       "<change-folder>!<enter>"               "Go to INBOX"
