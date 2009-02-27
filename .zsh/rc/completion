@@ -84,6 +84,6 @@ zstyle ':completion:*:(ssh|scp):*:hosts-host' ignored-patterns \
 zstyle ':completion:*:(ssh|scp):*:hosts-ipaddr' ignored-patterns \
     '^<->.<->.<->.<->' '127.0.0.<->'
 zstyle ':completion:*:(ssh|scp):*:users' ignored-patterns \
-    '_*' adm bin daemon halt lp named shutdown sync 
+    '_*' adm bin daemon dbus halt lp named rpc rpcuser shutdown sync 
 
 # vim: ft=zsh
