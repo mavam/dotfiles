@@ -31,8 +31,8 @@ typeset -U path cdpath fpath manpath
 
 # System $PATH
 path=( 
-    $path 
     ~/bin
+    $path 
     /usr/local/bin
     /usr/bin
     /bin
