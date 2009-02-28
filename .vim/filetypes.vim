@@ -8,6 +8,8 @@ au BufRead,BufNewFile *.dox     set filetype=doxygen spell
 au BufRead,BufNewFile *.mail    set filetype=mail spell
 au BufRead,BufNewFile *.bro     set filetype=bro
 au BufRead,BufNewFile *.wiki    set filetype=mediawiki spell
+au BufRead,BufNewFile *.ll      set filetype=llvm
+au BufRead,BufNewFile *.td      set filetype=tablegen
 
 " Transparent editing of gpg encrypted files.
 " By Wouter Hanegraaff <wouter@blub.net>
