@@ -18,5 +18,5 @@ text/*; view -Mf '%s' ; edit=vim -f '%s'; compose=vim -f '%s'; needsterminal
 
 # Unidentified
 mime_lookup application/octet-stream
-application/*; ~/.mutt/scripts/view_attachment %s
-application/octet-stream; ~/.mutt/scripts/view_attachment %s
+application/*; ~/.mutt/scripts/view_attachment.sh %s
+application/octet-stream; ~/.mutt/scripts/view_attachment.sh %s
