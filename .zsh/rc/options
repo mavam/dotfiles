@@ -25,13 +25,18 @@ setopt list_packed              # try  to  make the completion list smaller
 setopt brace_ccl                # {az} brace expansion 
 setopt extended_glob            # http://zsh.dotsrc.org/Intro/intro_2.html#SEC2
 
-# history
-setopt hist_ignore_dups         # this will ignore _consecutive_ duplicates
-unsetopt hist_ignore_space      # don't add cmd to hist when first char is blank
-setopt append_history           # don't overwrite history
-setopt hist_reduce_blanks       # remove superfluous blanks 
-
-# initialisation 
+# History
+setopt append_history           # Don't overwrite history
+setopt extended_history         # Also record time and duration of commands.
+setopt share_history            # Share history between multiple shells
+#unsetopt hist_save_by_copy     # Users and sudo'd users share one history file.
+setopt hist_expire_dups_first   # Clear duplicates when trimming internal hist.
+setopt hist_find_no_dups        # Don't display duplicates during searches.
+setopt hist_ignore_dups         # This will ignore consecutive duplicates.
+setopt hist_ignore_all_dups     # Remember only one unique copy of the command.
+unsetopt hist_ignore_space      # Don't add cmd to hist when first char is blank
+setopt hist_reduce_blanks       # Remove superfluous blanks.
+setopt hist_save_no_dups        # Omit older commands in favor of newer ones.
 
 # input/output 
 setopt correct                  # try to correct the spelling of commands
