@@ -10,6 +10,7 @@ au BufRead,BufNewFile *.bro     set filetype=bro
 au BufRead,BufNewFile *.wiki    set filetype=mediawiki spell
 au BufRead,BufNewFile *.ll      set filetype=llvm
 au BufRead,BufNewFile *.td      set filetype=tablegen
+au BufRead,BufNewFile Portfile  set filetype=tcl
 
 " Transparent editing of gpg encrypted files.
 " By Wouter Hanegraaff <wouter@blub.net>
