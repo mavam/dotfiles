@@ -5,11 +5,10 @@ subscribe   secreadgroup@lists.berkeley.edu
 
 # ICSI/ICIR/LBL/Bro
 lists       (inhouse|seminars)@icsi.berkeley.edu
-subscribe   bro-tracker@icsi.berkeley.edu
+subscribe   (bro-tracker|net-sec|hilti)@icsi.berkeley.edu
 subscribe   bro-dev@george.lbl.gov
 subscribe   bro@icsi.berkeley.edu
 subscribe   fastbit-users@hpcrdm.lbl.gov
-subscribe   net-sec@icsi.berkeley.edu
 
 # Tools
 subscribe   lists.boost.org
