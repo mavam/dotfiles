@@ -13,4 +13,7 @@ auto = true
 # Disable file logging.
 log = false
 
+# Merge conflicting files
+#merge = Name *.* -> diff3 CURRENT1 CURRENTARCH CURRENT2 -m > NEW
+
 # vim: ft=sh

@@ -24,13 +24,10 @@ function bro_setup
     export BRO="$1/src/bro"
     export BROPATH="."
     for i in "$@"; do
-        export BROPATH="${BROPATH}:${i}:${i}/policy:${i}/policy/local:${i}/policy/sigs:/usr/local/bro/lib/"
+        export BROPATH="$BROPATH:$i:$i/policy:$i/policy/local:$i/policy/sigs:/usr/local/bro/lib/"
     done
     echo $BROPATH
 }
-
-# Local aliases.
-alias shinobi='ssh mv@vallentin.cc -t screen -DR'
 
 # TeX inputs.
 [[ -d ~/code/texinputs ]] && export TEXINPUTS=.:~/code/texinputs//:
@@ -44,7 +41,7 @@ function _setup_agent
     local kc_bin
 
     # Trust only ~/bin.
-    [[ -x ${HOME}/bin/keychain ]] && kc_bin=${HOME}/bin/keychain
+    [[ -x $HOME/bin/keychain ]] && kc_bin=$HOME/bin/keychain
 
 	if [[ -n $kc_bin ]]; then
         local ssh_keys
@@ -60,6 +57,6 @@ function _setup_agent
 }
 
 # Don't start agent(s) as root or remotely.
-[[ ${UID} != 0 && -z "${SSH_CONNECTION}" ]] && _setup_agent
+[[ $UID != 0 && -z "$SSH_CONNECTION" ]] && _setup_agent
 
 # vim: ft=zsh 
