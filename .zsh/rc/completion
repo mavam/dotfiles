@@ -51,7 +51,7 @@ zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
 # List of completers to use.
-zstyle ':completion:*::::' completer _expand _complete _ignored _approximate
+zstyle ':completion:*::::' completer _expand _complete _ignored # _approximate
 
 # Prevent CVS files/directories from being completed.
 zstyle ':completion:*:(all-|)files' ignored-patterns '(|*/)CVS'
