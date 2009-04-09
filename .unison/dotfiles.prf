@@ -1,0 +1,10 @@
+include common
+
+path = .lbdb
+path = .ssh/config
+path = .ssh/identities
+path = .vim/spell
+path = .vim/spellfile.add
+path = .vim/spellfile.add.spl
+
+# vim: ft=sh
