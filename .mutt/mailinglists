@@ -16,6 +16,7 @@ subscribe   (spirit-(general|devel)|boost-.*)@lists.sourceforge.net
 subscribe   screen-(users|devel)@gnu.org
 subscribe   sup-talk@rubyforge.org
 subscribe   zsh-users@sunsite.dk
+subscribe   zen@zshwiki.org
 
 # Security
 subscribe   (focus-ids|pen-test|wifisec)@(lists.)?securityfocus.com

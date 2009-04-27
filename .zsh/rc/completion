@@ -15,10 +15,10 @@ dircolors_string()
     local dc=$(whence -p dircolors)
     local gdc=$(whence -p gdircolors)
 
-    if [[ -x $dc ]]; then
-        cmd=$dc 
-    elif [[ -x $gdc ]]; then
+    if [[ -x $gdc ]]; then
         cmd=$gdc
+    elif [[ -x $dc ]]; then
+        cmd=$dc 
     fi
 
 
