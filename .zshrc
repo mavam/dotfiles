@@ -71,9 +71,7 @@ case ${OS} in
 esac
 
 # Source general files.
-for i in ~/.zsh/rc/*; do
-	source $i
-done
+for i (~/.zsh/rc/*) { source $i }
 
 # At last, source user specific files.
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local

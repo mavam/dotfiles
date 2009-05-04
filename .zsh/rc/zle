@@ -10,7 +10,7 @@
 # that's the good guy <:
 bindkey -v
 
-# ensures that I can delete over stuff that was done in a previous insert
+# Ensures that I can delete over stuff that was done in a previous insert
 # session, not proper vi action
 bindkey -M viins '' backward-delete-char
 bindkey -M viins '' backward-delete-char
@@ -40,7 +40,7 @@ bindkey "^@" push-line					# C-<space> push line on buffer stack
 bindkey "^r" history-incremental-search-backward # C-r: search in $HISTFILE 
 bindkey "^k" run-help					# C-k: man <...>
 
-# emacs compatibility
+# Emacs compatibility
 bindkey "^y" yank                       # C-y: Insert kill buffer contents
 bindkey "^n" down-history				# C-n: next command in history
 bindkey "^p" up-history					# C-p: prev command in history
@@ -60,10 +60,15 @@ magic-space-rationalise-dot() {
 zle -N magic-space magic-space-rationalise-dot
 bindkey "." magic-space
 
-# sudo current command line
-run-with-sudo() { LBUFFER="sudo $LBUFFER" }
-zle -N run-with-sudo
-bindkey "^Xs" run-with-sudo
+# Insert the current date (yyyy-mm-dd) 
+_insert_date() { BUFFER="$BUFFER$(date '+%F')"; CURSOR=$#BUFFER }
+zle -N _insert_date
+bindkey "^Xd" _insert_date
+
+# Sudo the command line.
+_run_with_sudo() { LBUFFER="sudo $LBUFFER"; CURSOR=$#BUFFER }
+zle -N _run_with_sudo
+bindkey "^Xs" _run_with_sudo
 
 autoload -U incremental-complete-word
 zle -N incremental-complete-word
@@ -78,7 +83,7 @@ autoload -U tetris
 zle -N tetris
 bindkey "^Xt" tetris 
 
-# automatic URL quoting
+# Automatic URL quoting
 autoload -U url-quote-magic
 zle -N self-insert url-quote-magic
 
