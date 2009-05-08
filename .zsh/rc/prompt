@@ -4,7 +4,6 @@
 
 function set_prompt()
 { 
-    # Foreground colors
     local none=$'%{\e[0m%}'
 
     local black=$'%{\e[0;30m%}'
@@ -41,7 +40,6 @@ function set_prompt()
 
     # Right-side prompt
     export RPROMPT="%(?..${red}%U%?%u${none}) ${col2}[%(!.${redB}.${col3})%35<..<%~${col2}]${none}"
-
 
     # $PS2 (used in loops, statements, ...)
     export PS2="%(4_:... :)%3_ ${col2}>${none} "   
