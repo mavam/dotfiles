@@ -2,6 +2,39 @@
 ##  Prompt
 ## 
 
+# TODO.
+#function left_prompt
+#{
+#    local c_user=$fg_bold[cyan]
+#    local c_at=$fg[green]
+#    local c_host=$fg_bold[cyan]
+#    local c_indicator=$fg_bold[blue]
+#
+#    local c_path=$fg[cyan]
+#    
+##    if [[ -z "$SSH_CONNECTION" ]] ; then
+##        c_at="%{$fg_bold[$2]%}"
+##        c_indicator=="%{$fg_bold[yellow]%}"
+##    fi
+#
+#    local user_and_host="%(!.$fg_bold[red]%m.$c_user%n$c_at@$c_host%m)"
+#    local indicator="$c_indicator%#"
+#
+#    export PROMPT="$user_and_host $indicator $reset_color"
+#}
+#
+#function right_prompt
+#{
+#    local status_code="%(?..$fg[red]%U%?%u)"
+#    local cwd="%(!.$fg_bold[red].$fg_bold[cyan])"
+#
+#    # FIXME: What's the right escaping mechanism to prevent '[' from being
+#    # treated as subscript parameter? When found, replace with $fg[blue][.
+#    local bb=$'%{\e[1;34m%}'
+#
+#    export RPROMPT="$status_code $bb[$cwd%35<..<%~$bb]$reset_color "
+#}
+
 function set_prompt()
 { 
     local none=$'%{\e[0m%}'

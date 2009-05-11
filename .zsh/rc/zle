@@ -89,13 +89,10 @@ autoload -U insert-files
 zle -N insert-files
 bindkey "^Xf" insert-files
 
-# we're getting closer to emacs :>
-autoload -U tetris 
-zle -N tetris
-bindkey "^Xt" tetris 
-
 # Automatic URL quoting
 autoload -U url-quote-magic
 zle -N self-insert url-quote-magic
+
+autoload -U zmv
 
 # vim: ft=zsh
