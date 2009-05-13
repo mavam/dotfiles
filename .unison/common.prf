@@ -14,6 +14,11 @@ auto = true
 log = false
 
 # Merge conflicting files
-#merge = Name *.* -> diff3 CURRENT1 CURRENTARCH CURRENT2 -m > NEW
+merge = Name * -> /Applications/MacVim.app/Contents/MacOS/Vim -g CURRENT1 CURRENT2 CURRENTARCHOPT
+backupcurrent = Name *
+maxbackups = 10
 
-# vim: ft=sh
+# Do not sync these files.
+ignore = Name *.{o,pyc}
+
+# vim: ft=sh tw=0
