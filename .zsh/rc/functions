@@ -140,6 +140,8 @@ beer()
 # the OS provides. Newer versions of screen support vertical split, layouts, ...
 s()
 {
+    ssh-grab
+    
     local version=${$(screen -v)[(w)3]%.*}
     local screenrc="$HOME/.screenrc.modern"
 
