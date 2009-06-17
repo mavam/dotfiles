@@ -80,6 +80,11 @@ nnoremap <F2> :set list!<CR>
 " F4: Toggle past mode.
 set pastetoggle=<F4>
 
+" Switching to hex mode.
+nnoremap <C-H> :Hexmode<CR>
+inoremap <C-H> <Esc>:Hexmode<CR>
+vnoremap <C-H> :<C-U>Hexmode<CR>
+
 " Allow deletion without updating the clipboard (yank buffer)
 vnoremap x "_x
 vnoremap X "_X
