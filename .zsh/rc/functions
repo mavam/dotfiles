@@ -201,4 +201,10 @@ show()
 }
 alias show "noglob show"
 
+# Combining the power of tail -f and the less pager.
+ltail()
+{
+    tail -f $1 | less -S
+}
+
 # vim: ft=zsh
