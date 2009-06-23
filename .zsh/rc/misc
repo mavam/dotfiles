@@ -1,0 +1,17 @@
+# Colorize STDERR.
+zmodload zsh/terminfo zsh/system
+autoload colors is-at-least
+
+if [[ "${terminfo[colors]}" -ge 8 ]] { colors }
+
+color_err () {
+    # sysread & syswrite are part of zsh/system
+    while sysread std_err_color
+    do
+      syswrite -o 2 "${fg_bold[red]}${std_err_color}${terminfo[sgr0]}"
+    done
+}
+
+is-at-least 4.3.4 && exec 2> >( color_err )
+
+# vim: ft=zsh
