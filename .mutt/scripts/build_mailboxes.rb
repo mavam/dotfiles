@@ -11,7 +11,7 @@ ORDER = %w{
     flagged
     .list.boost
     .list.boost.spirit
-    .list.zsh-users
+    .list.zsh
     .list.screen
     .list.sup-talk
     .list.pentest

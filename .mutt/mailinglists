@@ -20,7 +20,7 @@ subscribe   zen@zshwiki.org
 
 # Security
 subscribe   (focus-ids|pen-test|wifisec)@(lists.)?securityfocus.com
-subscribe   framework-hackers@spool.metasploit.com
+subscribe   framework@spool.metasploit.com
 subscribe   botnets@whitestar.linuxbox.org
 
 # vim: ft=muttrc
