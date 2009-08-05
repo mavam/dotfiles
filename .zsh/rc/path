@@ -1,0 +1,6 @@
+# Add Ruby gem binary dirs.
+foreach dir (~/.gem/ruby/*) { [[ -d $dir/bin ]] && path=( $dir/bin $path ) }
+
+clean-path path
+
+# vim: ft=zsh
