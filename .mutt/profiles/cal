@@ -8,7 +8,7 @@ set from=vallentin@berkeley.edu
 set signature=~/.mutt/sigs/cal
 my_hdr Reply-To: Matthias Vallentin <vallentin@berkeley.edu>
 
-set smtp_url=smtps://mpm@calmail.berkeley.edu:465
+set smtp_url=smtps://mpm@calmail.berkeley.edu
 set record="=sent"
 
 # Next profile.

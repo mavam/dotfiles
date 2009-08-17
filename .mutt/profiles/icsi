@@ -4,12 +4,11 @@ set my_profile="icsi"
 # Set the profile name in the status line.
 set status_format="%_h:  [%r]  %f [total:%?M?%M/?%m%?n? new:%n?%?o? old:%o?%?d? del:%d?%?F? flag:%F?%?t? tag:%t?%?p? post:%p?%?b? inc:%b?%?l? %l?]       (%s/%S)%> [profile: $my_profile] [%P]   "
 
-
 set from=vallentin@icsi.berkeley.edu
 set signature=~/.mutt/sigs/icsi
 my_hdr Reply-To: Matthias Vallentin <vallentin@icsi.berkeley.edu>
 
-set smtp_url=smtps://mpm@calmail.berkeley.edu:465
+set smtp_url=smtps://mpm@calmail.berkeley.edu
 set record="=sent"
 
 # Next profile.

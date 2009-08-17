@@ -23,6 +23,7 @@ ORDER = %w{
     .devnull
     health
     private
+    airjaldi
     EECS
     UCB
     ICSI
@@ -41,4 +42,4 @@ ORDER = %w{
 dirs = Dir.entries(MAILDIR)
 mboxes = dirs.sort_by {|dir| ORDER.index(dir) || dirs.index(dir) + ORDER.size} 
 
-puts mboxes.reject {|box| box[/^(\.){1,2}$/]}.map {|box| "\"=#{box}\""}.join(' ')
+puts mboxes.reject {|box| box[/^(\.){1,2}$/]}.map {|box| "\"=#{box}\""} * " "
