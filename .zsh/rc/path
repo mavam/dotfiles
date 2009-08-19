@@ -1,5 +1,7 @@
 # Add Ruby gem binary dirs.
-foreach dir (~/.gem/ruby/*) { [[ -d $dir/bin ]] && path=( $dir/bin $path ) }
+if [[ -d ~/.gem ]]; then
+    foreach dir (~/.gem/ruby/*) { [[ -d $dir/bin ]] && path=( $dir/bin $path ) }
+fi
 
 clean-path path
 
