@@ -17,16 +17,23 @@ if whence locale > /dev/null; then
     fi
 fi
 
-# Takes multiple arguments to create $BROPATH. The first argument must
-# contain the Bro build directory where the src/bro binary is located.
-function bro_setup
-{ 
-    export BRO="$1/src/bro"
-    export BROPATH="."
-    for i in "$@"; do
-        export BROPATH="$BROPATH:$i:$i/policy:$i/policy/local:$i/policy/sigs:/usr/local/bro/lib/"
-    done
+# Sets the $BROPATH environment variable
+function bro_path
+{
+    export BROPATH="$1:$1/sigs:$1/site:$1/time-machine"
     echo $BROPATH
+}
+
+function bro_source
+{ 
+    path=( $1/src $path )
+    bro_path "$1/policy"
+}
+
+function bro_root
+{
+    path=( $1/bin $path )
+    bro_path "$1/share/bro"
 }
 
 # TeX inputs.
