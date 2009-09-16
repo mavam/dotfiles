@@ -31,7 +31,7 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 if [[ -x $(whence -p gem1.9) ]]; then
     gem=gem1.9 
 elif [[ -x $(whence -p gem) ]]; then
-    gem = gem
+    gem=gem
 fi
 
 if [[ -n $gem ]]; then
