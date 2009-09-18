@@ -1,6 +1,6 @@
 # Roots of the synchronisation.
 root = /Users/mavam
-root = ssh://login.icsi.berkeley.edu/mavam
+root = ssh://shogun.local
 
 # If any new preferences are added by Unison (e.g. 'ignore' preferences
 # added via the graphical UI), then store them in the file 'common'
