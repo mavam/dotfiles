@@ -51,10 +51,9 @@ function _setup_agent
     [[ -x $HOME/bin/keychain ]] && kc_bin=$HOME/bin/keychain # Trust only ~/bin.
 
 	if [[ -n $kc_bin ]]; then
-	    local identities=~/.ssh/identities/*~*.pub
-
-        if [[ -n $identities ]]; then
-            $kc_bin -q --host fixed ($identities)
+	    local identities=$HOME/.ssh/identities
+        if [[ -n $identities/*~*pub ]]; then
+            $kc_bin -q --host fixed $identities/*~*pub
             source ~/.keychain/fixed-sh
         fi
 	fi

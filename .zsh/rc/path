@@ -3,6 +3,4 @@ if [[ -d ~/.gem ]]; then
     foreach dir (~/.gem/ruby/*) { [[ -d $dir/bin ]] && path=( $dir/bin $path ) }
 fi
 
-clean-path path
-
 # vim: ft=zsh

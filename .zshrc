@@ -1,6 +1,6 @@
-##
-##  Environment
-##
+#
+# zsh 
+#
 
 umask 022
 
@@ -9,22 +9,6 @@ umask 022
 (( ${+OSVERSION} )) || export OSVERSION="${OSTYPE#$OS}"
 (( ${+OSMAJOR} ))   || export OSMAJOR="${OSVERSION%%.*}"
 (( ${+HOSTNAME} ))  || export HOSTNAME=$(uname -n)
-
-# Removes non-existent directories from an array.
-clean-path ()
-{             
-    local element
-    local build
-    build=()
-    # Make sure that this works even with variables containing IFS characters,
-    # if you're crazy enough to setopt shwordsplit.
-    eval '
-    foreach element in "$'"$1"'[@]"; do
-        [[ -d "$element" ]] && build=("$build[@]" "$element")
-    done
-    '"$1"'=( "$build[@]" )
-    '
-}
 
 # Automatically remove duplicates from these arrays.
 typeset -U path cdpath fpath manpath
@@ -43,7 +27,6 @@ path=(
     /usr/ucb            # SunOS
     /usr/sww/bin        # SunOS
 )
-clean-path path
 
 manpath=(
     $manpath
@@ -51,7 +34,6 @@ manpath=(
     /usr/local/man
     /usr/man
 )
-clean-path manpath
 
 # Function path
 fpath=(~/.zsh/completions $fpath)
@@ -59,10 +41,6 @@ fpath=(~/.zsh/completions $fpath)
 # Load the completion system
 autoload -U compinit
 compinit -u
-
-##
-##  Resource files
-##
 
 # Source os specific files.
 case ${OS} in
@@ -73,5 +51,26 @@ esac
 # Source general files.
 for i (~/.zsh/rc/*) { source $i }
 
-# At last, source user specific files.
+# Source user specific files.
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
+
+# Removes non-existent directories from an array.
+clean-path ()
+{             
+    local element
+    local build
+    build=()
+    # Make sure that this works even with variables containing IFS characters,
+    # if you're crazy enough to setopt shwordsplit.
+    eval '
+    foreach element in "$'"$1"'[@]"; do
+        [[ -d "$element" ]] && build=("$build[@]" "$element")
+    done
+    '"$1"'=( "$build[@]" )
+    '
+}
+
+# Finally, clean path variables.
+clean-path path
+clean-path manpath
+clean-path fpath
