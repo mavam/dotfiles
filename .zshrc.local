@@ -24,13 +24,15 @@ function bro_path
     echo $BROPATH
 }
 
+# Set up a Bro source tree.
 function bro_source
 { 
     path=( $1/src $path )
     bro_path "$1/policy"
 }
 
-function bro_root
+# Set up a prefix where Bro is installed.
+function bro_prefix
 {
     path=( $1/bin $path )
     bro_path "$1/share/bro"
@@ -46,18 +48,13 @@ function bro_root
 function _setup_agent
 {
     local kc_bin
-
-    # Trust only ~/bin.
-    [[ -x $HOME/bin/keychain ]] && kc_bin=$HOME/bin/keychain
+    [[ -x $HOME/bin/keychain ]] && kc_bin=$HOME/bin/keychain # Trust only ~/bin.
 
 	if [[ -n $kc_bin ]]; then
-        local ssh_keys
-        if [[ -n ~/.ssh/identities/*~*.pub ]]; then
-            ssh_keys=(~/.ssh/identities/*~*.pub)
-        fi
+	    local identities=~/.ssh/identities/*~*.pub
 
-        if [[ -n $ssh_keys ]]; then
-            $kc_bin -q --host fixed $ssh_keys
+        if [[ -n $identities ]]; then
+            $kc_bin -q --host fixed ($identities)
             source ~/.keychain/fixed-sh
         fi
 	fi

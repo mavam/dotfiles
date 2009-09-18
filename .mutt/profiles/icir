@@ -10,7 +10,7 @@ my_hdr Reply-To: Matthias Vallentin <vallentin@icir.org>
 
 # Mutt says: "No authenticators available", something with the TLS/SSL
 # configuration seems to have changed...we temporarily swith to GMails SMTP
-#set smtp_url=smtps://mpm@calmail.berkeley.edu
+#set smtp_url=smtps://mavam@calmail.berkeley.edu:465
 #set record="=sent"
 set smtp_url=smtps://matthias.vallentin@smtp.gmail.com
 unset record
