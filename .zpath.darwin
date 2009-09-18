@@ -1,0 +1,17 @@
+# 
+# MacOS specific path settings
+#
+
+# MacTeX binaries.
+[[ -d /usr/texbin ]] && path=( $path /usr/texbin )
+
+# Apple's X11 binaries.
+[[ -d /usr/X11R6/bin ]] && path=( $path /usr/X11R6/bin )
+
+# Default MacPorts installations.
+if [[ -d /opt/local ]] ; then 
+    path=( /opt/local/bin /opt/local/sbin $path )
+    manpath=( /opt/local/share/man $manpath )
+fi
+
+# vim: ft=zsh

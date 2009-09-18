@@ -1,25 +1,10 @@
-# =========================
-#  MacOS specific settings
-# =========================
+# 
+# MacOS resource files.
+#
 
 # MacVIM alias.
 if [[ -d /Applications/MacVim.app ]]; then
     alias gvim='/Applications/MacVim.app/Contents/MacOS/Vim -g'
 fi
-
-# Include MacTeX binaries.
-[[ -d /usr/texbin ]] && path=( $path /usr/texbin )
-
-# Include Apple's X11 binaries.
-[[ -d /usr/X11R6/bin ]] && path=( $path /usr/X11R6/bin )
-
-# Initialize default MacPorts installations.
-if [[ -d /opt/local ]] ; then 
-    path=( /opt/local/bin /opt/local/sbin $path )
-    manpath=( /opt/local/share/man $manpath )
-fi
-
-# Initialize default Fink installations.
-[[ -f /sw/bin/init.sh ]] && source /sw/bin/init.sh
 
 # vim: ft=zsh
