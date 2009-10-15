@@ -1,5 +1,5 @@
 *HTML.txt*	Set of HTML/XHTML macros, menus and toolbar buttons.
-		Last change: 2008 May 09
+		Last change: 2009 Sep 21
 		Author: Christian J. Robinson
 
 						*HTML.vim* *HTML-macros*
@@ -59,8 +59,10 @@ example, if you're within <I></I> and type |;em| it will assume you want
 
 							*i_;&*
 ;&	The HTML |character-entities| insert mode mappings start with &, so
-	typing ;& in insert mode will insert a literal & character.  (See
-	|n_;&|)
+	typing ;& in insert mode will insert a literal & character.
+	(In actuality this mapping is defined as |g:html_map_leader| +
+	|g:html_map_entity_leader| to insert whatever is in
+	|g:html_map_entity_leader|.) (See also |n_;&|)
 
 				*html-<Tab>* *html-tab* *html-CTRL-I*
 				*i_html-<Tab>* *i_html-tab* *i_html-CTRL-I*
@@ -158,10 +160,44 @@ variable is ignored if you have set |g:do_xhtml_mappings|.  e.g.: >
 *g:html_map_leader*
 This variable can be set to the character you want for the leader of the
 mappings defined under |html-tags|, the default being ';'.  This variable must
-be set before HTML.vim is sourced.  There is no way to modify the mappings for
-the character entity mappings, which are prefixed with '&'.  You can set this
-to your |mapleader| or |maplocalleader|.  e.g.: >
+be set before HTML.vim is sourced.  You can set this to your |mapleader| or
+|maplocalleader|.  e.g.: >
 	:let g:html_map_leader = g:maplocalleader
+
+*g:html_map_entity_leader*
+This variable can be set to the character you want for the leader of the
+character entity insert mode mappings defined under |character-entities|, the
+default being '&'.  This variable must be set before HTML.vim is sourced.  If
+you attempt to set this to the same value as |g:html_map_leader| you will get
+an error.  e.g.: >
+	:let g:html_map_entity_leader = '\'
+
+*g:no_html_map_override*
+Set this variable to a nonzero value if you do not want this plugin to
+override mappings that already exist.  When this variable is not set you will
+get a warning message when this plugin overrides a mapping.  This variable
+must be set before HTML.vim is sourced.  e.g.: >
+	:let g:no_html_map_override = 'yes'
+
+This only applies to the mappings defined internally to the plugin.  If you
+call the |HTMLmap()| function elsewhere you will still get a warning message
+when there's an already existing mapping and the mapping will still be
+overridden.
+
+*g:no_html_maps* *b:no_html_maps*
+Set this variable a regular expression to match against mappings.  If a
+mapping to be defined matches this regular expression it will not be defined.
+You can also set this on a per-buffer basis by using b:no_html_maps instead.
+The patterns are case sensitive, will not undergo |g:html_map_leader| and
+|g:html_map_entity_leader| substitution, and must be set before HTML.vim is
+sourced.  e.g., to suppress the <A HREF>, <IMG SRC> and the centered headers
+tags: >
+	:let g:no_html_maps = '^\(;ah\|;im\|;H\d\)$'
+
+This only applies to the mappings defined internally to the plugin.  If you
+call the |HTMLmap()| function elsewhere the mapping will be defined even if it
+matches this regular expression.  This is useful if you wish to define custom
+variants of some of the plugin's mappings without getting warning messages.
 
 *g:no_html_tab_mapping*
 Set this variable to a nonzero value if you do not want the tab key to be
@@ -169,6 +205,9 @@ mapped in normal, visual and insert mode.  ;<Tab> will be used instead.  See
 |html-tab| and |i_;tab|.  This variable must be set before HTML.vim is sourced
 for the current buffer.  e.g.: >
 	:let g:no_html_tab_mapping = 'yes'
+
+Note that you can suppress the defining of both <Tab> and ;<Tab> as a mapping
+by adding "\t" to |g:no_html_maps| instead.
 
 *g:no_html_toolbar*
 Set this variable to a nonzero value if you do not want this plugin to modify
@@ -200,7 +239,7 @@ See |html-template-tokens| for special tokens you can use within the template.
 *g:html_authorname* *g:html_authoremail*
 Within the internal template, html_authorname is inserted inside
 <META NAME="Author" CONTENT="...">
-html_authoremail is converted to |g:html_authoremail_encoded| and inserted
+g:html_authoremail is converted to |g:html_authoremail_encoded| and inserted
 inside <LINK REV="made" HREF="mailto:...">  e.g.: >
 	:let g:html_authorname  = 'John Smith'
 	:let g:html_authoremail = 'jsmith@example.com'
@@ -321,8 +360,7 @@ You would get something like: >
 	buffer or the colors menu wasn't defined.  {only in the GUI}
 
 							*n_;#* *i_;#*
-;#	A shortcut mapping to call |:ColorSelect|.  This mapping is not
-	defined unless the GUI is running.
+;#	A shortcut mapping to call |:ColorSelect|.  {only in the GUI}
 
 ==============================================================================
 4. Mappings for Normal <> Tags				*html-tags*
@@ -517,9 +555,14 @@ another character of your preference.  See |g:html_map_leader|.
 	CONTENT="here"> and places the cursor on the second " of NAME="".  If
 	this is used in insert mode rather than visual mode, the contents of
 	the |clipboard| are placed between the quotes. (|n_;|)
+							*i_;mh* *v_;mh* *n_;mh*
+;mh	Meta http-equiv (<META HTTP-EQUIV="" CONTENT="").  Places the cursor
+	on the second " of HTTP-EQUIV="".  Visual mode puts the visually
+	selected text <META HTTP-EQUIV="" CONTENT="here">. (|n_;|)
 							*n_;mi* *i_;mi*
 ;mi	Automatically add or update the WIDTH and HEIGHT attributes of an
-	<IMG> tag.
+	<IMG> tag.  If the <IMG> tag spans multiple lines the cursor must be
+	on the first line of the tag.
 
 	This mapping is only defined if MangleImageTag.vim is installed,
 	available with installation instructions here:
@@ -661,6 +704,9 @@ characters into the HTML buffer.  These are known as characters entities.
 	their &#...; entities, where "..." is equivalent to the ASCII decimal
 	representation.  For example, "foo bar" would become
 	"&#102;&#111;&#111;&#32;&#98;&#97;&#114;". (See |i_;&|) (|n_;|)
+
+	(Note that the "&" in this mapping is not translated to whatever
+	|g:html_map_entity_leader| is set to.)
 							*n_;%* *v_;%*
 ;%	This mapping converts the motion or visually selected characters to
 	their %XX hexadecimal string for URIs.  For example, "foo bar" would
@@ -676,6 +722,9 @@ multiple reasons.  Use ;&l or ;%l to emulate the old behavior.
 
 
 The following mappings work in insert mode only.
+
+Note that you can change the leader character for these mappings from '&' to
+another character of your preference.  See |g:html_map_entity_leader|.
 
 Name:			HTML:		Macro:
 --------------------------------------------------------------------
@@ -765,6 +814,7 @@ C-cedilla		&Ccedil;	&C,		*i_&C,*
 c-cedilla		&ccedil;	&c,		*i_&c,*
 O-slash			&Oslash;	&O/		*i_&O/*
 o-slash			&oslash;	&o/		*i_&o/*
+Szlig			&szlig;		&sz		*i_&sz*
 Left single arrow	&larr;		&la		*i_&la*
 Right single arrow	&rarr;		&ra		*i_&ra*
 Up single arrow		&uarr;		&ua		*i_&ua*
@@ -840,14 +890,48 @@ You can use a browser to preview your current HTML document.  (See
 |html-author-notes|)
 
 
-For Windows:
+
+For Windows:				*browser-control-windows*
 								*n_;db*
 ;db	Call the default browser on the current file.
 								*n_;ie*
 ;ie	Call Explorer on the current file.
 
 
-For Unix:
+For Mac OS X:				*browser-control-macos*
+
+The following mappings are only defined if you have properly installed the
+browser_launcher.vim script, available with installation instructions here:
+http://www.infynity.spodzone.com/vim/HTML/
+
+Opening new tabs and windows depends on the built-in Graphic User Interface
+Scripting architecture of Mac OS X which comes disabled by default. You can
+activate GUI Scripting by selecting the checkbox "Enable access for assistive
+devices" in the Universal Access preference pane.
+								*n_;db*
+;db	Call the default browser on the current file.
+								*n_;ff*
+;ff	Make Firefox view the current file, starting Firefox if it is not
+	running.
+								*n_;nff*
+;nff	Same as |;ff|, but start a new browser window.
+								*n_;tff*
+;tff	Same as |;nff|, but open a new tab.
+								*n_;oa*
+;oa	Make Opera view the current file, starting Opera if it is not running.
+								*n_;noa*
+;noa	Same as |;oa|, but start a new browser window.
+								*n_;toa*
+;toa	Same as |;noa|, but open a new tab.
+								*n_;sf*
+;sf	Make Safari view the current file, starting Safari if it is not running.
+								*n_;nsf*
+;nsf	Same as |;sf|, but start a new browser window.
+								*n_;tsf*
+;tsf	Same as |;nsf|, but open a new tab.
+
+
+For Unix:				*browser-control-unix*
 
 The following mappings are only defined if you have properly installed the
 browser_launcher.vim script, available with installation instructions here:
@@ -931,6 +1015,9 @@ HTMLmap({maptype}, {lhs}, {rhs} [, {re-indent}])	*HTMLmap()*
 
 	If {lhs} starts with "<lead>" that string will replaced with the
 	contents of |g:html_map_leader|.
+
+	If {lhs} starts with "<elead>" that string will replaced with the
+	contents of |g:html_map_entity_leader|.
 
 	Any text in {rhs} that is enclosed by [{}] will be converted to
 	uppercase/lowercase according to the |g:html_tag_case| variable, and

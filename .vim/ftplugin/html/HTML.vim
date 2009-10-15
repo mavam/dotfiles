@@ -1,9 +1,9 @@
 " ---- Author & Copyright: ---------------------------------------------- {{{1
 "
-" Author:      Christian J. Robinson <infynity@onewest.net>
+" Author:      Christian J. Robinson <heptite@gmail.com>
 " URL:         http://www.infynity.spodzone.com/vim/HTML/
-" Last Change: May 09, 2008
-" Version:     0.34.2
+" Last Change: September 19, 2009
+" Version:     0.36.1
 " Original Concept: Doug Renze
 "
 "
@@ -52,7 +52,7 @@
 " - Add :HTMLmappingsreload/html/xhtml to the HTML menu?
 "
 " ---- RCS Information: ------------------------------------------------- {{{1
-" $Id: HTML.vim,v 1.187 2008/05/10 00:18:51 infynity Exp $
+" $Id: HTML.vim,v 1.210 2009/09/19 19:43:45 infynity Exp $
 " ----------------------------------------------------------------------- }}}1
 
 " ---- Initialization: -------------------------------------------------- {{{1
@@ -149,16 +149,11 @@ function! SetIfUnset(var, ...)
     echohl None
     return -1
   else
-    let i = 2
-    let val = a:1
-    while i <= a:0
-      execute "let val = val . ' ' . a:" . i
-      let i = i + 1
-    endwhile
+    let val = join(a:000, ' ')
   endif
 
   if ! s:IsSet(var)
-    if (val == "-")
+    if val == "-"
       execute "let " . var . "= \"\""
     else
       execute "let " . var . "= val"
@@ -185,18 +180,28 @@ endfunction  "}}}3
 
 command! -nargs=+ SetIfUnset call SetIfUnset(<f-args>)
 
-SetIfUnset g:html_bgcolor         #FFFFFF
-SetIfUnset g:html_textcolor       #000000
-SetIfUnset g:html_linkcolor       #0000EE
-SetIfUnset g:html_alinkcolor      #FF0000
-SetIfUnset g:html_vlinkcolor      #990066
-SetIfUnset g:html_tag_case        uppercase
-SetIfUnset g:html_map_leader      ;
-SetIfUnset g:html_default_charset iso-8859-1
+SetIfUnset g:html_bgcolor           #FFFFFF
+SetIfUnset g:html_textcolor         #000000
+SetIfUnset g:html_linkcolor         #0000EE
+SetIfUnset g:html_alinkcolor        #FF0000
+SetIfUnset g:html_vlinkcolor        #990066
+SetIfUnset g:html_tag_case          uppercase
+SetIfUnset g:html_map_leader        ;
+SetIfUnset g:html_map_entity_leader &
+SetIfUnset g:html_default_charset   iso-8859-1
 " No way to know sensible defaults here so just make sure the
 " variables are set:
 SetIfUnset g:html_authorname  -
 SetIfUnset g:html_authoremail -
+
+if g:html_map_entity_leader ==# g:html_map_leader
+  echohl ErrorMsg
+  echomsg 'ERROR! "g:html_map_entity_leader" and "g:html_map_leader" have the same value!'
+  echomsg '       Resetting "g:html_map_entity_leader" to "&".'
+  echohl None
+  sleep 2
+  let g:html_map_entity_leader = '&'
+endif
 
 if exists('b:html_tag_case')
   let b:html_tag_case_save = b:html_tag_case
@@ -211,7 +216,7 @@ else
   let b:do_xhtml_mappings = 0
 
   if s:BoolVar('g:html_tag_case_autodetect')
-        \ && (line('$') != 1 || getline(1) != "")
+        \ && (line('$') != 1 || getline(1) != '')
 
     let s:found_upper = search('\C<\(\s*/\)\?\s*\u\+\_[^<>]*>', 'wn')
     let s:found_lower = search('\C<\(\s*/\)\?\s*\l\+\_[^<>]*>', 'wn')
@@ -277,7 +282,7 @@ endfunction
 
 " HTMLmap()  {{{2
 "
-" Define the HTML mappings with the appropriate case, plus some extra stuff:
+" Define the HTML mappings with the appropriate case, plus some extra stuff.
 "
 " Arguments:
 "  1 - String:  Which map command to run.
@@ -291,26 +296,27 @@ endfunction
 "                 2: re-selects the region and re-indents.
 "                 (Don't use these two arguments for maps that enter insert
 "                 mode!)
-let s:modes{'n'} = 'normal'
-let s:modes{'v'} = 'visual'
-let s:modes{'o'} = 'operator-pending'
-let s:modes{'i'} = 'insert'
-let s:modes{'c'} = 'command-line'
-let s:modes{'l'} = 'langmap'
+let s:modes = {
+      \ 'n': 'normal',
+      \ 'v': 'visual',
+      \ 'o': 'operator-pending',
+      \ 'i': 'insert',
+      \ 'c': 'command-line',
+      \ 'l': 'langmap',
+    \}
 function! HTMLmap(cmd, map, arg, ...)
   let mode = strpart(a:cmd, 0, 1)
-  if exists('s:modes{mode}') && maparg(a:map, mode) != ''
-    echohl WarningMsg
-    echomsg "WARNING: A mapping to \"" . a:map . "\" already exists for " . s:modes{mode} . " mode."
-    echohl None
+  let map = substitute(a:map, '^<lead>\c', escape(g:html_map_leader, '&~\'), '')
+  let map = substitute(map, '^<elead>\c', escape(g:html_map_entity_leader, '&~\'), '')
+
+  if exists('s:modes[mode]') && s:MapCheck(map, mode) >= 2
+    return
   endif
 
-  let arg = s:HTMLconvertCase(a:arg)
+  let arg = s:ConvertCase(a:arg)
   if ! s:BoolVar('b:do_xhtml_mappings')
-    let arg = substitute(arg, ' />', '>', 'g')
+    let arg = substitute(arg, ' \?/>', '>', 'g')
   endif
-
-  let map = substitute(a:map, '^<lead>\c', g:html_map_leader, '')
 
   if mode == 'v'
     " If 'selection' is "exclusive" all the visual mode mappings need to
@@ -321,7 +327,7 @@ function! HTMLmap(cmd, map, arg, ...)
       execute a:cmd . " <buffer> <silent> " . map . " " . arg
     elseif a:0 >= 1 && a:1 >= 1
       execute a:cmd . " <buffer> <silent> " . map . " <C-C>:call <SID>TO(0)<CR>gv" . arg
-        \ . ":call <SID>TO(1)<CR>m':call <SID>HTMLreIndent(line(\"'<\"), line(\"'>\"), " . a:1 . ")<CR>``"
+        \ . ":call <SID>TO(1)<CR>m':call <SID>ReIndent(line(\"'<\"), line(\"'>\"), " . a:1 . ")<CR>``"
     elseif a:0 >= 1
       execute a:cmd . " <buffer> <silent> " . map . " <C-C>:call <SID>TO(0)<CR>gv" . arg
         \ . "<C-O>:call <SID>TO(1)<CR>"
@@ -333,20 +339,20 @@ function! HTMLmap(cmd, map, arg, ...)
     execute a:cmd . " <buffer> <silent> " . map . " " . arg
   endif
 
-  if exists('s:modes{mode}')
+  if exists('s:modes[mode]')
     let b:HTMLclearMappings = b:HTMLclearMappings . ':' . mode . "unmap <buffer> " . map . "\<CR>"
   else
     let b:HTMLclearMappings = b:HTMLclearMappings . ":unmap <buffer> " . map . "\<CR>"
   endif
 
-  call s:HTMLextraMappingsAdd(':call HTMLmap("' . a:cmd . '", "' . escape(a:map, '"\')
+  call s:ExtraMappingsAdd(':call HTMLmap("' . a:cmd . '", "' . escape(a:map, '"\')
         \ . '", "' . escape(a:arg, '"\') . (a:0 >= 1 ? ('", ' . a:1) : '"' ) . ')')
 endfunction
 
 " HTMLmapo()  {{{2
 "
 " Define a map that takes an operator to its corresponding visual mode
-" mapping:
+" mapping.
 "
 " Arguments:
 "  1 - String:  The mapping.
@@ -356,13 +362,52 @@ endfunction
 function! HTMLmapo(map, insert)
   let map = substitute(a:map, "^<lead>", g:html_map_leader, '')
 
+  if s:MapCheck(map, 'o') >= 2
+    return
+  endif
+
   execute 'nnoremap <buffer> <silent> ' . map
     \ . " :let b:htmltagaction='" . map . "'<CR>"
     \ . ":let b:htmltaginsert=" . a:insert . "<CR>"
     \ . ':set operatorfunc=<SID>WR<CR>g@'
 
   let b:HTMLclearMappings = b:HTMLclearMappings . ":nunmap <buffer> " . map . "\<CR>"
-  call s:HTMLextraMappingsAdd(':call HTMLmapo("' . escape(a:map, '"\') . '", ' . a:insert . ')')
+  call s:ExtraMappingsAdd(':call HTMLmapo("' . escape(a:map, '"\') . '", ' . a:insert . ')')
+endfunction
+
+" s:MapCheck()  {{{2
+"
+" Check to see if a mapping for a mode already exists.  If there is, and
+" overriding hasn't been suppressed, print an error.
+"
+" Arguments:
+"  1 - String:    The map sequence (LHS).
+"  2 - Character: The mode for the mapping.
+" Return Value:
+"  0 - No mapping was found.
+"  1 - A mapping was found, but overriding has /not/ been suppressed.
+"  2 - A mapping was found and overriding has been suppressed.
+"  3 - The mapping to be defined was suppressed by g:no_html_maps.
+"
+" (Note that suppression only works for the internal mappings.)
+function! s:MapCheck(map, mode)
+  if exists('s:doing_internal_html_mappings') &&
+        \ ( (exists('g:no_html_maps') && a:map =~# g:no_html_maps) ||
+        \   (exists('b:no_html_maps') && a:map =~# b:no_html_maps) )
+    return 3
+  elseif exists('s:modes[a:mode]') && maparg(a:map, a:mode) != ''
+    if s:BoolVar('g:no_html_map_override') && exists('s:doing_internal_html_mappings')
+      return 2
+    else
+      echohl WarningMsg
+      echomsg "WARNING: A mapping to \"" . a:map . "\" for " . s:modes[a:mode] . " mode has been overridden for this buffer."
+      echohl None
+
+      return 1
+    endif
+  endif
+
+  return 0
 endfunction
 
 " s:WR()  {{{2
@@ -392,14 +437,14 @@ function! s:WR(type)
   "unlet b:htmltagaction b:htmltaginsert
 endfunction
 
-" s:HTMLextraMappingsAdd()  {{{2
+" s:ExtraMappingsAdd()  {{{2
 "
-" Add to the b:HTMLextraMappings variable if necessary:
+" Add to the b:HTMLextraMappings variable if necessary.
 "
 " Arguments:
 "  1 - String: The command necessary to re-define the mapping.
-function! s:HTMLextraMappingsAdd(arg)
-  if ! exists('s:doing_internal_html_mappings')
+function! s:ExtraMappingsAdd(arg)
+  if ! exists('s:doing_internal_html_mappings') && ! exists('s:doing_extra_html_mappings')
     if ! exists('b:HTMLextraMappings')
       let b:HTMLextraMappings = ''
     endif
@@ -411,7 +456,7 @@ endfunction
 "
 " Used to make sure the 'showmatch', 'indentexpr', and 'formatoptions' options
 " are off temporarily to prevent the visual mappings from causing a
-" (visual)bell or inserting improperly:
+" (visual)bell or inserting improperly.
 "
 " Arguments:
 "  1 - Integer: 0 - Turn options off.
@@ -445,7 +490,7 @@ endfunction
 " s:TC()  {{{2
 "
 " Used to make sure the 'comments' option is off temporarily to prevent
-" certain mappings from inserting unwanted comment leaders:
+" certain mappings from inserting unwanted comment leaders.
 "
 " Arguments:
 "  1 - Integer: 0 - Turn options off.
@@ -461,7 +506,7 @@ endfunction
 " s:VI() {{{2
 "
 " Used by HTMLmap() to enter insert mode in Visual mappings in the right
-" place, depending on what 'selection' is set to:
+" place, depending on what 'selection' is set to.
 "
 " Arguments:
 "   None
@@ -475,31 +520,31 @@ function! s:VI()
   endif
 endfunction
 
-" s:HTMLconvertCase()  {{{2
+" s:ConvertCase()  {{{2
 "
 " Convert special regions in a string to the appropriate case determined by
-" b:html_tag_case
+" b:html_tag_case.
 "
 " Arguments:
 "  1 - String: The string with the regions to convert surrounded by [{...}].
 " Return Value:
 "  The converted string.
-function! s:HTMLconvertCase(str)
+function! s:ConvertCase(str)
   if (! exists('b:html_tag_case')) || b:html_tag_case =~? 'u\(pper\(case\)\?\)\?' || b:html_tag_case == ''
     let str = substitute(a:str, '\[{\(.\{-}\)}\]', '\U\1', 'g')
   elseif b:html_tag_case =~? 'l\(ower\(case\)\?\)\?'
     let str = substitute(a:str, '\[{\(.\{-}\)}\]', '\L\1', 'g')
   else
     echohl WarningMsg
-    echomsg "b:html_tag_case = '" . b:html_tag_case . "' invalid, overriding to 'upppercase'."
+    echomsg "WARNING: b:html_tag_case = '" . b:html_tag_case . "' invalid, overriding to 'upppercase'."
     echohl None
     let b:html_tag_case = 'uppercase'
-    let str = s:HTMLconvertCase(a:str)
+    let str = s:ConvertCase(a:str)
   endif
   return str
 endfunction
 
-" s:HTMLreIndent()  {{{2
+" s:ReIndent()  {{{2
 "
 " Re-indent a region.  (Usually called by HTMLmap.)
 "  Nothing happens if filetype indenting isn't enabled or 'indentexpr' is
@@ -510,7 +555,7 @@ endfunction
 "  2 - Integer: End of region.
 "  3 - Integer: 1: Add an extra line below the region to re-indent.
 "               *: Don't add an extra line.
-function! s:HTMLreIndent(first, last, extraline)
+function! s:ReIndent(first, last, extraline)
   " To find out if filetype indenting is enabled:
   let save_register = @x
   redir @x | silent! filetype | redir END
@@ -576,7 +621,7 @@ endfunction
 "       tab is successively pressed
 function! HTMLnextInsertPoint(...)
   let saveerrmsg  = v:errmsg
-  let v:errmsg    = ""
+  let v:errmsg    = ''
   let saveruler   = &ruler   | let &ruler=0
   let saveshowcmd = &showcmd | let &showcmd=0
   let byteoffset  = s:ByteOffset()
@@ -622,7 +667,7 @@ function! HTMLnextInsertPoint(...)
     endif
   else
     normal 0
-    silent! execute ':go ' . s:ByteOffset() - 1
+    silent! execute ':go ' . (s:ByteOffset() - 1)
     execute 'silent! normal! /<\([^ <>]\+\)\_[^<>]*>\_s*<\/\1>\|<\_[^<>]*""\_[^<>]*>\|<!--\_s*-->/;/>\_s*<\|""\|<!--\_s*-->/e' . "\<CR>"
 
     " Handle cursor positioning for comments and/or open+close tags spanning
@@ -661,38 +706,81 @@ endfunction
 " Return Value:
 "  The string to be executed to insert the tag.
 
-" -----------------------------------------------------------------------
-" s:HTMLtags{tag}{mode}{open/close} = keystrokes                      {{{
+" s:smarttags[tag][mode][open/close] = keystrokes  {{{
 "  tag        - The literal tag, without the <>'s
 "  mode       - i = insert, v = visual
+"               (no "o", because o-mappings invoke visual mode)
 "  open/close - c = When inside an equivalent tag, close then open it
 "               o = When not inside an equivalent tag
 "  keystrokes - The mapping keystrokes to execute
-let s:HTMLtags{'i'}{'i'}{'o'} = "<[{I></I}]>\<C-O>F<"
-let s:HTMLtags{'i'}{'i'}{'c'} = "<[{/I><I}]>\<C-O>F<"
-let s:HTMLtags{'i'}{'v'}{'o'} = "`>a</[{I}]>\<C-O>`<<[{I}]>"
-let s:HTMLtags{'i'}{'v'}{'c'} = "`>a<[{I}]>\<C-O>`<</[{I}]>"
-let s:HTMLtags{'em'}{'i'}{'o'} = "<[{EM></EM}]>\<C-O>F<"
-let s:HTMLtags{'em'}{'i'}{'c'} = "<[{/EM><EM}]>\<C-O>F<"
-let s:HTMLtags{'em'}{'v'}{'o'} = "`>a</[{EM}]>\<C-O>`<<[{EM}]>"
-let s:HTMLtags{'em'}{'v'}{'c'} = "`>a<[{EM}]>\<C-O>`<</[{EM}]>"
-let s:HTMLtags{'b'}{'i'}{'o'} = "<[{B></B}]>\<C-O>F<"
-let s:HTMLtags{'b'}{'i'}{'c'} = "<[{/B><B}]>\<C-O>F<"
-let s:HTMLtags{'b'}{'v'}{'o'} = "`>a</[{B}]>\<C-O>`<<[{B}]>"
-let s:HTMLtags{'b'}{'v'}{'c'} = "`>a<[{B}]>\<C-O>`<</[{B}]>"
-let s:HTMLtags{'u'}{'i'}{'o'} = "<[{U></U}]>\<C-O>F<"
-let s:HTMLtags{'u'}{'i'}{'c'} = "<[{/U><U}]>\<C-O>F<"
-let s:HTMLtags{'u'}{'v'}{'o'} = "`>a</[{U}]>\<C-O>`<<[{U}]>"
-let s:HTMLtags{'u'}{'v'}{'c'} = "`>a<[{U}]>\<C-O>`<</[{U}]>"
-let s:HTMLtags{'comment'}{'i'}{'o'} = "<!--  -->\<C-O>F "
-let s:HTMLtags{'comment'}{'i'}{'c'} = " --><!-- \<C-O>F<"
-let s:HTMLtags{'comment'}{'v'}{'o'} = "`>a -->\<C-O>`<<!-- "
-let s:HTMLtags{'comment'}{'v'}{'c'} = "`>a<!-- \<C-O>`< -->"
-let s:HTMLtags{'strong'}{'i'}{'o'} = "<[{STRONG></STRONG}]>\<C-O>F<"
-let s:HTMLtags{'strong'}{'i'}{'c'} = "<[{/STRONG><STRONG}]>\<C-O>F<"
-let s:HTMLtags{'strong'}{'v'}{'o'} = "`>a</[{STRONG}]>\<C-O>`<<[{STRONG}]>"
-let s:HTMLtags{'strong'}{'v'}{'c'} = "`>a<[{STRONG}]>\<C-O>`<</[{STRONG}]>"
-" ------------------------------------------------------------------- }}}
+let s:smarttags = {}
+let s:smarttags['i'] = {
+      \ 'i': {
+        \ 'o': "<[{I></I}]>\<C-O>F<",
+        \ 'c': "<[{/I><I}]>\<C-O>F<",
+      \ },
+      \ 'v': {
+        \ 'o': "`>a</[{I}]>\<C-O>`<<[{I}]>",
+        \ 'c': "`>a<[{I}]>\<C-O>`<</[{I}]>",
+      \ }
+    \ }
+
+let s:smarttags['em'] = {
+      \ 'i': {
+        \ 'o': "<[{EM></EM}]>\<C-O>F<",
+        \ 'c': "<[{/EM><EM}]>\<C-O>F<",
+      \ },
+      \ 'v': {
+        \ 'o': "`>a</[{EM}]>\<C-O>`<<[{EM}]>",
+        \ 'c': "`>a<[{EM}]>\<C-O>`<</[{EM}]>",
+      \ }
+    \ }
+
+let s:smarttags['b'] = {
+      \ 'i': {
+        \ 'o': "<[{B></B}]>\<C-O>F<",
+        \ 'c': "<[{/B><B}]>\<C-O>F<",
+      \},
+      \ 'v': {
+        \ 'o': "`>a</[{B}]>\<C-O>`<<[{B}]>",
+        \ 'c': "`>a<[{B}]>\<C-O>`<</[{B}]>",
+      \ }
+    \ }
+
+let s:smarttags['strong']  = {
+      \ 'i': {
+        \ 'o': "<[{STRONG></STRONG}]>\<C-O>F<",
+        \ 'c': "<[{/STRONG><STRONG}]>\<C-O>F<",
+      \},
+      \ 'v': {
+        \ 'o': "`>a</[{STRONG}]>\<C-O>`<<[{STRONG}]>",
+        \ 'c': "`>a<[{STRONG}]>\<C-O>`<</[{STRONG}]>",
+      \ }
+    \ }
+
+let s:smarttags['u'] = {
+      \ 'i': {
+        \ 'o': "<[{U></U}]>\<C-O>F<",
+        \ 'c': "<[{/U><U}]>\<C-O>F<",
+      \},
+      \ 'v': {
+        \ 'o': "`>a</[{U}]>\<C-O>`<<[{U}]>",
+        \ 'c': "`>a<[{U}]>\<C-O>`<</[{U}]>",
+      \ }
+    \ }
+
+let s:smarttags['comment'] = {
+      \ 'i': {
+        \ 'o': "<!--  -->\<C-O>F ",
+        \ 'c': " --><!-- \<C-O>F<",
+      \},
+      \ 'v': {
+        \ 'o': "`>a -->\<C-O>`<<!-- ",
+        \ 'c': "`>a<!-- \<C-O>`< -->",
+      \ }
+    \ }
+" }}}
+
 function! s:tag(tag, mode)
   let attr=synIDattr(synID(line('.'), col('.') - 1, 1), "name")
   if ( a:tag == 'i' && attr =~? 'italic' )
@@ -701,9 +789,9 @@ function! s:tag(tag, mode)
         \ || ( a:tag == 'strong' && attr =~? 'bold' )
         \ || ( a:tag == 'u' && attr =~? 'underline' )
         \ || ( a:tag == 'comment' && attr =~? 'comment' )
-    let ret=s:HTMLconvertCase(s:HTMLtags{a:tag}{a:mode}{'c'})
+    let ret=s:ConvertCase(s:smarttags[a:tag][a:mode]['c'])
   else
-    let ret=s:HTMLconvertCase(s:HTMLtags{a:tag}{a:mode}{'o'})
+    let ret=s:ConvertCase(s:smarttags[a:tag][a:mode]['o'])
   endif
   if a:mode == 'v'
     " If 'selection' is "exclusive" all the visual mode mappings need to
@@ -713,7 +801,7 @@ function! s:tag(tag, mode)
   return ret
 endfunction
 
-" s:HTMLdetectCharset()  {{{2
+" s:DetectCharset()  {{{2
 "
 " Detects the HTTP-EQUIV Content-Type charset based on Vim's current
 " encoding/fileencoding.
@@ -723,20 +811,22 @@ endfunction
 " Return Value:
 "  The value for the Content-Type charset based on 'fileencoding' or
 "  'encoding'.
-function! s:HTMLdetectCharset()
+
+" TODO: This table needs to be expanded:
+let s:charsets = {}
+let s:charsets['latin1']    = 'iso-8859-1'
+let s:charsets['utf_8']     = 'UTF-8'
+let s:charsets['utf_16']    = 'UTF-16'
+let s:charsets['shift_jis'] = 'Shift_JIS'
+let s:charsets['euc_jp']    = 'EUC-JP'
+let s:charsets['cp950']     = 'Big5'
+let s:charsets['big5']      = 'Big5'
+
+function! s:DetectCharset()
 
   if exists("g:html_charset")
     return g:html_charset
   endif
-
-  " TODO: This table needs to be expanded:
-  let charsets{'latin1'}    = 'iso-8859-1'
-  let charsets{'utf_8'}     = 'UTF-8'
-  let charsets{'utf_16'}    = 'UTF-16'
-  let charsets{'shift_jis'} = 'Shift_JIS'
-  let charsets{'euc_jp'}    = 'EUC-JP'
-  let charsets{'cp950'}     = 'Big5'
-  let charsets{'big5'}      = 'Big5'
 
   if &fileencoding != ''
     let enc=tolower(&fileencoding)
@@ -751,8 +841,8 @@ function! s:HTMLdetectCharset()
 
   let enc=substitute(enc, '\W', '_', 'g')
 
-  if charsets{enc} != ''
-    return charsets{enc}
+  if s:charsets[enc] != ''
+    return s:charsets[enc]
   endif
 
   return g:html_default_charset
@@ -767,55 +857,43 @@ endfunction
 " Return Value:
 "  None
 function! HTMLgenerateTable()
-    let byteoffset = s:ByteOffset()
+  let byteoffset = s:ByteOffset()
 
-    let rows    = inputdialog("Number of rows: ") + 0
-    let columns = inputdialog("Number of columns: ") + 0
+  let rows    = inputdialog("Number of rows: ") + 0
+  let columns = inputdialog("Number of columns: ") + 0
 
-    if (! (rows > 0 && columns > 0))
-        echo "Rows and columns must be integers."
-        return
-    endif
+  if ! (rows > 0 && columns > 0)
+    echo "Rows and columns must be integers."
+    return
+  endif
 
-    let border = inputdialog("Border width of table [none]: ") + 0
+  let border = inputdialog("Border width of table [none]: ") + 0
 
-    let r = 0
-    let c = 0
+  if border
+    execute s:ConvertCase("normal o<[{TABLE BORDER}]=" . border . ">\<ESC>")
+  else
+    execute s:ConvertCase("normal o<[{TABLE}]>\<ESC>")
+  endif
 
-    if (border)
-        execute s:HTMLconvertCase("normal o<[{TABLE BORDER}]=" . border . ">\<ESC>")
-    else
-        execute s:HTMLconvertCase("normal o<[{TABLE}]>\<ESC>")
-    endif
+  for r in range(rows)
+    execute s:ConvertCase("normal o<[{TR}]>\<ESC>")
 
-    while r < rows
-        let r = r + 1
-        let c = 0
+    for c in range(columns)
+      execute s:ConvertCase("normal o<[{TD}]>\<CR></[{TD}]>\<ESC>")
+    endfor
 
-        execute s:HTMLconvertCase("normal o<[{TR}]>\<ESC>")
+    execute s:ConvertCase("normal o</[{TR}]>\<ESC>")
+  endfor
 
-        while c < columns
-            let c = c + 1
-            execute s:HTMLconvertCase("normal o<[{TD}]>\<CR></[{TD}]>\<ESC>")
-        endwhile
+  execute s:ConvertCase("normal o</[{TABLE}]>\<ESC>")
 
-        execute s:HTMLconvertCase("normal o</[{TR}]>\<ESC>")
+  execute ":go " . (byteoffset <= 0 ? 1 : byteoffset)
 
-    endwhile
-
-    execute s:HTMLconvertCase("normal o</[{TABLE}]>\<ESC>")
-
-    if byteoffset == -1
-      go 1
-    else
-      execute ":go " . byteoffset
-    endif
-
-    normal jjj^
+  normal jjj^
 
 endfunction
 
-" s:HTMLmappingsControl()  {{{2
+" s:MappingsControl()  {{{2
 "
 " Disable/enable all the mappings defined by HTMLmap()/HTMLmapo().
 "
@@ -828,7 +906,7 @@ endfunction
 "                x/xhtml:   Reload the mapppings in XHTML mode
 " Return Value:
 "  None
-silent! function! s:HTMLmappingsControl(dowhat)
+silent! function! s:MappingsControl(dowhat)
   if ! exists('b:did_html_mappings_init')
     echohl ErrorMsg
     echomsg "The HTML mappings were not sourced for this buffer."
@@ -845,9 +923,9 @@ silent! function! s:HTMLmappingsControl(dowhat)
       silent execute b:HTMLclearMappings
       unlet b:did_html_mappings
       if exists("g:did_html_menus")
-        call s:HTMLmenuControl('disable')
+        call s:MenuControl('disable')
       endif
-    else
+    elseif ! exists('s:quiet_errors')
       echohl ErrorMsg
       echomsg "The HTML mappings are already disabled."
       echohl None
@@ -860,18 +938,20 @@ silent! function! s:HTMLmappingsControl(dowhat)
     else
       execute "source " . s:thisfile
       if exists('b:HTMLextraMappings')
-        let s:doing_internal_html_mappings = 1
+        let s:doing_extra_html_mappings = 1
         silent execute b:HTMLextraMappings
-        unlet s:doing_internal_html_mappings
+        unlet s:doing_extra_html_mappings
       endif
     endif
   elseif a:dowhat =~? '^r\(eload\|einit\)\=$'
+    let s:quiet_errors = 1
     HTMLmappings off
     let b:did_html_mappings_init=-1
     silent! unlet g:did_html_menus g:did_html_toolbar g:did_html_functions
     silent! unmenu HTML
     silent! unmenu! HTML
     HTMLmappings on
+    unlet s:quiet_errors
   elseif a:dowhat =~? '^h\(tml\)\=$'
     if exists('b:html_tag_case_save')
       let b:html_tag_case = b:html_tag_case_save
@@ -892,10 +972,10 @@ silent! function! s:HTMLmappingsControl(dowhat)
   endif
 endfunction
 
-command! -nargs=1 HTMLmappings call <SID>HTMLmappingsControl(<f-args>)
+command! -nargs=1 HTMLmappings call <SID>MappingsControl(<f-args>)
 
 
-" s:HTMLmenuControl()  {{{2
+" s:MenuControl()  {{{2
 "
 " Disable/enable the HTML menu and toolbar.
 "
@@ -906,7 +986,7 @@ command! -nargs=1 HTMLmappings call <SID>HTMLmappingsControl(<f-args>)
 "                "enable": Enable the menu and toolbar
 " Return Value:
 "  None
-function! s:HTMLmenuControl(...)
+function! s:MenuControl(...)
   if a:0 > 0
     if a:1 !~? '^\(dis\|en\)able$'
       echoerr "Invalid argument: " . a:1
@@ -934,18 +1014,31 @@ function! s:HTMLmenuControl(...)
     endif
     if exists('b:did_html_mappings_init') && ! exists('b:did_html_mappings')
       amenu enable HTML
-      amenu enable HTML.Enable\ Mappings
+      amenu disable HTML.Control.*
+      amenu enable HTML.Control
+      amenu enable HTML.Control.Enable\ Mappings
+      amenu enable HTML.Control.Reload\ Mappings
     endif
   elseif bool == 'enable' || exists("b:did_html_mappings_init")
     amenu enable HTML
     if exists("b:did_html_mappings")
       amenu enable HTML.*
-      amenu disable HTML.Enable\ Mappings
+      amenu enable HTML.Control.*
+      amenu disable HTML.Control.Enable\ Mappings
+
+      if s:BoolVar('b:do_xhtml_mappings')
+        amenu disable HTML.Control.Switch\ to\ XHTML\ mode
+        amenu enable  HTML.Control.Switch\ to\ HTML\ mode
+      else
+        amenu enable  HTML.Control.Switch\ to\ XHTML\ mode
+        amenu disable HTML.Control.Switch\ to\ HTML\ mode
+      endif
+
       if exists('g:did_html_toolbar')
         amenu enable ToolBar.*
       endif
     else
-      amenu enable HTML.Enable\ Mappings
+      amenu enable HTML.Control.Enable\ Mappings
     endif
   endif
 endfunction
@@ -974,63 +1067,65 @@ function! s:ShowColors(...)
   endif
 
   let curbuf = bufnr('%')
-	let maxw = 0
+  let maxw = 0
 
-	silent new \[HTML\ Colors\ Display\]
-	setlocal buftype=nofile noswapfile bufhidden=wipe
+  silent new [HTML\ Colors\ Display]
+  setlocal buftype=nofile noswapfile bufhidden=wipe
 
-	for key in keys(s:color_list)
-		if strlen(key) > maxw
-			let maxw = strlen(key)
-		endif
-	endfor
+  for key in keys(s:color_list)
+    if strlen(key) > maxw
+      let maxw = strlen(key)
+    endif
+  endfor
 
-	let col = 0
-	let line = ''
-	for key in sort(keys(s:color_list))
-		let col+=1
+  let col = 0
+  let line = ''
+  for key in sort(keys(s:color_list))
+    let col+=1
 
-		let line.=repeat(' ', maxw - strlen(key)) . key . ' = ' . s:color_list[key]
+    let line.=repeat(' ', maxw - strlen(key)) . key . ' = ' . s:color_list[key]
 
-		if col >= 2
-			call append('$', line)
-			let line = ''
-			let col = 0
-		else
-			let line .= '          '
-		endif
+    if col >= 2
+      call append('$', line)
+      let line = ''
+      let col = 0
+    else
+      let line .= '      '
+    endif
 
-		execute 'syntax match hc_' . key . ' /' . s:color_list[key] . '/'
-		execute 'highlight hc_' . key . ' guibg=' . s:color_list[key]
-	endfor
+    let key2 = substitute(key, ' ', '', 'g')
+
+    execute 'syntax match hc_' . key2 . ' /' . s:color_list[key] . '/'
+    execute 'highlight hc_' . key2 . ' guibg=' . s:color_list[key]
+  endfor
 
   if line != ''
     call append('$', line)
   endif
 
-	call append(0, [
+  call append(0, [
         \'+++ q = quit  <space> = page down   b = page up           +++',
         \'+++ <tab> = Go to next color                              +++',
         \'+++ <enter> or <double click> = Select color under cursor +++',
       \])
-	exe 0
-	1,3center 70
+  exe 0
+  exe '1,3center ' . ((maxw + 13) * 2)
 
   setlocal nomodifiable
 
-	syntax match hc_colorsKeys =^\%<4l\s*+++ .\+ +++$=
-	highlight link hc_colorsKeys Comment
+  syntax match hc_colorsKeys =^\%<4l\s*+++ .\+ +++$=
+  highlight link hc_colorsKeys Comment
 
-	wincmd _
+  wincmd _
 
-	noremap <silent> <buffer> q <C-w>c
-	inoremap <silent> <buffer> q <C-o><C-w>c
-	noremap <silent> <buffer> <space> <C-f>
-	inoremap <silent> <buffer> <space> <C-o><C-f>
-	noremap <silent> <buffer> b <C-b>
-	inoremap <silent> <buffer> b <C-o><C-b>
-  noremap <silent> <buffer> <tab> :call search('\w\+ = #\x\{6\}')<CR>
-  inoremap <silent> <buffer> <tab> <C-o>:call search('\w\+ = #\x\{6\}')<CR>
+  noremap <silent> <buffer> q <C-w>c
+  inoremap <silent> <buffer> q <C-o><C-w>c
+  noremap <silent> <buffer> <space> <C-f>
+  inoremap <silent> <buffer> <space> <C-o><C-f>
+  noremap <silent> <buffer> b <C-b>
+  inoremap <silent> <buffer> b <C-o><C-b>
+  noremap <silent> <buffer> <tab> :call search('[A-Za-z][A-Za-z ]\+ = #\x\{6\}')<CR>
+  inoremap <silent> <buffer> <tab> <C-o>:call search('[A-Za-z][A-Za-z ]\+ = #\x\{6\}')<CR>
 
   if a:0 >= 1
     let ext = ', "' . escape(a:1, '"') . '"'
@@ -1047,7 +1142,7 @@ endfunction
 function! s:ColorSelect(bufnr, ...)
   let line  = getline('.')
   let col   = col('.')
-  let color = substitute(line, '.\{-\}\%<' . (col + 1) . 'c\(\w\+ = #\x\{6\}\)\%>' . col . 'c.*', '\1', '') 
+  let color = substitute(line, '.\{-\}\%<' . (col + 1) . 'c\([A-Za-z][A-Za-z ]\+ = #\x\{6\}\)\%>' . col . 'c.*', '\1', '') 
 
   if color == line
     return ''
@@ -1073,11 +1168,24 @@ function! s:ColorSelect(bufnr, ...)
   echo color
 endfunction
 
+function! s:ShellEscape(str) " {{{2
+	if exists('*shellescape')
+		return shellescape(a:str)
+	else
+    if has('unix')
+      return "'" . substitute(a:str, "'", "'\\\\''", 'g') . "'"
+    else
+      " Don't know how to properly escape for 'doze, so don't bother:
+      return a:str
+    endif
+	endif
+endfunction
+
 " ---- Template Creation Stuff: {{{2
 
 " HTMLtemplate()  {{{3
 "
-" Determine whether to insert the HTML template:
+" Determine whether to insert the HTML template.
 "
 " Arguments:
 "  None
@@ -1089,13 +1197,13 @@ function! HTMLtemplate()
   let save_ruler = &ruler
   let save_showcmd = &showcmd
   set noruler noshowcmd
-  if (line('$') == 1 && getline(1) == "")
+  if line('$') == 1 && getline(1) == ''
     let ret = s:HTMLtemplate2()
   else
     let YesNoOverwrite = confirm("Non-empty file.\nInsert template anyway?", "&Yes\n&No\n&Overwrite", 2, "W")
-    if (YesNoOverwrite == 1)
+    if YesNoOverwrite == 1
       let ret = s:HTMLtemplate2()
-    elseif (YesNoOverwrite == 3)
+    elseif YesNoOverwrite == 3
       execute "1,$delete"
       let ret = s:HTMLtemplate2()
     endif
@@ -1107,7 +1215,7 @@ endfunction  " }}}3
 
 " s:HTMLtemplate2()  {{{3
 "
-" Actually insert the HTML template:
+" Actually insert the HTML template.
 "
 " Arguments:
 "  None
@@ -1124,9 +1232,9 @@ function! s:HTMLtemplate2()
 
   let template = ''
 
-  if (exists('b:html_template') && b:html_template != '')
+  if exists('b:html_template') && b:html_template != ''
     let template = b:html_template
-  elseif (exists('g:html_template') && g:html_template != '')
+  elseif exists('g:html_template') && g:html_template != ''
     let template = g:html_template
   endif
 
@@ -1162,7 +1270,7 @@ function! s:HTMLtemplate2()
   silent! %s/\C%time%/\=strftime('%r %Z')/g
   silent! %s/\C%time12%/\=strftime('%r %Z')/g
   silent! %s/\C%time24%/\=strftime('%T')/g
-  silent! %s/\C%charset%/\=<SID>HTMLdetectCharset()/g
+  silent! %s/\C%charset%/\=<SID>DetectCharset()/g
   silent! %s/\C%vimversion%/\=strpart(v:version, 0, 1) . '.' . (strpart(v:version, 1, 2) + 0)/g
 
   go 1
@@ -1186,6 +1294,14 @@ let s:internal_html_template=
   \"  <[{META NAME}]=\"Author\" [{CONTENT}]=\"%authorname%\" />\n" .
   \"  <[{META NAME}]=\"Copyright\" [{CONTENT}]=\"Copyright (C) %date% %authorname%\" />\n" .
   \"  <[{LINK REV}]=\"made\" [{HREF}]=\"mailto:%authoremail%\" />\n\n" .
+  \"  <[{STYLE TYPE}]=\"text/css\">\n" .
+  \"   <!--\n" .
+  \"   [{BODY}] {background: %bgcolor%; color: %textcolor%;}\n" .
+  \"   [{A}]:link {color: %linkcolor%;}\n" .
+  \"   [{A}]:visited {color: %vlinkcolor%;}\n" .
+  \"   [{A}]:hover, [{A}]:active, [{A}]:focus {color: %alinkcolor%;}\n" .
+  \"   -->\n" .
+  \"  </[{STYLE}]>\n\n" .
   \" </[{HEAD}]>\n" .
   \" <[{BODY BGCOLOR}]=\"%bgcolor%\"" .
     \" [{TEXT}]=\"%textcolor%\"" .
@@ -1218,7 +1334,7 @@ else
   let b:internal_html_template = substitute(b:internal_html_template, ' />', '>', 'g')
 endif
 
-let b:internal_html_template = s:HTMLconvertCase(b:internal_html_template)
+let b:internal_html_template = s:ConvertCase(b:internal_html_template)
 
 " ----------------------------------------------------------------------------
 
@@ -1232,18 +1348,12 @@ let b:did_html_mappings = 1
 
 let b:HTMLclearMappings = 'normal '
 
-" Make it convenient to use ; as "normal":
-"if g:html_map_leader == ';'
-"  call HTMLmap("inoremap", ";;", ";")
-"  call HTMLmap("vnoremap", ";;", ";", -1)
-"  call HTMLmap("nnoremap", ";;", ";")
-"endif
-" ...Actually need to do that with whatever the map leader is set to:
+" Make it easy to use a ; (or whatever the map leader is) as normal:
 call HTMLmap("inoremap", '<lead>' . g:html_map_leader, g:html_map_leader)
 call HTMLmap("vnoremap", '<lead>' . g:html_map_leader, g:html_map_leader, -1)
 call HTMLmap("nnoremap", '<lead>' . g:html_map_leader, g:html_map_leader)
-" ...Make it easy to insert a & in insert mode:
-call HTMLmap("inoremap", "<lead>&", "&")
+" Make it easy to insert a & (or whatever the entity leader is):
+call HTMLmap("inoremap", "<lead>" . g:html_map_entity_leader, g:html_map_entity_leader)
 
 if ! s:BoolVar('g:no_html_tab_mapping')
   " Allow hard tabs to be inserted:
@@ -1267,7 +1377,7 @@ if exists("*MangleImageTag")
   call HTMLmap("inoremap", "<lead>mi", "<C-O>:call MangleImageTag()<CR>")
 endif
 
-call HTMLmap("nnoremap", "<lead>html", ":if (HTMLtemplate()) \\| startinsert \\| endif<CR>")
+call HTMLmap("nnoremap", "<lead>html", ":if HTMLtemplate() \\| startinsert \\| endif<CR>")
 
 " ----------------------------------------------------------------------------
 
@@ -1293,7 +1403,7 @@ call HTMLmap("imap", "<lead>4", "<C-O>" . g:html_map_leader . "4")
 call HTMLmap("imap", "<lead>s4", "<C-O>" . g:html_map_leader . "s4")
 
 "       Content-Type META tag
-call HTMLmap("inoremap", "<lead>ct", "<[{META HTTP-EQUIV}]=\"Content-Type\" [{CONTENT}]=\"text/html; charset=<C-R>=<SID>HTMLdetectCharset()<CR>\" />")
+call HTMLmap("inoremap", "<lead>ct", "<[{META HTTP-EQUIV}]=\"Content-Type\" [{CONTENT}]=\"text/html; charset=<C-R>=<SID>DetectCharset()<CR>\" />")
 
 "       Comment Tag
 call HTMLmap("inoremap", "<lead>cm", "<C-R>=<SID>tag('comment','i')<CR>")
@@ -1602,6 +1712,14 @@ call HTMLmap("vnoremap", "<lead>mE", "<ESC>`>a\" /><C-O>`<<[{META NAME=\"\" CONT
 call HTMLmapo('<lead>me', 1)
 call HTMLmapo('<lead>mE', 1)
 
+"       META    Meta http-equiv         HTML 2.0        HEADER
+call HTMLmap("inoremap", "<lead>mh", "<[{META HTTP-EQUIV=\"\" CONTENT}]=\"\" /><C-O>3F\"")
+" Visual mappings:
+call HTMLmap("vnoremap", "<lead>mh", "<ESC>`>a\" /><C-O>`<<[{META HTTP-EQUIV=\"\" CONTENT}]=\"<C-O>2F\"", 0)
+" Motion mappings:
+call HTMLmapo('<lead>mh', 1)
+
+
 "       OL      Ordered List            HTML 3.0
 call HTMLmap("inoremap", "<lead>ol", "<[{OL}]><CR></[{OL}]><ESC>O")
 " Visual mapping:
@@ -1865,168 +1983,196 @@ call HTMLmapo("<lead>%", 0)
 call HTMLmap("vnoremap", "<lead>^", "s<C-R>=HTMLencodeString(@\", 'd')<CR><Esc>")
 call HTMLmapo("<lead>^", 0)
 
-call HTMLmap("inoremap", "&&", "&amp;")
-call HTMLmap("inoremap", "&cO", "&copy;")
-call HTMLmap("inoremap", "&rO", "&reg;")
-call HTMLmap("inoremap", "&tm", "&trade;")
-call HTMLmap("inoremap", "&'", "&quot;")
-call HTMLmap("inoremap", "&<", "&lt;")
-call HTMLmap("inoremap", "&>", "&gt;")
-call HTMLmap("inoremap", "&<space>", "&nbsp;")
+call HTMLmap("inoremap", "<elead>&", "&amp;")
+call HTMLmap("inoremap", "<elead>cO", "&copy;")
+call HTMLmap("inoremap", "<elead>rO", "&reg;")
+call HTMLmap("inoremap", "<elead>tm", "&trade;")
+call HTMLmap("inoremap", "<elead>'", "&quot;")
+call HTMLmap("inoremap", "<elead><", "&lt;")
+call HTMLmap("inoremap", "<elead>>", "&gt;")
+call HTMLmap("inoremap", "<elead><space>", "&nbsp;")
 call HTMLmap("inoremap", "<lead><space>", "&nbsp;")
-call HTMLmap("inoremap", "&#", "&pound;")
-call HTMLmap("inoremap", "&Y=", "&yen;")
-call HTMLmap("inoremap", "&c\\|", "&cent;")
-call HTMLmap("inoremap", "&A`", "&Agrave;")
-call HTMLmap("inoremap", "&A'", "&Aacute;")
-call HTMLmap("inoremap", "&A^", "&Acirc;")
-call HTMLmap("inoremap", "&A~", "&Atilde;")
-call HTMLmap("inoremap", "&A\"", "&Auml;")
-call HTMLmap("inoremap", "&Ao", "&Aring;")
-call HTMLmap("inoremap", "&AE", "&AElig;")
-call HTMLmap("inoremap", "&C,", "&Ccedil;")
-call HTMLmap("inoremap", "&E`", "&Egrave;")
-call HTMLmap("inoremap", "&E'", "&Eacute;")
-call HTMLmap("inoremap", "&E^", "&Ecirc;")
-call HTMLmap("inoremap", "&E\"", "&Euml;")
-call HTMLmap("inoremap", "&I`", "&Igrave;")
-call HTMLmap("inoremap", "&I'", "&Iacute;")
-call HTMLmap("inoremap", "&I^", "&Icirc;")
-call HTMLmap("inoremap", "&I\"", "&Iuml;")
-call HTMLmap("inoremap", "&N~", "&Ntilde;")
-call HTMLmap("inoremap", "&O`", "&Ograve;")
-call HTMLmap("inoremap", "&O'", "&Oacute;")
-call HTMLmap("inoremap", "&O^", "&Ocirc;")
-call HTMLmap("inoremap", "&O~", "&Otilde;")
-call HTMLmap("inoremap", "&O\"", "&Ouml;")
-call HTMLmap("inoremap", "&O/", "&Oslash;")
-call HTMLmap("inoremap", "&U`", "&Ugrave;")
-call HTMLmap("inoremap", "&U'", "&Uacute;")
-call HTMLmap("inoremap", "&U^", "&Ucirc;")
-call HTMLmap("inoremap", "&U\"", "&Uuml;")
-call HTMLmap("inoremap", "&Y'", "&Yacute;")
-call HTMLmap("inoremap", "&a`", "&agrave;")
-call HTMLmap("inoremap", "&a'", "&aacute;")
-call HTMLmap("inoremap", "&a^", "&acirc;")
-call HTMLmap("inoremap", "&a~", "&atilde;")
-call HTMLmap("inoremap", "&a\"", "&auml;")
-call HTMLmap("inoremap", "&ao", "&aring;")
-call HTMLmap("inoremap", "&ae", "&aelig;")
-call HTMLmap("inoremap", "&c,", "&ccedil;")
-call HTMLmap("inoremap", "&e`", "&egrave;")
-call HTMLmap("inoremap", "&e'", "&eacute;")
-call HTMLmap("inoremap", "&e^", "&ecirc;")
-call HTMLmap("inoremap", "&e\"", "&euml;")
-call HTMLmap("inoremap", "&i`", "&igrave;")
-call HTMLmap("inoremap", "&i'", "&iacute;")
-call HTMLmap("inoremap", "&i^", "&icirc;")
-call HTMLmap("inoremap", "&i\"", "&iuml;")
-call HTMLmap("inoremap", "&n~", "&ntilde;")
-call HTMLmap("inoremap", "&o`", "&ograve;")
-call HTMLmap("inoremap", "&o'", "&oacute;")
-call HTMLmap("inoremap", "&o^", "&ocirc;")
-call HTMLmap("inoremap", "&o~", "&otilde;")
-call HTMLmap("inoremap", "&o\"", "&ouml;")
-call HTMLmap("inoremap", "&x", "&times;")
-call HTMLmap("inoremap", "&u`", "&ugrave;")
-call HTMLmap("inoremap", "&u'", "&uacute;")
-call HTMLmap("inoremap", "&u^", "&ucirc;")
-call HTMLmap("inoremap", "&u\"", "&uuml;")
-call HTMLmap("inoremap", "&y'", "&yacute;")
-call HTMLmap("inoremap", "&y\"", "&yuml;")
-call HTMLmap("inoremap", "&2<", "&laquo;")
-call HTMLmap("inoremap", "&2>", "&raquo;")
-call HTMLmap("inoremap", "&\"", "&uml;")
-call HTMLmap("inoremap", "&/", "&divide;")
-call HTMLmap("inoremap", "&o/", "&oslash;")
-call HTMLmap("inoremap", "&!", "&iexcl;")
-call HTMLmap("inoremap", "&?", "&iquest;")
-call HTMLmap("inoremap", "&dg", "&deg;")
-call HTMLmap("inoremap", "&mi", "&micro;")
-call HTMLmap("inoremap", "&pa", "&para;")
-call HTMLmap("inoremap", "&.", "&middot;")
-call HTMLmap("inoremap", "&14", "&frac14;")
-call HTMLmap("inoremap", "&12", "&frac12;")
-call HTMLmap("inoremap", "&34", "&frac34;")
-call HTMLmap("inoremap", "&n-", "&ndash;")  " Math symbol
-call HTMLmap("inoremap", "&2-", "&ndash;")  " ...
-call HTMLmap("inoremap", "&m-", "&mdash;")  " Sentence break
-call HTMLmap("inoremap", "&3-", "&mdash;")  " ...
-call HTMLmap("inoremap", "&--", "&mdash;")  " ...
-call HTMLmap("inoremap", "&3.", "&hellip;")
+call HTMLmap("inoremap", "<elead>#", "&pound;")
+call HTMLmap("inoremap", "<elead>Y=", "&yen;")
+call HTMLmap("inoremap", "<elead>c\\|", "&cent;")
+call HTMLmap("inoremap", "<elead>A`", "&Agrave;")
+call HTMLmap("inoremap", "<elead>A'", "&Aacute;")
+call HTMLmap("inoremap", "<elead>A^", "&Acirc;")
+call HTMLmap("inoremap", "<elead>A~", "&Atilde;")
+call HTMLmap("inoremap", '<elead>A"', "&Auml;")
+call HTMLmap("inoremap", "<elead>Ao", "&Aring;")
+call HTMLmap("inoremap", "<elead>AE", "&AElig;")
+call HTMLmap("inoremap", "<elead>C,", "&Ccedil;")
+call HTMLmap("inoremap", "<elead>E`", "&Egrave;")
+call HTMLmap("inoremap", "<elead>E'", "&Eacute;")
+call HTMLmap("inoremap", "<elead>E^", "&Ecirc;")
+call HTMLmap("inoremap", '<elead>E"', "&Euml;")
+call HTMLmap("inoremap", "<elead>I`", "&Igrave;")
+call HTMLmap("inoremap", "<elead>I'", "&Iacute;")
+call HTMLmap("inoremap", "<elead>I^", "&Icirc;")
+call HTMLmap("inoremap", '<elead>I"', "&Iuml;")
+call HTMLmap("inoremap", "<elead>N~", "&Ntilde;")
+call HTMLmap("inoremap", "<elead>O`", "&Ograve;")
+call HTMLmap("inoremap", "<elead>O'", "&Oacute;")
+call HTMLmap("inoremap", "<elead>O^", "&Ocirc;")
+call HTMLmap("inoremap", "<elead>O~", "&Otilde;")
+call HTMLmap("inoremap", '<elead>O"', "&Ouml;")
+call HTMLmap("inoremap", "<elead>O/", "&Oslash;")
+call HTMLmap("inoremap", "<elead>U`", "&Ugrave;")
+call HTMLmap("inoremap", "<elead>U'", "&Uacute;")
+call HTMLmap("inoremap", "<elead>U^", "&Ucirc;")
+call HTMLmap("inoremap", '<elead>U"', "&Uuml;")
+call HTMLmap("inoremap", "<elead>Y'", "&Yacute;")
+call HTMLmap("inoremap", "<elead>a`", "&agrave;")
+call HTMLmap("inoremap", "<elead>a'", "&aacute;")
+call HTMLmap("inoremap", "<elead>a^", "&acirc;")
+call HTMLmap("inoremap", "<elead>a~", "&atilde;")
+call HTMLmap("inoremap", '<elead>a"', "&auml;")
+call HTMLmap("inoremap", "<elead>ao", "&aring;")
+call HTMLmap("inoremap", "<elead>ae", "&aelig;")
+call HTMLmap("inoremap", "<elead>c,", "&ccedil;")
+call HTMLmap("inoremap", "<elead>e`", "&egrave;")
+call HTMLmap("inoremap", "<elead>e'", "&eacute;")
+call HTMLmap("inoremap", "<elead>e^", "&ecirc;")
+call HTMLmap("inoremap", '<elead>e"', "&euml;")
+call HTMLmap("inoremap", "<elead>i`", "&igrave;")
+call HTMLmap("inoremap", "<elead>i'", "&iacute;")
+call HTMLmap("inoremap", "<elead>i^", "&icirc;")
+call HTMLmap("inoremap", '<elead>i"', "&iuml;")
+call HTMLmap("inoremap", "<elead>n~", "&ntilde;")
+call HTMLmap("inoremap", "<elead>o`", "&ograve;")
+call HTMLmap("inoremap", "<elead>o'", "&oacute;")
+call HTMLmap("inoremap", "<elead>o^", "&ocirc;")
+call HTMLmap("inoremap", "<elead>o~", "&otilde;")
+call HTMLmap("inoremap", '<elead>o"', "&ouml;")
+call HTMLmap("inoremap", "<elead>x", "&times;")
+call HTMLmap("inoremap", "<elead>u`", "&ugrave;")
+call HTMLmap("inoremap", "<elead>u'", "&uacute;")
+call HTMLmap("inoremap", "<elead>u^", "&ucirc;")
+call HTMLmap("inoremap", '<elead>u"', "&uuml;")
+call HTMLmap("inoremap", "<elead>y'", "&yacute;")
+call HTMLmap("inoremap", '<elead>y"', "&yuml;")
+call HTMLmap("inoremap", "<elead>2<", "&laquo;")
+call HTMLmap("inoremap", "<elead>2>", "&raquo;")
+call HTMLmap("inoremap", '<elead>"', "&uml;")
+call HTMLmap("inoremap", "<elead>/", "&divide;")
+call HTMLmap("inoremap", "<elead>o/", "&oslash;")
+call HTMLmap("inoremap", "<elead>sz", "&szlig;")
+call HTMLmap("inoremap", "<elead>!", "&iexcl;")
+call HTMLmap("inoremap", "<elead>?", "&iquest;")
+call HTMLmap("inoremap", "<elead>dg", "&deg;")
+call HTMLmap("inoremap", "<elead>mi", "&micro;")
+call HTMLmap("inoremap", "<elead>pa", "&para;")
+call HTMLmap("inoremap", "<elead>.", "&middot;")
+call HTMLmap("inoremap", "<elead>14", "&frac14;")
+call HTMLmap("inoremap", "<elead>12", "&frac12;")
+call HTMLmap("inoremap", "<elead>34", "&frac34;")
+call HTMLmap("inoremap", "<elead>n-", "&ndash;")  " Math symbol
+call HTMLmap("inoremap", "<elead>2-", "&ndash;")  " ...
+call HTMLmap("inoremap", "<elead>m-", "&mdash;")  " Sentence break
+call HTMLmap("inoremap", "<elead>3-", "&mdash;")  " ...
+call HTMLmap("inoremap", "<elead>--", "&mdash;")  " ...
+call HTMLmap("inoremap", "<elead>3.", "&hellip;")
 " Greek letters:
 "   ... Capital:
-call HTMLmap("inoremap", "&Al", "&Alpha;")
-call HTMLmap("inoremap", "&Be", "&Beta;")
-call HTMLmap("inoremap", "&Ga", "&Gamma;")
-call HTMLmap("inoremap", "&De", "&Delta;")
-call HTMLmap("inoremap", "&Ep", "&Epsilon;")
-call HTMLmap("inoremap", "&Ze", "&Zeta;")
-call HTMLmap("inoremap", "&Et", "&Eta;")
-call HTMLmap("inoremap", "&Th", "&Theta;")
-call HTMLmap("inoremap", "&Io", "&Iota;")
-call HTMLmap("inoremap", "&Ka", "&Kappa;")
-call HTMLmap("inoremap", "&Lm", "&Lambda;")
-call HTMLmap("inoremap", "&Mu", "&Mu;")
-call HTMLmap("inoremap", "&Nu", "&Nu;")
-call HTMLmap("inoremap", "&Xi", "&Xi;")
-call HTMLmap("inoremap", "&Oc", "&Omicron;")
-call HTMLmap("inoremap", "&Pi", "&Pi;")
-call HTMLmap("inoremap", "&Rh", "&Rho;")
-call HTMLmap("inoremap", "&Si", "&Sigma;")
-call HTMLmap("inoremap", "&Ta", "&Tau;")
-call HTMLmap("inoremap", "&Up", "&Upsilon;")
-call HTMLmap("inoremap", "&Ph", "&Phi;")
-call HTMLmap("inoremap", "&Ch", "&Chi;")
-call HTMLmap("inoremap", "&Ps", "&Psi;")
+call HTMLmap("inoremap", "<elead>Al", "&Alpha;")
+call HTMLmap("inoremap", "<elead>Be", "&Beta;")
+call HTMLmap("inoremap", "<elead>Ga", "&Gamma;")
+call HTMLmap("inoremap", "<elead>De", "&Delta;")
+call HTMLmap("inoremap", "<elead>Ep", "&Epsilon;")
+call HTMLmap("inoremap", "<elead>Ze", "&Zeta;")
+call HTMLmap("inoremap", "<elead>Et", "&Eta;")
+call HTMLmap("inoremap", "<elead>Th", "&Theta;")
+call HTMLmap("inoremap", "<elead>Io", "&Iota;")
+call HTMLmap("inoremap", "<elead>Ka", "&Kappa;")
+call HTMLmap("inoremap", "<elead>Lm", "&Lambda;")
+call HTMLmap("inoremap", "<elead>Mu", "&Mu;")
+call HTMLmap("inoremap", "<elead>Nu", "&Nu;")
+call HTMLmap("inoremap", "<elead>Xi", "&Xi;")
+call HTMLmap("inoremap", "<elead>Oc", "&Omicron;")
+call HTMLmap("inoremap", "<elead>Pi", "&Pi;")
+call HTMLmap("inoremap", "<elead>Rh", "&Rho;")
+call HTMLmap("inoremap", "<elead>Si", "&Sigma;")
+call HTMLmap("inoremap", "<elead>Ta", "&Tau;")
+call HTMLmap("inoremap", "<elead>Up", "&Upsilon;")
+call HTMLmap("inoremap", "<elead>Ph", "&Phi;")
+call HTMLmap("inoremap", "<elead>Ch", "&Chi;")
+call HTMLmap("inoremap", "<elead>Ps", "&Psi;")
 "   ... Lowercase/small:
-call HTMLmap("inoremap", "&al;", "&alpha;")
-call HTMLmap("inoremap", "&be;", "&beta;")
-call HTMLmap("inoremap", "&ga;", "&gamma;")
-call HTMLmap("inoremap", "&de;", "&delta;")
-call HTMLmap("inoremap", "&ep;", "&epsilon;")
-call HTMLmap("inoremap", "&ze;", "&zeta;")
-call HTMLmap("inoremap", "&et;", "&eta;")
-call HTMLmap("inoremap", "&th;", "&theta;")
-call HTMLmap("inoremap", "&io;", "&iota;")
-call HTMLmap("inoremap", "&ka;", "&kappa;")
-call HTMLmap("inoremap", "&lm;", "&lambda;")
-call HTMLmap("inoremap", "&mu;", "&mu;")
-call HTMLmap("inoremap", "&nu;", "&nu;")
-call HTMLmap("inoremap", "&xi;", "&xi;")
-call HTMLmap("inoremap", "&oc;", "&omicron;")
-call HTMLmap("inoremap", "&pi;", "&pi;")
-call HTMLmap("inoremap", "&rh;", "&rho;")
-call HTMLmap("inoremap", "&si;", "&sigma;")
-call HTMLmap("inoremap", "&sf;", "&sigmaf;")
-call HTMLmap("inoremap", "&ta;", "&tau;")
-call HTMLmap("inoremap", "&up;", "&upsilon;")
-call HTMLmap("inoremap", "&ph;", "&phi;")
-call HTMLmap("inoremap", "&ch;", "&chi;")
-call HTMLmap("inoremap", "&ps;", "&psi;")
-call HTMLmap("inoremap", "&og;", "&omega;")
-call HTMLmap("inoremap", "&ts;", "&thetasym;")
-call HTMLmap("inoremap", "&uh;", "&upsih;")
-call HTMLmap("inoremap", "&pv;", "&piv;")
+call HTMLmap("inoremap", "<elead>al", "&alpha;")
+call HTMLmap("inoremap", "<elead>be", "&beta;")
+call HTMLmap("inoremap", "<elead>ga", "&gamma;")
+call HTMLmap("inoremap", "<elead>de", "&delta;")
+call HTMLmap("inoremap", "<elead>ep", "&epsilon;")
+call HTMLmap("inoremap", "<elead>ze", "&zeta;")
+call HTMLmap("inoremap", "<elead>et", "&eta;")
+call HTMLmap("inoremap", "<elead>th", "&theta;")
+call HTMLmap("inoremap", "<elead>io", "&iota;")
+call HTMLmap("inoremap", "<elead>ka", "&kappa;")
+call HTMLmap("inoremap", "<elead>lm", "&lambda;")
+call HTMLmap("inoremap", "<elead>mu", "&mu;")
+call HTMLmap("inoremap", "<elead>nu", "&nu;")
+call HTMLmap("inoremap", "<elead>xi", "&xi;")
+call HTMLmap("inoremap", "<elead>oc", "&omicron;")
+call HTMLmap("inoremap", "<elead>pi", "&pi;")
+call HTMLmap("inoremap", "<elead>rh", "&rho;")
+call HTMLmap("inoremap", "<elead>si", "&sigma;")
+call HTMLmap("inoremap", "<elead>sf", "&sigmaf;")
+call HTMLmap("inoremap", "<elead>ta", "&tau;")
+call HTMLmap("inoremap", "<elead>up", "&upsilon;")
+call HTMLmap("inoremap", "<elead>ph", "&phi;")
+call HTMLmap("inoremap", "<elead>ch", "&chi;")
+call HTMLmap("inoremap", "<elead>ps", "&psi;")
+call HTMLmap("inoremap", "<elead>og", "&omega;")
+call HTMLmap("inoremap", "<elead>ts", "&thetasym;")
+call HTMLmap("inoremap", "<elead>uh", "&upsih;")
+call HTMLmap("inoremap", "<elead>pv", "&piv;")
 " single-line arrows:
-call HTMLmap("inoremap", "&la", "&larr;")
-call HTMLmap("inoremap", "&ua", "&uarr;")
-call HTMLmap("inoremap", "&ra", "&rarr;")
-call HTMLmap("inoremap", "&da", "&darr;")
-call HTMLmap("inoremap", "&ha", "&harr;")
-"call HTMLmap("inoremap", "&ca", "&crarr;")
+call HTMLmap("inoremap", "<elead>la", "&larr;")
+call HTMLmap("inoremap", "<elead>ua", "&uarr;")
+call HTMLmap("inoremap", "<elead>ra", "&rarr;")
+call HTMLmap("inoremap", "<elead>da", "&darr;")
+call HTMLmap("inoremap", "<elead>ha", "&harr;")
+"call HTMLmap("inoremap", "<elead>ca", "&crarr;")
 " double-line arrows:
-call HTMLmap("inoremap", "&lA", "&lArr;")
-call HTMLmap("inoremap", "&uA", "&uArr;")
-call HTMLmap("inoremap", "&rA", "&rArr;")
-call HTMLmap("inoremap", "&dA", "&dArr;")
-call HTMLmap("inoremap", "&hA", "&hArr;")
+call HTMLmap("inoremap", "<elead>lA", "&lArr;")
+call HTMLmap("inoremap", "<elead>uA", "&uArr;")
+call HTMLmap("inoremap", "<elead>rA", "&rArr;")
+call HTMLmap("inoremap", "<elead>dA", "&dArr;")
+call HTMLmap("inoremap", "<elead>hA", "&hArr;")
 
 " ----------------------------------------------------------------------------
 
 
 " ---- Browser Remote Controls: ----------------------------------------- {{{1
-if has("unix")
+if has('mac') || has('macunix')
+  runtime! browser_launcher.vim
+
+  " Run the default Mac browser:
+  call HTMLmap("nnoremap", "<lead>db", ":call OpenInMacApp('default')<CR>")
+
+  " Firefox: View current file, starting Firefox if it's not running:
+  call HTMLmap("nnoremap", "<lead>ff", ":call OpenInMacApp('firefox',0)<CR>")
+  " Firefox: Open a new window, and view the current file:
+  call HTMLmap("nnoremap", "<lead>nff", ":call OpenInMacApp('firefox',1)<CR>")
+  " Firefox: Open a new tab, and view the current file:
+  call HTMLmap("nnoremap", "<lead>tff", ":call OpenInMacApp('firefox',2)<CR>")
+
+  " Opera: View current file, starting Opera if it's not running:
+  call HTMLmap("nnoremap", "<lead>oa", ":call OpenInMacApp('opera',0)<CR>")
+  " Opera: View current file in a new window, starting Opera if it's not running:
+  call HTMLmap("nnoremap", "<lead>noa", ":call OpenInMacApp('opera',1)<CR>")
+  " Opera: Open a new tab, and view the current file:
+  call HTMLmap("nnoremap", "<lead>toa", ":call OpenInMacApp('opera',2)<CR>")
+
+  " Safari: View current file, starting Safari if it's not running:
+  call HTMLmap("nnoremap", "<lead>sf", ":call OpenInMacApp('safari')<CR>")
+  " Safari: Open a new window, and view the current file:
+  call HTMLmap("nnoremap", "<lead>nsf", ":call OpenInMacApp('safari',1)<CR>")
+  " Safari: Open a new tab, and view the current file:
+  call HTMLmap("nnoremap", "<lead>tsf", ":call OpenInMacApp('safari',2)<CR>")
+
+elseif has("unix")
   runtime! browser_launcher.vim
 
   if exists("*LaunchBrowser")
@@ -2066,13 +2212,13 @@ if has("unix")
     " w3m in an xterm:  (This happens regardless in the Vim GUI.)
     call HTMLmap("nnoremap", "<lead>nw3", ":call LaunchBrowser('w',1)<CR>")
   endif
-elseif has("win32")
+elseif has("win32") || has('win64')
   " Run the default Windows browser:
-   call HTMLmap("nnoremap", "<lead>db", ":exe '!start RunDll32.exe shell32.dll,ShellExec_RunDLL ' . expand('%:p')<CR>")
+   call HTMLmap("nnoremap", "<lead>db", ":exe '!start RunDll32.exe shell32.dll,ShellExec_RunDLL ' . <SID>ShellEscape(expand('%:p'))<CR>")
 
   " This assumes that IE is installed and the file explorer will become IE
   " when given an URL to open:
-  call HTMLmap("nnoremap", "<lead>ie", ":exe '!start explorer ' . expand('%:p')<CR>")
+  call HTMLmap("nnoremap", "<lead>ie", ":exe '!start explorer ' . <SID>ShellEscape(expand('%:p'))<CR>")
 endif
 
 " ----------------------------------------------------------------------------
@@ -2084,14 +2230,14 @@ endif " ! exists("b:did_html_mappings")
 if ! has("gui_running") && ! s:BoolVar('g:force_html_menu')
   augroup HTMLplugin
   au!
-  execute 'autocmd GUIEnter * source ' . expand('<sfile>:p <bar> autocmd! HTMLplugin GUIEnter *')
+  execute 'autocmd GUIEnter * source ' . s:thisfile . ' | autocmd! HTMLplugin GUIEnter *'
   augroup END
 elseif exists("g:did_html_menus")
-  call s:HTMLmenuControl()
+  call s:MenuControl()
 elseif ! s:BoolVar('g:no_html_menu')
 
-command! -nargs=+ HTMLmenu call s:HTMLleadmenu(<f-args>)
-function! s:HTMLleadmenu(type, level, name, item, ...)
+command! -nargs=+ HTMLmenu call s:LeadMenu(<f-args>)
+function! s:LeadMenu(type, level, name, item, ...)
   if a:0 == 1
     let pre = a:1
   else
@@ -2112,13 +2258,13 @@ endfunction
 
 if ! s:BoolVar('g:no_html_toolbar') && has("toolbar")
 
-  if (has("win32") && globpath(&rtp, 'bitmaps/Browser.bmp') == '')
+  if ((has("win32") || has('win64')) && globpath(&rtp, 'bitmaps/Browser.bmp') == '')
       \ || globpath(&rtp, 'bitmaps/Browser.xpm') == ''
     let s:tmp = "Warning:\nYou need to install the Toolbar Bitmaps for the "
-    let s:tmp = s:tmp . fnamemodify(s:thisfile, ':t') . " plugin. "
-    let s:tmp = s:tmp . "See: http://www.infynity.spodzone.com/vim/HTML/#files\n"
-    let s:tmp = s:tmp . 'Or see ":help g:no_html_toolbar".'
-    if has('win32') || has('unix')
+          \ . fnamemodify(s:thisfile, ':t') . " plugin. "
+          \ . "See: http://www.infynity.spodzone.com/vim/HTML/#files\n"
+          \ . 'Or see ":help g:no_html_toolbar".'
+    if has('win32') || has('win64') || has('unix')
       let s:tmp = confirm(s:tmp, "&Dismiss\nView &Help\nGet &Bitmaps", 1, 'Warning')
     else
       let s:tmp = confirm(s:tmp, "&Dismiss\nView &Help", 1, 'Warning')
@@ -2129,8 +2275,8 @@ if ! s:BoolVar('g:no_html_toolbar') && has("toolbar")
       " Go to the previous window or everything gets messy:
       wincmd p
     elseif s:tmp == 3
-      if has('win32')
-        execute '!start RunDll32.exe shell32.dll,ShellExec_RunDLL http://www.infynity.spodzone.com/vim/HTML/#files'
+      if has('win32') || has('win64')
+        execute '!start RunDll32.exe shell32.dll,ShellExec_RunDLL http://www.infynity.spodzone.com/vim/HTML/\#files'
       else
         call LaunchBrowser('default', 2, 'http://www.infynity.spodzone.com/vim/HTML/#files')
       endif
@@ -2240,7 +2386,7 @@ if ! s:BoolVar('g:no_html_toolbar') && has("toolbar")
   tmenu           1.230 ToolBar.Find      Find...
   tmenu           1.240 ToolBar.Replace   Find & Replace
 
-  if has("win32") || has("win16") || has("gui_gtk") || has("gui_motif")
+  if has("win32") || has('win64') || has("win16") || has("gui_gtk") || has("gui_motif")
     amenu 1.250 ToolBar.Find    :promptfind<CR>
     vunmenu     ToolBar.Find
     vmenu       ToolBar.Find    y:promptfind <C-R>"<CR>
@@ -2284,7 +2430,7 @@ if ! s:BoolVar('g:no_html_toolbar') && has("toolbar")
       HTMLmenu amenu  1.530 ToolBar.Lynx      ly
     endif
 
-  elseif maparg(g:html_map_leader . 'db', 'n') != ""
+  elseif maparg(g:html_map_leader . 'db', 'n') != ''
     amenu 1.500 ToolBar.-sep50- <nul>
 
     tmenu          1.510 ToolBar.Browser Launch Default Browser on Current File
@@ -2296,7 +2442,7 @@ if ! s:BoolVar('g:no_html_toolbar') && has("toolbar")
   amenu 1.999 ToolBar.Help    :help HTML<CR>
 
   let did_html_toolbar = 1
-endif  " (! exists('g:no_html_toolbar')) && (has("toolbar") || has("win32") [...]
+endif  " ! s:BoolVar('g:no_html_toolbar') && has("toolbar")
 " ----------------------------------------------------------------------------
 
 
@@ -2316,72 +2462,106 @@ inoremenu 1.92 PopUp.Select\ &Inner\ Ta&g <C-O>vit
 cnoremenu 1.92 PopUp.Select\ &Inner\ Ta&g <C-C>vit
 " }}}2
 
-augroup HTML_menu_autos
+augroup HTMLmenu
 au!
-"autocmd BufLeave * call s:HTMLmenuControl()
-autocmd BufEnter,WinEnter * call s:HTMLmenuControl()
+"autocmd BufLeave * call s:MenuControl()
+autocmd BufEnter,WinEnter * call s:MenuControl()
 augroup END
 
-amenu HTM&L.Disable\ Mappings<tab>:HTMLmappings\ disable :HTMLmappings disable<CR>
-amenu HTM&L.Enable\ Mappings<tab>:HTMLmappings\ enable :HTMLmappings enable<CR>
-amenu disable HTML.Enable\ Mappings
-
+amenu HTM&L.HTML\ Help<TAB>:help\ HTML\.txt :help HTML.txt<CR>
  menu HTML.-sep1- <nul>
-amenu HTML.HTML\ Help<TAB>:help\ HTML :help HTML<CR>
- menu HTML.-sep2- <nul>
+
+amenu HTML.Co&ntrol.&Disable\ Mappings<tab>:HTML\ disable     :HTMLmappings disable<CR>
+amenu HTML.Co&ntrol.&Enable\ Mappings<tab>:HTML\ enable       :HTMLmappings enable<CR>
+amenu disable HTML.Control.Enable\ Mappings
+ menu HTML.Control.-sep1- <nul>
+amenu HTML.Co&ntrol.Switch\ to\ &HTML\ mode<tab>:HTML\ html   :HTMLmappings html<CR>
+amenu HTML.Co&ntrol.Switch\ to\ &XHTML\ mode<tab>:HTML\ xhtml :HTMLmappings xhtml<CR>
+ menu HTML.Control.-sep2- <nul>
+amenu HTML.Co&ntrol.&Reload\ Mappings<tab>:HTML\ reload       :HTMLmappings reload<CR>
+
+if s:BoolVar('b:do_xhtml_mappings')
+  amenu disable HTML.Control.Switch\ to\ XHTML\ mode
+else
+  amenu disable HTML.Control.Switch\ to\ HTML\ mode
+endif
+
+ "menu HTML.-sep2- <nul>
 
 if exists("*LaunchBrowser")
   let s:browsers = LaunchBrowser()
 
   if s:browsers =~ 'f'
-    HTMLmenu amenu - HTML.Preview.Firefox                 ff
-    HTMLmenu amenu - HTML.Preview.Firefox\ (New\ Window)  nff
-    HTMLmenu amenu - HTML.Preview.Firefox\ (New\ Tab)     tff
-    amenu HTML.Preview.-sep1-                             <nop>
+    HTMLmenu amenu - HTML.&Preview.&Firefox                ff
+    HTMLmenu amenu - HTML.&Preview.Firefox\ (New\ Window)  nff
+    HTMLmenu amenu - HTML.&Preview.Firefox\ (New\ Tab)     tff
+    amenu HTML.Preview.-sep1-                              <nop>
   endif
   if s:browsers =~ 'm'
-    HTMLmenu amenu - HTML.Preview.Mozilla                 mo
-    HTMLmenu amenu - HTML.Preview.Mozilla\ (New\ Window)  nmo
-    HTMLmenu amenu - HTML.Preview.Mozilla\ (New\ Tab)     tmo
-    amenu HTML.Preview.-sep2-                             <nop>
+    HTMLmenu amenu - HTML.&Preview.&Mozilla                mo
+    HTMLmenu amenu - HTML.&Preview.Mozilla\ (New\ Window)  nmo
+    HTMLmenu amenu - HTML.&Preview.Mozilla\ (New\ Tab)     tmo
+    amenu HTML.Preview.-sep2-                              <nop>
   endif
   if s:browsers =~ 'n'
-    HTMLmenu amenu - HTML.Preview.Netscape                ne
-    HTMLmenu amenu - HTML.Preview.Netscape\ (New\ Window) nne
-    amenu HTML.Preview.-sep3-                             <nop>
+    HTMLmenu amenu - HTML.&Preview.&Netscape               ne
+    HTMLmenu amenu - HTML.&Preview.Netscape\ (New\ Window) nne
+    amenu HTML.Preview.-sep3-                              <nop>
   endif
   if s:browsers =~ 'o'
-    HTMLmenu amenu - HTML.Preview.Opera                   oa
-    HTMLmenu amenu - HTML.Preview.Opera\ (New\ Window)    noa
-    HTMLmenu amenu - HTML.Preview.Opera\ (New\ Tab)       toa
-    amenu HTML.Preview.-sep4-                             <nop>
+    HTMLmenu amenu - HTML.&Preview.&Opera                  oa
+    HTMLmenu amenu - HTML.&Preview.Opera\ (New\ Window)    noa
+    HTMLmenu amenu - HTML.&Preview.Opera\ (New\ Tab)       toa
+    amenu HTML.Preview.-sep4-                              <nop>
   endif
   if s:browsers =~ 'l'
-    HTMLmenu amenu - HTML.Preview.Lynx                    ly
+    HTMLmenu amenu - HTML.&Preview.&Lynx                   ly
   endif
   if s:browsers =~ 'w'
-    HTMLmenu amenu - HTML.Preview.w3m                     w3
+    HTMLmenu amenu - HTML.&Preview.&w3m                    w3
   endif
-elseif maparg(g:html_map_leader . 'db', 'n') != ""
-  HTMLmenu amenu - HTML.Preview.Default\ Browser    db
-  HTMLmenu amenu - HTML.Preview.Internet\ Explorer  ie
+elseif exists("*OpenInMacApp")
+  HTMLmenu amenu - HTML.&Preview.&Firefox                ff
+  HTMLmenu amenu - HTML.&Preview.Firefox\ (New\ Window)  nff
+  HTMLmenu amenu - HTML.&Preview.Firefox\ (New\ Tab)     tff
+  amenu HTML.Preview.-sep1-                              <nop>
+
+  HTMLmenu amenu - HTML.&Preview.&Opera                  oa
+  HTMLmenu amenu - HTML.&Preview.Opera\ (New\ Window)    noa
+  HTMLmenu amenu - HTML.&Preview.Opera\ (New\ Tab)       toa
+  amenu HTML.Preview.-sep2-                              <nop>
+
+  HTMLmenu amenu - HTML.&Preview.&Safari                 sf
+  HTMLmenu amenu - HTML.&Preview.Safari\ (New\ Window)   nsf
+  HTMLmenu amenu - HTML.&Preview.Safari\ (New\ Tab)      tsf
+  amenu HTML.Preview.-sep3-                              <nop>
+
+  HTMLmenu amenu - HTML.&Preview.&Default\ Browser    db
+elseif maparg(g:html_map_leader . 'db', 'n') != ''
+  HTMLmenu amenu - HTML.&Preview.&Default\ Browser    db
+  HTMLmenu amenu - HTML.&Preview.&Internet\ Explorer  ie
 endif
-
- menu HTML.-sep3- <nul>
-
-HTMLmenu amenu - HTM&L.Template html
 
  menu HTML.-sep4- <nul>
 
+HTMLmenu amenu - HTML.Template html
+
+ menu HTML.-sep5- <nul>
+
 " Character Entities menu:   {{{2
 
-let b:save_encoding=&encoding
-let &encoding='latin1'
+"let b:save_encoding=&encoding
+"let &encoding='latin1'
+scriptencoding latin1
 
-command! -nargs=+ HTMLemenu call s:HTMLentitymenu(<f-args>)
-function! s:HTMLentitymenu(name, item, ...)
+command! -nargs=+ HTMLemenu call s:EntityMenu(<f-args>)
+function! s:EntityMenu(name, item, ...)
   if a:0 >= 1 && a:1 != '-'
-    let symb = ' (' . a:1 . ')'
+    if a:1 == '\-'
+      let symb = ' (-)'
+    else
+      let symb = ' (' . a:1 . ')'
+    endif
   else
     let symb = ''
   endif
@@ -2394,18 +2574,22 @@ function! s:HTMLentitymenu(name, item, ...)
 
   let name = escape(a:name, ' ')
 
-  execute 'imenu ' . name . escape(symb, ' &<.|') . '<tab>\&'
-        \ . escape(a:item, '&<') . ' ' . pre . '&' . a:item
-  execute 'nmenu ' . name . escape(symb, ' &<.|') . '<tab>\&'
-        \ . escape(a:item, '&<') . ' ' . pre . 'i&' . a:item . '<esc>'
+  execute 'imenu ' . name . escape(symb, ' &<.|') . '<tab>'
+        \ . escape(g:html_map_entity_leader, '&\')
+        \ . escape(a:item, '&<') . ' ' . pre
+        \ . g:html_map_entity_leader . a:item
+  execute 'nmenu ' . name . escape(symb, ' &<.|') . '<tab>'
+        \ . escape(g:html_map_entity_leader, '&\')
+        \ . escape(a:item, '&<') . ' ' . pre . 'i'
+        \ . g:html_map_entity_leader . a:item . '<esc>'
 endfunction
 
 
-HTMLmenu vmenu - HTML.Character\ Entities.Convert\ to\ Entity                &
-"HTMLmenu nmenu - HTML.Character\ Entities.Convert\ to\ Entity                &l
-HTMLmenu vmenu - HTML.Character\ Entities.Convert\ to\ %XX\ (URI\ Encode\)   %
-"HTMLmenu nmenu - HTML.Character\ Entities.Convert\ to\ %XX\ (URI\ Encode\)   %l
-HTMLmenu vmenu - HTML.Character\ Entities.Convert\ from\ Entities/%XX        ^
+HTMLmenu vmenu - HTML.Character\ &Entities.Convert\ to\ Entity                &
+"HTMLmenu nmenu - HTML.Character\ &Entities.Convert\ to\ Entity                &l
+HTMLmenu vmenu - HTML.Character\ &Entities.Convert\ to\ %XX\ (URI\ Encode\)   %
+"HTMLmenu nmenu - HTML.Character\ &Entities.Convert\ to\ %XX\ (URI\ Encode\)   %l
+HTMLmenu vmenu - HTML.Character\ &Entities.Convert\ from\ Entities/%XX        ^
 
  menu HTML.Character\ Entities.-sep0- <nul>
 HTMLemenu HTML.Character\ Entities.Ampersand            &
@@ -2433,140 +2617,138 @@ HTMLemenu HTML.Character\ Entities.Middle\ Dot          .        ·
 HTMLemenu HTML.Character\ Entities.One\ Quarter         14       ¼
 HTMLemenu HTML.Character\ Entities.One\ Half            12       ½
 HTMLemenu HTML.Character\ Entities.Three\ Quarters      34       ¾
-HTMLemenu HTML.Character\ Entities.En\ dash             n-       -
+HTMLemenu HTML.Character\ Entities.En\ dash             n-       \-
 HTMLemenu HTML.Character\ Entities.Em\ dash             m-       --
 HTMLemenu HTML.Character\ Entities.Ellipsis             3.       ...
  menu HTML.Character\ Entities.-sep2- <nul>
-HTMLemenu HTML.Character\ Entities.Graves.A-grave A` À
-HTMLemenu HTML.Character\ Entities.Graves.a-grave a` à
-HTMLemenu HTML.Character\ Entities.Graves.E-grave E` È
-HTMLemenu HTML.Character\ Entities.Graves.e-grave e` è
-HTMLemenu HTML.Character\ Entities.Graves.I-grave I` Ì
-HTMLemenu HTML.Character\ Entities.Graves.i-grave i` ì
-HTMLemenu HTML.Character\ Entities.Graves.O-grave O` Ò
-HTMLemenu HTML.Character\ Entities.Graves.o-grave o` ò
-HTMLemenu HTML.Character\ Entities.Graves.U-grave U` Ù
-HTMLemenu HTML.Character\ Entities.Graves.u-grave u` ù
-HTMLemenu HTML.Character\ Entities.Acutes.A-acute A' Á
-HTMLemenu HTML.Character\ Entities.Acutes.a-acute a' á
-HTMLemenu HTML.Character\ Entities.Acutes.E-acute E' É
-HTMLemenu HTML.Character\ Entities.Acutes.e-acute e' é
-HTMLemenu HTML.Character\ Entities.Acutes.I-acute I' Í
-HTMLemenu HTML.Character\ Entities.Acutes.i-acute i' í
-HTMLemenu HTML.Character\ Entities.Acutes.O-acute O' Ó
-HTMLemenu HTML.Character\ Entities.Acutes.o-acute o' ó
-HTMLemenu HTML.Character\ Entities.Acutes.U-acute U' Ú
-HTMLemenu HTML.Character\ Entities.Acutes.u-acute u' ú
-HTMLemenu HTML.Character\ Entities.Acutes.Y-acute Y' Ý
-HTMLemenu HTML.Character\ Entities.Acutes.y-acute y' ý
-HTMLemenu HTML.Character\ Entities.Tildes.A-tilde A~ Ã
-HTMLemenu HTML.Character\ Entities.Tildes.a-tilde a~ ã
-HTMLemenu HTML.Character\ Entities.Tildes.N-tilde N~ Ñ
-HTMLemenu HTML.Character\ Entities.Tildes.n-tilde n~ ñ
-HTMLemenu HTML.Character\ Entities.Tildes.O-tilde O~ Õ
-HTMLemenu HTML.Character\ Entities.Tildes.o-tilde o~ õ
-HTMLemenu HTML.Character\ Entities.Circumflexes.A-circumflex A^ Â
-HTMLemenu HTML.Character\ Entities.Circumflexes.a-circumflex a^ â
-HTMLemenu HTML.Character\ Entities.Circumflexes.E-circumflex E^ Ê
-HTMLemenu HTML.Character\ Entities.Circumflexes.e-circumflex e^ ê
-HTMLemenu HTML.Character\ Entities.Circumflexes.I-circumflex I^ Î
-HTMLemenu HTML.Character\ Entities.Circumflexes.i-circumflex i^ î
-HTMLemenu HTML.Character\ Entities.Circumflexes.O-circumflex O^ Ô
-HTMLemenu HTML.Character\ Entities.Circumflexes.o-circumflex o^ ô
-HTMLemenu HTML.Character\ Entities.Circumflexes.U-circumflex U^ Û
-HTMLemenu HTML.Character\ Entities.Circumflexes.u-circumflex u^ û
-HTMLemenu HTML.Character\ Entities.Umlauts.A-umlaut A" Ä
-HTMLemenu HTML.Character\ Entities.Umlauts.a-umlaut a" ä
-HTMLemenu HTML.Character\ Entities.Umlauts.E-umlaut E" Ë
-HTMLemenu HTML.Character\ Entities.Umlauts.e-umlaut e" ë
-HTMLemenu HTML.Character\ Entities.Umlauts.I-umlaut I" Ï
-HTMLemenu HTML.Character\ Entities.Umlauts.i-umlaut i" ï
-HTMLemenu HTML.Character\ Entities.Umlauts.O-umlaut O" Ö
-HTMLemenu HTML.Character\ Entities.Umlauts.o-umlaut o" ö
-HTMLemenu HTML.Character\ Entities.Umlauts.U-umlaut U" Ü
-HTMLemenu HTML.Character\ Entities.Umlauts.u-umlaut u" ü
-HTMLemenu HTML.Character\ Entities.Umlauts.y-umlaut y" ÿ
-HTMLemenu HTML.Character\ Entities.Umlauts.Umlaut " ¨
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Uppercase.Alpha    Al
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Uppercase.Beta     Be
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Uppercase.Gamma    Ga
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Uppercase.Delta    De
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Uppercase.Epsilon  Ep
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Uppercase.Zeta     Ze
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Uppercase.Eta      Et
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Uppercase.Theta    Th
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Uppercase.Iota     Io
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Uppercase.Kappa    Ka
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Uppercase.Lambda   Lm
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Uppercase.Mu       Mu
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Uppercase.Nu       Nu
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Uppercase.Xi       Xi
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Uppercase.Omicron  Oc
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Uppercase.Pi       Pi
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Uppercase.Rho      Rh
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Uppercase.Sigma    Si
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Uppercase.Tau      Ta
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Uppercase.Upsilon  Up
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Uppercase.Phi      Ph
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Uppercase.Chi      Ch
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Uppercase.Psi      Ps
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Lowercase.alpha    al
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Lowercase.beta     be
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Lowercase.gamma    ga
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Lowercase.delta    de
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Lowercase.epsilon  ep
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Lowercase.zeta     ze
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Lowercase.eta      et
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Lowercase.theta    th
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Lowercase.iota     io
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Lowercase.kappa    ka
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Lowercase.lambda   lm
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Lowercase.mu       mu
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Lowercase.nu       nu
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Lowercase.xi       xi
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Lowercase.omicron  oc
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Lowercase.pi       pi
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Lowercase.rho      rh
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Lowercase.sigma    si
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Lowercase.sigmaf   sf
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Lowercase.tau      ta
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Lowercase.upsilon  up
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Lowercase.phi      ph
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Lowercase.chi      ch
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Lowercase.psi      ps
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Lowercase.omega    og
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Lowercase.thetasym ts
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Lowercase.upsih    uh
-HTMLemenu HTML.Character\ Entities.Greek\ Letters.Lowercase.piv      pv
-HTMLemenu HTML.Character\ Entities.Arrows.Left\ single\ arrow        la
-HTMLemenu HTML.Character\ Entities.Arrows.Right\ single\ arrow       ra
-HTMLemenu HTML.Character\ Entities.Arrows.Up\ single\ arrow          ua
-HTMLemenu HTML.Character\ Entities.Arrows.Down\ single\ arrow        da
-HTMLemenu HTML.Character\ Entities.Arrows.Left-right\ single\ arrow  ha
+HTMLemenu HTML.Character\ Entities.&Graves.A-grave A` À
+HTMLemenu HTML.Character\ Entities.&Graves.a-grave a` à
+HTMLemenu HTML.Character\ Entities.&Graves.E-grave E` È
+HTMLemenu HTML.Character\ Entities.&Graves.e-grave e` è
+HTMLemenu HTML.Character\ Entities.&Graves.I-grave I` Ì
+HTMLemenu HTML.Character\ Entities.&Graves.i-grave i` ì
+HTMLemenu HTML.Character\ Entities.&Graves.O-grave O` Ò
+HTMLemenu HTML.Character\ Entities.&Graves.o-grave o` ò
+HTMLemenu HTML.Character\ Entities.&Graves.U-grave U` Ù
+HTMLemenu HTML.Character\ Entities.&Graves.u-grave u` ù
+HTMLemenu HTML.Character\ Entities.&Acutes.A-acute A' Á
+HTMLemenu HTML.Character\ Entities.&Acutes.a-acute a' á
+HTMLemenu HTML.Character\ Entities.&Acutes.E-acute E' É
+HTMLemenu HTML.Character\ Entities.&Acutes.e-acute e' é
+HTMLemenu HTML.Character\ Entities.&Acutes.I-acute I' Í
+HTMLemenu HTML.Character\ Entities.&Acutes.i-acute i' í
+HTMLemenu HTML.Character\ Entities.&Acutes.O-acute O' Ó
+HTMLemenu HTML.Character\ Entities.&Acutes.o-acute o' ó
+HTMLemenu HTML.Character\ Entities.&Acutes.U-acute U' Ú
+HTMLemenu HTML.Character\ Entities.&Acutes.u-acute u' ú
+HTMLemenu HTML.Character\ Entities.&Acutes.Y-acute Y' Ý
+HTMLemenu HTML.Character\ Entities.&Acutes.y-acute y' ý
+HTMLemenu HTML.Character\ Entities.&Tildes.A-tilde A~ Ã
+HTMLemenu HTML.Character\ Entities.&Tildes.a-tilde a~ ã
+HTMLemenu HTML.Character\ Entities.&Tildes.N-tilde N~ Ñ
+HTMLemenu HTML.Character\ Entities.&Tildes.n-tilde n~ ñ
+HTMLemenu HTML.Character\ Entities.&Tildes.O-tilde O~ Õ
+HTMLemenu HTML.Character\ Entities.&Tildes.o-tilde o~ õ
+HTMLemenu HTML.Character\ Entities.&Circumflexes.A-circumflex A^ Â
+HTMLemenu HTML.Character\ Entities.&Circumflexes.a-circumflex a^ â
+HTMLemenu HTML.Character\ Entities.&Circumflexes.E-circumflex E^ Ê
+HTMLemenu HTML.Character\ Entities.&Circumflexes.e-circumflex e^ ê
+HTMLemenu HTML.Character\ Entities.&Circumflexes.I-circumflex I^ Î
+HTMLemenu HTML.Character\ Entities.&Circumflexes.i-circumflex i^ î
+HTMLemenu HTML.Character\ Entities.&Circumflexes.O-circumflex O^ Ô
+HTMLemenu HTML.Character\ Entities.&Circumflexes.o-circumflex o^ ô
+HTMLemenu HTML.Character\ Entities.&Circumflexes.U-circumflex U^ Û
+HTMLemenu HTML.Character\ Entities.&Circumflexes.u-circumflex u^ û
+HTMLemenu HTML.Character\ Entities.&Umlauts.A-umlaut A" Ä
+HTMLemenu HTML.Character\ Entities.&Umlauts.a-umlaut a" ä
+HTMLemenu HTML.Character\ Entities.&Umlauts.E-umlaut E" Ë
+HTMLemenu HTML.Character\ Entities.&Umlauts.e-umlaut e" ë
+HTMLemenu HTML.Character\ Entities.&Umlauts.I-umlaut I" Ï
+HTMLemenu HTML.Character\ Entities.&Umlauts.i-umlaut i" ï
+HTMLemenu HTML.Character\ Entities.&Umlauts.O-umlaut O" Ö
+HTMLemenu HTML.Character\ Entities.&Umlauts.o-umlaut o" ö
+HTMLemenu HTML.Character\ Entities.&Umlauts.U-umlaut U" Ü
+HTMLemenu HTML.Character\ Entities.&Umlauts.u-umlaut u" ü
+HTMLemenu HTML.Character\ Entities.&Umlauts.y-umlaut y" ÿ
+HTMLemenu HTML.Character\ Entities.&Umlauts.Umlaut   "  ¨
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Uppercase.Alpha    Al
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Uppercase.Beta     Be
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Uppercase.Gamma    Ga
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Uppercase.Delta    De
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Uppercase.Epsilon  Ep
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Uppercase.Zeta     Ze
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Uppercase.Eta      Et
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Uppercase.Theta    Th
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Uppercase.Iota     Io
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Uppercase.Kappa    Ka
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Uppercase.Lambda   Lm
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Uppercase.Mu       Mu
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Uppercase.Nu       Nu
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Uppercase.Xi       Xi
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Uppercase.Omicron  Oc
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Uppercase.Pi       Pi
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Uppercase.Rho      Rh
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Uppercase.Sigma    Si
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Uppercase.Tau      Ta
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Uppercase.Upsilon  Up
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Uppercase.Phi      Ph
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Uppercase.Chi      Ch
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Uppercase.Psi      Ps
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Lowercase.alpha    al
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Lowercase.beta     be
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Lowercase.gamma    ga
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Lowercase.delta    de
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Lowercase.epsilon  ep
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Lowercase.zeta     ze
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Lowercase.eta      et
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Lowercase.theta    th
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Lowercase.iota     io
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Lowercase.kappa    ka
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Lowercase.lambda   lm
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Lowercase.mu       mu
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Lowercase.nu       nu
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Lowercase.xi       xi
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Lowercase.omicron  oc
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Lowercase.pi       pi
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Lowercase.rho      rh
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Lowercase.sigma    si
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Lowercase.sigmaf   sf
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Lowercase.tau      ta
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Lowercase.upsilon  up
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Lowercase.phi      ph
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Lowercase.chi      ch
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Lowercase.psi      ps
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Lowercase.omega    og
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Lowercase.thetasym ts
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Lowercase.upsih    uh
+HTMLemenu HTML.Character\ Entities.Greek\ &Letters.&Lowercase.piv      pv
+HTMLemenu HTML.Character\ Entities.A&rrows.Left\ single\ arrow        la
+HTMLemenu HTML.Character\ Entities.A&rrows.Right\ single\ arrow       ra
+HTMLemenu HTML.Character\ Entities.A&rrows.Up\ single\ arrow          ua
+HTMLemenu HTML.Character\ Entities.A&rrows.Down\ single\ arrow        da
+HTMLemenu HTML.Character\ Entities.A&rrows.Left-right\ single\ arrow  ha
 imenu HTML.Character\ Entities.Arrows.-sep1-                             <nul>
-HTMLemenu HTML.Character\ Entities.Arrows.Left\ double\ arrow        lA
-HTMLemenu HTML.Character\ Entities.Arrows.Right\ double\ arrow       rA
-HTMLemenu HTML.Character\ Entities.Arrows.Up\ double\ arrow          uA
-HTMLemenu HTML.Character\ Entities.Arrows.Down\ double\ arrow        dA
-HTMLemenu HTML.Character\ Entities.Arrows.Left-right\ double\ arrow  hA
-HTMLemenu HTML.Character\ Entities.\ \ \ \ \ \ \ etc\.\.\..A-ring      Ao Å
-HTMLemenu HTML.Character\ Entities.\ \ \ \ \ \ \ etc\.\.\..a-ring      ao å
-HTMLemenu HTML.Character\ Entities.\ \ \ \ \ \ \ etc\.\.\..AE-ligature AE Æ
-HTMLemenu HTML.Character\ Entities.\ \ \ \ \ \ \ etc\.\.\..ae-ligature ae æ
-HTMLemenu HTML.Character\ Entities.\ \ \ \ \ \ \ etc\.\.\..C-cedilla   C, Ç
-HTMLemenu HTML.Character\ Entities.\ \ \ \ \ \ \ etc\.\.\..c-cedilla   c, ç
-HTMLemenu HTML.Character\ Entities.\ \ \ \ \ \ \ etc\.\.\..O-slash     O/ Ø
-HTMLemenu HTML.Character\ Entities.\ \ \ \ \ \ \ etc\.\.\..o-slash     o/ ø
+HTMLemenu HTML.Character\ Entities.A&rrows.Left\ double\ arrow        lA
+HTMLemenu HTML.Character\ Entities.A&rrows.Right\ double\ arrow       rA
+HTMLemenu HTML.Character\ Entities.A&rrows.Up\ double\ arrow          uA
+HTMLemenu HTML.Character\ Entities.A&rrows.Down\ double\ arrow        dA
+HTMLemenu HTML.Character\ Entities.A&rrows.Left-right\ double\ arrow  hA
+HTMLemenu HTML.Character\ Entities.\ \ \ \ \ \ \ &etc\.\.\..A-ring      Ao Å
+HTMLemenu HTML.Character\ Entities.\ \ \ \ \ \ \ &etc\.\.\..a-ring      ao å
+HTMLemenu HTML.Character\ Entities.\ \ \ \ \ \ \ &etc\.\.\..AE-ligature AE Æ
+HTMLemenu HTML.Character\ Entities.\ \ \ \ \ \ \ &etc\.\.\..ae-ligature ae æ
+HTMLemenu HTML.Character\ Entities.\ \ \ \ \ \ \ &etc\.\.\..C-cedilla   C, Ç
+HTMLemenu HTML.Character\ Entities.\ \ \ \ \ \ \ &etc\.\.\..c-cedilla   c, ç
+HTMLemenu HTML.Character\ Entities.\ \ \ \ \ \ \ &etc\.\.\..O-slash     O/ Ø
+HTMLemenu HTML.Character\ Entities.\ \ \ \ \ \ \ &etc\.\.\..o-slash     o/ ø
 
-delcommand HTMLemenu
-delfunction s:HTMLentitymenu
-
-let &encoding=b:save_encoding
-unlet b:save_encoding
+"let &encoding=b:save_encoding
+"unlet b:save_encoding
+scriptencoding
 
 " Colors menu:   {{{2
 
-command! -nargs=+ HTMLcmenu call s:HTMLcolorsmenu(<f-args>)
+command! -nargs=+ HTMLcmenu call s:ColorsMenu(<f-args>)
 let s:colors_sort = {
       \ 'A': 'A',   'B': 'B',   'C': 'C',
       \ 'D': 'D',   'E': 'E-G', 'F': 'E-G',
@@ -2577,15 +2759,16 @@ let s:colors_sort = {
       \ 'S': 'S',   'T': 'T-Z', 'U': 'T-Z',
       \ 'V': 'T-Z', 'W': 'T-Z', 'X': 'T-Z',
       \ 'Y': 'T-Z', 'Z': 'T-Z',
-		\}
+    \}
 let s:color_list = {}
-function! s:HTMLcolorsmenu(name, color)
+function! s:ColorsMenu(name, color)
   let c = toupper(strpart(a:name, 0, 1))
-  execute 'imenu HTML.Colors.&' . s:colors_sort[c] . '.' . a:name
+  let name = substitute(a:name, '\C\([a-z]\)\([A-Z]\)', '\1\ \2', 'g')
+  execute 'imenu HTML.&Colors.&' . s:colors_sort[c] . '.' . escape(name, ' ')
         \ . '<tab>(' . a:color . ') ' . a:color
-  execute 'nmenu HTML.Colors.&' . s:colors_sort[c] . '.' . a:name
+  execute 'nmenu HTML.&Colors.&' . s:colors_sort[c] . '.' . escape(name, ' ')
         \ . '<tab>(' . a:color . ') i' . a:color . '<esc>'
-	call extend(s:color_list, {a:name : a:color})
+  call extend(s:color_list, {name : a:color})
 endfunction
 
 if has('gui_running')
@@ -2594,9 +2777,8 @@ if has('gui_running')
   call HTMLmap("nnoremap", "<lead>#", ":ColorSelect<CR>")
   call HTMLmap("inoremap", "<lead>#", "<C-O>:ColorSelect<CR>")
 
-	amenu <silent> HTML.Colors.Display\ All :ColorSelect<CR>
-	imenu <silent> HTML.Colors.Display\ All <C-O>:ColorSelect<CR>
-	amenu HTML.Colors.-sep1- <nul>
+  HTMLmenu amenu - HTML.&Colors.Display\ All\ &&\ Select #
+  amenu HTML.Colors.-sep1- <nul>
 endif
 
 HTMLcmenu AliceBlue            #F0F8FF
@@ -2643,7 +2825,7 @@ HTMLcmenu DarkViolet           #9400D3
 HTMLcmenu DeepPink             #FF1493
 HTMLcmenu DeepSkyblue          #00BFFF
 HTMLcmenu DimGray              #696969
-HTMLcmenu Dodgerblue           #1E90FF
+HTMLcmenu DodgerBlue           #1E90FF
 
 HTMLcmenu Firebrick            #B22222
 HTMLcmenu FloralWhite          #FFFAF0
@@ -2747,213 +2929,224 @@ HTMLcmenu Tomato               #FF6347
 HTMLcmenu Turquoise            #40E0D0
 HTMLcmenu Violet               #EE82EE
 
-delcommand HTMLcmenu
-delfunction s:HTMLcolorsmenu
-unlet s:colors_sort
-
 " Font Styles menu:   {{{2
 
-HTMLmenu imenu - HTML.Font\ Styles.Bold      bo
-HTMLmenu vmenu - HTML.Font\ Styles.Bold      bo
-HTMLmenu nmenu - HTML.Font\ Styles.Bold      bo i
-HTMLmenu imenu - HTML.Font\ Styles.Italics   it
-HTMLmenu vmenu - HTML.Font\ Styles.Italics   it
-HTMLmenu nmenu - HTML.Font\ Styles.Italics   it i
-HTMLmenu imenu - HTML.Font\ Styles.Underline un
-HTMLmenu vmenu - HTML.Font\ Styles.Underline un
-HTMLmenu nmenu - HTML.Font\ Styles.Underline un i
-HTMLmenu imenu - HTML.Font\ Styles.Big       bi
-HTMLmenu vmenu - HTML.Font\ Styles.Big       bi
-HTMLmenu nmenu - HTML.Font\ Styles.Big       bi i
-HTMLmenu imenu - HTML.Font\ Styles.Small     sm
-HTMLmenu vmenu - HTML.Font\ Styles.Small     sm
-HTMLmenu nmenu - HTML.Font\ Styles.Small     sm i
+HTMLmenu imenu - HTML.Font\ &Styles.Bold      bo
+HTMLmenu vmenu - HTML.Font\ &Styles.Bold      bo
+HTMLmenu nmenu - HTML.Font\ &Styles.Bold      bo i
+HTMLmenu imenu - HTML.Font\ &Styles.Strong    st
+HTMLmenu vmenu - HTML.Font\ &Styles.Strong    st
+HTMLmenu nmenu - HTML.Font\ &Styles.Strong    st i
+HTMLmenu imenu - HTML.Font\ &Styles.Italics   it
+HTMLmenu vmenu - HTML.Font\ &Styles.Italics   it
+HTMLmenu nmenu - HTML.Font\ &Styles.Italics   it i
+HTMLmenu imenu - HTML.Font\ &Styles.Emphasis  em
+HTMLmenu vmenu - HTML.Font\ &Styles.Emphasis  em
+HTMLmenu nmenu - HTML.Font\ &Styles.Emphasis  em i
+HTMLmenu imenu - HTML.Font\ &Styles.Underline un
+HTMLmenu vmenu - HTML.Font\ &Styles.Underline un
+HTMLmenu nmenu - HTML.Font\ &Styles.Underline un i
+HTMLmenu imenu - HTML.Font\ &Styles.Big       bi
+HTMLmenu vmenu - HTML.Font\ &Styles.Big       bi
+HTMLmenu nmenu - HTML.Font\ &Styles.Big       bi i
+HTMLmenu imenu - HTML.Font\ &Styles.Small     sm
+HTMLmenu vmenu - HTML.Font\ &Styles.Small     sm
+HTMLmenu nmenu - HTML.Font\ &Styles.Small     sm i
  menu HTML.Font\ Styles.-sep1- <nul>
-HTMLmenu imenu - HTML.Font\ Styles.Font\ Size  fo
-HTMLmenu vmenu - HTML.Font\ Styles.Font\ Size  fo
-HTMLmenu nmenu - HTML.Font\ Styles.Font\ Size  fo i
-HTMLmenu imenu - HTML.Font\ Styles.Font\ Color fc
-HTMLmenu vmenu - HTML.Font\ Styles.Font\ Color fc
-HTMLmenu nmenu - HTML.Font\ Styles.Font\ Color fc i
+HTMLmenu imenu - HTML.Font\ &Styles.Font\ Size  fo
+HTMLmenu vmenu - HTML.Font\ &Styles.Font\ Size  fo
+HTMLmenu nmenu - HTML.Font\ &Styles.Font\ Size  fo i
+HTMLmenu imenu - HTML.Font\ &Styles.Font\ Color fc
+HTMLmenu vmenu - HTML.Font\ &Styles.Font\ Color fc
+HTMLmenu nmenu - HTML.Font\ &Styles.Font\ Color fc i
  menu HTML.Font\ Styles.-sep2- <nul>
-HTMLmenu imenu - HTML.Font\ Styles.CITE           ci 
-HTMLmenu vmenu - HTML.Font\ Styles.CITE           ci 
-HTMLmenu nmenu - HTML.Font\ Styles.CITE           ci i
-HTMLmenu imenu - HTML.Font\ Styles.CODE           co 
-HTMLmenu vmenu - HTML.Font\ Styles.CODE           co 
-HTMLmenu nmenu - HTML.Font\ Styles.CODE           co i
-HTMLmenu imenu - HTML.Font\ Styles.Inserted\ Text in 
-HTMLmenu vmenu - HTML.Font\ Styles.Inserted\ Text in 
-HTMLmenu nmenu - HTML.Font\ Styles.Inserted\ Text in i
-HTMLmenu imenu - HTML.Font\ Styles.Deleted\ Text  de 
-HTMLmenu vmenu - HTML.Font\ Styles.Deleted\ Text  de 
-HTMLmenu nmenu - HTML.Font\ Styles.Deleted\ Text  de i
-HTMLmenu imenu - HTML.Font\ Styles.Emphasize      em 
-HTMLmenu vmenu - HTML.Font\ Styles.Emphasize      em 
-HTMLmenu nmenu - HTML.Font\ Styles.Emphasize      em i
-HTMLmenu imenu - HTML.Font\ Styles.Keyboard\ Text kb 
-HTMLmenu vmenu - HTML.Font\ Styles.Keyboard\ Text kb 
-HTMLmenu nmenu - HTML.Font\ Styles.Keyboard\ Text kb i
-HTMLmenu imenu - HTML.Font\ Styles.Sample\ Text   sa 
-HTMLmenu vmenu - HTML.Font\ Styles.Sample\ Text   sa 
-HTMLmenu nmenu - HTML.Font\ Styles.Sample\ Text   sa i
-HTMLmenu imenu - HTML.Font\ Styles.Strikethrough  sk 
-HTMLmenu vmenu - HTML.Font\ Styles.Strikethrough  sk 
-HTMLmenu nmenu - HTML.Font\ Styles.Strikethrough  sk i
-HTMLmenu imenu - HTML.Font\ Styles.STRONG         st 
-HTMLmenu vmenu - HTML.Font\ Styles.STRONG         st 
-HTMLmenu nmenu - HTML.Font\ Styles.STRONG         st i
-HTMLmenu imenu - HTML.Font\ Styles.Subscript      sb 
-HTMLmenu vmenu - HTML.Font\ Styles.Subscript      sb 
-HTMLmenu nmenu - HTML.Font\ Styles.Subscript      sb i
-HTMLmenu imenu - HTML.Font\ Styles.Superscript    sp 
-HTMLmenu vmenu - HTML.Font\ Styles.Superscript    sp 
-HTMLmenu nmenu - HTML.Font\ Styles.Superscript    sp i
-HTMLmenu imenu - HTML.Font\ Styles.Teletype\ Text tt 
-HTMLmenu vmenu - HTML.Font\ Styles.Teletype\ Text tt 
-HTMLmenu nmenu - HTML.Font\ Styles.Teletype\ Text tt i
-HTMLmenu imenu - HTML.Font\ Styles.Variable       va 
-HTMLmenu vmenu - HTML.Font\ Styles.Variable       va 
-HTMLmenu nmenu - HTML.Font\ Styles.Variable       va i
+HTMLmenu imenu - HTML.Font\ &Styles.CITE           ci 
+HTMLmenu vmenu - HTML.Font\ &Styles.CITE           ci 
+HTMLmenu nmenu - HTML.Font\ &Styles.CITE           ci i
+HTMLmenu imenu - HTML.Font\ &Styles.CODE           co 
+HTMLmenu vmenu - HTML.Font\ &Styles.CODE           co 
+HTMLmenu nmenu - HTML.Font\ &Styles.CODE           co i
+HTMLmenu imenu - HTML.Font\ &Styles.Inserted\ Text in 
+HTMLmenu vmenu - HTML.Font\ &Styles.Inserted\ Text in 
+HTMLmenu nmenu - HTML.Font\ &Styles.Inserted\ Text in i
+HTMLmenu imenu - HTML.Font\ &Styles.Deleted\ Text  de 
+HTMLmenu vmenu - HTML.Font\ &Styles.Deleted\ Text  de 
+HTMLmenu nmenu - HTML.Font\ &Styles.Deleted\ Text  de i
+HTMLmenu imenu - HTML.Font\ &Styles.Emphasize      em 
+HTMLmenu vmenu - HTML.Font\ &Styles.Emphasize      em 
+HTMLmenu nmenu - HTML.Font\ &Styles.Emphasize      em i
+HTMLmenu imenu - HTML.Font\ &Styles.Keyboard\ Text kb 
+HTMLmenu vmenu - HTML.Font\ &Styles.Keyboard\ Text kb 
+HTMLmenu nmenu - HTML.Font\ &Styles.Keyboard\ Text kb i
+HTMLmenu imenu - HTML.Font\ &Styles.Sample\ Text   sa 
+HTMLmenu vmenu - HTML.Font\ &Styles.Sample\ Text   sa 
+HTMLmenu nmenu - HTML.Font\ &Styles.Sample\ Text   sa i
+HTMLmenu imenu - HTML.Font\ &Styles.Strikethrough  sk 
+HTMLmenu vmenu - HTML.Font\ &Styles.Strikethrough  sk 
+HTMLmenu nmenu - HTML.Font\ &Styles.Strikethrough  sk i
+HTMLmenu imenu - HTML.Font\ &Styles.STRONG         st 
+HTMLmenu vmenu - HTML.Font\ &Styles.STRONG         st 
+HTMLmenu nmenu - HTML.Font\ &Styles.STRONG         st i
+HTMLmenu imenu - HTML.Font\ &Styles.Subscript      sb 
+HTMLmenu vmenu - HTML.Font\ &Styles.Subscript      sb 
+HTMLmenu nmenu - HTML.Font\ &Styles.Subscript      sb i
+HTMLmenu imenu - HTML.Font\ &Styles.Superscript    sp 
+HTMLmenu vmenu - HTML.Font\ &Styles.Superscript    sp 
+HTMLmenu nmenu - HTML.Font\ &Styles.Superscript    sp i
+HTMLmenu imenu - HTML.Font\ &Styles.Teletype\ Text tt 
+HTMLmenu vmenu - HTML.Font\ &Styles.Teletype\ Text tt 
+HTMLmenu nmenu - HTML.Font\ &Styles.Teletype\ Text tt i
+HTMLmenu imenu - HTML.Font\ &Styles.Variable       va 
+HTMLmenu vmenu - HTML.Font\ &Styles.Variable       va 
+HTMLmenu nmenu - HTML.Font\ &Styles.Variable       va i
 
 
 " Frames menu:   {{{2
 
-HTMLmenu imenu - HTML.Frames.FRAMESET fs
-HTMLmenu vmenu - HTML.Frames.FRAMESET fs
-HTMLmenu nmenu - HTML.Frames.FRAMESET fs i
-HTMLmenu imenu - HTML.Frames.FRAME    fr
-HTMLmenu vmenu - HTML.Frames.FRAME    fr
-HTMLmenu nmenu - HTML.Frames.FRAME    fr i
-HTMLmenu imenu - HTML.Frames.NOFRAMES nf
-HTMLmenu vmenu - HTML.Frames.NOFRAMES nf
-HTMLmenu nmenu - HTML.Frames.NOFRAMES nf i
-HTMLmenu imenu - HTML.Frames.IFRAME   if
-HTMLmenu vmenu - HTML.Frames.IFRAME   if
-HTMLmenu nmenu - HTML.Frames.IFRAME   if i
+HTMLmenu imenu - HTML.&Frames.FRAMESET fs
+HTMLmenu vmenu - HTML.&Frames.FRAMESET fs
+HTMLmenu nmenu - HTML.&Frames.FRAMESET fs i
+HTMLmenu imenu - HTML.&Frames.FRAME    fr
+HTMLmenu vmenu - HTML.&Frames.FRAME    fr
+HTMLmenu nmenu - HTML.&Frames.FRAME    fr i
+HTMLmenu imenu - HTML.&Frames.NOFRAMES nf
+HTMLmenu vmenu - HTML.&Frames.NOFRAMES nf
+HTMLmenu nmenu - HTML.&Frames.NOFRAMES nf i
+HTMLmenu imenu - HTML.&Frames.IFRAME   if
+HTMLmenu vmenu - HTML.&Frames.IFRAME   if
+HTMLmenu nmenu - HTML.&Frames.IFRAME   if i
 
 
 " Headers menu:   {{{2
 
-HTMLmenu imenu - HTML.Headers.Header\ Level\ 1 h1 
-HTMLmenu imenu - HTML.Headers.Header\ Level\ 2 h2 
-HTMLmenu imenu - HTML.Headers.Header\ Level\ 3 h3 
-HTMLmenu imenu - HTML.Headers.Header\ Level\ 4 h4 
-HTMLmenu imenu - HTML.Headers.Header\ Level\ 5 h5 
-HTMLmenu imenu - HTML.Headers.Header\ Level\ 6 h6 
-HTMLmenu vmenu - HTML.Headers.Header\ Level\ 1 h1 
-HTMLmenu vmenu - HTML.Headers.Header\ Level\ 2 h2 
-HTMLmenu vmenu - HTML.Headers.Header\ Level\ 3 h3 
-HTMLmenu vmenu - HTML.Headers.Header\ Level\ 4 h4 
-HTMLmenu vmenu - HTML.Headers.Header\ Level\ 5 h5 
-HTMLmenu vmenu - HTML.Headers.Header\ Level\ 6 h6 
-HTMLmenu nmenu - HTML.Headers.Header\ Level\ 1 h1 i
-HTMLmenu nmenu - HTML.Headers.Header\ Level\ 2 h2 i
-HTMLmenu nmenu - HTML.Headers.Header\ Level\ 3 h3 i
-HTMLmenu nmenu - HTML.Headers.Header\ Level\ 4 h4 i
-HTMLmenu nmenu - HTML.Headers.Header\ Level\ 5 h5 i
-HTMLmenu nmenu - HTML.Headers.Header\ Level\ 6 h6 i
+HTMLmenu imenu - HTML.&Headers.Header\ Level\ 1 h1 
+HTMLmenu imenu - HTML.&Headers.Header\ Level\ 2 h2 
+HTMLmenu imenu - HTML.&Headers.Header\ Level\ 3 h3 
+HTMLmenu imenu - HTML.&Headers.Header\ Level\ 4 h4 
+HTMLmenu imenu - HTML.&Headers.Header\ Level\ 5 h5 
+HTMLmenu imenu - HTML.&Headers.Header\ Level\ 6 h6 
+HTMLmenu vmenu - HTML.&Headers.Header\ Level\ 1 h1 
+HTMLmenu vmenu - HTML.&Headers.Header\ Level\ 2 h2 
+HTMLmenu vmenu - HTML.&Headers.Header\ Level\ 3 h3 
+HTMLmenu vmenu - HTML.&Headers.Header\ Level\ 4 h4 
+HTMLmenu vmenu - HTML.&Headers.Header\ Level\ 5 h5 
+HTMLmenu vmenu - HTML.&Headers.Header\ Level\ 6 h6 
+HTMLmenu nmenu - HTML.&Headers.Header\ Level\ 1 h1 i
+HTMLmenu nmenu - HTML.&Headers.Header\ Level\ 2 h2 i
+HTMLmenu nmenu - HTML.&Headers.Header\ Level\ 3 h3 i
+HTMLmenu nmenu - HTML.&Headers.Header\ Level\ 4 h4 i
+HTMLmenu nmenu - HTML.&Headers.Header\ Level\ 5 h5 i
+HTMLmenu nmenu - HTML.&Headers.Header\ Level\ 6 h6 i
 
 
 " Lists menu:   {{{2
 
-HTMLmenu imenu - HTML.Lists.Ordered\ List    ol 
-HTMLmenu vmenu - HTML.Lists.Ordered\ List    ol 
-HTMLmenu nmenu - HTML.Lists.Ordered\ List    ol i
-HTMLmenu imenu - HTML.Lists.Unordered\ List  ul 
-HTMLmenu vmenu - HTML.Lists.Unordered\ List  ul 
-HTMLmenu nmenu - HTML.Lists.Unordered\ List  ul i
-HTMLmenu imenu - HTML.Lists.List\ Item       li 
-HTMLmenu vmenu - HTML.Lists.List\ Item       li 
-HTMLmenu nmenu - HTML.Lists.List\ Item       li i
+HTMLmenu imenu - HTML.&Lists.Ordered\ List    ol 
+HTMLmenu vmenu - HTML.&Lists.Ordered\ List    ol 
+HTMLmenu nmenu - HTML.&Lists.Ordered\ List    ol i
+HTMLmenu imenu - HTML.&Lists.Unordered\ List  ul 
+HTMLmenu vmenu - HTML.&Lists.Unordered\ List  ul 
+HTMLmenu nmenu - HTML.&Lists.Unordered\ List  ul i
+HTMLmenu imenu - HTML.&Lists.List\ Item       li 
+HTMLmenu vmenu - HTML.&Lists.List\ Item       li 
+HTMLmenu nmenu - HTML.&Lists.List\ Item       li i
  menu HTML.Lists.-sep1- <nul>
-HTMLmenu imenu - HTML.Lists.Definition\ List dl 
-HTMLmenu vmenu - HTML.Lists.Definition\ List dl 
-HTMLmenu nmenu - HTML.Lists.Definition\ List dl i
-HTMLmenu imenu - HTML.Lists.Definition\ Term dt 
-HTMLmenu vmenu - HTML.Lists.Definition\ Term dt
-HTMLmenu nmenu - HTML.Lists.Definition\ Term dt i
-HTMLmenu imenu - HTML.Lists.Definition\ Body dd 
-HTMLmenu vmenu - HTML.Lists.Definition\ Body dd
-HTMLmenu nmenu - HTML.Lists.Definition\ Body dd i
+HTMLmenu imenu - HTML.&Lists.Definition\ List dl 
+HTMLmenu vmenu - HTML.&Lists.Definition\ List dl 
+HTMLmenu nmenu - HTML.&Lists.Definition\ List dl i
+HTMLmenu imenu - HTML.&Lists.Definition\ Term dt 
+HTMLmenu vmenu - HTML.&Lists.Definition\ Term dt
+HTMLmenu nmenu - HTML.&Lists.Definition\ Term dt i
+HTMLmenu imenu - HTML.&Lists.Definition\ Body dd 
+HTMLmenu vmenu - HTML.&Lists.Definition\ Body dd
+HTMLmenu nmenu - HTML.&Lists.Definition\ Body dd i
 
 
 " Tables menu:   {{{2
 
-HTMLmenu nmenu - HTML.Tables.Interactive\ Table tA 
-HTMLmenu imenu - HTML.Tables.TABLE              ta 
-HTMLmenu vmenu - HTML.Tables.TABLE              ta 
-HTMLmenu nmenu - HTML.Tables.TABLE              ta i
-HTMLmenu imenu - HTML.Tables.Row                tr 
-HTMLmenu vmenu - HTML.Tables.Row                tr 
-HTMLmenu nmenu - HTML.Tables.Row                tr i
-HTMLmenu imenu - HTML.Tables.Data               td 
-HTMLmenu vmenu - HTML.Tables.Data               td 
-HTMLmenu nmenu - HTML.Tables.Data               td i
-HTMLmenu imenu - HTML.Tables.CAPTION            ca 
-HTMLmenu vmenu - HTML.Tables.CAPTION            ca 
-HTMLmenu nmenu - HTML.Tables.CAPTION            ca i
-HTMLmenu imenu - HTML.Tables.Header             th 
-HTMLmenu vmenu - HTML.Tables.Header             th 
-HTMLmenu nmenu - HTML.Tables.Header             th i
+HTMLmenu nmenu - HTML.&Tables.Interactive\ Table      tA 
+HTMLmenu imenu - HTML.&Tables.TABLE                   ta 
+HTMLmenu vmenu - HTML.&Tables.TABLE                   ta 
+HTMLmenu nmenu - HTML.&Tables.TABLE                   ta i
+HTMLmenu imenu - HTML.&Tables.Header\ Row             tH 
+HTMLmenu vmenu - HTML.&Tables.Header\ Row             tH 
+HTMLmenu nmenu - HTML.&Tables.Header\ Row             tH i
+HTMLmenu imenu - HTML.&Tables.Row                     tr 
+HTMLmenu vmenu - HTML.&Tables.Row                     tr 
+HTMLmenu nmenu - HTML.&Tables.Row                     tr i
+HTMLmenu imenu - HTML.&Tables.Footer\ Row             tf 
+HTMLmenu vmenu - HTML.&Tables.Footer\ Row             tf 
+HTMLmenu nmenu - HTML.&Tables.Footer\ Row             tf i
+HTMLmenu imenu - HTML.&Tables.Column\ Header          th 
+HTMLmenu vmenu - HTML.&Tables.Column\ Header          th 
+HTMLmenu nmenu - HTML.&Tables.Column\ Header          th i
+HTMLmenu imenu - HTML.&Tables.Data\ (Column\ Element) td 
+HTMLmenu vmenu - HTML.&Tables.Data\ (Column\ Element) td 
+HTMLmenu nmenu - HTML.&Tables.Data\ (Column\ Element) td i
+HTMLmenu imenu - HTML.&Tables.CAPTION                 ca 
+HTMLmenu vmenu - HTML.&Tables.CAPTION                 ca 
+HTMLmenu nmenu - HTML.&Tables.CAPTION                 ca i
 
 
 " Forms menu:   {{{2
 
-HTMLmenu imenu - HTML.Forms.FORM             fm
-HTMLmenu vmenu - HTML.Forms.FORM             fm
-HTMLmenu nmenu - HTML.Forms.FORM             fm i
-HTMLmenu imenu - HTML.Forms.BUTTON           bu
-HTMLmenu vmenu - HTML.Forms.BUTTON           bu
-HTMLmenu nmenu - HTML.Forms.BUTTON           bu i
-HTMLmenu imenu - HTML.Forms.CHECKBOX         ch
-HTMLmenu vmenu - HTML.Forms.CHECKBOX         ch
-HTMLmenu nmenu - HTML.Forms.CHECKBOX         ch i
-HTMLmenu imenu - HTML.Forms.RADIO            ra
-HTMLmenu vmenu - HTML.Forms.RADIO            ra
-HTMLmenu nmenu - HTML.Forms.RADIO            ra i
-HTMLmenu imenu - HTML.Forms.HIDDEN           hi
-HTMLmenu vmenu - HTML.Forms.HIDDEN           hi
-HTMLmenu nmenu - HTML.Forms.HIDDEN           hi i
-HTMLmenu imenu - HTML.Forms.PASSWORD         pa
-HTMLmenu vmenu - HTML.Forms.PASSWORD         pa
-HTMLmenu nmenu - HTML.Forms.PASSWORD         pa i
-HTMLmenu imenu - HTML.Forms.TEXT             te
-HTMLmenu vmenu - HTML.Forms.TEXT             te
-HTMLmenu nmenu - HTML.Forms.TEXT             te i
-HTMLmenu imenu - HTML.Forms.SELECT           se
-HTMLmenu vmenu - HTML.Forms.SELECT           se
-HTMLmenu nmenu - HTML.Forms.SELECT           se i
-HTMLmenu imenu - HTML.Forms.SELECT\ MULTIPLE ms 
-HTMLmenu vmenu - HTML.Forms.SELECT\ MULTIPLE ms 
-HTMLmenu nmenu - HTML.Forms.SELECT\ MULTIPLE ms i
-HTMLmenu imenu - HTML.Forms.OPTION           op
-HTMLmenu vmenu - HTML.Forms.OPTION           op
-HTMLmenu nmenu - HTML.Forms.OPTION           op i
-HTMLmenu imenu - HTML.Forms.OPTGROUP         og
-HTMLmenu vmenu - HTML.Forms.OPTGROUP         og
-HTMLmenu nmenu - HTML.Forms.OPTGROUP         og i
-HTMLmenu imenu - HTML.Forms.TEXTAREA         tx
-HTMLmenu vmenu - HTML.Forms.TEXTAREA         tx
-HTMLmenu nmenu - HTML.Forms.TEXTAREA         tx i
-HTMLmenu imenu - HTML.Forms.SUBMIT           su
-HTMLmenu nmenu - HTML.Forms.SUBMIT           su i
-HTMLmenu imenu - HTML.Forms.RESET            re
-HTMLmenu nmenu - HTML.Forms.RESET            re i
-HTMLmenu imenu - HTML.Forms.LABEL            la
-HTMLmenu vmenu - HTML.Forms.LABEL            la
-HTMLmenu nmenu - HTML.Forms.LABEL            la i
+HTMLmenu imenu - HTML.F&orms.FORM             fm
+HTMLmenu vmenu - HTML.F&orms.FORM             fm
+HTMLmenu nmenu - HTML.F&orms.FORM             fm i
+HTMLmenu imenu - HTML.F&orms.BUTTON           bu
+HTMLmenu vmenu - HTML.F&orms.BUTTON           bu
+HTMLmenu nmenu - HTML.F&orms.BUTTON           bu i
+HTMLmenu imenu - HTML.F&orms.CHECKBOX         ch
+HTMLmenu vmenu - HTML.F&orms.CHECKBOX         ch
+HTMLmenu nmenu - HTML.F&orms.CHECKBOX         ch i
+HTMLmenu imenu - HTML.F&orms.RADIO            ra
+HTMLmenu vmenu - HTML.F&orms.RADIO            ra
+HTMLmenu nmenu - HTML.F&orms.RADIO            ra i
+HTMLmenu imenu - HTML.F&orms.HIDDEN           hi
+HTMLmenu vmenu - HTML.F&orms.HIDDEN           hi
+HTMLmenu nmenu - HTML.F&orms.HIDDEN           hi i
+HTMLmenu imenu - HTML.F&orms.PASSWORD         pa
+HTMLmenu vmenu - HTML.F&orms.PASSWORD         pa
+HTMLmenu nmenu - HTML.F&orms.PASSWORD         pa i
+HTMLmenu imenu - HTML.F&orms.TEXT             te
+HTMLmenu vmenu - HTML.F&orms.TEXT             te
+HTMLmenu nmenu - HTML.F&orms.TEXT             te i
+HTMLmenu imenu - HTML.F&orms.FILE             fi
+HTMLmenu vmenu - HTML.F&orms.FILE             fi
+HTMLmenu nmenu - HTML.F&orms.FILE             fi i
+HTMLmenu imenu - HTML.F&orms.SELECT           se
+HTMLmenu vmenu - HTML.F&orms.SELECT           se
+HTMLmenu nmenu - HTML.F&orms.SELECT           se i
+HTMLmenu imenu - HTML.F&orms.SELECT\ MULTIPLE ms 
+HTMLmenu vmenu - HTML.F&orms.SELECT\ MULTIPLE ms 
+HTMLmenu nmenu - HTML.F&orms.SELECT\ MULTIPLE ms i
+HTMLmenu imenu - HTML.F&orms.OPTION           op
+HTMLmenu vmenu - HTML.F&orms.OPTION           op
+HTMLmenu nmenu - HTML.F&orms.OPTION           op i
+HTMLmenu imenu - HTML.F&orms.OPTGROUP         og
+HTMLmenu vmenu - HTML.F&orms.OPTGROUP         og
+HTMLmenu nmenu - HTML.F&orms.OPTGROUP         og i
+HTMLmenu imenu - HTML.F&orms.TEXTAREA         tx
+HTMLmenu vmenu - HTML.F&orms.TEXTAREA         tx
+HTMLmenu nmenu - HTML.F&orms.TEXTAREA         tx i
+HTMLmenu imenu - HTML.F&orms.SUBMIT           su
+HTMLmenu nmenu - HTML.F&orms.SUBMIT           su i
+HTMLmenu imenu - HTML.F&orms.RESET            re
+HTMLmenu nmenu - HTML.F&orms.RESET            re i
+HTMLmenu imenu - HTML.F&orms.LABEL            la
+HTMLmenu vmenu - HTML.F&orms.LABEL            la
+HTMLmenu nmenu - HTML.F&orms.LABEL            la i
 
 " }}}2
 
- menu HTML.-sep5- <nul>
+ menu HTML.-sep6- <nul>
 
 HTMLmenu nmenu - HTML.Doctype\ (transitional) 4 
 HTMLmenu nmenu - HTML.Doctype\ (strict)       s4 
 HTMLmenu imenu - HTML.Content-Type            ct 
 HTMLmenu nmenu - HTML.Content-Type            ct i
 
- menu HTML.-sep6- <nul>
+ menu HTML.-sep7- <nul>
 
 HTMLmenu imenu - HTML.BODY             bd
 HTMLmenu vmenu - HTML.BODY             bd
@@ -2998,56 +3191,56 @@ HTMLmenu imenu - HTML.TITLE              ti
 HTMLmenu vmenu - HTML.TITLE              ti 
 HTMLmenu nmenu - HTML.TITLE              ti i
 
-HTMLmenu imenu - HTML.More\.\.\..ADDRESS                   ad 
-HTMLmenu vmenu - HTML.More\.\.\..ADDRESS                   ad 
-HTMLmenu nmenu - HTML.More\.\.\..ADDRESS                   ad i
-HTMLmenu imenu - HTML.More\.\.\..BASE\ HREF                bh 
-HTMLmenu vmenu - HTML.More\.\.\..BASE\ HREF                bh 
-HTMLmenu nmenu - HTML.More\.\.\..BASE\ HREF                bh i
-HTMLmenu imenu - HTML.More\.\.\..BLOCKQUTE                 bl 
-HTMLmenu vmenu - HTML.More\.\.\..BLOCKQUTE                 bl 
-HTMLmenu nmenu - HTML.More\.\.\..BLOCKQUTE                 bl i
-HTMLmenu imenu - HTML.More\.\.\..Defining\ Instance        df 
-HTMLmenu vmenu - HTML.More\.\.\..Defining\ Instance        df 
-HTMLmenu nmenu - HTML.More\.\.\..Defining\ Instance        df i
-HTMLmenu imenu - HTML.More\.\.\..Document\ Division        dv 
-HTMLmenu vmenu - HTML.More\.\.\..Document\ Division        dv 
-HTMLmenu nmenu - HTML.More\.\.\..Document\ Division        dv i
-HTMLmenu imenu - HTML.More\.\.\..EMBED                     eb
-HTMLmenu nmenu - HTML.More\.\.\..EMBED                     eb i
-HTMLmenu imenu - HTML.More\.\.\..ISINDEX                   ii
-HTMLmenu nmenu - HTML.More\.\.\..ISINDEX                   ii i
-HTMLmenu imenu - HTML.More\.\.\..JavaScript                js
-HTMLmenu nmenu - HTML.More\.\.\..JavaScript                js i
-HTMLmenu imenu - HTML.More\.\.\..Sourced\ JavaScript       sj 
-HTMLmenu nmenu - HTML.More\.\.\..Sourced\ JavaScript       sj i
-HTMLmenu imenu - HTML.More\.\.\..LINK\ HREF                lk 
-HTMLmenu vmenu - HTML.More\.\.\..LINK\ HREF                lk 
-HTMLmenu nmenu - HTML.More\.\.\..LINK\ HREF                lk i
-HTMLmenu imenu - HTML.More\.\.\..Linked\ CSS               ls 
-HTMLmenu vmenu - HTML.More\.\.\..Linked\ CSS               ls 
-HTMLmenu nmenu - HTML.More\.\.\..Linked\ CSS               ls i
-HTMLmenu imenu - HTML.More\.\.\..META                      me 
-HTMLmenu vmenu - HTML.More\.\.\..META                      me 
-HTMLmenu nmenu - HTML.More\.\.\..META                      me i
-HTMLmenu imenu - HTML.More\.\.\..NOSCRIPT                  nj 
-HTMLmenu vmenu - HTML.More\.\.\..NOSCRIPT                  nj 
-HTMLmenu nmenu - HTML.More\.\.\..NOSCRIPT                  nj i
-HTMLmenu imenu - HTML.More\.\.\..Generic\ Embedded\ Object ob 
-HTMLmenu vmenu - HTML.More\.\.\..Generic\ Embedded\ Object ob 
-HTMLmenu nmenu - HTML.More\.\.\..Generic\ Embedded\ Object ob i
-HTMLmenu imenu - HTML.More\.\.\..Quoted\ Text              qu 
-HTMLmenu vmenu - HTML.More\.\.\..Quoted\ Text              qu 
-HTMLmenu nmenu - HTML.More\.\.\..Quoted\ Text              qu i
-HTMLmenu imenu - HTML.More\.\.\..SPAN                      sn 
-HTMLmenu vmenu - HTML.More\.\.\..SPAN                      sn 
-HTMLmenu nmenu - HTML.More\.\.\..SPAN                      sn i
-HTMLmenu imenu - HTML.More\.\.\..STYLE                     cs 
-HTMLmenu vmenu - HTML.More\.\.\..STYLE                     cs 
-HTMLmenu nmenu - HTML.More\.\.\..STYLE                     cs i
-
-delcommand HTMLmenu
-delfunction s:HTMLleadmenu
+HTMLmenu imenu - HTML.&More\.\.\..ADDRESS                   ad 
+HTMLmenu vmenu - HTML.&More\.\.\..ADDRESS                   ad 
+HTMLmenu nmenu - HTML.&More\.\.\..ADDRESS                   ad i
+HTMLmenu imenu - HTML.&More\.\.\..BASE\ HREF                bh 
+HTMLmenu vmenu - HTML.&More\.\.\..BASE\ HREF                bh 
+HTMLmenu nmenu - HTML.&More\.\.\..BASE\ HREF                bh i
+HTMLmenu imenu - HTML.&More\.\.\..BLOCKQUTE                 bl 
+HTMLmenu vmenu - HTML.&More\.\.\..BLOCKQUTE                 bl 
+HTMLmenu nmenu - HTML.&More\.\.\..BLOCKQUTE                 bl i
+HTMLmenu imenu - HTML.&More\.\.\..Defining\ Instance        df 
+HTMLmenu vmenu - HTML.&More\.\.\..Defining\ Instance        df 
+HTMLmenu nmenu - HTML.&More\.\.\..Defining\ Instance        df i
+HTMLmenu imenu - HTML.&More\.\.\..Document\ Division        dv 
+HTMLmenu vmenu - HTML.&More\.\.\..Document\ Division        dv 
+HTMLmenu nmenu - HTML.&More\.\.\..Document\ Division        dv i
+HTMLmenu imenu - HTML.&More\.\.\..EMBED                     eb
+HTMLmenu nmenu - HTML.&More\.\.\..EMBED                     eb i
+HTMLmenu imenu - HTML.&More\.\.\..ISINDEX                   ii
+HTMLmenu nmenu - HTML.&More\.\.\..ISINDEX                   ii i
+HTMLmenu imenu - HTML.&More\.\.\..JavaScript                js
+HTMLmenu nmenu - HTML.&More\.\.\..JavaScript                js i
+HTMLmenu imenu - HTML.&More\.\.\..Sourced\ JavaScript       sj 
+HTMLmenu nmenu - HTML.&More\.\.\..Sourced\ JavaScript       sj i
+HTMLmenu imenu - HTML.&More\.\.\..LINK\ HREF                lk 
+HTMLmenu vmenu - HTML.&More\.\.\..LINK\ HREF                lk 
+HTMLmenu nmenu - HTML.&More\.\.\..LINK\ HREF                lk i
+HTMLmenu imenu - HTML.&More\.\.\..META                      me 
+HTMLmenu vmenu - HTML.&More\.\.\..META                      me 
+HTMLmenu nmenu - HTML.&More\.\.\..META                      me i
+HTMLmenu imenu - HTML.&More\.\.\..META\ HTTP-EQUIV          mh 
+HTMLmenu vmenu - HTML.&More\.\.\..META\ HTTP-EQUIV          mh 
+HTMLmenu nmenu - HTML.&More\.\.\..META\ HTTP-EQUIV          mh i
+HTMLmenu imenu - HTML.&More\.\.\..NOSCRIPT                  nj 
+HTMLmenu vmenu - HTML.&More\.\.\..NOSCRIPT                  nj 
+HTMLmenu nmenu - HTML.&More\.\.\..NOSCRIPT                  nj i
+HTMLmenu imenu - HTML.&More\.\.\..Generic\ Embedded\ Object ob 
+HTMLmenu vmenu - HTML.&More\.\.\..Generic\ Embedded\ Object ob 
+HTMLmenu nmenu - HTML.&More\.\.\..Generic\ Embedded\ Object ob i
+HTMLmenu imenu - HTML.&More\.\.\..Quoted\ Text              qu 
+HTMLmenu vmenu - HTML.&More\.\.\..Quoted\ Text              qu 
+HTMLmenu nmenu - HTML.&More\.\.\..Quoted\ Text              qu i
+HTMLmenu imenu - HTML.&More\.\.\..SPAN                      sn 
+HTMLmenu vmenu - HTML.&More\.\.\..SPAN                      sn 
+HTMLmenu nmenu - HTML.&More\.\.\..SPAN                      sn i
+HTMLmenu imenu - HTML.&More\.\.\..STYLE\ (Inline\ CSS\)     cs 
+HTMLmenu vmenu - HTML.&More\.\.\..STYLE\ (Inline\ CSS\)     cs 
+HTMLmenu nmenu - HTML.&More\.\.\..STYLE\ (Inline\ CSS\)     cs i
+HTMLmenu imenu - HTML.&More\.\.\..Linked\ CSS               ls 
+HTMLmenu vmenu - HTML.&More\.\.\..Linked\ CSS               ls 
+HTMLmenu nmenu - HTML.&More\.\.\..Linked\ CSS               ls i
 
 let g:did_html_menus = 1
 endif
@@ -3058,7 +3251,22 @@ endif
 
 silent! unlet s:browsers
 
-" Restore cpoptions:
+if exists(':HTMLmenu')
+  delcommand HTMLmenu
+  delfunction s:LeadMenu
+endif
+
+if exists(':HTMLemenu')
+  delcommand HTMLemenu
+  delfunction s:EntityMenu
+endif
+
+if exists(':HTMLcmenu')
+  delcommand HTMLcmenu
+  delfunction s:ColorsMenu
+  unlet s:colors_sort
+endif
+
 let &cpoptions = s:savecpo
 unlet s:savecpo
 
