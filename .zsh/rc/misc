@@ -4,7 +4,8 @@ autoload -U colors is-at-least
 
 if [[ "${terminfo[colors]}" -ge 8 ]] { colors }
 
-color_err () {
+color_err ()
+{
     # sysread & syswrite are part of zsh/system
     while sysread std_err_color
     do
@@ -12,6 +13,7 @@ color_err () {
     done
 }
 
-is-at-least 4.3.4 && exec 2> >( color_err )
+# sysread is not available on the iPhone.
+[[ "$MACHTYPE" != "arm" ]] && is-at-least 4.3.4 && exec 2> >( color_err )
 
 # vim: ft=zsh
