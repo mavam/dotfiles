@@ -101,7 +101,7 @@ color index      brightgreen black ~G # PGP encrypted
 color index      brightwhite black ~O # old
 color index      brightblack black ~l # mailing lists
 color index      cyan        black ~Q # replied mails
-color index      yellow      black ~v # collapsed thread
+color index      magenta      black ~v # collapsed thread
 color index      brightwhite black ~N # new
 color index      blue        black ~D # deleted
 color index      blue        black ~= # duplicates

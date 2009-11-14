@@ -26,6 +26,7 @@ unset collapse_unread   # don't collapse threads containing unread messages
 unset confirmappend     # prompt when appending messages to a mailbox
 set delete=yes          # really delete messages when syncing a mailbox
 set edit_headers        # allow editing headers of outgoing messages
+set envelope_from=yes
 set fast_reply          # skip prompt for recipients and subject 
 set history=200         # [10] size of the string history buffer
 set include             # include messages when replying
@@ -39,7 +40,10 @@ set pipe_decode         # weed headers and attempt to decode PGP/MIME first
 set print=ask-yes
 unset prompt_after      # prompt for command when pager exits
 set quit=ask-yes
+set reverse_name=yes
+set reverse_realname=no
 unset sig_dashes        # insert '-- ' before the 'signature'
+set ssl_force_tls=yes
 set thorough_search     # decode headers and attachments before searching
 set timeout=10          # [300]
 unset wait_key          # Ask to press a key after shell-escape, pipes, etc.
@@ -320,7 +324,7 @@ set to_chars=" +TCFL"
 set crypt_replysign=yes          # automatically sign replies to signed msgs
 set crypt_replysignencrypted=yes # automatically sign replies to encrypted msgs
 
-set pgp_sign_as=0x37F34C16
+set pgp_sign_as="0x37F34C16"
 set pgp_timeout=3600
 
 # [pgp_entry_format] PGP key selection menu
