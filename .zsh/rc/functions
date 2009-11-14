@@ -52,7 +52,8 @@ regcheck()
 }
 
 # synopsis: findpids [prog] (slightly adapted keychain version)
-findpids() {
+findpids() 
+{
     local me=$(whoami) || return 1
     unset fp_psout
 
@@ -61,7 +62,7 @@ findpids() {
     # appears in the line, and the PID is the first item on the line.
     [[ -n "$OSTYPE" ]] || return 1
 
-    # Try systems where we know what to do first
+    # Try systems where we know what to do first.
     case "$OSTYPE" in
         AIX|*bsd*|*BSD*|CYGWIN|darwin*|Linux|OSF1)
             fp_psout=`ps x 2>/dev/null` ;;      # BSD syntax

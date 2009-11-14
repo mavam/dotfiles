@@ -10,8 +10,8 @@ compinit -u
 for i (~/.zsh/rc/*) { source $i }
 
 # Source OS specific resource files.
-if [[ -f $HOME/.zshenv.${OS} ]]; then
-    source $HOME/.zshenv.${OS}
+if [[ -f $HOME/.zsh/os/${OS} ]]; then
+    source $HOME/.zsh/os/${OS}
 fi
 
 # Source user specific files.

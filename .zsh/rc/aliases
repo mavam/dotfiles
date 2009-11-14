@@ -28,7 +28,6 @@ esac
 # Vim
 alias v="vim"
 alias vi="vim"
-alias m="mvim"
 
 # Directories
 [[ -x $(whence -p gls) ]] && alias ls='gls --color=auto'  # prefer GNU version.
@@ -36,6 +35,7 @@ alias la='ls -al'
 alias ll='ls -l'
 alias lsa='ls -ld .*'
 alias ..='cd ..'
+
 alias d='dirs -v'
 pu() { pushd $1 > /dev/null; dirs -v; }
 alias po='popd > /dev/null; dirs -v'
