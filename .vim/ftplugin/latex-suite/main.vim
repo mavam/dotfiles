@@ -1,7 +1,7 @@
 " LaTeX filetype
 "	  Language: LaTeX (ft=tex)
 "	Maintainer: Srinath Avadhanula
-"		   CVS: $Id: main.vim 999 2006-03-21 05:32:37Z srinathava $
+"		   CVS: $Id: main.vim 1069 2009-09-01 18:51:19Z tmaas $
 "		   URL: 
 
 " line continuation used here.
@@ -29,7 +29,7 @@ let s:path = expand('<sfile>:p:h')
 " set up personal defaults.
 runtime ftplugin/tex/texrc
 " set up global defaults.
-exe "so ".s:path.'/texrc'
+exe "so ".fnameescape(s:path.'/texrc')
 
 " }}}
 
@@ -412,23 +412,24 @@ function! Tex_GetMainFileName(...)
 		return retval
 	endif
 
-	let curd = getcwd()
+	let s:origdir = fnameescape(getcwd())
 
 	let dirmodifier = '%:p:h'
-	let dirLast = expand(dirmodifier)
-	call Tex_CD(dirLast)
+	let dirLast = fnameescape(expand(dirmodifier))
+	exe 'cd '.dirLast
 
 	" move up the directory tree until we find a .latexmain file.
 	" TODO: Should we be doing this recursion by default, or should there be a
 	"       setting?
 	while glob('*.latexmain') == ''
 		let dirmodifier = dirmodifier.':h'
+		let dirNew = fnameescape(expand(dirmodifier))
 		" break from the loop if we cannot go up any further.
-		if expand(dirmodifier) == dirLast
+		if dirNew == dirLast
 			break
 		endif
-		let dirLast = expand(dirmodifier)
-		call Tex_CD(dirLast)
+		let dirLast = dirNew
+		exe 'cd '.dirLast
 	endwhile
 
 	let lheadfile = glob('*.latexmain')
@@ -442,12 +443,12 @@ function! Tex_GetMainFileName(...)
 		let lheadfile = expand('%'.modifier)
 	endif
 
-	call Tex_CD(curd)
+	exe 'cd '.s:origdir
 
-	" NOTE: The caller of this function needs to escape spaces in the
-	"       file name as appropriate. The reason its not done here is that
-	"       escaping spaces is not safe if this file is to be used as part of
-	"       an external command on certain platforms.
+	" NOTE: The caller of this function needs to escape the file name with
+	"       fnameescape() . The reason its not done here is that escaping is not
+	"       safe if this file is to be used as part of an external command on
+	"       certain platforms.
 	return lheadfile
 endfunction 
 
@@ -639,6 +640,23 @@ function! Tex_FindFile(fname, path, suffixesadd)
 	endif
 	return retval
 endfunction " }}}
+" Tex_GetPos: gets position of cursor {{{
+function! Tex_GetPos()
+	if exists('*getpos')
+		return getpos('.')
+	else
+		return line('.').' | normal! '.virtcol('.').'|'
+	endif
+endfunction " }}}
+" Tex_SetPos: sets position of cursor {{{
+function! Tex_SetPos(pos)
+	if exists('*setpos')
+		call setpos('.', a:pos)
+	else
+		exec a:pos
+	endif
+endfunction " }}}
+
 
 " ==============================================================================
 " Smart key-mappings
@@ -772,7 +790,7 @@ if g:Tex_SmartKeyDot
 
 	function! <SID>SmartDots()
 		if strpart(getline('.'), col('.')-3, 2) == '..' && 
-			\ g:Tex_package_detected =~ '\<amsmath\>'
+			\ g:Tex_package_detected =~ '\<amsmath\|ellipsis\>'
 			return "\<bs>\<bs>\\dots"
 		elseif synIDattr(synID(line('.'),col('.')-1,0),"name") =~ '^texMath'
 			\&& strpart(getline('.'), col('.')-3, 2) == '..' 
@@ -788,39 +806,39 @@ endif
 " }}}
 
 " source texproject.vim before other files
-exe 'source '.s:path.'/texproject.vim'
+exe 'source '.fnameescape(s:path.'/texproject.vim')
 
 " source all the relevant files.
-exe 'source '.s:path.'/texmenuconf.vim'
-exe 'source '.s:path.'/envmacros.vim'
-exe 'source '.s:path.'/elementmacros.vim'
+exe 'source '.fnameescape(s:path.'/texmenuconf.vim')
+exe 'source '.fnameescape(s:path.'/envmacros.vim')
+exe 'source '.fnameescape(s:path.'/elementmacros.vim')
 
 " source utf-8 or plain math menus
 if exists("g:Tex_UseUtfMenus") && g:Tex_UseUtfMenus != 0 && has("gui_running")
-	exe 'source '.s:path.'/mathmacros-utf.vim'
+	exe 'source '.fnameescape(s:path.'/mathmacros-utf.vim')
 else
-	exe 'source '.s:path.'/mathmacros.vim'
+	exe 'source '.fnameescape(s:path.'/mathmacros.vim')
 endif
 
-exe 'source '.s:path.'/multicompile.vim'
-exe 'source '.s:path.'/compiler.vim'
-exe 'source '.s:path.'/folding.vim'
-exe 'source '.s:path.'/templates.vim'
-exe 'source '.s:path.'/custommacros.vim'
-exe 'source '.s:path.'/bibtex.vim'
+exe 'source '.fnameescape(s:path.'/multicompile.vim')
+exe 'source '.fnameescape(s:path.'/compiler.vim')
+exe 'source '.fnameescape(s:path.'/folding.vim')
+exe 'source '.fnameescape(s:path.'/templates.vim')
+exe 'source '.fnameescape(s:path.'/custommacros.vim')
+exe 'source '.fnameescape(s:path.'/bibtex.vim')
 
 " source advanced math functions
 if g:Tex_AdvancedMath == 1
-	exe 'source '.s:path.'/brackets.vim'
-	exe 'source '.s:path.'/smartspace.vim'
+	exe 'source '.fnameescape(s:path.'/brackets.vim')
+	exe 'source '.fnameescape(s:path.'/smartspace.vim')
 endif
 
 if g:Tex_Diacritics != 0
-	exe 'source '.s:path.'/diacritics.vim'
+	exe 'source '.fnameescape(s:path.'/diacritics.vim')
 endif
 
-exe 'source '.s:path.'/texviewer.vim'
-exe 'source '.s:path.'/version.vim'
+exe 'source '.fnameescape(s:path.'/texviewer.vim')
+exe 'source '.fnameescape(s:path.'/version.vim')
 
 " ==============================================================================
 " Finally set up the folding, options, mappings and quit.
@@ -833,7 +851,7 @@ function! <SID>SetTeXOptions()
 	endif
 	let b:doneSetTeXOptions = 1
 
-	exe 'setlocal dict^='.s:path.'/dictionaries/dictionary'
+	exe 'setlocal dict^='.fnameescape(s:path.'/dictionaries/dictionary')
 
 	call Tex_Debug('SetTeXOptions: sourcing maps', 'main')
 	" smart functions
@@ -904,7 +922,7 @@ endif
 let g:Tex_completion_explorer = ','
 
 " Mappings defined in package files will overwrite all other
-exe 'source '.s:path.'/packages.vim'
+exe 'source '.fnameescape(s:path.'/packages.vim')
 
 " ==============================================================================
 " These functions are used to immitate certain operating system type functions
@@ -1019,6 +1037,6 @@ if !has('python') || !g:Tex_UsePython
 	finish
 endif
 
-exec 'pyfile '.expand('<sfile>:p:h').'/pytools.py'
+exec 'pyfile '.fnameescape(expand('<sfile>:p:h')).'/pytools.py'
 
 " vim:fdm=marker:ff=unix:noet:ts=4:sw=4:nowrap

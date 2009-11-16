@@ -5,13 +5,13 @@
 "              (plus other modifications by Mikolaj Machowski) 
 " 	  Version: 1.0 
 "     Created: Tue Apr 23 05:00 PM 2002 PST
-"         CVS: $Id: templates.vim 1002 2006-03-23 04:02:21Z srinathava $ 
+"         CVS: $Id: templates.vim 1065 2009-08-16 19:39:23Z tmaas $ 
 " 
 "  Description: functions for handling templates in latex-suite/templates
 "               directory.
 "=============================================================================
 
-let s:path = expand("<sfile>:p:h")
+let s:path = fnameescape(expand("<sfile>:p:h"))
 
 " SetTemplateMenu: sets up the menu for templates {{{
 function! <SID>SetTemplateMenu()

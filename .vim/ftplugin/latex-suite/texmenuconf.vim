@@ -3,13 +3,13 @@
 "      Author: Srinath Avadhanula
 "   Copyright: Vim charityware license. :help license
 " Description: 
-"         CVS: $Id: texmenuconf.vim 997 2006-03-20 09:45:45Z srinathava $
+"         CVS: $Id: texmenuconf.vim 1064 2009-08-16 19:37:57Z tmaas $
 " 
 "=============================================================================
 
 " Paths, crucial for functions
-let s:path = expand("<sfile>:p:h")
-let s:up_path = expand("<sfile>:p:h:h")
+let s:path = fnameescape(expand("<sfile>:p:h"))
+let s:up_path = fnameescape(expand("<sfile>:p:h:h"))
 let s:mainmenuname = g:Tex_MenuPrefix.'S&uite.'
 let s:mapleader = exists('mapleader') ? mapleader : "\\"
 
@@ -89,7 +89,7 @@ function! Tex_MenuConfigure(type, action) " {{{
 	if a:type == 'math'
 		if a:action == 1
 			let g:Tex_MathMenus = 1
-			exe 'so '.s:path.'/mathmacros.vim'
+			exe 'source '.s:path.'/mathmacros.vim'
 			exe 'amenu disable '.menuloc.'Add\ Math\ Menu'
 			exe 'amenu enable '.menuloc.'Remove\ Math\ Menu'
 		elseif a:action == 0
@@ -107,11 +107,11 @@ function! Tex_MenuConfigure(type, action) " {{{
 			exe 'amenu enable '.menuloc.'Expand\ Elements'
 			exe 'amenu disable '.menuloc.'Compress\ Elements'
 		endif
-		exe 'source '.s:path.'/elementmacros.vim'
+		exe 'source '.fnameescape(s:path.'/elementmacros.vim')
 	elseif a:type == 'packages'
 		if a:action == 1
 			let g:Tex_PackagesMenu = 1
-			exe 'so '.s:path.'/packages.vim'
+			exe 'source '.s:path.'/packages.vim'
 			exe 'amenu disable '.menuloc.'Load\ Packages\ Menu'
 		endif
 	endif
