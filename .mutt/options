@@ -43,7 +43,8 @@ set quit=ask-yes
 set reverse_name=yes
 set reverse_realname=no
 unset sig_dashes        # insert '-- ' before the 'signature'
-set ssl_force_tls=yes
+set ssl_force_tls=yes   # Always use TLS when connecting to a server.
+set ssl_starttls=yes    # Active TLS if available.
 set thorough_search     # decode headers and attachments before searching
 set timeout=10          # [300]
 unset wait_key          # Ask to press a key after shell-escape, pipes, etc.

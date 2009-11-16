@@ -4,18 +4,16 @@ set my_profile="icir"
 # Set the profile name in the status line.
 set status_format="%_h:  [%r]  %f [total:%?M?%M/?%m%?n? new:%n?%?o? old:%o?%?d? del:%d?%?F? flag:%F?%?t? tag:%t?%?p? post:%p?%?b? inc:%b?%?l? %l?]       (%s/%S)%> [profile: $my_profile] [%P]   "
 
+set hostname=icsi.berkeley.edu
 set from=vallentin@icir.org
 set signature=~/.mutt/sigs/icir
-my_hdr Reply-To: Matthias Vallentin <vallentin@icir.org>
+#my_hdr Reply-To: Matthias Vallentin <vallentin@icir.org>
 
-# Mutt says: "No authenticators available", something with the TLS/SSL
-# configuration seems to have changed...we temporarily swith to GMails SMTP
-#set smtp_url=smtps://mavam@calmail.berkeley.edu:465
-#set record="=sent"
-set smtp_url=smtps://matthias.vallentin@smtp.gmail.com
-unset record
+# SMTP settings.
+set record="=sent"
+set ssl_starttls=yes
 
 # Next profile.
-macro generic <F7> ':source ~/.mutt/profiles/cal<enter>'
+macro generic <F7> ':source ~/.mutt/profiles/eecs<enter>'
 
 # vim: ft=muttrc

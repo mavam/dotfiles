@@ -96,7 +96,7 @@ color quoted8    brightgreen black
 color index      green       black ~g # PGP signed
 color index      green       black ~k # GPG
 color index      brightgreen black ~G # PGP encrypted
-#color index      black     black  ~p # mail to myself
+color index      yellow     black  ~p # mail to myself
 #color index      black     black  ~P # mail from myself
 color index      brightwhite black ~O # old
 color index      brightblack black ~l # mailing lists
@@ -116,12 +116,28 @@ color header    brightblack  black "Date:"
 color header    red          black "Subject:"
 color header    brightblack  black "(User-Agent|X-Mailer):"
 
-# custom body colors
+# Custom body colors
+# ==================
+# Protocols.
 color body  magenta     black "(finger|ftp|http|https|telnet)://[^ >]+"
 color body  magenta     black "news:[^ \">\t\r\n]*"
-color body  brightwhite black "(^|[[:space:]])\\*[^[:space:]]+\\*([[:space:]]|$)" # *Bold* text.
-color body  brightwhite black "(^|[[:space:]])_[^[:space:]]+_([[:space:]]|$)"     # _Underlined_ text.
-color body  brightwhite black "(^|[[:space:]])/[^[:space:]]+/([[:space:]]|$)"     # /Italic/ text.
+# *Bold* text.
+color body brightwhite black "(^|[[:space:]])\\*[^[:space:]]+\\*([[:space:]]|$)"
+# _Underlined_ text.
+color body  brightwhite black "(^|[[:space:]])_[^[:space:]]+_([[:space:]]|$)"
+# /Italic/ text.
+color body  brightwhite black "(^|[[:space:]])/[^[:space:]]+/([[:space:]]|$)"
+# Smileys.
+color body  yellow      black "([;:][-^][)/(|])|( :[pxo)^])"
+ # Emails.
+color body	brightred   black "[\-\.+_a-zA-Z0-9]+@[\-\.a-zA-Z0-9]+"
+# Phone Numbers.
+color body  green       black "(1[-.])?[0-9]{3}[-.][A-Z0-9]{3}[-.][-0-9]+"
+color body  green       black "(tele)?(cell|fax|fon|phone|tel)[.: ]+[+]?[- 0-9/()]{4,}[0-9]"
+# HTML tags.
+color body  yellow      black   "</?\w+>"
+
+
 
 # GPG / PGP 
 color body  yellow       black "^gpg:.*"

@@ -2,7 +2,6 @@
 #                              Personal constants
 # ---------------------------------------------------------------------------- #
 set realname="Matthias Vallentin"
-set hostname=cs.berkeley.edu
 alternates '(vallentin?@(icsi.berkeley.edu|icir.org)|matthias.vallentin@gmail.com|(vallentin|mavam|mpm)@berkeley.edu|mavam@(ee)?cs.berkeley.edu)'
 
 unmy_hdr *
