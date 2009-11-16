@@ -136,10 +136,14 @@ function! <SID>Tex_SetBracketingMaps()
 endfunction
 " }}}
 
-augroup LatexSuite
-	au LatexSuite User LatexSuiteFileType 
-		\ call Tex_Debug('brackets.vim: Catching LatexSuiteFileType event', 'brak') | 
-		\ call <SID>Tex_SetBracketingMaps()
-augroup END
+" [mv 2009-11-15]
+" I disable these commands until I have figured out how UTF-8 characters
+" interfere with Vim.  
+"
+"augroup LatexSuite
+"	au LatexSuite User LatexSuiteFileType 
+"		\ call Tex_Debug('brackets.vim: Catching LatexSuiteFileType event', 'brak') | 
+"		\ call <SID>Tex_SetBracketingMaps()
+"augroup END
 
 " vim:fdm=marker
