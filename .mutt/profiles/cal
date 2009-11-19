@@ -11,7 +11,8 @@ set signature=~/.mutt/sigs/cal
 
 # SMTP settings.
 set record="=sent"
-set smtp_url=smtp://mavam@gateway.eecs.berkeley.edu
+set smtp_url=smtps://mpm@calmail.berkeley.edu
+set smtp_authenticators="login"
 
 # Next profile.
 macro generic <F7> ':source ~/.mutt/profiles/icsi<enter>'

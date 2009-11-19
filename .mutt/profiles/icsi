@@ -12,6 +12,7 @@ set signature=~/.mutt/sigs/icsi
 # SMTP settings.
 set record="=sent"
 set smtp_url=smtp://mavam@gateway.eecs.berkeley.edu
+unset smtp_authenticators
 
 # Next profile.
 macro generic <F7> ':source ~/.mutt/profiles/gmail<enter>'

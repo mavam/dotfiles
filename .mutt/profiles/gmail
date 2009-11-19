@@ -11,6 +11,7 @@ set signature=~/.mutt/sigs/priv
 
 # SMTP settings.
 set smtp_url=smtps://matthias.vallentin@smtp.gmail.com
+unset smtp_authenticators
 unset record
 
 # Next profile.
