@@ -118,25 +118,26 @@ color header    brightblack  black "(User-Agent|X-Mailer):"
 
 # Custom body colors
 # ==================
-# Protocols.
+# Protocols
 color body  magenta     black "(finger|ftp|http|https|telnet)://[^ >]+"
 color body  magenta     black "news:[^ \">\t\r\n]*"
-# *Bold* text.
+# *Bold* text
 color body brightwhite black "(^|[[:space:]])\\*[^[:space:]]+\\*([[:space:]]|$)"
-# _Underlined_ text.
+# _Underlined_ text
 color body  brightwhite black "(^|[[:space:]])_[^[:space:]]+_([[:space:]]|$)"
-# /Italic/ text.
+# /Italic/ text
 color body  brightwhite black "(^|[[:space:]])/[^[:space:]]+/([[:space:]]|$)"
-# Smileys.
-color body  yellow      black "([;:][-^][)/(|])|( :[pxo)^])"
- # Emails.
-color body	brightred   black "[\-\.+_a-zA-Z0-9]+@[\-\.a-zA-Z0-9]+"
-# Phone Numbers.
-color body  green       black "(1[-.])?[0-9]{3}[-.][A-Z0-9]{3}[-.][-0-9]+"
-color body  green       black "(tele)?(cell|fax|fon|phone|tel)[.: ]+[+]?[- 0-9/()]{4,}[0-9]"
-# HTML tags.
-color body  yellow      black   "</?\w+>"
-
+# Smileys
+color body  yellow      black '([;:][-^][)/(|])|( [;:][pxo)^])'
+ # Emails
+color body	brightred   black '[-.+_a-z0-9]+@[-.a-z0-9]+\.[a-z]+'
+# Phone Numbers
+color body  green       black '(\+?1[-.])?[0-9]{3}[-.][a-z0-9]{3}[-.][-0-9]+'
+color body  green       black '((\+|00)[0-9]{1,2}) ?(\(0\))?[0-9]{1,4}[\/ ][-0-9]+'
+# IPs and subnets
+color body  green       black '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}(\/[0-9]{1,2})?'
+# Time
+color body  red         black  '([0-9]{1,2}:)?[0-9]{1,2}(:[0-9]{1,2})? ?[ap]m'
 
 
 # GPG / PGP 
@@ -144,7 +145,7 @@ color body  yellow       black "^gpg:.*"
 color body  brightyellow black "^gpg: WARNING.*"
 color body  green        black "^gpg: Good signature from.*"
 color body  green        black "^Verification successful"
-color body  white        red     "^gpg: Bad signature from.*"
+color body  white        red   "^gpg: Bad signature from.*"
 
 
 # mono terminal "colors"
