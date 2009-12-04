@@ -9,6 +9,7 @@ path = .vim/spellfile.add
 path = .vim/spellfile.add.spl
 path = code
 path = docs/cv
+path = docs/Papers
 path = docs/software/mavam.keylayout
 path = docs/software/1Password.agilekeychain
 path = docs/templates

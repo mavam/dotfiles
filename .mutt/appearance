@@ -128,7 +128,7 @@ color body  brightwhite black "(^|[[:space:]])_[^[:space:]]+_([[:space:]]|$)"
 # /Italic/ text
 color body  brightwhite black "(^|[[:space:]])/[^[:space:]]+/([[:space:]]|$)"
 # Smileys
-color body  yellow      black '([;:][-^][)/(|])|( [;:][pxo)^])'
+color body  yellow      black ' [;:=][-^]?[pxo)]'
  # Emails
 color body	brightred   black '[-.+_a-z0-9]+@[-.a-z0-9]+\.[a-z]+'
 # Phone Numbers
