@@ -11,6 +11,10 @@ set iskeyword+=:
 " To err is human
 set spell
 
+" Fix a default key mapping that prevents inserting é.
+" http://vim-latex.sourceforge.net/index.php?subject=faq&title=FAQ#faq-e-acute
+imap <buffer> <leader>it <Plug>Tex_InsertItemOnThisLine
+
 " Prepend CTRL on Alt-key mappings: Alt-{B,C,L,I}
 "imap <C-M-b> <Plug>Tex_MathBF
 "imap <C-M-c> <Plug>Tex_MathCal
