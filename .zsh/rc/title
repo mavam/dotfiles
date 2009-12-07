@@ -2,47 +2,49 @@
 ## Functions to modify the terminal title.
 ##
 
-# Helper function to set the shell title.
-case $TERM in
-    xterm*|rxvt*)
-        title() 
-        { 
-            print -Pn "\e]0;$1" 
-            print -n "${(q)${ARGV[2,-1]}}\a"
-        }
-        ;;
-    screen)
-        title() 
-        {
-            print -nPR $'\033k'$1$'\033'\\
-            print -nPR $'\033]0;'$2$'\a'
-        }
-        ;;
-esac     
+if [[ -n $TERM ]]; then
 
-# Always show a static title.
-static-title()
-{
-    unfunction precmd
-    unfunction preexec
-    title ${(q)*}
-}
+    case $TERM in
+        xterm*|rxvt*)
+            title() 
+            { 
+                print -Pn "\e]0;$1" 
+                print -n "${(q)${ARGV[2,-1]}}\a"
+            }
+            ;;
+        screen)
+            title() 
+            {
+                print -nPR $'\033k'$1$'\033'\\
+                print -nPR $'\033]0;'$2$'\a'
+            }
+            ;;
+    esac     
 
-# Executed before each prompt.
-precmd()
-{
-    title "%20<..<%3~%<<"
-}
+    # Always show a static title.
+    static-title()
+    {
+        unfunction precmd
+        unfunction preexec
+        title ${(q)*}
+    }
 
-# Executed just after a command has been read and is about to be executed.
-preexec() 
-{
-    emulate -L zsh
-    local -a cmd
-    cmd=(${(z)1})
+    # Executed before each prompt.
+    precmd()
+    {
+        title "%20<..<%3~%<<"
+    }
 
-    title $cmd[1]:t $cmd[2,-1]
-    #title %n@%m$cmd[1]:t $cmd[2,-1]
-}
+    # Executed just after a command has been read and is about to be executed.
+    preexec() 
+    {
+        emulate -L zsh
+        local -a cmd
+        cmd=(${(z)1})
+
+        title $cmd[1]:t $cmd[2,-1]
+        #title %n@%m$cmd[1]:t $cmd[2,-1]
+    }
+fi
 
 # vim: ft=zsh
