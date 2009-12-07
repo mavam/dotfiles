@@ -1,5 +1,5 @@
 include common
 
-path = Desktop/share
+path = Desktop/print
 
 # vim: ft=sh
