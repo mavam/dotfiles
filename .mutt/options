@@ -31,6 +31,7 @@ set fast_reply          # skip prompt for recipients and subject
 set history=200         # [10] size of the string history buffer
 set include             # include messages when replying
 set mail_check=60       # [5] how often mutt should look for new mail
+unset mark_old          # Distinguish between old and new unread mails
 #set menu_scroll         # scroll menus when moving across screen boundary
 #set mime_forward=no     # attach message as a seperate MIME part
 set move=no             # move read messages from spool to $mbox

@@ -51,14 +51,9 @@ export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[01;32m'
 
 # Setup Ruby gem environment.
-if [[ -x $(whence -p gem1.9) ]]; then
-    gem=gem1.9 
-elif [[ -x $(whence -p gem) ]]; then
-    gem=gem
-fi
-if [[ -n $gem ]]; then
-    export GEM_HOME=$($gem env gemhome)
-    export GEM_PATH=$($gem env gempath)
+if [[ -x $(whence -p gem) ]]; then
+    export GEM_HOME=$(gem env gemhome)
+    export GEM_PATH=$(gem env gempath)
 fi
 
 # Source OS specific environment
