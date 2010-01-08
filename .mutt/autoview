@@ -8,7 +8,4 @@ auto_view text/html
 auto_view text/enriched 
 #auto_view application/postscript 
 
-# images
-auto_view image/*
-
 # vim:ft=muttrc

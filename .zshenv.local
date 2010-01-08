@@ -1,0 +1,14 @@
+# 
+#  Local Zsh environment 
+#
+
+# Add local scripts to $PATH.
+[[ -d ~/code/scripts ]] && path=( ~/code/scripts $path )
+
+# TeX inputs.
+[[ -d ~/code/texinputs ]] && export TEXINPUTS=.:~/code/texinputs//:
+
+# Sup: use Xapian instead of Ferret.
+[[ -x $(whence -p sup) ]] && export SUP_INDEX=xapian
+
+# vim: ft=zsh

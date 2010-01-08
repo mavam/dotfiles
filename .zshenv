@@ -24,6 +24,21 @@ if [[ -f $HOME/.zpath && $SHLVL == 1 ]]; then
     source $HOME/.zpath
 fi
 
+# Setup locale.
+if [[ -x $(whence -p locale) ]]; then
+    if [[ $(locale -a | grep '^en_US.utf8$') == "en_US.utf8" ]] ; then
+        export LANG=en_US.utf8
+    elif [[ $(locale -a | grep '^en_US.UTF-8$') == "en_US.UTF-8" ]] ; then
+        export LANG=en_US.UTF-8
+    elif [[ $(locale -a | grep '^en_US.iso88591$') == "en_US.iso88591" ]] ; then
+        export LANG=en_US.iso88591
+    elif [[ $(locale -a | grep '^en_US$') == "en_US" ]] ; then
+        export LANG=en_US
+    else 
+        export LANG=C
+    fi
+fi
+
 # Editor
 if [[ -x $(whence -p vim) ]]; then
     export EDITOR="vim"

@@ -1,21 +1,6 @@
-## 
-##  User specific Zsh configuration 
-##
-
-# locale
-if whence locale > /dev/null; then
-    if [[ $(locale -a | grep '^en_US.utf8$') == "en_US.utf8" ]] ; then
-        export LANG=en_US.utf8
-    elif [[ $(locale -a | grep '^en_US.UTF-8$') == "en_US.UTF-8" ]] ; then
-        export LANG=en_US.UTF-8
-    elif [[ $(locale -a | grep '^en_US.iso88591$') == "en_US.iso88591" ]] ; then
-        export LANG=en_US.iso88591
-    elif [[ $(locale -a | grep '^en_US$') == "en_US" ]] ; then
-        export LANG=en_US
-    else 
-        export LANG=C
-    fi
-fi
+# 
+#  Local Zsh configuration 
+#
 
 # Sets the $BROPATH environment variable
 function bro_path
@@ -37,29 +22,5 @@ function bro_prefix
     path=( $1/bin $path )
     bro_path "$1/share/bro"
 }
-
-# TeX inputs.
-[[ -d ~/code/texinputs ]] && export TEXINPUTS=.:~/code/texinputs//:
-
-# Local scripts.
-[[ -d ~/code/scripts ]] && path=( ~/code/scripts $path )
-
-# Let keychain manage the agents
-function _setup_agent
-{
-    local kc_bin
-    [[ -x $HOME/bin/keychain ]] && kc_bin=$HOME/bin/keychain # Trust only ~/bin.
-
-	if [[ -n $kc_bin ]]; then
-	    local identities=$HOME/.ssh/identities
-        if [[ -n $identities/*~*pub ]]; then
-            $kc_bin -q --host fixed $identities/*~*pub
-            source ~/.keychain/fixed-sh
-        fi
-	fi
-}
-
-# Don't start agent(s) as root or remotely.
-[[ $UID != 0 && -z "$SSH_CONNECTION" ]] && _setup_agent
 
 # vim: ft=zsh 

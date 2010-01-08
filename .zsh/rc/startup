@@ -2,6 +2,19 @@
 ## Startup
 ##
 
+# Setup SSH agent environment. But don't start agent(s) as root or remotely.
+if [[ $UID != 0 && -z "$SSH_CONNECTION" ]]; then
+    # Trust only $HOME/bin for keychain.
+    local kc_bin=$HOME/bin/keychain 
+    if [[ -x $kc_bin ]]; then
+        local identities=$HOME/.ssh/identities
+        if [[ -n $identities/*~*pub ]]; then
+            $kc_bin -q --host fixed $identities/*~*pub
+            source ~/.keychain/fixed-sh
+        fi
+    fi
+fi
+
 # Report about the following processes.
 procs=( {ssh,gpg}-agent )
 for p in $procs ; do
