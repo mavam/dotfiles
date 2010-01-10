@@ -6,7 +6,7 @@
 if [[ -d /Applications/MacVim.app ]]; then
     alias gvim='/Applications/MacVim.app/Contents/MacOS/Vim -g'
 fi
-[[ -x $(whence -p mvim) ]] && alias m='mvim'
+which mvim &> /dev/null && alias m='mvim'
 
 # Unload the TUN Kernel extension (to make OpenVPN work).
 unload_tun()

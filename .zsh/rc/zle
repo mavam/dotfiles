@@ -63,10 +63,13 @@ bindkey "." magic-space
 # Keep failing searches on the command line.
 _failsafe_hisb()
 {
-# TODO: Switch to pattern search when it is widely available.
-#  zle history-incremental-pattern-search-backward
-  zle history-incremental-search-backward
-  [[ $? = 3 ]] && BUFFER=$LASTABORTEDSEARCH
+    if is-at-least 4.3.9; then
+        zle history-incremental-pattern-search-backward
+    else
+        zle history-incremental-search-backward
+    fi
+
+    [[ $? = 3 ]] && BUFFER=$LASTABORTEDSEARCH
 }
 zle -N _failsafe_hisb
 bindkey "^r" _failsafe_hisb

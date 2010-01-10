@@ -25,7 +25,7 @@ if [[ -f $HOME/.zpath && $SHLVL == 1 ]]; then
 fi
 
 # Setup locale.
-if [[ -x $(whence -p locale) ]]; then
+if which locale &> /dev/null; then
     if [[ $(locale -a | grep '^en_US.utf8$') == "en_US.utf8" ]] ; then
         export LANG=en_US.utf8
     elif [[ $(locale -a | grep '^en_US.UTF-8$') == "en_US.UTF-8" ]] ; then
@@ -40,11 +40,11 @@ if [[ -x $(whence -p locale) ]]; then
 fi
 
 # Editor
-if [[ -x $(whence -p vim) ]]; then
+if which vim &> /dev/null; then
     export EDITOR="vim"
     export VIMRELEASE="$(print ${${$(vim --version)[5]}:gs/.//})"
 else
-    [[ -x $(whence -p vi) ]] && export EDITOR="vi"
+    which vi &> /dev/null && export EDITOR="vi"
 fi
 export VISUAL=$EDITOR
 
@@ -66,7 +66,7 @@ export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[01;32m'
 
 # Setup Ruby gem environment.
-if [[ -x $(whence -p gem) ]]; then
+if which gem &> /dev/null; then
     export GEM_HOME=$(gem env gemhome)
     export GEM_PATH=$(gem env gempath)
 fi

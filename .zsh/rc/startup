@@ -26,7 +26,7 @@ for p in $procs ; do
 done
 
 # Notify if there is a detached screen.
-if [[ -x $(whence -p screen) ]] ; then
+if which screen &> /dev/null ; then
 	#screen_pids=($(screen -ls | awk -F. '/[ \t]+[0-9]+/ {print $1}'))
 	screen_pids=(${${(M)${(f)"$(screen -ls)"}:#(#s)[[:space:]]##([0-9]##).*}/(#b)[[:space:]]#([0-9]##).*/$match[1]})
 	if (( ${#screen_pids} )) ; then

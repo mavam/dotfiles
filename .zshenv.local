@@ -9,6 +9,6 @@
 [[ -d ~/code/texinputs ]] && export TEXINPUTS=.:~/code/texinputs//:
 
 # Sup: use Xapian instead of Ferret.
-[[ -x $(whence -p sup) ]] && export SUP_INDEX=xapian
+which sup &> /dev/null && export SUP_INDEX=xapian
 
 # vim: ft=zsh

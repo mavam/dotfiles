@@ -7,8 +7,6 @@ typeset -U path cdpath fpath manpath
 
 # System $PATH.
 path=( 
-    ~/bin
-    $path 
     /usr/local/bin
     /usr/bin
     /bin
@@ -22,8 +20,6 @@ path=(
 
 # Man pages.
 manpath=(
-    $manpath
-    ~/man
     /usr/local/man
     /usr/man
 )
@@ -35,6 +31,10 @@ fpath=(~/.zsh/completions $fpath)
 if [[ -f $HOME/.zpath.${OS} ]]; then
     source $HOME/.zpath.${OS}
 fi
+
+# Home prefix has highest precedence, thus sourced last.
+path=( ~/bin $path )
+manpath=( ~/man $manpath )
 
 # Removes non-existent directories from an array.
 clean-path ()
