@@ -96,6 +96,4 @@ bindkey "^Xf" insert-files
 autoload -U url-quote-magic
 zle -N self-insert url-quote-magic
 
-autoload -U zmv
-
 # vim: ft=zsh

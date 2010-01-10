@@ -50,6 +50,9 @@ alias 8='pu -8'
 alias 9='pu -9'
 
 # Misc
+autoload -U zmv
+alias mmv='noglob zmv -W'
+
 alias hist-full='history -E 1'
 alias funcs='declare -f'
 
