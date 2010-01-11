@@ -9,24 +9,25 @@ ORDER = %w{
     sent
     drafts
     flagged
-    .list.boost
-    .list.boost.spirit
-    .list.zsh
-    .list.screen
-    .list.sup-talk
-    .list.pentest
-    .list.metasploit
-    .list.ids
-    .list.wifisec
-    .list.botnets
-    .list.misc
-    .devnull
-    health
+    list.boost
+    list.boost.spirit
+    list.zsh
+    list.screen
+    list.sup-talk
+    list.pentest
+    list.metasploit
+    list.ids
+    list.wifisec
+    list.botnets
+    list.misc
     private
+    devnull
+    health
     airjaldi
     EECS
     UCB
     ICSI
+    CCIED
     LBL
     TUM
     bro
@@ -34,9 +35,11 @@ ORDER = %w{
     bay-area
     money
     news
+    travel
     shopping
     spam
     trash
+    universe
 }
 
 dirs = Dir.entries(MAILDIR)

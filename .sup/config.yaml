@@ -1,0 +1,21 @@
+--- 
+:accounts: 
+  :default: 
+    :email: vallentin@icir.org
+    :alternates: []
+
+    :sendmail: /usr/sbin/sendmail -oem -ti
+    :name: Matthias Vallentin
+    :signature: /Users/mavam/.signature
+:ask_for_to: true
+:sent_source: sup://sent
+:discard_snippets_from_encrypted_messages: false
+:ask_for_cc: true
+:default_attachment_save_dir: ""
+:ask_for_bcc: false
+:ask_for_subject: true
+:thread_by_subject: false
+:confirm_no_attachments: true
+:edit_signature: false
+:editor: vim
+:confirm_top_posting: true
