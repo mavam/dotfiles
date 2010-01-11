@@ -1,5 +1,4 @@
 base=/
-#maildir=${HOME}/.gmail/universe:Volumes/backup/mail-*
-maildir=${HOME}/.gmail/universe
+maildir=${HOME}/.gmail/universe:Volumes/drobo/mail/2009/universe
 mfolder=${HOME}/.mairix/search
 database=${HOME}/.mairix/database
