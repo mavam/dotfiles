@@ -4,6 +4,7 @@
 #
 #     Copyright (C) 2003  Brendan Cully <brendan@kublai.com>
 #     Copyright (C) 2005  Roland Rosenfeld <roland@spinnaker.de>
+#     Copyright (C) 2010  Matthias Vallentin <vallentin@icir.org>
 # 
 #     This program is free software; you can redistribute it and/or modify
 #     it under the terms of the GNU General Public License as published by
@@ -20,9 +21,14 @@
 #     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111, USA.
 #
 
-libdir=/opt/local/lib/lbdb/
+#libdir=/opt/local/lib/lbdb/
+
+#m_osx_addressbook_query()
+#{
+#  $libdir/ABQuery `echo "$@" | iconv -f 'utf-8' -t 'macroman'` | grep -ia "$@"
+#}
 
 m_osx_addressbook_query()
 {
-  $libdir/ABQuery `echo "$@" | iconv -f 'utf-8' -t 'macroman'` | grep -ia "$@"
+  $HOME/.mutt/scripts/contact-lookup "$@"
 }

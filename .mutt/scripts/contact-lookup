@@ -1,0 +1,4 @@
+#!/bin/sh
+
+search=$(echo "$@" | iconv -f 'utf-8' -t 'macroman')
+contacts -sSH -f '%fn %ln <%e>' $search | iconv -f 'macroman' -t 'utf-8'

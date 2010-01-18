@@ -1,4 +1,5 @@
-METHODS="m_osx_addressbook m_inmail"
+#METHODS="m_osx_addressbook m_inmail"
+METHODS="m_osx_addressbook"
 
 MUTT_DIRECTORY="$HOME/.mutt"
 MUTTALIAS_FILES="aliases"

@@ -8,6 +8,7 @@ set certificate_file=~/.mutt/certificates
 
 set print_command="muttprint"
 set query_command="lbdbq '%s'"
+#set query_command="~/.mutt/scripts/contact-lookup %s"
 
 # (not required when using offlineimap)
 # Requires: mkdir -p ~/.mutt/cache/{headers,bodies}
