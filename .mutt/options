@@ -10,10 +10,11 @@ set print_command="muttprint"
 set query_command="lbdbq '%s'"
 #set query_command="~/.mutt/scripts/contact-lookup %s"
 
-# (not required when using offlineimap)
-# Requires: mkdir -p ~/.mutt/cache/{headers,bodies}
+# (not necessary when using offlineimap)
+# requires: mkdir -p ~/.mutt/cache/{headers,bodies}
 #set header_cache="~/.mutt/cache/headers"
 #set message_cachedir="~/.mutt/cache/bodies"
+#set message_cache_clean=yes
 
 
 # ---------------------------------------------------------------------------- #
