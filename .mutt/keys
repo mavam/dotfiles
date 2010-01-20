@@ -2,6 +2,10 @@
 # Key Bindings.
 # 
 
+# You need the "noop" bind so that the line editor accepts IMAP folders with
+# spaces in their names. 
+bind editor <space> noop
+
 # Generic.
 # The generic menu is not a real menu, but specifies common functions (such as
 # movement) available in all menus except for pager and editor. Changing
@@ -9,62 +13,70 @@
 # as noted).
 
 # termcap is terribly wrong sometimes....
-macro generic \r     <Enter>
-macro generic \e[A   <Up>
-macro generic \e[B   <Down>
-macro generic \e[C   <Right>
-macro generic \e[D   <Left>
-macro generic \e[1~  <Home>
-macro generic \e[4~  <End>
-macro generic \e[5~  <PageUp>
-macro generic \e[6~  <PageDown>
-macro generic \eOP   <F1>
-macro generic \eOQ   <F2>
-macro generic \eOR   <F3>
-macro generic \eOS   <F4>
+macro generic \r          <Enter>
+macro generic \e[A        <Up>
+macro generic \e[B        <Down>
+macro generic \e[C        <Right>
+macro generic \e[D        <Left>
+macro generic \e[1~       <Home>
+macro generic \e[4~       <End>
+macro generic \e[5~       <PageUp>
+macro generic \e[6~       <PageDown>
+macro generic \eOP        <F1>
+macro generic \eOQ        <F2>
+macro generic \eOR        <F3>
+macro generic \eOS        <F4>
 
-bind generic "g"     first-entry
-bind generic "G"     last-entry
-bind generic <home>  first-entry
-bind generic <end>   last-entry
-bind generic <left>  previous-entry
-bind generic <right> next-entry
+# Movements.
+bind generic \Cu          half-up
+bind generic \Cd          half-down
+bind generic <home>       first-entry
+bind generic <end>        last-entry
+bind generic k            previous-entry
+bind generic j            next-entry
+bind generic g            noop
+bind generic gg           first-entry
+bind generic G            last-entry
+bind generic H            top-page
+bind generic M            middle-page
+bind generic L            bottom-page
+bind generic z            noop
+bind generic zt           current-top
+bind generic zb           current-bottom
+bind generic zz           current-middle
+bind index,pager <left>   previous-undeleted
+bind index,pager <right>  next-undeleted
 
-# You need the "noop" bind so that the line editor accepts IMAP folders with
-# spaces in their names. 
-bind editor <space> noop
+# Thread handling.
+bind index zo             collapse-thread 
+bind index zc             collapse-thread 
+bind index zM             collapse-all
+bind index zR             collapse-all
+bind index,pager [        previous-thread
+bind index,pager ]        next-thread
+bind index,pager {        previous-subthread
+bind index,pager }        next-subthread
 
-bind index,pager  "["     previous-thread
-bind index,pager  "]"     next-thread
-bind index,pager  "{"     previous-subthread
-bind index,pager  "}"     next-subthread
-bind index,pager  ",g"    group-reply
-bind index,pager  "\Cp"   half-up
-bind index,pager  "\Cn"   half-down
+# Message handling
+bind index,pager ,R       recall-message
+bind index,pager ,r       group-reply
+bind index,pager \Cp      half-up
+bind index,pager \Cn      half-down
 
-bind index  "h"     noop
-bind index  "z"     noop
-bind index  "Z"     noop
-bind index  "g"     first-entry
-bind index  "G"     last-entry
-bind index  ",z"    collapse-thread 
-bind index  ",Z"    collapse-all
-bind index  "zt"    current-top
-bind index  "zb"    current-bottom
-bind index  "zz"    current-middle
-
-bind pager  "g"     top
-bind pager  "G"     bottom
-bind pager  <home>  top
-bind pager  <end>   bottom
-bind pager  "\Cf"   next-page
-bind pager  "\Cb"   previous-page
-bind pager  "\Cj"   next-line
-bind pager  "\Ck"   previous-line
-bind pager  <up>    previous-line
-bind pager  <down>  next-line
-bind pager  <left>  previous-undeleted
-bind pager  <right> next-undeleted
+bind pager g              top
+bind pager <home>         top
+bind pager G              bottom
+bind pager <end>          bottom
+bind pager \Cu            half-up
+bind pager \Cd            half-down
+bind pager \Cf            next-page
+bind pager \Cb            previous-page
+bind pager \Cj            next-line
+bind pager <down>         next-line
+bind pager \Ck            previous-line
+bind pager <up>           previous-line
+bind pager <left>         previous-undeleted
+bind pager <right>        next-undeleted
 
 
 #
@@ -74,49 +86,48 @@ bind pager  <right> next-undeleted
 # Mairix search
 macro generic     ",/"      "<enter-command>set my_search = \`~/.mutt/scripts/mutt-mairix.sh\`<return><enter-command>push \$my_search<return>"
 
-macro index,pager ",<F5>"   "<enter-command>source ~/.muttrc<enter>"             "Reload .muttrc"
-macro index,pager ",v"      "<pipe-message>vim +':set ft=mail' - <enter>"        "View the message in vim"
-macro index,pager ",V"      "<pipe-message>mvim +':set ft=mail' - <enter>"       "View the message in MacVim"
-macro index,pager "\'"      "<clear-flag>r"                                      "Mark as un-replied"
-macro index,pager ",r"      "<read-thread><previous-undeleted><next-new-then-unread>" "Mark current thread as read and go to next unread message"
+macro generic     ",<F5>"   "<enter-command>source ~/.muttrc<enter>"                "Reload .muttrc"
 
-macro index       ",R"      "<tag-pattern>~U<enter><clear-flag>N<clear-flag>*"   "Catch up (mark all as read)"
-macro index       ",n"      "<limit>~N<enter>"                                   "Limit display to new mail"
-macro index       ",u"      "<limit>~U<enter>"                                   "Limit display to unread mail"
-macro index       ",a"      "<limit>all<enter>"                                  "Reset disply limit to all mail"
+macro index,pager ",v"      "<pipe-message>vim +':set ft=mail' - <enter>"           "View the message in vim"
+macro index,pager ",V"      "<pipe-message>mvim +':set ft=mail' - <enter>"          "View the message in MacVim"
+macro index,pager "\'"      "<clear-flag>r"                                         "Mark as un-replied"
+macro index,pager "R"       "<read-thread><previous-undeleted><next-new-then-unread>" "Mark current thread as read and go to next unread message"
 
-macro pager       ",s"      "<pipe-message>lbdb-fetchaddr<enter>"                "Store address details in lbdb"
-macro pager       "H"       "<pipe-message>mailhops<enter>"                      "View the path of the mail"
+macro index       ",c"      "<tag-pattern>~U<enter><clear-flag>N<clear-flag>*"      "Catch up (mark all as read)"
+macro index       ",n"      "<limit>~N<enter>"                                      "Limit display to new mail"
+macro index       ",u"      "<limit>~U<enter>"                                      "Limit display to unread mail"
+macro index       ",a"      "<limit>all<enter>"                                     "Reset disply limit to all mail"
+macro pager       ",s"      "<pipe-message>lbdb-fetchaddr<enter>"                   "Store address details in lbdb"
 macro pager       ",p"      "<pipe-entry>gpg --keyserver search.keyserver.net --recv-key <enter>"  "Get PGP key"
-macro pager       "\cu"     "<pipe-entry>urlview<enter>"                         "Follow links with urlview"
+macro pager       "\cu"     "<pipe-entry>urlview<enter>"                            "Follow links with urlview"
 macro pager       ",f"      "<enter-command>set display_filter=~/.mutt/scripts/message-format.pl<enter><exit><display-message><enter-command>unset display_filter<enter>" "Pretty-print message via par"
 
-macro pager       "w"       "<enter-command>set invsmart_wrap invmarkers<enter>" "Toggle wrap stuff"
-macro pager       "\e1"     "<enter-command>set pager_index_lines=1<enter>"      "Set pager lines to 1"
-macro pager       "\e2"     "<enter-command>set pager_index_lines=2<enter>"      "Set pager liens to 2"
-macro pager       "\e3"     "<enter-command>set pager_index_lines=3<enter>"      "Set pager liens to 3"
-macro pager       "\e4"     "<enter-command>set pager_index_lines=4<enter>"      "Set pager liens to 4"
-macro pager       "\e5"     "<enter-command>set pager_index_lines=5<enter>"      "Set pager liens to 5"
-macro pager       "\e6"     "<enter-command>set pager_index_lines=6<enter>"      "Set pager liens to 6"
-macro pager       "\e7"     "<enter-command>set pager_index_lines=7<enter>"      "Set pager liens to 7"
-macro pager       "\e8"     "<enter-command>set pager_index_lines=8<enter>"      "Set pager liens to 8"
-macro pager       "\e9"     "<enter-command>set pager_index_lines=9<enter>"      "Set pager liens to 9"
-macro pager       "\e0"     "<enter-command>set pager_index_lines=0<enter>"      "Set pager liens to 0"
+macro pager       "w"       "<enter-command>set invsmart_wrap invmarkers<enter>"    "Toggle wrap stuff"
+macro pager       "\e1"     "<enter-command>set pager_index_lines=1<enter>"         "Set pager lines to 1"
+macro pager       "\e2"     "<enter-command>set pager_index_lines=2<enter>"         "Set pager liens to 2"
+macro pager       "\e3"     "<enter-command>set pager_index_lines=3<enter>"         "Set pager liens to 3"
+macro pager       "\e4"     "<enter-command>set pager_index_lines=4<enter>"         "Set pager liens to 4"
+macro pager       "\e5"     "<enter-command>set pager_index_lines=5<enter>"         "Set pager liens to 5"
+macro pager       "\e6"     "<enter-command>set pager_index_lines=6<enter>"         "Set pager liens to 6"
+macro pager       "\e7"     "<enter-command>set pager_index_lines=7<enter>"         "Set pager liens to 7"
+macro pager       "\e8"     "<enter-command>set pager_index_lines=8<enter>"         "Set pager liens to 8"
+macro pager       "\e9"     "<enter-command>set pager_index_lines=9<enter>"         "Set pager liens to 9"
+macro pager       "\e0"     "<enter-command>set pager_index_lines=0<enter>"         "Set pager liens to 0"
 
 #
 # GMail
 # 
 
 # Archiving only in INBOX.
-folder-hook .   'bind  index,pager "y"   noop'
-folder-hook "!" 'macro index,pager "y" "<delete-message>" "Remove INBOX label, i.e., archive message"'
+folder-hook .           'bind  index,pager "y"   noop'
+folder-hook "!"         'macro index,pager "y" "<delete-message>"                   "Remove INBOX label, i.e., archive message"'
 
 # Trash management.
-folder-hook . 'macro index,pager "d" "<save-message>=trash<enter><enter>" "Move message to trash"'
-folder-hook "=trash" 'bind index,pager "d" delete-message'
+folder-hook .           'macro index,pager "d" "<save-message>=trash<enter><enter>" "Move message to trash"'
+folder-hook "=trash"    'bind index,pager "d" delete-message'
 
-macro index,pager "S"       "<save-message>=spam<enter>"            "Mark message as spam"
-macro index,pager ",h"      "<save-message>!<enter>"                "Mark message as ham"
-macro index,pager "I"       "<change-folder>!<enter>"               "Go to INBOX"
+macro index,pager "I"       "<change-folder>!<enter>"                               "Go to INBOX"
+macro index,pager "H"       "<save-message>!<enter>"                                "Mark message as ham"
+macro index,pager "S"       "<save-message>=spam<enter>"                            "Mark message as spam"
 
 # vim: ft=muttrc
