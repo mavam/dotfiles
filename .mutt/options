@@ -35,7 +35,8 @@ set include             # include messages when replying
 set mail_check=60       # [5] how often mutt should look for new mail
 unset mark_old          # Distinguish between old and new unread mails
 #set menu_scroll         # scroll menus when moving across screen boundary
-#set mime_forward=no     # attach message as a seperate MIME part
+set mime_forward=yes    # Forward attachments as well
+set mime_forward_rest=yes
 set move=no             # move read messages from spool to $mbox
 set net_inc=5           # [10] large transfers update their progress every 'x'
 set pipe_split          # pipe messages one by one
