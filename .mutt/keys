@@ -28,55 +28,56 @@ macro generic \eOR        <F3>
 macro generic \eOS        <F4>
 
 # Movements.
-bind generic \Cu          half-up
-bind generic \Cd          half-down
-bind generic <home>       first-entry
-bind generic <end>        last-entry
-bind generic k            previous-entry
-bind generic j            next-entry
-bind generic g            noop
-bind generic gg           first-entry
-bind generic G            last-entry
-bind generic H            top-page
-bind generic M            middle-page
-bind generic L            bottom-page
-bind generic z            noop
-bind generic zt           current-top
-bind generic zb           current-bottom
-bind generic zz           current-middle
-bind index,pager <left>   previous-undeleted
-bind index,pager <right>  next-undeleted
+bind index,pager,generic \cp    half-up
+bind index,pager,generic \cn    half-down
+bind index,pager,generic [      half-up
+bind index,pager,generic ]      half-down
+bind index,pager,generic k      previous-entry
+bind index,pager,generic j      next-entry
+bind index,pager <left>         previous-undeleted
+bind index,pager <right>        next-undeleted
+bind index,generic <home>       first-entry
+bind index,generic <end>        last-entry
+bind index,generic g            noop
+bind index,generic gg           first-entry
+bind index,generic G            last-entry
+bind index,generic H            top-page
+bind index,generic M            middle-page
+bind index,generic L            bottom-page
+bind index,generic z            noop
+bind index,generic zt           current-top
+bind index,generic zb           current-bottom
+bind index,generic zz           current-middle
+
+bind pager g                    noop
+bind pager gg                   top
+bind pager <home>               top
+bind pager G                    bottom
+bind pager <end>                bottom
+bind pager \cf                  next-page
+bind pager \cb                  previous-page
+bind pager \cj                  next-line
+bind pager <down>               next-line
+bind pager \ck                  previous-line
+bind pager <up>                 previous-line
 
 # Thread handling.
 bind index zo             collapse-thread 
 bind index zc             collapse-thread 
 bind index zM             collapse-all
 bind index zR             collapse-all
-bind index,pager [        previous-thread
-bind index,pager ]        next-thread
-bind index,pager {        previous-subthread
-bind index,pager }        next-subthread
+bind index,pager {        previous-thread
+bind index,pager }        next-thread
+macro index,pager R       "<read-thread><previous-undeleted><next-new-then-unread>" "Mark current thread as read and go to next unread message"
 
 # Message handling
-bind index,pager ,R       recall-message
-bind index,pager ,r       group-reply
-bind index,pager \Cp      half-up
-bind index,pager \Cn      half-down
-
-bind pager g              top
-bind pager <home>         top
-bind pager G              bottom
-bind pager <end>          bottom
-bind pager \Cu            half-up
-bind pager \Cd            half-down
-bind pager \Cf            next-page
-bind pager \Cb            previous-page
-bind pager \Cj            next-line
-bind pager <down>         next-line
-bind pager \Ck            previous-line
-bind pager <up>           previous-line
-bind pager <left>         previous-undeleted
-bind pager <right>        next-undeleted
+bind index,pager  ,R       recall-message
+bind index,pager  ,r       group-reply
+macro index,pager  *       <tag-message>                                           "Tag message"
+macro index       ,c      "<tag-pattern>~U<enter><clear-flag>N<clear-flag>*"      "Catch up (mark all as read)"
+macro index,pager ,v      "<pipe-message>vim +':set ft=mail' - <enter>"           "View the message in vim"
+macro index,pager ,V      "<pipe-message>mvim +':set ft=mail' - <enter>"          "View the message in MacVim"
+macro index,pager \'      "<clear-flag>r"                                         "Mark as un-replied"
 
 
 #
@@ -87,13 +88,6 @@ bind pager <right>        next-undeleted
 macro generic     ",/"      "<enter-command>set my_search = \`~/.mutt/scripts/mutt-mairix.sh\`<return><enter-command>push \$my_search<return>"
 
 macro generic     ",<F5>"   "<enter-command>source ~/.muttrc<enter>"                "Reload .muttrc"
-
-macro index,pager ",v"      "<pipe-message>vim +':set ft=mail' - <enter>"           "View the message in vim"
-macro index,pager ",V"      "<pipe-message>mvim +':set ft=mail' - <enter>"          "View the message in MacVim"
-macro index,pager "\'"      "<clear-flag>r"                                         "Mark as un-replied"
-macro index,pager "R"       "<read-thread><previous-undeleted><next-new-then-unread>" "Mark current thread as read and go to next unread message"
-
-macro index       ",c"      "<tag-pattern>~U<enter><clear-flag>N<clear-flag>*"      "Catch up (mark all as read)"
 macro index       ",n"      "<limit>~N<enter>"                                      "Limit display to new mail"
 macro index       ",u"      "<limit>~U<enter>"                                      "Limit display to unread mail"
 macro index       ",a"      "<limit>all<enter>"                                     "Reset disply limit to all mail"
