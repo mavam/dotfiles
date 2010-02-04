@@ -73,7 +73,7 @@ macro index,pager R       "<read-thread><previous-undeleted><next-new-then-unrea
 # Message handling
 bind index,pager  ,R       recall-message
 bind index,pager  ,r       group-reply
-macro index,pager  *       <tag-message>                                           "Tag message"
+macro index,pager  *       <tag-thread>                                           "Tag entire thread"
 macro index       ,c      "<tag-pattern>~U<enter><clear-flag>N<clear-flag>*"      "Catch up (mark all as read)"
 macro index,pager ,v      "<pipe-message>vim +':set ft=mail' - <enter>"           "View the message in vim"
 macro index,pager ,V      "<pipe-message>mvim +':set ft=mail' - <enter>"          "View the message in MacVim"
