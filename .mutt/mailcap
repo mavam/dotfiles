@@ -20,6 +20,6 @@ text/*; view -Mf '%s' ; edit=vim -f '%s'; compose=vim -f '%s'; needsterminal
 application/msword; ~/.mutt/scripts/view_attachment.sh %s -
 
 # Unidentified
-mime_lookup application/octet-stream
 application/octet-stream; ~/.mutt/scripts/view_attachment.sh %s -
 application/*; ~/.mutt/scripts/view_attachment.sh %s -
+mime_lookup application/octet-stream
