@@ -329,7 +329,6 @@ set to_chars=" +TCFL"
 set crypt_replysign=yes          # automatically sign replies to signed msgs
 set crypt_replysignencrypted=yes # automatically sign replies to encrypted msgs
 
-set pgp_sign_as="0x37F34C16"
 set pgp_timeout=3600
 
 # [pgp_entry_format] PGP key selection menu
