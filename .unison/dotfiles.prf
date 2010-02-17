@@ -1,5 +1,6 @@
 include common
 
+path = .gnupg
 path = .lbdb
 path = .ssh/config
 path = .ssh/identities
