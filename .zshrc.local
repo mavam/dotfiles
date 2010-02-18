@@ -7,6 +7,7 @@ if [[ $UID != 0 && -z "$SSH_CONNECTION" ]]; then
     if which keychain &> /dev/null; then
         keychain -q --host fixed $HOME/.ssh/identities/*~*pub 9C8D4B41
         source ~/.keychain/fixed-sh
+        source ~/.keychain/fixed-sh-gpg
     fi
 fi
 

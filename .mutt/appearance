@@ -93,10 +93,10 @@ color quoted7    brightcyan  black
 color quoted8    brightgreen black
 
 # message index-colors
+color index      yellow     black  ~p # mail to myself
 color index      green       black ~g # PGP signed
 color index      green       black ~k # GPG
 color index      brightgreen black ~G # PGP encrypted
-color index      yellow     black  ~p # mail to myself
 #color index      black     black  ~P # mail from myself
 color index      brightwhite black ~O # old
 color index      brightblack black ~l # mailing lists

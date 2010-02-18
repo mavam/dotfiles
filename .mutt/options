@@ -328,8 +328,8 @@ set to_chars=" +TCFL"
 
 set crypt_replysign=yes          # automatically sign replies to signed msgs
 set crypt_replysignencrypted=yes # automatically sign replies to encrypted msgs
-
-set pgp_timeout=3600
+set pgp_timeout=0
+set pgp_use_gpg_agent=yes
 
 # [pgp_entry_format] PGP key selection menu
 # %n    number
@@ -354,45 +354,42 @@ set pgp_good_sign="`gettext -d gnupg -s 'Good signature from "' | tr -d '"'`"
 # %r      One or more key IDs.
 
 #set pgp_getkeys_command
-set pgp_getkeys_command="/opt/local/bin/gpg --recv-keys %r 2> /dev/null"
+set pgp_getkeys_command="gpg --recv-keys %r 2> /dev/null"
 
 # decode application/pgp
-set pgp_decode_command="/opt/local/bin/gpg %?p?--passphrase-fd 0? --no-verbose --batch --output - %f"
+set pgp_decode_command="gpg %?p?--passphrase-fd 0? --no-verbose --batch --output - %f"
 
 # verify a pgp/mime signature
-set pgp_verify_command="/opt/local/bin/gpg --no-verbose --batch --output - --verify %s %f"
+set pgp_verify_command="gpg --no-verbose --batch --output - --verify %s %f"
 
 # decrypt a pgp/mime attachment
-set pgp_decrypt_command="/opt/local/bin/gpg --passphrase-fd 0 --no-verbose --batch --output - %f"
+set pgp_decrypt_command="gpg --no-verbose --batch --output - %f"
 
 # create a application/pgp signed (old-style) message
-# set pgp_clearsign_command="/opt/local/bin/gpg-2comp --no-verbose --batch  --output - --passphrase-fd 0 --armor --textmode --clearsign %?a?-u %a?  %f"
-set pgp_clearsign_command="/opt/local/bin/gpg --no-verbose --batch --output - --passphrase-fd 0 --armor --textmode --clearsign %?a?-u %a? %f"
+set pgp_clearsign_command="gpg --no-verbose --batch --output - --armor --textmode --clearsign %?a?-u %a? %f"
 
 # create a pgp/mime signed attachment
-# set pgp_sign_command="/opt/local/bin/gpg-2comp --no-verbose --batch --output - --passphrase-fd 0 --armor --detach-sign --textmode %?a?-u %a? %f"
-set pgp_sign_command="/opt/local/bin/gpg --no-verbose --batch --output - --passphrase-fd 0 --armor --detach-sign --textmode %?a?-u %a? %f"
+set pgp_sign_command="gpg --no-verbose --batch --output - --armor --detach-sign --textmode %?a?-u %a? %f"
 
 # create a pgp/mime encrypted attachment
-set pgp_encrypt_only_command="pgpewrap /opt/local/bin/gpg -v --batch --output - --encrypt --textmode --armor --always-trust -- -r %r -- %f"
+set pgp_encrypt_only_command="pgpewrap gpg -v --batch --output - --encrypt --textmode --armor --always-trust -- -r %r -- %f"
 
 # create a pgp/mime encrypted and signed attachment
-# set pgp_encrypt_sign_command="pgpewrap gpg-2comp --passphrase-fd 0 -v --batch --output - --encrypt --sign %?a?-u %a? --armor --always-trust -- -r %r -- %f"
-set pgp_encrypt_sign_command="pgpewrap gpg --passphrase-fd 0 -v --batch --output - --encrypt --sign %?a?-u %a? --armor --always-trust -- -r %r -- %f"
+set pgp_encrypt_sign_command="pgpewrap gpg -v --batch --output - --encrypt --sign %?a?-u %a? --armor --always-trust -- -r %r -- %f"
 
 # import a key into the public key ring
-set pgp_import_command="/opt/local/bin/gpg --no-verbose --import -v %f"
+set pgp_import_command="gpg --no-verbose --import -v %f"
 
 # export a key from the public key ring
-set pgp_export_command="/opt/local/bin/gpg --no-verbose --export --armor %r"
+set pgp_export_command="gpg --no-verbose --export --armor %r"
 
 # verify a key
-set pgp_verify_key_command="/opt/local/bin/gpg --no-verbose --batch --fingerprint --check-sigs %r"
+set pgp_verify_key_command="gpg --no-verbose --batch --fingerprint --check-sigs %r"
 
 # read in the public key ring
-set pgp_list_pubring_command="/opt/local/bin/gpg --no-verbose --batch --with-colons --list-keys %r"=20
+set pgp_list_pubring_command="gpg --no-verbose --batch --with-colons --list-keys %r"=20
 
 # read in the secret key ring
-set pgp_list_secring_command="/opt/local/bin/gpg --no-verbose --batch --with-colons --list-secret-keys %r"=20
+set pgp_list_secring_command="gpg --no-verbose --batch --with-colons --list-secret-keys %r"=20
 
 # vim: ft=muttrc
