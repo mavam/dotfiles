@@ -2,8 +2,7 @@
 ## Functions to modify the terminal title.
 ##
 
-if [[ -n $TERM ]]; then
-
+if [[ "$TERM" != "linux" ]]; then
     case $TERM in
         xterm*|rxvt*)
             title() 
