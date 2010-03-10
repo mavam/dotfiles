@@ -1,25 +1,33 @@
 " Respect Doxygen comments.
-au FileType c,cpp set comments-=://
-au FileType c,cpp set comments+=:///
-au FileType c,cpp set comments+=://
+autocmd FileType c,cpp set comments-=://
+autocmd FileType c,cpp set comments+=:///
+autocmd FileType c,cpp set comments+=://
+
+" R stuff
+autocmd BufNewFile,BufRead *.r set ft=r
+autocmd BufNewFile,BufRead *.R set ft=r
+autocmd BufNewFile,BufRead *.s set ft=r
+autocmd BufNewFile,BufRead *.S set ft=r
+autocmd BufRead *.Rout set ft=r
+autocmd BufRead *.Rhistory set ft=r
 
 " Custom file types
-au BufRead,BufNewFile *.dox     set filetype=doxygen spell
-au BufRead,BufNewFile *.mail    set filetype=mail spell
-au BufRead,BufNewFile *.bro     set filetype=bro
-au BufRead,BufNewFile *.wiki    set filetype=mediawiki spell
-au BufRead,BufNewFile *.ll      set filetype=llvm
-au BufRead,BufNewFile *.td      set filetype=tablegen
-au BufRead,BufNewFile Portfile  set filetype=tcl
+autocmd BufRead,BufNewFile *.dox     set filetype=doxygen spell
+autocmd BufRead,BufNewFile *.mail    set filetype=mail spell
+autocmd BufRead,BufNewFile *.bro     set filetype=bro
+autocmd BufRead,BufNewFile *.wiki    set filetype=mediawiki spell
+autocmd BufRead,BufNewFile *.ll      set filetype=llvm
+autocmd BufRead,BufNewFile *.td      set filetype=tablegen
+autocmd BufRead,BufNewFile Portfile  set filetype=tcl
 
 " Autocmds to automatically enter hex mode and handle file writes properly
 " vim -b : edit binary using xxd-format!
 augroup Binary
-au!
-au BufReadPre *.bin,*.hex setlocal binary
-au BufReadPost *
+autocmd!
+autocmd BufReadPre *.bin,*.hex setlocal binary
+autocmd BufReadPost *
       \ if &binary | Hexmode | endif
-au BufWritePre *
+autocmd BufWritePre *
       \ if exists("b:editHex") && b:editHex && &binary |
       \  let oldro=&ro | let &ro=0 |
       \  let oldma=&ma | let &ma=1 |
@@ -27,7 +35,7 @@ au BufWritePre *
       \  let &ma=oldma | let &ro=oldro |
       \  unlet oldma | unlet oldro |
       \ endif
-au BufWritePost *
+autocmd BufWritePost *
       \ if exists("b:editHex") && b:editHex && &binary |
       \  let oldro=&ro | let &ro=0 |
       \  let oldma=&ma | let &ma=1 |
@@ -41,7 +49,7 @@ augroup END
 " Transparent editing of gpg encrypted files.
 " By Wouter Hanegraaff <wouter@blub.net>
 augroup encrypted
-    au!
+    autocmd!
     " First make sure nothing is written to ~/.viminfo while editing
     " an encrypted file.
     autocmd BufReadPre,FileReadPre      *.gpg set viminfo=
