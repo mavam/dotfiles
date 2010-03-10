@@ -170,7 +170,7 @@ command -bar Hexmode call ToggleHex()
 
 " Helper function to toggle hex mode.
 " See http://vim.wikia.com/wiki/Improved_Hex_editing.
-function ToggleHex()
+function! ToggleHex()
   " hex mode should be considered a read-only operation
   " save values for modified and read-only for restoration later,
   " and clear the read-only flag for now
@@ -207,10 +207,6 @@ function ToggleHex()
   let &modifiable=l:oldmodifiable
 endfunction
 
-" }}}
-
-" {{{ Sourced files
-source ~/.vim/filetypes.vim
 " }}}
 
 " vim: set fenc=utf-8 tw=80 sw=2 sts=2 et foldmethod=marker :

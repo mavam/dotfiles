@@ -21,14 +21,14 @@
 #     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111, USA.
 #
 
-#libdir=/opt/local/lib/lbdb/
-
-#m_osx_addressbook_query()
-#{
-#  $libdir/ABQuery `echo "$@" | iconv -f 'utf-8' -t 'macroman'` | grep -ia "$@"
-#}
+libdir=/opt/local/lib/lbdb/
 
 m_osx_addressbook_query()
 {
-  $HOME/.mutt/scripts/contact-lookup "$@"
+  $libdir/ABQuery `echo "$@" | iconv -f 'utf-8' -t 'macroman'` | grep -ia "$@"
 }
+
+#m_osx_addressbook_query()
+#{
+#  $HOME/.mutt/scripts/contact-lookup "$@"
+#}
