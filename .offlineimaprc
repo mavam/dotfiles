@@ -14,7 +14,7 @@ quick = 10
 [Repository Local]
 type = Maildir
 localfolders = ~/.gmail
-sep = .
+sep = /
 restoreatime = no
 
 [Repository Remote]
