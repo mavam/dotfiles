@@ -7,7 +7,7 @@ if [[ "$TERM" != "linux" ]]; then
         xterm*|rxvt*)
             title() 
             { 
-                print -Pn "\e]0;$1" 
+                print -Pn "\e]0;${(fV)1}" 
                 print -n "${(q)${ARGV[2,-1]}}\a"
             }
             ;;

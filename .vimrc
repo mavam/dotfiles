@@ -46,6 +46,9 @@ set expandtab           " expand tabs to spaces
 " g0  = do not indent C++ scope declarations.
 " t0  = do not indent a function's return type declaration.
 set cino=e-s,g0,t0
+
+" Use CSS when exporting with :TOhtml.
+"let html_use_css = 1
 " }}}
 
 "{{{ Spell settings
