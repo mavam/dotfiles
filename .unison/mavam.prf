@@ -19,5 +19,6 @@ path = publications
 path = work/icsi
 path = work/ucb
 path = Desktop/print
+path = Dropbox
 
 # vim: ft=sh

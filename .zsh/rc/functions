@@ -2,28 +2,6 @@
 ##  Functions
 ##
 
-kernel()
-{
-    printf 'GET /kdist/finger_banner HTTP1.0\n\n' | nc www.kernel.org 80 \
-    | grep latest
-}
-
-http_header()
-{
-    local port=80
-    local vhost=$1
-
-    [[ -n $2 ]] && port=$2
-    [[ -n $3 ]] && vhost=$3
-
-    print $port
-    print $vhost
-
-    printf "HEAD /$4 HTTP/1.1\\nHost: $vhost\nConnection: close\n\n" \
-    | nc $1 $port
-}     
-
-# Search recursively for todo items.
 todo() 
 {
     grep -ir todo *
@@ -139,17 +117,18 @@ beer()
 
 # Launch a screen with a different configuration file depending on which version
 # the OS provides. Newer versions of screen support vertical split, layouts, ...
-s()
+attach()
 {
     ssh-grab
     
     local version=${$(screen -v)[(w)3]%.*}
     local screenrc="$HOME/.screenrc.modern"
+    local args="-DR"
 
     if [[ $(($version)) -ge 4.01 ]]; then 
-        screen -c $screenrc $@ 
+        screen -c $screenrc $args
     else 
-        screen $@
+        screen $args
     fi
 }
 
@@ -181,11 +160,10 @@ ssh-fix()
 {
     local prefix="${HOME}/.screen"
     local file="ssh-session-vars"
-    local fullpath="${prefix}/${file}"
+    local fullpath=${prefix}/${file}
 
     [[ -f ${fullpath} ]] && source ${fullpath}
 }
-
 
 # Assign a glob expression to a variable. First creates an empty array variable
 # "show", then assigns to it the glob expansion (toggled on by `~') of its
