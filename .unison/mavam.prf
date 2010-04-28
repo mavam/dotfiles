@@ -9,6 +9,7 @@ path = .vim/spellfile.add
 path = .vim/spellfile.add.spl
 path = code
 path = docs/cv
+path = docs/fun
 path = docs/Papers
 path = docs/software/0wn3d-WLANs.txt
 path = docs/software/mavam.keylayout
