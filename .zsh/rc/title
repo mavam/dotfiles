@@ -31,7 +31,7 @@ static-title()
 precmd()
 {
     # Reload SSH environment if in screen session.
-    ssh-fix
+    [[ $TERM == "screen" ]] && ssh-fix
 
     [[ $TERM == "linux" ]] && return
 
