@@ -30,10 +30,12 @@ static-title()
 # Executed before each prompt.
 precmd()
 {
+    if ! whence title &> /dev/null; then
+        return
+    fi
+
     # Reload SSH environment if in screen session.
     [[ $TERM == "screen" ]] && ssh-fix
-
-    [[ $TERM == "linux" ]] && return
 
     title "%20<..<%3~%<<"
 }
@@ -41,7 +43,9 @@ precmd()
 # Executed just after a command has been read and is about to be executed.
 preexec() 
 {
-    [[ $TERM == "linux" ]] && return
+    if ! whence title &> /dev/null; then
+        return
+    fi
 
     emulate -L zsh
     local -a cmd; cmd=(${(z)1})             # Re-parse the command line.

@@ -17,7 +17,6 @@ fi
 function bro_path
 {
     export BROPATH="$1:$1/sigs:$1/site:$1/time-machine"
-    echo $BROPATH
 }
 
 # Set up a Bro source tree.
@@ -33,5 +32,33 @@ function bro_prefix
     path=( $1/bin $path )
     bro_path "$1/share/bro"
 }
+
+# Autmatically setup Bro.
+# $1: array of prefixes
+# $2: array of Bro source trees.
+function bro_auto_setup
+{
+    local -a prefixes trees; 
+    [[ $1 != "" ]] && prefixes=$1 || prefixes=( ~ /usr /usr/local )
+    [[ $2 != "" ]] && trees=$2 || trees=( ~/code/bro/bro-trunk ~/src/bro )
+
+    foreach pfx ($prefixes)
+    {
+        if [[ -d $dir && -x $dir/bin/bro ]] ; then
+            bro_prefix $dir 
+            return
+        fi
+    }
+
+    foreach dir ($trees)
+    {
+        if [[ -d $dir && -x $dir/src/bro ]] ; then
+            bro_source $dir 
+            return
+        fi
+    }
+}
+
+bro_auto_setup
 
 # vim: ft=zsh 
