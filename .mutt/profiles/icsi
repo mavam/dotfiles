@@ -6,8 +6,8 @@ set status_format="%_h:  [%r]  %f [total:%?M?%M/?%m%?n? new:%n?%?o? old:%o?%?d? 
 
 set hostname=icsi.berkeley.edu
 set from=vallentin@icsi.berkeley.edu
-set signature=~/.mutt/sigs/icsi
-#my_hdr Reply-To: Matthias Vallentin <vallentin@icsi.berkeley.edu>
+set signature=~/.mutt/sigs/simple
+#set signature=~/.mutt/sigs/icsi
 
 # SMTP settings.
 set record="=sent"

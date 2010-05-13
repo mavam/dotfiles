@@ -6,7 +6,8 @@ set status_format="%_h:  [%r]  %f [total:%?M?%M/?%m%?n? new:%n?%?o? old:%o?%?d? 
 
 set hostname=cs.berkeley.edu
 set from=mavam@cs.berkeley.edu
-set signature=~/.mutt/sigs/icir
+set signature=~/.mutt/sigs/simple
+#set signature=~/.mutt/sigs/icir
 
 # SMTP settings.
 set record="=sent"

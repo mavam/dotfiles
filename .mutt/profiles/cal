@@ -6,8 +6,8 @@ set status_format="%_h:  [%r]  %f [total:%?M?%M/?%m%?n? new:%n?%?o? old:%o?%?d? 
 
 set hostname=cs.berkeley.edu
 set from=vallentin@berkeley.edu
-set signature=~/.mutt/sigs/cal
-#my_hdr Reply-To: Matthias Vallentin <vallentin@berkeley.edu>
+set signature=~/.mutt/sigs/simple
+#set signature=~/.mutt/sigs/cal
 
 # SMTP settings.
 set record="=sent"

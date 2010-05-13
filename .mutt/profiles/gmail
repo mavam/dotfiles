@@ -6,8 +6,8 @@ set status_format="%_h:  [%r]  %f [total:%?M?%M/?%m%?n? new:%n?%?o? old:%o?%?d? 
 
 set hostname=local
 set from=matthias.vallentin@gmail.com
-set signature=~/.mutt/sigs/priv
-#my_hdr Reply-To: Matthias Vallentin <matthias.vallentin@gmail.com>
+set signature=~/.mutt/sigs/simple
+#set signature=~/.mutt/sigs/priv
 
 # SMTP settings.
 set smtp_url=smtps://matthias.vallentin@smtp.gmail.com
