@@ -11,16 +11,7 @@ umask 022
 (( ${+OSMAJOR} ))   || export OSMAJOR="${OSVERSION%%.*}"
 (( ${+HOSTNAME} ))  || export HOSTNAME=$(uname -n)
 
-# Set PATH according to .zpath, yet ensure this is done only once.  Note that
-# some of the commands below use "whence" to determine the location of a
-# program. Therefore, it is important that the PATH is *always* set properly at
-# this point. If we add
-#   
-#       ! -o LOGIN
-#
-# to the check, login shells make the below decisions based on an incomplete
-# PATH variable and might choose the wrong versions.
-if [[ -f $HOME/.zpath && $SHLVL == 1 ]]; then
+if [[ -f $HOME/.zpath ]]; then
     source $HOME/.zpath
 fi
 
@@ -43,8 +34,8 @@ fi
 if which vim &> /dev/null; then
     export EDITOR="vim"
     export VIMRELEASE="$(print ${${$(vim --version)[5]}:gs/.//})"
-else
-    which vi &> /dev/null && export EDITOR="vi"
+elif which vi &> /dev/null; then
+    export EDITOR="vi"
 fi
 export VISUAL=$EDITOR
 

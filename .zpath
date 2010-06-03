@@ -13,7 +13,7 @@ path=(
     /usr/local/sbin
     /usr/sbin
     /sbin
-    /usr/X11R6/bin      # X11
+    /usr/X11R6/bin
     /usr/ucb            # SunOS
     /usr/sww/bin        # SunOS
 )
@@ -25,7 +25,7 @@ manpath=(
 )
 
 # Function path.
-fpath=(~/.zsh/completions $fpath)
+fpath=( ~/.zsh/funcs $fpath )
 
 # Source OS specific zpath
 if [[ -f $HOME/.zpath.${OS} ]]; then

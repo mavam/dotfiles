@@ -95,11 +95,12 @@ _cols()
 # Prints out lines that are common among $# files.
 intersection()
 {
+    local sort="sort -S 1G"
     case $# in
         (0) true;;
-        (2) sort -u "$1"; sort -u "$2";;
-        (*) sort -u "$1"; shift; intersection "$@";;
-    esac | sort | uniq -d
+        (2) $sort -u "$1"; $sort -u "$2";;
+        (*) $sort -u "$1"; shift; intersection "$@";;
+    esac | $sort | uniq -d
 } 
 
 # Thirsty ?
