@@ -1,10 +1,9 @@
-# Adapated version of Bart Schäfer's prompt.
+# Prompt based on Bart Schäfer's prompt and inspired by Phil Gold.
 zmodload -i zsh/parameter || return 1
 
 prompt_mavam_help () {
     setopt localoptions nocshnullcmd noshnullcmd
-    [[ $ZSH_VERSION < 4.2.2 ]] &&
-        print 'Requires ZSH_VERSION 4.2.2'$'\n'
+    is-at-least 4.2.2 || print 'Requires Zsh version 4.2.2'$'\n'
     <<-\EOF
         This prompt gives the effect of left and right prompts on the upper
         line of a two-line prompt. 
@@ -106,13 +105,13 @@ prompt_mavam_ps1 () {
     setopt localoptions noxtrace noksharrays
 
     # Set up the components.
-    local -h host dir ec fillbar date indicator rs="%f%k%u"
-    host="%(!.%{$fg[root]%}%m.%{$fg[user]%}%n%{$fg[at]%}@%{$fg[host]%}%m)$rs"
-    dir="%{$fg[dir]%}%8~$rs"
-    ec="%(?..%{$fg[red]%}%U%?$rs)"
+    local -h host dir ec fillbar date indicator
+    host="%(!.%{$fg[root]%}%m.%{$fg[user]%}%n%{$fg[a]%}@%{$fg[host]%}%m)$fg[rs]"
+    dir="%{$fg[dir]%B%}%8~$fg[rs]"
+    ec="%(?..%{$fg[red]%}%U%?$fg[rs])"
     fillbar='$ch[on]%9v$ch[off]'
+    indicator="%{$fg[ch]%}(%{$fg[indicator]%}%#%{$fg[ch]%})$fg[rs]"
     date="%{$fg[date]%}%D{%H:%M:%S %y-%m-%d}"
-    indicator="%{$fg[ch]%}(%{$fg[indicator]%}%#%{$fg[ch]%})$rs"
 
     # This is just a tad silly ...
     [[ $prompt_theme[1] = oliver ]] && PS1='[%h%0(?..:%?)]%# ' ||
@@ -124,7 +123,7 @@ prompt_mavam_ps1 () {
         "%$[COLUMNS-PSCOL]>..>"  # Begin truncation (upper left prompt)
         '$ch[charset]$fg[ch]$ch[on]$ch[ul]$ch[hbar]$ch[off]'
         "("
-        "$host"
+        "%B$host"
         "$fg[ch])"
         "%<<"                    # End truncation (end upper left prompt)
         "$fillbar"               # Pad line to upper right position
@@ -146,6 +145,7 @@ prompt_mavam_ps1 () {
         "$date"
         "$fg[ch])"
         '$ch[on]$ch[hbar]$ch[lr]$ch[off]'
+        "$fg[rs]"
         )
     RPROMPT="${(j::)rprompt}"
 }
@@ -184,10 +184,11 @@ prompt_mavam_setup () {
         fg[ec]="%F{red}"
         fg[ch]="%F{${1:-blue}}"
         fg[user]="%F{${2:-cyan}}"
-        fg[at]="%F{${3:-green}}"
+        fg[a]="%F{${3:-green}}"
         fg[host]="%F{${2:-cyan}}"
         fg[dir]="%F{${4:-cyan}}"
-        fg[date]="%F{${5:-default}}"
+        fg[date]="%F{${5:-white}}"
+        fg[rs]="%f%k%u%b"
 
         if [[ -z "$SSH_CONNECTION" ]]; then
             fg[indicator]="%F{white}"   # Local prompt
@@ -206,6 +207,12 @@ prompt_mavam_setup () {
         ch[ll]=${altchar[m]:--}
         ch[lr]=${altchar[j]:--}
         ch[ur]=${altchar[k]:--}
+
+        # PS2 (used in loops, statements, ...)
+        PS2="%(4_:... :)%3_ $fg[ch]>$fg[rs] "   
+
+        # Correction prompt
+        SPROMPT="zsh: correct '%B%R%b' to '%B%r%b'? (%Un%uo|%Uy%ues|%Ua%ubort|%Ue%udit) " 
         ;;
     esac
 

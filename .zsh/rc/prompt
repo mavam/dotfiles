@@ -49,14 +49,15 @@ function old_prompt()
     export SPROMPT="error: correct '%B%R%b' to '%B%r%b'? (%Un%uo|%Uy%ues|%Ua%ubort|%Ue%udit) " 
 }
 
-if [[ $ZSH_VERSION < 4.3.7 ]]; then
-    old_prompt    
-else
+if is-at-least 4.3.7; then
     autoload -U promptinit
     promptinit
 
     setopt prompt_subst
     prompt mavam
+    #prompt mavam blue cyan green green yellow
+else
+    old_prompt    
 fi
 
 # vim:ft=zsh
