@@ -13,10 +13,12 @@ ORDER = %w{
     flagged
     list
     private
-    devnull
-    health
+    money
+    shopping
+    travel
     airjaldi
-    EECS
+    bay-area
+    body-mind
     UCB
     ICSI
     CCIED
@@ -24,11 +26,8 @@ ORDER = %w{
     TUM
     bro
     logs
-    bay-area
-    money
     news
-    travel
-    shopping
+    devnull
     spam
     trash
     universe
