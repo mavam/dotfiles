@@ -2,7 +2,7 @@
 ##  Prompt
 ## 
 
-# Depricated prompt for machines that with version < 4.2.2
+# Depricated prompt for machines that with version < 4.3.7
 function old_prompt()
 { 
     local none=$'%{\e[0m%}'
@@ -49,7 +49,7 @@ function old_prompt()
     export SPROMPT="error: correct '%B%R%b' to '%B%r%b'? (%Un%uo|%Uy%ues|%Ua%ubort|%Ue%udit) " 
 }
 
-if [[ $ZSH_VERSION < 4.2.2 ]]; then
+if [[ $ZSH_VERSION < 4.3.7 ]]; then
     old_prompt    
 else
     autoload -U promptinit
