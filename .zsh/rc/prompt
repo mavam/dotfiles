@@ -6,6 +6,6 @@ autoload -U promptinit
 promptinit
 
 setopt prompt_subst
-prompt_mavam_setup
+prompt mavam
 
 # vim:ft=zsh
