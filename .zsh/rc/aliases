@@ -5,7 +5,40 @@
 # OS-specific aliases
 case ${OS} in
     freebsd|darwin)
+        # First letter: foreground. Second: background.
+        # a -- black
+        # b -- red
+        # c -- green
+        # d -- brown
+        # e -- blue
+        # f -- magenta
+        # g -- cyan
+        # h -- light gray
+        # A -- bold black, usually shows up as dark gray
+        # B -- bold red
+        # C -- bold green
+        # D -- bold brown, usually shows up as yellow
+        # E -- bold blue
+        # F -- bold magenta
+        # G -- bold cyan
+        # H -- bold light gray; looks like bright white
+        # x -- default foreground or background
+        # Order:
+        # 01) DIR
+        # 02) SYM_LINK
+        # 03) SOCKET
+        # 04) PIPE
+        # 05) EXE
+        # 06) BLOCK_SP
+        # 07) CHAR_SP
+        # 08) EXE_SUID
+        # 09) EXE_GUID
+        # 10) DIR_STICKY
+        # 11) DIR_WO_STICKY
+        export LSCOLORS="GxFxFxdxCxDxDxhbadExEx"
+        export CLICOLORS="YES"
         alias ls='ls -G'
+
         alias grep='grep --colour=auto'
         alias psa='ps -wwaxo user,ruser,pid,ppid,pri,pcpu,pmem,vsize,rss,tt,start,args'
         alias psme='ps -U ${LOGNAME} -wwaxo user,ruser,pid,ppid,pri,pcpu,pmem,vsize,rss,tt,start,args'
@@ -25,11 +58,9 @@ case ${OS} in
         ;;
 esac
 
-# Vim
 alias v="vim"
 alias vi="vim"
 
-# Directories
 which gls &> /dev/null && alias ls='gls --color=auto'  # prefer GNU version.
 alias la='ls -al'
 alias ll='ls -l'
