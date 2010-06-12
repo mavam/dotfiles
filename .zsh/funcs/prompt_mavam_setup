@@ -193,7 +193,7 @@ prompt_mavam_setup () {
         if [[ -z "$SSH_CONNECTION" ]]; then
             fg[indicator]="%F{white}"   # Local prompt
         else
-            fg[indicator]="%F{yellow}"  # Remote prompt
+            fg[indicator]="%F{red}"  # Remote prompt
         fi
 
         # Use the ch assoc to hold special characters.
@@ -221,7 +221,7 @@ prompt_mavam_setup () {
     # No RPS1 by default because prompt_off_setup doesn't fix it.
     (($#RPS1 && $# > 4)) && RPS1="%F{$5}$RPS1%f"
 
-    # Paste our special commands into precmd and TRAPWINCH
+    # Paste our special commands into precmd and TRAPWINCH.
     add-zsh-hook precmd prompt_mavam_precmd
     functions[TRAPWINCH]="${functions[TRAPWINCH]//prompt_mavam_winch}
         prompt_mavam_winch"

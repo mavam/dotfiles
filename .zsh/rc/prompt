@@ -2,7 +2,7 @@
 ##  Prompt
 ## 
 
-# Depricated prompt for machines that with version < 4.3.7
+# Depricated prompt for machines that with Zsh version < 4.3.7
 function old_prompt()
 { 
     local none=$'%{\e[0m%}'
