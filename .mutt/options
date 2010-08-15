@@ -323,7 +323,7 @@ set to_chars=" +TCFL"
 #                               crypto settings
 # ---------------------------------------------------------------------------- #
 
-set crypt_replysign=yes          # automatically sign replies to signed msgs
+set crypt_replysign=no           # automatically sign replies to signed msgs
 set crypt_replysignencrypted=yes # automatically sign replies to encrypted msgs
 set pgp_timeout=0
 set pgp_use_gpg_agent=yes
