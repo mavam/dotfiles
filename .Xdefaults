@@ -16,8 +16,8 @@ URxvt.scrollBar: false
 URxvt.saveLines: 65535
 URxvt*urlLauncher: firefox
 
-URxvt.font: xft:terminus:autohint=false:antialias=false:size=10
-URxvt.boldFont: xft:terminus:style=Bold:autohint=false:antialias=false:size=10
+#URxvt.font: xft:terminus:autohint=false:antialias=false:size=10
+#URxvt.boldFont: xft:terminus:style=Bold:autohint=false:antialias=false:size=10
 
 ! Colors similar to Linux console
 URxvt.color0: rgb:0/0/0
