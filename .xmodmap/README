@@ -1,0 +1,23 @@
+Methodology
+===========
+
+1) Load the common keys:
+
+    xmodmap .xmodmap/common
+
+2) Load the keyboard-specific keys:
+    
+    xmodmap .xmodmap/layouts/foo
+
+3) Load the control keys:
+
+    xmodmap .xmodmap/control
+
+Files
+=====
+
+common
+    Defines keycodes and keysyms that are common across all keyboard layouts.
+
+control
+    Defines control keys like Alt, Control, Shift, etc.

@@ -1,7 +1,10 @@
 !
 ! Das Keyboard 
 !
+
+keycode  37 = Control_L
 keycode  78 = Scroll_Lock
+keycode  63 = KP_Multiply XF86_ClearGrab
 keycode  79 = KP_Home KP_7
 keycode  80 = KP_Up KP_8
 keycode  81 = KP_Prior KP_9
@@ -41,27 +44,4 @@ keycode 126 = KP_Equal
 keycode 127 = NoSymbol Super_L
 keycode 128 = NoSymbol Hyper_L
 
-!
-! Keyboard Control Keys
-!
-clear Lock
-clear Shift
-clear Control
-clear Mod1
-clear Mod2
-clear Mod3
-clear Mod4
-clear Mod5
-
-keysym Caps_Lock = Mode_switch
-keysym Menu = Super_R
-keysym Super_R = Mode_switch
-
-add Shift = Shift_L Shift_R
-add Control = Control_L Control_R
-add Mod1 = Alt_L Alt_R
-add Mod2 = Num_Lock
-add Mod3 = Mode_switch
-add Mod4 = Super_L 
-add Mod5 = ISO_Level3_Shift
-
+! vim: ft=xmodmap

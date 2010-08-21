@@ -1,0 +1,20 @@
+!
+! Keyboard Control Keys
+!
+clear Shift
+clear Control
+clear Mod1
+clear Mod2
+clear Mod3
+clear Mod4
+clear Mod5
+
+add Shift = Shift_L Shift_R
+add Control = Control_L Control_R
+add Mod1 = Alt_L Alt_R
+add Mod2 = Num_Lock
+add Mod3 = Super_L Super_R
+add Mod4 = Mode_switch
+add Mod5 = ISO_Level3_Shift
+
+! vim: ft=xmodmap

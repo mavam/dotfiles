@@ -1,0 +1,80 @@
+!
+! Keycodes
+!
+! keycode = <Normal> <Shift> <Mode_switch> <Shift + Mode_switch>
+
+! TODO: sync with Ukulele layout.
+keycode   9 = Escape
+keycode  10 = 1 exclam onesuperior exclamdown
+keycode  11 = 2 at twosuperior onehalf
+keycode  12 = 3 numbersign threesuperior threequarters
+keycode  13 = 4 dollar section sterling
+keycode  14 = 5 percent currency cent
+keycode  15 = 6 asciicircum registered copyright
+keycode  16 = 7 ampersand ordfeminine masculine
+keycode  17 = 8 asterisk yen diaeresis
+keycode  18 = 9 parenleft ae AE
+keycode  19 = 0 parenright oslash Ooblique
+keycode  20 = minus underscore macron notsign
+keycode  21 = equal plus plusminus division
+keycode  22 = BackSpace Terminate_Server
+keycode  23 = Tab ISO_Left_Tab
+keycode  24 = q Q aacute Aacute
+keycode  25 = w W agrave Agrave
+keycode  26 = e E eacute Eacute
+keycode  27 = r R egrave Egrave
+keycode  28 = t T
+keycode  29 = y Y ydiaeresis 
+keycode  30 = u U udiaeresis Udiaeresis
+keycode  31 = i I icircumflex Icircumflex
+keycode  32 = o O odiaeresis Odiaeresis
+keycode  33 = p P thorn THORN
+keycode  34 = bracketleft braceleft
+keycode  35 = bracketright braceright
+keycode  36 = Return
+keycode  38 = a A adiaeresis Adiaeresis
+keycode  39 = s S ssharp
+keycode  40 = d D ecircumflex Ecircumflex
+keycode  41 = f F eth ETH
+keycode  42 = g G
+keycode  43 = h H
+keycode  44 = j J ucircumflex Ucircumflex
+keycode  45 = k K
+keycode  46 = l L ocircumflex Ocircumflex
+keycode  47 = semicolon colon
+keycode  48 = apostrophe quotedbl
+keycode  49 = grave asciitilde degree degree
+keycode  50 = Shift_L
+keycode  51 = backslash bar
+keycode  52 = z Z acircumflex Acircumflex
+keycode  53 = x X multiply multiply
+keycode  54 = c C ccedilla Ccedilla
+keycode  55 = v V aring Aring
+keycode  56 = b B
+keycode  57 = n N ntilde Ntilde
+keycode  58 = m M mu paragraph
+keycode  59 = comma less guillemotleft cedilla
+keycode  60 = period greater guillemotright periodcentered
+keycode  61 = slash question questiondown
+keycode  62 = Shift_R
+keycode  64 = Alt_L Meta_L
+keycode  65 = space
+keycode  66 = Caps_Lock
+keycode  67 = F1 XF86_Switch_VT_1
+keycode  68 = F2 XF86_Switch_VT_2
+keycode  69 = F3 XF86_Switch_VT_3
+keycode  70 = F4 XF86_Switch_VT_4
+keycode  71 = F5 XF86_Switch_VT_5
+keycode  72 = F6 XF86_Switch_VT_6
+keycode  73 = F7 XF86_Switch_VT_7
+keycode  74 = F8 XF86_Switch_VT_8
+keycode  75 = F9 XF86_Switch_VT_9
+keycode  76 = F10 XF86_Switch_VT_10
+keycode  77 = Num_Lock Pointer_EnableKeys
+keycode  95 = F11 XF86_Switch_VT_11
+keycode  96 = F12 XF86_Switch_VT_12
+
+remove Lock = Caps_Lock
+keysym Caps_Lock = Multi_key
+
+! vim: ft=xmodmap
