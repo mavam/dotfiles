@@ -1,1 +1,55 @@
+#
+# .XCompose
+#
+# TODO:
+#   - Greek states
+#   - Math states
+include "/usr/share/X11/locale/en_US.UTF-8"
 
+# Acute
+<Multi_key> <semicolon> <a>       : "á"   aacute # LATIN SMALL LETTER A WITH ACUTE
+<Multi_key> <semicolon> <A>       : "Á"   Aacute # LATIN CAPITAL LETTER A WITH ACUTE
+<Multi_key> <semicolon> <e>       : "é"   eacute # LATIN SMALL LETTER E WITH ACUTE
+<Multi_key> <semicolon> <E>       : "É"   Eacute # LATIN CAPITAL LETTER E WITH ACUTE
+<Multi_key> <semicolon> <i>       : "í"   iacute # LATIN SMALL LETTER I WITH ACUTE
+<Multi_key> <semicolon> <I>       : "Í"   Iacute # LATIN CAPITAL LETTER I WITH ACUTE
+<Multi_key> <semicolon> <o>       : "ó"   oacute # LATIN SMALL LETTER O WITH ACUTE
+<Multi_key> <semicolon> <O>       : "Ó"   Oacute # LATIN CAPITAL LETTER O WITH ACUTE
+<Multi_key> <semicolon> <u>       : "ú"   ograve # LATIN SMALL LETTER U WITH ACUTE
+<Multi_key> <semicolon> <U>       : "Ú"   Ograve # LATIN CAPITAL LETTER U WITH ACUTE
+
+# Grave
+<Multi_key> <apostrophe> <a>      : "à"   agrave # LATIN SMALL LETTER A WITH GRAVE
+<Multi_key> <apostrophe> <A>      : "À"   Agrave # LATIN CAPITAL LETTER A WITH GRAVE
+<Multi_key> <apostrophe> <e>      : "È"   egrave # LATIN SMALL LETTER E WITH GRAVE
+<Multi_key> <apostrophe> <E>      : "È"   Egrave # LATIN CAPITAL LETTER E WITH GRAVE
+<Multi_key> <apostrophe> <i>      : "ì"   igrave # LATIN SMALL LETTER I WITH GRAVE
+<Multi_key> <apostrophe> <I>      : "Ì"   Igrave # LATIN CAPITAL LETTER I WITH GRAVE
+<Multi_key> <apostrophe> <o>      : "ò"   ograve # LATIN SMALL LETTER O WITH GRAVE
+<Multi_key> <apostrophe> <O>      : "Ò"   Ograve # LATIN CAPITAL LETTER O WITH GRAVE
+<Multi_key> <apostrophe> <u>      : "ù"   ograve # LATIN SMALL LETTER U WITH GRAVE
+<Multi_key> <apostrophe> <U>      : "Ù"   Ograve # LATIN CAPITAL LETTER U WITH GRAVE
+
+# Circumflex
+<Multi_key> <comma> <A>           : "Â"   Acircumflex # LATIN CAPITAL LETTER A WITH CIRCUMFLEX
+<Multi_key> <comma> <E>           : "Ê"   Ecircumflex # LATIN CAPITAL LETTER E WITH CIRCUMFLEX
+<Multi_key> <comma> <I>           : "Î"   Icircumflex # LATIN CAPITAL LETTER I WITH CIRCUMFLEX
+<Multi_key> <comma> <O>           : "Ô"   Ocircumflex # LATIN CAPITAL LETTER O WITH CIRCUMFLEX
+<Multi_key> <comma> <U>           : "Û"   Ucircumflex # LATIN CAPITAL LETTER U WITH CIRCUMFLEX
+<Multi_key> <comma> <a>           : "â"   acircumflex # LATIN SMALL LETTER A WITH CIRCUMFLEX
+<Multi_key> <comma> <e>           : "ê"   ecircumflex # LATIN SMALL LETTER E WITH CIRCUMFLEX
+<Multi_key> <comma> <i>           : "î"   icircumflex # LATIN SMALL LETTER I WITH CIRCUMFLEX
+<Multi_key> <comma> <o>           : "ô"   ocircumflex # LATIN SMALL LETTER O WITH CIRCUMFLEX
+<Multi_key> <comma> <u>           : "û"   ucircumflex # LATIN SMALL LETTER U WITH CIRCUMFLEX
+
+# Tilde
+<Multi_key> <period> <A>      : "Ã"   Atilde # LATIN CAPITAL LETTER A WITH TILDE
+<Multi_key> <period> <I>      : "Ĩ"   U0128 # LATIN CAPITAL LETTER I WITH TILDE
+<Multi_key> <period> <N>      : "Ñ"   Ntilde # LATIN CAPITAL LETTER N WITH TILDE
+<Multi_key> <period> <O>      : "Õ"   Otilde # LATIN CAPITAL LETTER O WITH TILDE
+<Multi_key> <period> <U>      : "Ũ"   U0168 # LATIN CAPITAL LETTER U WITH TILDE
+<Multi_key> <period> <a>      : "ã"   atilde # LATIN SMALL LETTER A WITH TILDE
+<Multi_key> <period> <i>      : "ĩ"   U0129 # LATIN SMALL LETTER I WITH TILDE
+<Multi_key> <period> <n>      : "ñ"   ntilde # LATIN SMALL LETTER N WITH TILDE
+<Multi_key> <period> <o>      : "õ"   otilde # LATIN SMALL LETTER O WITH TILDE
+<Multi_key> <period> <u>      : "ũ"   U0169 # LATIN SMALL LETTER U WITH TILDE

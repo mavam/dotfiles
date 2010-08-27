@@ -1,5 +1,25 @@
-Methodology
-===========
+About
+=====
+
+In order to unify the key mapping across different keyboard, this xmodmap setup
+divides the key definitions across several files. By maintaining common mappings
+separate from the keyboard-specific ones, we get easier maintance (e.g.,
+changing common key mappings) at the cost of a slightly more complicated setup.
+
+Files
+=====
+
+common
+    Defines keycodes and keysyms that are common across all keyboard layouts.
+
+control
+    Defines control keys like Alt, Control, Shift, etc.
+
+layouts
+    Contains keyboard-specific keycodes and keysyms
+
+Usage
+=====
 
 1) Load the common keys:
 
@@ -13,11 +33,3 @@ Methodology
 
     xmodmap .xmodmap/control
 
-Files
-=====
-
-common
-    Defines keycodes and keysyms that are common across all keyboard layouts.
-
-control
-    Defines control keys like Alt, Control, Shift, etc.

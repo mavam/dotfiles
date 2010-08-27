@@ -1,0 +1,7 @@
+# Prefer X Input Method (XIM) instead of SCIM in order to activate .XCompose.
+# Note: using it might also require invoking 'sude im-switch -c' on some
+# distributions.
+export GTK_IM_MODULE=xim
+export QT_IM_MODULE=xim
+
+# vim: ft=zsh
