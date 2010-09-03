@@ -2,7 +2,7 @@
 
 import os, os.path, re
 
-prioritized = ['INBOX', 'drafts', 'sent', 'flagged']
+prioritized = ['INBOX', 'important', 'drafts', 'sent', 'flagged']
 
 def prio_cmp(x, y):
    for prefix in prioritized:
@@ -16,9 +16,4 @@ def prio_cmp(x, y):
           return +1
    return cmp(x, y)
 
-mobile = os.environ['HOSTNAME'] != 'shogun'
-filter_pattern = ''
-if mobile:
-    filter_pattern = '(INBOX|.*(Drafts|Sent Mail|Starred)|list.*)' 
-else:
-    filter_pattern = '.*'
+filter_pattern = '.*'

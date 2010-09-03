@@ -8,17 +8,20 @@ MAILDIR = "#{ENV['HOME']}/.gmail"
 # Custom order of mailboxes.
 ORDER = %w{
     INBOX
+    important
     sent
     drafts
     flagged
     list
     private
+    living
     money
     shopping
     travel
     airjaldi
     bay-area
     body-mind
+    CS
     UCB
     ICSI
     CCIED
