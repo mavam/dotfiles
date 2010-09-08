@@ -4,7 +4,7 @@ folder-hook . 'push <collapse-all>'
 folder-hook . 'source ~/.mutt/profiles/icir'
 
 send-hook   .                                   'source ~/.mutt/profiles/icir'
-send-hook   net-sec@icsi\.berkeley\.edu         'source ~/.mutt/profiles/icsi'
+send-hook   net-sec-users@icsi\.berkeley\.edu   'source ~/.mutt/profiles/icsi'
 send-hook   bro-dev@george\.lbl\.gov            'source ~/.mutt/profiles/icsi'
 send-hook   fastbit-users@hpcrdm\.lbl\.gov      'source ~/.mutt/profiles/icsi'
 send-hook   @lists.*                            'source ~/.mutt/profiles/icsi'

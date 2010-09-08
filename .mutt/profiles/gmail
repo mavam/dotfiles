@@ -1,16 +1,15 @@
 # Profile Name
-set my_profile="gmail"
+set my_profile="vallentin.net"
 
 # Set the profile name in the status line.
 set status_format="%_h:  [%r]  %f [total:%?M?%M/?%m%?n? new:%n?%?o? old:%o?%?d? del:%d?%?F? flag:%F?%?t? tag:%t?%?p? post:%p?%?b? inc:%b?%?l? %l?]       (%s/%S)%> [profile: $my_profile] [%P]   "
 
 set hostname=local
-set from=matthias.vallentin@gmail.com
+set from=matthias@vallentin.net
 set signature=~/.mutt/sigs/simple
-#set signature=~/.mutt/sigs/priv
 
 # SMTP settings.
-set smtp_url=smtps://matthias.vallentin@smtp.gmail.com
+set smtp_url="smtps://matthias@vallentin.net@smtp.gmail.com:587/"
 unset smtp_authenticators
 unset record
 

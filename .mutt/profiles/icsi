@@ -11,7 +11,7 @@ set signature=~/.mutt/sigs/simple
 
 # SMTP settings.
 set record="=sent"
-set smtp_url=smtp://mavam@gateway.eecs.berkeley.edu
+set smtp_url=smtp://mavam@gateway.eecs.berkeley.edu:587
 unset smtp_authenticators
 
 # Next profile.
