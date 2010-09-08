@@ -5,7 +5,7 @@ subscribe   secreadgroup@lists.berkeley.edu
 
 # ICSI/ICIR/LBL/Bro
 lists       (inhouse|seminars)@icsi.berkeley.edu
-subscribe   (bro-tracker|net-sec-users|hilti)@icsi.berkeley.edu
+subscribe   (bro-tracker|net-sec(-users)?|hilti)@icsi.berkeley.edu
 subscribe   bro-dev@george.lbl.gov
 subscribe   bro@icsi.berkeley.edu
 subscribe   fastbit-users@hpcrdm.lbl.gov
