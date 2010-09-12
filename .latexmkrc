@@ -1,3 +1,11 @@
+#
+# Generel
+#
+
+# Needed for the dot2texi package which invokes GraphViz.
+$latex = 'latex --shell-escape';
+$pdflatex = 'pdflatex --shell-escape';
+
 # 
 # Mac OS
 #

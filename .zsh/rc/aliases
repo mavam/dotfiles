@@ -51,7 +51,6 @@ case ${OS} in
         alias psta='pstree -aphlnu'
         alias pstme='pstree -aphlnu ${LOGNAME}'
         ;;
-        ;;
 esac
 
 alias grep='grep --colour=auto'
