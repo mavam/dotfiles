@@ -39,7 +39,6 @@ case ${OS} in
         export CLICOLORS="YES"
         alias ls='ls -G'
 
-        alias grep='grep --colour=auto'
         alias psa='ps -wwaxo user,ruser,pid,ppid,pri,pcpu,pmem,vsize,rss,tt,start,args'
         alias psme='ps -U ${LOGNAME} -wwaxo user,ruser,pid,ppid,pri,pcpu,pmem,vsize,rss,tt,start,args'
         alias psta='pstree -g2 -w' 
@@ -47,17 +46,16 @@ case ${OS} in
         ;;
     linux-gnu)
         alias ls='ls --color=auto'
-        alias grep='grep --colour=auto'
         alias psa='ps -eo user,ruser,pid,ppid,pri,pcpu,pmem,vsize,rss,tt,start,args'
         alias psme='psa | grep -E "^USER|${LOGNAME}"'
         alias psta='pstree -aphlnu'
         alias pstme='pstree -aphlnu ${LOGNAME}'
         ;;
-    solaris)
-        alias grep='ggrep --colour=auto'
         ;;
 esac
 
+alias grep='grep --colour=auto'
+alias egrep='egrep --colour=auto'
 alias v="vim"
 alias vi="vim"
 
