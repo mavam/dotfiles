@@ -38,7 +38,7 @@ set formatoptions=tcrqn " see :h 'fo-table for a detailed explanation
 set copyindent          " Copy the structure of existing indentation
 set shiftwidth=4        " tab indention 
 set tabstop=4           " number of spcaes for a tab
-set textwidth=80        " textwidth
+set textwidth=79        " textwidth
 set expandtab           " expand tabs to spaces
 
 " Indentation Tweaks.
