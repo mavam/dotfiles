@@ -1,0 +1,7 @@
+[user]
+	name = Matthias Vallentin
+	email = vallentin@icir.org
+[color]
+	diff = auto
+	status = auto
+	branch = auto
