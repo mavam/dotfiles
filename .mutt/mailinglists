@@ -1,16 +1,12 @@
-# EECS
 lists       ((soda|(ee)?cs)-.*|help)@(ee)?cs.berkeley.edu
 lists       lists.(eecs.)?berkeley.edu
 subscribe   secreadgroup@lists.berkeley.edu
 
-# ICSI/ICIR/LBL/Bro
 lists       (inhouse|seminars)@icsi.berkeley.edu
 subscribe   (bro-tracker|net-sec(-users)?|hilti)@icsi.berkeley.edu
-subscribe   bro(-dev)?@bro-ids.org|bro@icsi.berkeley.edu
-subscribe   bro-blue@bro-ids.org
+subscribe   bro(-(dev|blue))?@bro-ids.org
 subscribe   fastbit-users@hpcrdm.lbl.gov
 
-# Tools
 subscribe   lists.boost.org
 subscribe   (spirit-(general|devel)|boost-.*|asio-users)@lists.sourceforge.net
 subscribe   screen-(users|devel)@gnu.org
@@ -18,7 +14,6 @@ subscribe   sup-talk@rubyforge.org
 subscribe   zsh-users@sunsite.dk
 subscribe   zen@zshwiki.org
 
-# Security
 subscribe   (focus-ids|pen-test|wifisec)@(lists.)?securityfocus.com
 subscribe   framework@spool.metasploit.com
 subscribe   botnets@whitestar.linuxbox.org
