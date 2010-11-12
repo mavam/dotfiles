@@ -1,12 +1,12 @@
-#set default_hook="~f %s !~P | (~P ~C %s)"
-
 folder-hook . 'push <collapse-all>'
 folder-hook . 'source ~/.mutt/profiles/icir'
 
 send-hook   .                                   'source ~/.mutt/profiles/icir'
+send-hook   ~l !(~t boost-)                     'unset record'
 send-hook   fastbit-users@hpcrdm\.lbl\.gov      'source ~/.mutt/profiles/icsi'
 send-hook   @lists.*                            'source ~/.mutt/profiles/icsi'
 send-hook   boost-cmake@lists\.boost\.org       'source ~/.mutt/profiles/icir'
+
 
 # ---------------------------------------------------------------------------- #
 #                                    help
