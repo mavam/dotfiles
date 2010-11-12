@@ -18,7 +18,7 @@ set nocompatible        " Use Vim defaults
 set modeline            " modelines at the {end,beginning} of a file are handy!
 
 " low priority for these files in tab-completion
-set suffixes+=.aux,.bbl,.blg,.dvi,.log,.pdf     " LaTeX
+set suffixes+=.aux,.bbl,.blg,.dvi,.log,.pdf,.fdb_latexmk     " LaTeX
 set suffixes+=.info,.out,.o,.lo
 
 " When displaying line numbers, don't use an annoyingly wide number column. This
@@ -80,7 +80,7 @@ nnoremap <F2> :set list!<CR>
 " F3: Toggle expansion of tabs to spaces.
 " nmap <F3> :set expandtab!<CR>
 
-" F4: Toggle past mode.
+" F4: Toggle paste mode.
 set pastetoggle=<F4>
 
 " Switching to hex mode.
@@ -103,7 +103,6 @@ vnoremap X "_X
 "noremap! <M-Down> <Down>
 "noremap! <M-Up> k
 "noremap! <M-Down> j
-
 
 " }}}
 
