@@ -1,5 +1,0 @@
-include common
-
-path = work/ucb
-
-# vim: ft=sh
