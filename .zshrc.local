@@ -39,21 +39,26 @@ function bro_prefix
 function bro_auto_setup
 {
     local -a prefixes trees; 
-    [[ $1 != "" ]] && prefixes=$1 || prefixes=( ~ /usr /usr/local )
-    [[ $2 != "" ]] && trees=$2 || trees=( ~/code/bro/bro-trunk ~/src/bro )
+    [[ $1 != "" ]] && prefixes=$1 || prefixes=( ~/code/root /usr /usr/local )
+    [[ $2 != "" ]] && trees=$2 || trees=( ~/code/bro/bro ~/src/bro )
 
-    foreach pfx ($prefixes)
+    # First check the source trees.
+    foreach dir ($trees)
     {
-        if [[ -d $dir && -x $dir/bin/bro ]] ; then
-            bro_prefix $dir 
+        # FIXME: The default build directory is different now that Bro moved to
+        # CMake.
+        if [[ -x $dir/src/bro ]] ; then
+            bro_source $dir 
             return
         fi
     }
 
-    foreach dir ($trees)
+    # Then check the prefixes.
+    foreach pfx ($prefixes)
     {
-        if [[ -d $dir && -x $dir/src/bro ]] ; then
-            bro_source $dir 
+        if [[ -x $pfx/bin/bro ]]
+        then
+            bro_prefix $pfx 
             return
         fi
     }
