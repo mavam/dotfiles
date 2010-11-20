@@ -48,7 +48,7 @@ set expandtab           " expand tabs to spaces
 set cino=e-s,g0,t0
 
 " Use CSS when exporting with :TOhtml.
-"let html_use_css = 1
+let html_use_css = 0
 " }}}
 
 "{{{ Spell settings
