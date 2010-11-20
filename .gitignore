@@ -1,7 +1,8 @@
-# Weed out all non-dot directories and the README file.
+# Weed out all non-dot directories.
 */
+TODO
+slides
 !.*/
-!README
 
 .CFUserTextEncoding
 .DS_Store
@@ -17,6 +18,7 @@
 .ncftp
 .mairix
 .msf3
+.macports
 .mutt/certificates
 .offlineimap/
 .qt
