@@ -2,7 +2,7 @@
 #                              Personal constants
 # ---------------------------------------------------------------------------- #
 set realname="Matthias Vallentin"
-alternates '(matthias@vallentin.net|vallentin?@(icsi.berkeley.edu|icir.org)|matthias.vallentin@gmail.com|(vallentin|mavam|mpm)@berkeley.edu|mavam@(ee)?cs.berkeley.edu)'
+alternates '(matthias@vallentin.net|vallentin?@(icsi.berkeley.edu|icir.org)|matthias.vallentin@gmail.com|(vallentin|mavam|mpm)@berkeley.edu|(mavam|vallentin|matthias.vallentin)@(ee)?cs.berkeley.edu)'
 
 unmy_hdr *
 my_hdr X-PGP-Fingerprint: 8A3B 1323 B469 CCBA 54D3  3BCC D5E7 8DF5 9C8D 4B41

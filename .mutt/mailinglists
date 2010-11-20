@@ -4,7 +4,7 @@ subscribe   secreadgroup@lists.berkeley.edu
 
 lists       (inhouse|seminars)@icsi.berkeley.edu
 subscribe   (bro-tracker|net-sec(-users)?|hilti)@icsi.berkeley.edu
-subscribe   bro(-(dev|blue))?@bro-ids.org
+subscribe   bro(-(dev|blue|commits-internal))?@bro-ids.org
 subscribe   fastbit-users@hpcrdm.lbl.gov
 
 subscribe   lists.boost.org
