@@ -19,7 +19,9 @@ slides
 .mairix
 .msf3
 .macports
+.mutt/aliases
 .mutt/certificates
+.mutt/lists
 .offlineimap/
 .qt
 .ssh/
