@@ -15,13 +15,9 @@ WORDCHARS="\'*?_-.[]~=/&;!#$%^(){}<>\'"
 # all names are case insensitive and underscores are ignored. For
 # example, `allexport' is equivalent to `A__lleXP_ort'.
 
-# Load the completion system
-autoload -U compinit
-compinit -i  # silently ignore insecure dirs/files
-
 # Changing directories 
 setopt pushd_ignore_dups        # don't push copies of the same dir on the stack
-setopt pushd_minus              # reference stack entries with a ''
+setopt pushd_minus              # reference stack entries with '-'
 
 # Completion 
 setopt complete_in_word         # cursors stays, completion from both ends
@@ -61,7 +57,5 @@ setopt long_list_jobs           # list jobs in the long format by default
 # shell emulation 
 # Shell state 
 setopt no_flow_control          # ignore ^S/^Q
-
-# zle 
 
 # vim: ft=zsh

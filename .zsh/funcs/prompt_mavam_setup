@@ -223,8 +223,7 @@ prompt_mavam_setup () {
 
     # Paste our special commands into precmd and TRAPWINCH.
     add-zsh-hook precmd prompt_mavam_precmd
-    functions[TRAPWINCH]="${functions[TRAPWINCH]//prompt_mavam_winch}
-        prompt_mavam_winch"
+    functions[TRAPWINCH]="${functions[TRAPWINCH]//prompt_mavam_winch} prompt_mavam_winch"
 
     return 0
 }
