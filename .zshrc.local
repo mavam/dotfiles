@@ -5,11 +5,8 @@
 # Setup SSH and GPG agents. But don't start them as root or remotely.
 if [[ $UID != 0 && -z "$SSH_CONNECTION" ]]; then
     if which keychain &> /dev/null; then
-        keychain -q --host fixed $HOME/.ssh/identities/*~*pub 9C8D4B41
-        [[ -f ~/.keychain/fixed-sh ]] && source ~/.keychain/fixed-sh
-
         export GPG_TTY=$(TTY)
-        [[ -f ~/.keychain/fixed-sh-gpg ]] && source ~/.keychain/fixed-sh-gpg
+        eval $(keychain --eval --host fix $HOME/.ssh/identities/*~*pub 9C8D4B41)
     fi
 fi
 
