@@ -2,16 +2,6 @@
 ## Startup
 ##
 
-# Report about the following processes.
-procs=( {ssh,gpg}-agent )
-for p in $procs ; do
-	local -a pids
-	pids=($(findpids $p))
-	if (( $#pids )) ; then
-		printf "%d %s running: [%s]\n" $#pids "${p}(s)" "$pids"
-	fi
-done
-
 # Notify if there is a detached screen.
 if which screen &> /dev/null ; then
 	#screen_pids=($(screen -ls | awk -F. '/[ \t]+[0-9]+/ {print $1}'))
@@ -20,5 +10,15 @@ if which screen &> /dev/null ; then
 		printf "%d screen(s) running: [%s]\n" $#screen_pids "${screen_pids}"
 	fi
 fi
+
+# Report about running agents.
+#procs=( {ssh,gpg}-agent )
+#for p in $procs ; do
+#	local -a pids
+#	pids=($(findpids $p))
+#	if (( $#pids )) ; then
+#		printf "%d %s running: [%s]\n" $#pids "${p}(s)" "$pids"
+#	fi
+#done
 
 # vim: ft=zsh
