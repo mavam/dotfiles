@@ -8,7 +8,4 @@
 # TeX inputs.
 [[ -d ~/code/texinputs ]] && export TEXINPUTS=.:~/code/texinputs//:
 
-# Sup: use Xapian instead of Ferret.
-which sup &> /dev/null && export SUP_INDEX=xapian
-
 # vim: ft=zsh

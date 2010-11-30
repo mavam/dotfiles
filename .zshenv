@@ -61,6 +61,7 @@ if which gem &> /dev/null; then
     local gempath=$(gem env gempath)
     (( $? == 0 )) && export GEM_PATH=~/.gem:$gempath
     export GEM_HOME=~/.gem
+    path=( $GEM_HOME/bin $path )
 fi
 
 # Source OS specific environment
