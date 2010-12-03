@@ -56,13 +56,6 @@ export LESS_TERMCAP_so=$'\E[01;44;33m'
 export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[01;32m'
 
-# Setup Ruby gem environment.
-if which gem &> /dev/null; then
-    local gempath=$(gem env gempath)
-    (( $? == 0 )) && export GEM_PATH=~/.gem:$gempath
-    export GEM_HOME=~/.gem
-fi
-
 # Source OS specific environment
 if [[ -f $HOME/.zshenv.${OS} ]]; then
     source $HOME/.zshenv.${OS}
