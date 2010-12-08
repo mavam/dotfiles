@@ -47,6 +47,9 @@ export CVS_RSH="ssh"
 export CVSEDITOR="vim"
 export RSYNC_RSH="ssh"
 
+# GPG
+export GPG_TTY=$(TTY)
+
 # Beautify man pages.
 export LESS_TERMCAP_mb=$'\E[01;31m'
 export LESS_TERMCAP_md=$'\E[01;31m'

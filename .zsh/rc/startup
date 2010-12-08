@@ -11,14 +11,32 @@ if which screen &> /dev/null ; then
 	fi
 fi
 
-# Report about running agents.
-#procs=( {ssh,gpg}-agent )
-#for p in $procs ; do
-#	local -a pids
-#	pids=($(findpids $p))
-#	if (( $#pids )) ; then
-#		printf "%d %s running: [%s]\n" $#pids "${p}(s)" "$pids"
-#	fi
-#done
+# Setup SSH and GPG agents. 
+function setup_agents
+{
+    local gpg_keys=${${${(M)${(f)"$(gpg --list-secret-keys \
+        --list-options no-show-photos 2>/dev/null)"}:%sec*}#sec */}%% *}
+
+    if which keychain &> /dev/null
+    then
+        case $1 in
+            "ssh") eval $(keychain --agents ssh --eval ~/.ssh/**/*pub(:r));;
+            "gpg") eval $(keychain --agents gpg --eval $gpg_keys);;
+            *)   eval $(keychain --eval ~/.ssh/**/*pub(:r) $gpg_keys);;
+        esac
+    fi
+}
+
+# Automatically start agents if they are already running.
+if [[ ${#$(findpids gpg-agent)} > 0 && ${#$(findpids ssh-agent)} > 0 ]]
+then
+    setup_agents
+elif [[ ${#$(findpids ssh-agent)} > 0 ]]
+then
+    setup_agents "ssh"
+elif [[ ${#$(findpids gpg-agent)} > 0 ]]
+then
+    setup_agents "gpg"
+fi
 
 # vim: ft=zsh

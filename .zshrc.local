@@ -2,14 +2,6 @@
 #  Local Zsh configuration 
 #
 
-# Setup SSH and GPG agents. But don't start them as root or remotely.
-if [[ $UID != 0 && -z "$SSH_CONNECTION" ]]; then
-    if which keychain &> /dev/null; then
-        export GPG_TTY=$(TTY)
-        eval $(keychain --eval --host fix $HOME/.ssh/identities/*~*pub 9C8D4B41)
-    fi
-fi
-
 # Sets the $BROPATH environment variable
 function bro_path
 {
