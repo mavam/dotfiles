@@ -61,8 +61,6 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 
 # Setup Ruby gem environment.
 if which gem &> /dev/null; then
-    local gempath=$(gem env gempath)
-    (( $? == 0 )) && export GEM_PATH=~/.gem:$gempath
     export GEM_HOME=~/.gem
     path=( $GEM_HOME/bin $path )
 fi
