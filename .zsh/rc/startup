@@ -14,17 +14,17 @@ fi
 # Setup SSH and GPG agents. 
 function setup_agents
 {
+    ! which keychain &> /dev/null && return
+
     local gpg_keys=${${${(M)${(f)"$(gpg --list-secret-keys \
         --list-options no-show-photos 2>/dev/null)"}:%sec*}#sec */}%% *}
 
-    if which keychain &> /dev/null
-    then
-        case $1 in
-            "ssh") eval $(keychain --agents ssh --eval ~/.ssh/**/*pub(:r));;
-            "gpg") eval $(keychain --agents gpg --eval $gpg_keys);;
-            *)   eval $(keychain --eval ~/.ssh/**/*pub(:r) $gpg_keys);;
-        esac
-    fi
+    case $1 in
+        "ssh") eval \
+            $(keychain --eval --host fix --agents ssh ~/.ssh/**/*pub(:r));;
+        "gpg") eval $(keychain --eval --host fix --agents gpg $gpg_keys);;
+        *)     eval $(keychain --eval --host fix ~/.ssh/**/*pub(:r) $gpg_keys);;
+    esac
 }
 
 # Automatically start agents if they are already running.
