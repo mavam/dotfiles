@@ -1,0 +1,14 @@
+autoload -Uz add-zsh-hook
+autoload -U  compinit
+autoload -U  colors
+autoload -U  incremental-complete-word
+autoload -U  insert-files
+autoload -U  is-at-least
+autoload -U  promptinit
+autoload -U  url-quote-magic
+autoload -Uz vcs_info
+autoload -U  zmv
+
+if [[ "${terminfo[colors]}" -ge 8 ]] { colors }
+
+# vim: ft=zsh
