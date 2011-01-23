@@ -1,9 +1,5 @@
 # Colorize STDERR.
 #zmodload zsh/terminfo zsh/system 2> /dev/null
-#autoload -U colors is-at-least
-#
-#if [[ "${terminfo[colors]}" -ge 8 ]] { colors }
-#
 #color_err ()
 #{
 #    # sysread & syswrite are part of zsh/system

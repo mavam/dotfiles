@@ -2,7 +2,7 @@
 ##  Prompt
 ## 
 
-# Depricated prompt for machines that with Zsh version < 4.3.7
+# Legacy prompt for machines that with Zsh version < 4.3.7
 function old_prompt()
 { 
     local none=$'%{\e[0m%}'
@@ -49,13 +49,55 @@ function old_prompt()
     export SPROMPT="error: correct '%B%R%b' to '%B%r%b'? (%Un%uo|%Uy%ues|%Ua%ubort|%Ue%udit) " 
 }
 
-autoload -U is-at-least
+# Git integration
+# ===============
+# Update the vcs_info_msg_ magic variables, but only as little as possible.
+#
+# This variable dictates weather we are going to do the git prompt update
+# before printing the next prompt.  On some setups this saves 10s of work.
+PR_GIT_UPDATE=1
+
+# Called before command excution. Decide if we should update the prompt next
+# time.
+function zsh_git_prompt_preexec 
+{
+    case "$(history $HISTCMD)" in 
+        *git*)
+            PR_GIT_UPDATE=1
+            ;;
+    esac
+}
+add-zsh-hook preexec zsh_git_prompt_preexec
+
+# Called after directory change. Assume that we have to update git.
+# prompt.
+function zsh_git_prompt_chpwd 
+{
+    PR_GIT_UPDATE=1
+}
+add-zsh-hook chpwd zsh_git_prompt_chpwd
+
+# Called before prompt generation. If needed, update the prompt info.
+function zsh_git_prompt_precmd 
+{
+   if [[ -n "$PR_GIT_UPDATE" ]]
+   then
+           vcs_info 'prompt'
+           PR_GIT_UPDATE=
+   fi
+}
+add-zsh-hook precmd zsh_git_prompt_precmd
+
+
+# Prompt initialization
+# =====================
 if is-at-least 4.3.7
 then
-    autoload -U promptinit
     promptinit
 
     setopt prompt_subst
+
+    # See ~/.zsh/funcs/prompt_mavam_setup for details.
     prompt mavam
     #prompt mavam blue cyan green green yellow
 else

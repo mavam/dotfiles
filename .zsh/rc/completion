@@ -2,8 +2,6 @@
 ##  Completion
 ##
 
-# Load the completion system
-autoload -U compinit
 compinit -i  # silently ignore insecure dirs/files
 
 # context string: ':completion:[function]:[completer]:[command]:[arg]' [tag]

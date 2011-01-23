@@ -84,16 +84,13 @@ _run_with_sudo() { LBUFFER="sudo $LBUFFER"; CURSOR=$#BUFFER }
 zle -N _run_with_sudo
 bindkey "^Xs" _run_with_sudo
 
-autoload -U incremental-complete-word
 zle -N incremental-complete-word
 bindkey "^Xi" incremental-complete-word 
 
-autoload -U insert-files
 zle -N insert-files
 bindkey "^Xf" insert-files
 
 # Automatic URL quoting
-autoload -U url-quote-magic
 zle -N self-insert url-quote-magic
 
 # vim: ft=zsh

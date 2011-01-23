@@ -2,6 +2,9 @@
 ## Functions to modify the terminal title.
 ##
 
+# TODO: modularize aspects into separate functions and push each into the
+# corresponding execution array, e.g., preexec_functions.
+
 case $TERM in
     xterm*|rxvt*)
         title() 

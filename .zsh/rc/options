@@ -9,7 +9,6 @@ SAVEHIST=100000
 WATCHFMT='%n %a %l from %m at %t.'
 watch=(notme)         # report login/logout events of all except ourself
 LOGCHECK=60           # time in seconds between checks for login/logout activity
-
 WORDCHARS="\'*?_-.[]~=/&;!#$%^(){}<>\'"
 
 # all names are case insensitive and underscores are ignored. For
