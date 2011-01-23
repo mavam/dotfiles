@@ -117,8 +117,8 @@ folder-hook .           'bind  index,pager "y"   noop'
 folder-hook "!"         'macro index,pager "y" "<delete-message>"                   "Remove INBOX label, i.e., archive message"'
 
 # Trash management.
-folder-hook .           'macro index,pager "d" "<save-message>=trash<enter><enter>" "Move message to trash"'
-folder-hook "=trash"    'bind index,pager "d" delete-message'
+#folder-hook .           'macro index,pager "d" "<save-message>=trash<enter><enter>" "Move message to trash"'
+#folder-hook "=trash"    'bind index,pager "d" delete-message'
 
 macro index,pager "I"       "<change-folder>!<enter>"                               "Go to INBOX"
 macro index,pager "H"       "<save-message>!<enter>"                                "Mark message as ham"
