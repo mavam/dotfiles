@@ -3,7 +3,7 @@
 #
 
 # Add local scripts to $PATH.
-[[ -d ~/code/scripts ]] && path=( ~/code/scripts $path )
+[[ -d ~/code/scripts ]] && path=( ~/code/scripts ~/code/root/bin $path )
 
 # TeX inputs.
 [[ -d ~/code/texinputs ]] && export TEXINPUTS=.:~/code/texinputs//:
