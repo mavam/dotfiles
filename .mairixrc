@@ -1,8 +1,0 @@
-# .mairixrc
-base=/
-
-maildir=Volumes/drobo/mail/2009/universe
-maildir=${HOME}/.gmail/universe
-
-mfolder=${HOME}/.mairix/search
-database=${HOME}/.mairix/database

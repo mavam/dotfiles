@@ -1,0 +1,88 @@
+###############################################################################
+
+VERBOSE = off
+#LOGFILE = $HOME/.procmail/procmail.log
+LOGFILE = /dev/null
+
+###############################################################################
+
+# After executing pm-jadate.rc, we can use the following values time variables
+# from the email:
+#
+#     YYYY    = 4 digits
+#     YY      = 2 digits
+#     MON     = 3 characters
+#     MM      = 2 digits
+#     DAY     = 3 characters
+#     DD      = 2 digits
+#     hh      = 2 digits      if available
+#     mm      = 2 digits      if available
+#     ss      = 2 digits      if available
+#PMSRC = $HOME/.procmail/lib
+#INCLUDERC = $PMSRC/pm-jadate.rc
+
+# Partition email based on monthly mail folders.
+#SLICE = $YYYY/$MM     # email-based time
+SLICE = `date +%Y/%m` # host-based time
+
+###############################################################################
+
+MAIL = $HOME/.mail
+MAILDIR=$MAIL
+DEFAULT=$SLICE/inbox/
+
+DUMMY=`test -d $MAILDIR/$SLICE || mkdir -m 700 -p $MAILDIR/$SLICE`
+
+###############################################################################
+
+# Catch duplicates.
+:0 Wh: msgid.lock
+| formail -D 8192 $MAIL/msgid.cache
+
+# Immediately delete high-volume or unnecessary CCIED mailings.
+:0
+* ^List-Id.*cied(-weather)?\.cs\.ucsd\.edu
+* ^Subject: ((Daily|Hourly) GQ Activity Report)|(url consumer stats update)|(Trajectory Daily Brief)
+/dev/null
+
+# Mailing lists that are automatically archived.
+:0
+* ^List-Id.*(asio-users|boost|boost-(users|langbinding|cmake)|threads-devel|spirit-(general|devel))\.lists\.(sourceforge\.net|boost\.org)
+$SLICE/list.boost/
+
+:0
+* ^List-Id.*fastbit-users\.hpcrdm\.lbl\.gov
+$SLICE/list.fastbit/
+
+:0
+* ^TO_focus-ids@securityfocus\.com
+$SLICE/list.ids/
+
+:0
+* ^List-Id.*framework\.spool\.metasploit\.com
+$SLICE/list.metasploit/
+
+:0
+* ^TO_pen-test@securityfocus\.com
+$SLICE/list.pen-test/
+
+:0
+* ^List-Id.*screen-(devel|users)\.gnu\.org
+$SLICE/list.screen/
+
+:0
+* ^List-Id.*sup-(devel|talk)\.rubyforge\.org
+$SLICE/list.sup/
+
+:0
+* ^TO_wifisec@securityfocus\.com
+$SLICE/list.wifisec/
+
+:0
+* ^List-Id.*zsh\.org
+$SLICE/list.zsh/
+
+# Sent mail.
+#:0
+#* ^From.*(Matthias Vallentin|(mpm|mavam|(m|matthias\.)?vallentin)@(.*berkeley.edu|icir.org|lbl.gov))
+#$SLICE/sent/
