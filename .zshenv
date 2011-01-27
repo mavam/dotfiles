@@ -11,9 +11,7 @@ umask 022
 (( ${+OSMAJOR} ))   || export OSMAJOR="${OSVERSION%%.*}"
 (( ${+HOSTNAME} ))  || export HOSTNAME=$(uname -n)
 
-if [[ -f $HOME/.zpath ]]; then
-    source $HOME/.zpath
-fi
+[[ -f ~/.zpath ]] && source ~/.zpath
 
 # Setup locale.
 if which locale &> /dev/null; then
@@ -65,14 +63,13 @@ if which gem &> /dev/null; then
     path=( $GEM_HOME/bin $path )
 fi
 
-# Source OS specific environment
-if [[ -f $HOME/.zshenv.${OS} ]]; then
-    source $HOME/.zshenv.${OS}
-fi
+# Source OS-specific environment.
+[[ -f ~/.zsh/env/$OS ]] && source ~/.zsh/env/$OS
 
-# Source local environment
-if [[ -f $HOME/.zshenv.local ]]; then
-    source $HOME/.zshenv.local
-fi
+# Source host-specific environment.
+[[ -f ~/.zsh/env/$HOST ]] && source ~/.zsh/env/$HOST
+
+# Source local environment.
+[[ -f ~/.zshenv.local ]] && source ~/.zshenv.local
 
 # vim: ft=zsh

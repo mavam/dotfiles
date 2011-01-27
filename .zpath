@@ -27,10 +27,11 @@ manpath=(
 # Function path.
 fpath=( ~/.zsh/funcs $fpath )
 
-# Source OS specific zpath
-if [[ -f $HOME/.zpath.${OS} ]]; then
-    source $HOME/.zpath.${OS}
-fi
+# Source OS-specific path configuration.
+[[ -f ~/.zsh/path/os/$OS ]] && source ~/.zsh/path/os/$OS
+
+# Source host path configuration.
+[[ -f ~/.zsh/path/rc/$HOST ]] && source ~/.zsh/path/rc/$HOST
 
 # Home prefix has highest precedence, thus sourced last.
 path=( ~/bin $path )
