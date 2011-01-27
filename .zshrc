@@ -1,25 +1,15 @@
 #
-# zshrc 
+# .zshrc
 #
-
-# Load the completion system.
-autoload -U compinit
-compinit -u
 
 # Source general files.
 for i (~/.zsh/rc/*) { source $i }
 
 # Source OS specific resource files.
-if [[ -f ~/.zsh/os/${OS} ]]; then
-    source ~/.zsh/os/${OS}
-fi
+[[ -f ~/.zsh/os/$OS ]] && source ~/.zsh/os/$OS
 
 # Source host specific files.
-if [[ -f ~/.zsh/host/$HOST ]]; then
-    source ~/.zsh/host/$HOST
-fi
+[[ -f ~/.zsh/host/$HOST ]] && source ~/.zsh/host/$HOST
 
 # Source user specific files.
-if [[ -f ~/.zshrc.local ]]; then
-    source ~/.zshrc.local
-fi
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local

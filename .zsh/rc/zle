@@ -90,7 +90,4 @@ bindkey "^Xi" incremental-complete-word
 zle -N insert-files
 bindkey "^Xf" insert-files
 
-# Automatic URL quoting
-zle -N self-insert url-quote-magic
-
 # vim: ft=zsh
