@@ -11,8 +11,8 @@ watch=(notme)         # report login/logout events of all except ourself
 LOGCHECK=60           # time in seconds between checks for login/logout activity
 WORDCHARS="\'*?_-.[]~=/&;!#$%^(){}<>\'"
 
-# all names are case insensitive and underscores are ignored. For
-# example, `allexport' is equivalent to `A__lleXP_ort'.
+# All names are case insensitive and underscores are ignored. For example,
+# `allexport' is equivalent to `A__lleXP_ort'.
 
 # Changing directories 
 setopt pushd_ignore_dups        # don't push copies of the same dir on the stack
@@ -49,11 +49,6 @@ setopt short_loops              # allow the short forms of loop constructs
 setopt no_bg_nice               # don't run background jobs at lower priority
 setopt long_list_jobs           # list jobs in the long format by default
 
-# Prompting 
-#setopt transient_rprompt       # remove any right prompt from display
-
-# scripts and functions 
-# shell emulation 
 # Shell state 
 setopt no_flow_control          # ignore ^S/^Q
 
