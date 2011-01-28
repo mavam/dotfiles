@@ -123,7 +123,7 @@ prompt_mavam_ps1()
 {
     setopt localoptions noxtrace noksharrays
 
-    # Set up the components.
+    # Set up the prompt components.
     local -h host dir ec fillbar date indicator git
     host="%(!.%{$fg[root]%}%m.%{$fg[user]%}%n%{$fg[a]%}@%{$fg[host]%}%m)$fg[rs]"
     dir="%(!.%{$fg[root]%}%8~.%{$fg[dir]%}%8~)$fg[rs]"
@@ -141,9 +141,9 @@ prompt_mavam_ps1()
         "$fg[ch]("
         "$dir"
         "$fg[ch])"
-        '$vcs_info_msg_0_'
         "%<<"                    # End truncation (end upper left prompt)
         "$fillbar"               # Pad line to upper right position
+        '$vcs_info_msg_0_'
         "$fg[ch]("
         "$host"
         "$fg[ch])"
@@ -198,6 +198,11 @@ prompt_mavam_setup()
         fg[dir]="%F{${4:-cyan}}"
         fg[date]="%F{${5:-white}}"
         fg[rs]="%f%k%u%b"
+        if [[ -z "$SSH_CONNECTION" ]]; then
+            fg[indicator]=$fg[a]        # Local prompt
+        else
+            fg[indicator]="%F{red}"     # Remote prompt
+        fi
 
         # Git styling
         # %s   The VCS in use (git, hg, svn, etc.).
@@ -228,12 +233,6 @@ prompt_mavam_setup()
         zstyle ':vcs_info:*:prompt:*' formats       "${fmt_branch}"
         zstyle ':vcs_info:*:prompt:*' nvcsformats   ""
         #zstyle ':vcs_info:*:prompt:*' branchformat "%b$fg[ch]:%F{yellow}%r"
-
-        if [[ -z "$SSH_CONNECTION" ]]; then
-            fg[indicator]="%F{white}"   # Local prompt
-        else
-            fg[indicator]="%F{red}"  # Remote prompt
-        fi
 
         # Use the ch assoc to hold special characters.
         local -Ah altchar
@@ -266,7 +265,8 @@ prompt_mavam_setup()
     return 0
 }
 
-prompt_mavam_preview() {
+prompt_mavam_preview()
+{
     prompt_preview_theme mavam "$@"
 }
 
