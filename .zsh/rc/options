@@ -7,8 +7,9 @@ HISTSIZE=100000
 SAVEHIST=100000
 
 WATCHFMT='%n %a %l from %m at %t.'
-watch=(notme)         # report login/logout events of all except ourself
-LOGCHECK=60           # time in seconds between checks for login/logout activity
+watch=(notme)         # Report login/logout events for everybody except ourself.
+LOGCHECK=60           # Time (seconds) between checks for login/logout activity.
+REPORTTIME=5          # Display usage statistics for commands running > 5 sec.
 WORDCHARS="\'*?_-.[]~=/&;!#$%^(){}<>\'"
 
 # All names are case insensitive and underscores are ignored. For example,
