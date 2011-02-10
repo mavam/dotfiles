@@ -1,6 +1,6 @@
 # Mutt-like send-hooks.
 recipients = header.values_at("To", "Cc", "Bcc").flatten
-if recipients.any? { |r| r =~ /sup-talk|lists\./ }
+if recipients.any? { |r| r =~ /sup-talk|lists\.|zsh-users/ }
   a = Redwood::AccountManager.account_for("vallentin@icsi.berkeley.edu")
   header["From"] = a.full_address
 end
