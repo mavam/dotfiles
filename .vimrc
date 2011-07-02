@@ -150,8 +150,7 @@ autocmd FileType c,cpp set comments+=://
 
 autocmd Filetype ruby set sw=2 ts=2
 autocmd Filetype mail set tw=72 spell
-autocmd Filetype tex set sw=2 ts=2 spell
-autocmd Filetype tex set set iskeyword+=:
+autocmd Filetype tex set sw=2 ts=2 iskeyword+=: spell
 
 " Prepend CTRL on Alt-key mappings: Alt-{B,C,L,I}
 "autocmd Filetype tex imap <C-M-b> <Plug>Tex_MathBF
@@ -196,7 +195,7 @@ Bundle 'gmarik/vundle'
 
 " LaTeX
 Bundle 'LaTeX-Suite-aka-Vim-LaTeX'
-let g:tex_flavor='latex' " Prevents Vim 7.0 from setting filetype to 'plaintex'
+let g:tex_flavor = 'latex' " Prevents Vim 7 from setting filetype to 'plaintex'.
 
 " Command-T
 Bundle 'git://git.wincent.com/command-t.git'
@@ -204,7 +203,6 @@ let g:CommandTMatchWindowAtTop=1  " Show window at top.
 
 Bundle 'rson/vim-conque'
 Bundle 'rstacruz/sparkup'
-Bundle 'fholgado/minibufexpl.vim'
 Bundle 'tpope/vim-fugitive'
 Bundle 'tpope/vim-git'
 Bundle 'tpope/vim-haml'
@@ -213,6 +211,10 @@ Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-repeat'
 Bundle 'vim-scripts/Vim-R-plugin'
 " Bundle 'xolox/vim-easytags'
+
+Bundle 'fholgado/minibufexpl.vim'
+let g:miniBufExplSplitBelow = 1
+let g:miniBufExplMapCTabSwitchBufs = 1
 
 filetype plugin indent on
 
