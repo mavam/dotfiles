@@ -204,7 +204,7 @@ prompt_mavam_setup()
             fg[indicator]="%F{red}"     # Remote prompt
         fi
 
-        # Git styling
+        # VCS styling
         # %s   The VCS in use (git, hg, svn, etc.).
         # %b   Information about the current branch.
         # %a   An  identifier  that  describes  the action. Only makes sense in
