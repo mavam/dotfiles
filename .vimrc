@@ -77,8 +77,7 @@ endif
 
 let mapleader=','   " Change the mapleader from '\' to ','.
 
-" F1: Toggle hlsearch (highlight search matches).
-nmap <F1> :set hls!<CR>
+nnoremap <esc> :noh<return>
 
 " F2: Toggle list (display unprintable characters).
 nnoremap <F2> :set list!<CR>
