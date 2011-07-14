@@ -11,7 +11,7 @@ set ignorecase          " Case-insensitive search
 set incsearch           " Jumps to search word as you type.
 set smartcase           " Override ignorecase when searching uppercase.
 set modeline            " Enables modelines.
-set wildmode=longest,list " Complete longest common string, then show options.
+set wildmode=longest,list:full " Complete longest common string, then show options.
 
 " Low priority for these files in tab-completion.
 set suffixes+=.aux,.bbl,.blg,.dvi,.log,.pdf,.fdb_latexmk     " LaTeX
