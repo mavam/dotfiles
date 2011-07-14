@@ -101,16 +101,20 @@ nmap <D-0> g^
 "                               Custom Functions
 " =============================================================================
 
-" Compare current buffer with last saved version.
-function! s:DiffWithSaved() 
-  let filetype=&ft 
-  diffthis 
-  " new | r # | normal 1Gdd - for horizontal split 
-  vnew | r # | normal 1Gdd 
-  diffthis 
-  exe "setlocal bt=nofile bh=wipe nobl noswf ro ft=" . filetype 
-endfunction 
-com! Diff call s:DiffWithSaved() 
+function! Preserve(command)
+  " Preparation: save last search, and cursor position.
+  let _s=@/
+  let l = line(".")
+  let c = col(".")
+  " Do the business:
+  execute a:command
+  " Clean up: restore previous search history, and cursor position
+  let @/=_s
+  call cursor(l, c)
+endfunction
+
+nmap <Leader>$ :call Preserve("%s/\\s\\+$//e")<CR>
+nmap <Leader>= :call Preserve("normal gg=G")<CR>
 
 " =============================================================================
 "                                Filetype Stuff
