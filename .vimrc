@@ -195,7 +195,7 @@ let g:tex_flavor = 'latex' " Prevents Vim 7 from setting filetype to 'plaintex'.
 
 " Command-T
 Bundle 'git://git.wincent.com/command-t.git'
-let g:CommandTMatchWindowAtTop=1  " Show window at top.
+let g:CommandTMatchWindowAtTop = 1  " Show window at top.
 
 " Solarized colorscheme
 Bundle 'altercation/vim-colors-solarized'
