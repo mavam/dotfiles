@@ -34,9 +34,9 @@ if has('gui_running')
     set lines=25
     set guioptions-=T   " Remove the toolbar.
     set guifont=Monaco:h11
-    set transparency=15
-else
-    set t_Co=256        " 256 color terminal.
+    set transparency=5
+"else
+"    set t_Co=256        " 256 color terminal.
 endif
 
 " Folding
@@ -128,6 +128,10 @@ com! Diff call s:DiffWithSaved()
 "                                Filetype Stuff
 " =============================================================================
 
+if &t_Co > 2 || has('gui_running')
+  syntax on
+endif
+
 " R stuff
 autocmd BufNewFile,BufRead *.r set ft=r
 autocmd BufNewFile,BufRead *.R set ft=r
@@ -190,7 +194,7 @@ filetype off
 set rtp+=~/.vim/bundle/vundle
 call vundle#rc()
 
-" Base
+" Vundle base
 Bundle 'gmarik/vundle'
 
 " LaTeX
@@ -201,14 +205,27 @@ let g:tex_flavor = 'latex' " Prevents Vim 7 from setting filetype to 'plaintex'.
 Bundle 'git://git.wincent.com/command-t.git'
 let g:CommandTMatchWindowAtTop=1  " Show window at top.
 
+" Solarized colorscheme
+"Bundle 'altercation/vim-colors-solarized'
+"let g:solarized_menu = 0
+"let g:solarized_termtrans = 1
+"let g:solarized_contrast = 'high'
+"let g:solarized_contrast = 'high'
+"let g:solarized_hitrail = 1
+"colorscheme solarized
+
+Bundle 'godlygeek/tabular'
 Bundle 'rson/vim-conque'
 Bundle 'rstacruz/sparkup'
+Bundle 'tpope/vim-endwise'
 Bundle 'tpope/vim-fugitive'
 Bundle 'tpope/vim-git'
 Bundle 'tpope/vim-haml'
 Bundle 'tpope/vim-markdown'
 Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-repeat'
+Bundle 'tpope/vim-speeddating'
+Bundle 'tpope/vim-unimpaired'
 Bundle 'vim-scripts/Vim-R-plugin'
 " Bundle 'xolox/vim-easytags'
 
@@ -216,7 +233,7 @@ Bundle 'fholgado/minibufexpl.vim'
 let g:miniBufExplSplitBelow = 1
 let g:miniBufExplMapCTabSwitchBufs = 1
 
+" Needs to be executed after Vundle.
 filetype plugin indent on
 
-" =============================================================================
 " vim: set fenc=utf-8 tw=80 sw=2 sts=2 et foldmethod=marker :
