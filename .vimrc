@@ -50,12 +50,13 @@ endif
 "                                  Formatting
 " =============================================================================
 set formatoptions=tcrqn " see :h 'fo-table for a detailed explanation
-"set formatoptions=croql
+set nojoinspaces        " Don't insert two spaces when joining after [.?!].
 set copyindent          " Copy the structure of existing indentation
-set shiftwidth=4        " tab indention 
-set tabstop=4           " number of spcaes for a tab
-set textwidth=79        " textwidth
-set expandtab           " expand tabs to spaces
+set expandtab           " Expand tabs to spaces.
+set tabstop=4           " number Of spcaes for a <Tab>.
+set softtabstop=4       " Number of spaces that a <Tab> counts for.
+set shiftwidth=4        " Tab indention 
+set textwidth=79        " Textwidth
 
 " Indentation Tweaks.
 " e-s = do not indent if opening bracket is not first character in a line.
