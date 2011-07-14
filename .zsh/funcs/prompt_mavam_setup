@@ -137,8 +137,8 @@ prompt_mavam_ps1()
     prompt=(
         "%$[COLUMNS-PSCOL]>..>"  # Begin truncation (upper left prompt)
         '$ch[charset]$fg[ch]$ch[on]$ch[ul]$ch[hbar]$ch[off]'
-        "%B"
         "$fg[ch]("
+        "%B"
         "$dir"
         "$fg[ch])"
         "%<<"                    # End truncation (end upper left prompt)
