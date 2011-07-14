@@ -79,26 +79,23 @@ let mapleader=','   " Change the mapleader from '\' to ','.
 
 nnoremap <esc> :noh<return>
 
-" F2: Toggle list (display unprintable characters).
-nnoremap <F2> :set list!<CR>
+" Toggle list mode (display unprintable characters).
+nnoremap <F11> :set list!<CR>
 
-" F3: Toggle expansion of tabs to spaces.
-" nmap <F3> :set expandtab!<CR>
+" Toggle paste mode.
+set pastetoggle=<F12>
 
-" F4: Toggle paste mode.
-set pastetoggle=<F4>
-
-" Using 'gj' and 'gk' instead of just 'j' and 'k' to move down and up by screen
-" lines instead of file lines. The following mapping does the same when holding
-" down the ALT key.
-"noremap <Up> gk
-"noremap! <Up> <C-O>gk
-"noremap <Down> gj
-"noremap! <Down> <C-O>gj
-"noremap! <M-Up> <Up>
-"noremap! <M-Down> <Down>
-"noremap! <M-Up> k
-"noremap! <M-Down> j
+" Quicker navigation for non-wrapped lines.
+vmap <D-j> gj
+vmap <D-k> gk
+vmap <D-4> g$
+vmap <D-6> g^
+vmap <D-0> g^
+nmap <D-j> gj
+nmap <D-k> gk
+nmap <D-4> g$
+nmap <D-6> g^
+nmap <D-0> g^
 
 " =============================================================================
 "                               Custom Functions
