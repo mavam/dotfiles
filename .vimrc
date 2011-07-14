@@ -24,9 +24,10 @@ scriptencoding utf-8
 " =============================================================================
 "                                   Styling
 " =============================================================================
-colorscheme koehler
 set background=dark     " Syntax highlighting for a dark terminal background.
+set hlsearch            " Highlight search results.
 set ruler               " Show the cursor position all the time.
+set showbreak=…         " Highlight non-wrapped lines.
 set showcmd             " Display incomplete command in bottom right corner.
 
 if has('gui_running')
@@ -35,8 +36,8 @@ if has('gui_running')
     set guioptions-=T   " Remove the toolbar.
     set guifont=Monaco:h11
     set transparency=5
-"else
-"    set t_Co=256        " 256 color terminal.
+else
+    set t_Co=256        " We use 256 color terminal emulators these days.
 endif
 
 " Folding
@@ -206,13 +207,16 @@ Bundle 'git://git.wincent.com/command-t.git'
 let g:CommandTMatchWindowAtTop=1  " Show window at top.
 
 " Solarized colorscheme
-"Bundle 'altercation/vim-colors-solarized'
-"let g:solarized_menu = 0
-"let g:solarized_termtrans = 1
-"let g:solarized_contrast = 'high'
-"let g:solarized_contrast = 'high'
-"let g:solarized_hitrail = 1
-"colorscheme solarized
+Bundle 'altercation/vim-colors-solarized'
+let g:solarized_menu = 0
+let g:solarized_termtrans = 1
+let g:solarized_contrast = 'high'
+let g:solarized_contrast = 'high'
+let g:solarized_hitrail = 1
+if !has('gui_running')
+  let g:solarized_termcolors = 256
+end
+colorscheme solarized
 
 Bundle 'godlygeek/tabular'
 Bundle 'rson/vim-conque'
