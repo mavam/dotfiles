@@ -224,9 +224,10 @@ Bundle 'tpope/vim-unimpaired'
 Bundle 'vim-scripts/Vim-R-plugin'
 " Bundle 'xolox/vim-easytags'
 
-Bundle 'fholgado/minibufexpl.vim'
-let g:miniBufExplSplitBelow = 1
-let g:miniBufExplMapCTabSwitchBufs = 1
+" MBE has some issues with fugitive at the moment.
+"Bundle 'fholgado/minibufexpl.vim'
+"let g:miniBufExplSplitBelow = 1
+"let g:miniBufExplMapCTabSwitchBufs = 1
 
 " Needs to be executed after Vundle.
 filetype plugin indent on
