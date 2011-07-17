@@ -3,7 +3,7 @@
 " =============================================================================
 set nocompatible        " iMproved.
 
-set autoindent          " Copy indent from current line when starting a new line
+set autoindent          " Copy indent from current line on starting a new line.
 set backspace=indent,eol,start " Backspacing over everything in insert mode.
 set hidden              " Allow for putting dirty buffers in background.
 set history=1024        " Lines of command history
@@ -11,7 +11,7 @@ set ignorecase          " Case-insensitive search
 set incsearch           " Jumps to search word as you type.
 set smartcase           " Override ignorecase when searching uppercase.
 set modeline            " Enables modelines.
-set wildmode=longest,list:full " Complete longest common string, then show options.
+set wildmode=longest,list:full " How to complete <Tab> matches.
 
 " Low priority for these files in tab-completion.
 set suffixes+=.aux,.bbl,.blg,.dvi,.log,.pdf,.fdb_latexmk     " LaTeX
@@ -39,8 +39,8 @@ if has('gui_running')
 
     " Disable MacVim-specific Cmd/Alt key mappings.
     if has("gui_macvim")
-	  let macvim_skip_cmd_opt_movement = 1
-	endif
+      let macvim_skip_cmd_opt_movement = 1
+    endif
 else
     set t_Co=256        " We use 256 color terminal emulators these days.
 endif
@@ -54,14 +54,14 @@ endif
 " =============================================================================
 "                                  Formatting
 " =============================================================================
-set formatoptions=tcrqn " see :h 'fo-table for a detailed explanation
+set formatoptions=tcrqn " See :h 'fo-table for a detailed explanation.
 set nojoinspaces        " Don't insert two spaces when joining after [.?!].
 set copyindent          " Copy the structure of existing indentation
 set expandtab           " Expand tabs to spaces.
-set tabstop=4           " number Of spcaes for a <Tab>.
+set tabstop=4           " number Of spaces for a <Tab>.
 set softtabstop=4       " Number of spaces that a <Tab> counts for.
 set shiftwidth=4        " Tab indention 
-set textwidth=79        " Textwidth
+set textwidth=79        " Text width
 
 " Indentation Tweaks.
 " e-s = do not indent if opening bracket is not first character in a line.
@@ -76,6 +76,22 @@ if v:version >= 700
   set spelllang=en,de,pt
   set spellfile=~/.vim/spellfile.add
 endif
+
+" =============================================================================
+"                               Custom Functions
+" =============================================================================
+
+function! Preserve(command)
+  " Preparation: save last search, and cursor position.
+  let _s=@/
+  let l = line(".")
+  let c = col(".")
+  " Do the business:
+  execute a:command
+  " Clean up: restore previous search history, and cursor position
+  let @/=_s
+  call cursor(l, c)
+endfunction
 
 " =============================================================================
 "                                 Key Bindings
@@ -103,23 +119,10 @@ nmap <D-4> g$
 nmap <D-6> g^
 nmap <D-0> g^
 
-" =============================================================================
-"                               Custom Functions
-" =============================================================================
-
-function! Preserve(command)
-  " Preparation: save last search, and cursor position.
-  let _s=@/
-  let l = line(".")
-  let c = col(".")
-  " Do the business:
-  execute a:command
-  " Clean up: restore previous search history, and cursor position
-  let @/=_s
-  call cursor(l, c)
-endfunction
-
+" Remove trailing whitespace.
 nmap <Leader>$ :call Preserve("%s/\\s\\+$//e")<CR>
+
+" Indent entire file.
 nmap <Leader>= :call Preserve("normal gg=G")<CR>
 
 " =============================================================================
@@ -131,12 +134,8 @@ if &t_Co > 2 || has('gui_running')
 endif
 
 " R stuff
-autocmd BufNewFile,BufRead *.r set ft=r
-autocmd BufNewFile,BufRead *.R set ft=r
-autocmd BufNewFile,BufRead *.s set ft=r
-autocmd BufNewFile,BufRead *.S set ft=r
-autocmd BufRead *.Rout set ft=r
-autocmd BufRead *.Rhistory set ft=r
+autocmd BufNewFile,BufRead *.[rRsS] set ft=r
+autocmd BufRead *.R{out,history} set ft=r
 
 " Custom file types
 autocmd BufRead,BufNewFile *.dox     set filetype=doxygen spell
@@ -230,7 +229,7 @@ Bundle 'tpope/vim-unimpaired'
 Bundle 'vim-scripts/Vim-R-plugin'
 " Bundle 'xolox/vim-easytags'
 
-" MBE has some issues with fugitive at the moment.
+" FIXME: MBE has some issues with fugitive at the moment, hence commented.
 "Bundle 'fholgado/minibufexpl.vim'
 "let g:miniBufExplSplitBelow = 1
 "let g:miniBufExplMapCTabSwitchBufs = 1
@@ -238,4 +237,4 @@ Bundle 'vim-scripts/Vim-R-plugin'
 " Needs to be executed after Vundle.
 filetype plugin indent on
 
-" vim: set fenc=utf-8 tw=80 sw=2 sts=2 et foldmethod=marker :
+" vim: set fenc=utf-8 sw=2 sts=2 foldmethod=marker :
