@@ -36,6 +36,11 @@ if has('gui_running')
     set guioptions-=T   " Remove the toolbar.
     set guifont=Monaco:h11
     set transparency=5
+
+    " Disable MacVim-specific Cmd/Alt key mappings.
+    if has("gui_macvim")
+	  let macvim_skip_cmd_opt_movement = 1
+	endif
 else
     set t_Co=256        " We use 256 color terminal emulators these days.
 endif
