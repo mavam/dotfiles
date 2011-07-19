@@ -54,11 +54,11 @@ function old_prompt()
 # Update the vcs_info_msg_ magic variables, but only as little as possible.
 #
 # This variable dictates weather we are going to do the git prompt update
-# before printing the next prompt.  On some setups this saves 10s of work.
+# before printing the next prompt. This can save up to 10 secs of work.
 PR_GIT_UPDATE=1
 
-# Called before command excution. Decide if we should update the prompt next
-# time.
+# Called before command excution: update the git prompt if the command involved
+# the word 'git'.
 function zsh_git_prompt_preexec 
 {
     case "$(history $HISTCMD)" in 
@@ -69,8 +69,7 @@ function zsh_git_prompt_preexec
 }
 add-zsh-hook preexec zsh_git_prompt_preexec
 
-# Called after directory change. Assume that we have to update git.
-# prompt.
+# Called after directory change: assume that we have to update the git prompt.
 function zsh_git_prompt_chpwd 
 {
     PR_GIT_UPDATE=1

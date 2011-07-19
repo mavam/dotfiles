@@ -57,11 +57,8 @@ export LESS_TERMCAP_so=$'\E[01;44;33m'
 export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[01;32m'
 
-# Setup Ruby gem environment.
-if which gem &> /dev/null; then
-    export GEM_HOME=~/.gem
-    path=( $GEM_HOME/bin $path )
-fi
+# Setup RVM environment.
+[[ -s ~/.rvm/scripts/rvm ]] && source ~/.rvm/scripts/rvm
 
 # Source OS-specific environment.
 [[ -f ~/.zsh/env/$OS ]] && source ~/.zsh/env/$OS

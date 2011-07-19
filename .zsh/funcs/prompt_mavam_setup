@@ -137,8 +137,8 @@ prompt_mavam_ps1()
     prompt=(
         "%$[COLUMNS-PSCOL]>..>"  # Begin truncation (upper left prompt)
         '$ch[charset]$fg[ch]$ch[on]$ch[ul]$ch[hbar]$ch[off]'
-        "%B"
         "$fg[ch]("
+        "%B"
         "$dir"
         "$fg[ch])"
         "%<<"                    # End truncation (end upper left prompt)
@@ -204,7 +204,7 @@ prompt_mavam_setup()
             fg[indicator]="%F{red}"     # Remote prompt
         fi
 
-        # Git styling
+        # VCS styling
         # %s   The VCS in use (git, hg, svn, etc.).
         # %b   Information about the current branch.
         # %a   An  identifier  that  describes  the action. Only makes sense in
