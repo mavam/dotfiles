@@ -73,7 +73,7 @@ set cino=e-s,g0,t0
 "                                   Spelling
 " =============================================================================
 if v:version >= 700
-  set spelllang=en,de,pt
+  set spelllang=en,de,pt,fr
   set spellfile=~/.vim/spellfile.add
 endif
 
