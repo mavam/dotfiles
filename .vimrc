@@ -149,9 +149,9 @@ autocmd FileType c,cpp set comments-=://
 autocmd FileType c,cpp set comments+=:///
 autocmd FileType c,cpp set comments+=://
 
-autocmd Filetype ruby set sw=2 ts=2
+autocmd Filetype ruby set sw=2 sts=2 ts=2
 autocmd Filetype mail set tw=72 spell
-autocmd Filetype tex set sw=2 ts=2 iskeyword+=: spell
+autocmd Filetype tex set sw=2 sts=2 ts=2 iskeyword+=: spell
 
 " Prepend CTRL on Alt-key mappings: Alt-{B,C,L,I}
 "autocmd Filetype tex imap <C-M-b> <Plug>Tex_MathBF
