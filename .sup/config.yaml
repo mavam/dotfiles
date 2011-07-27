@@ -1,4 +1,4 @@
---- 
+---
 :ask_for_from: true
 :ask_for_to: true
 :ask_for_subject: true
@@ -12,26 +12,26 @@
 
 :default_attachment_save_dir: ~/Dropbox/tmp
 
-:accounts: 
-  :default: 
+:accounts:
+  :default:
     :sendmail: msmtp --read-envelope-from -t
     :email: vallentin@icir.org
     :name: Matthias Vallentin
-  :private: 
-    :sendmail: msmtp --read-envelope-from -t --account=eecs 
+  :private:
+    :sendmail: msmtp --read-envelope-from -t --account=eecs
     :email: matthias@vallentin.net
     :name: Matthias Vallentin
     :alternates:
     - m@vallentin.net
     - maddi@vallentin.net
-  :ucb: 
+  :ucb:
     :sendmail: msmtp --read-envelope-from -t --account=cal
     :email: vallentin@berkeley.edu
     :name: Matthias Vallentin
     :alternates:
     - mpm@berkeley.edu
     - mavam@berkeley.edu
-  :eecs: 
+  :eecs:
     :sendmail: msmtp --read-envelope-from -t --account=eecs
     :email: vallentin@cs.berkeley.edu
     :name: Matthias Vallentin
@@ -41,9 +41,9 @@
     - mv@eecs.berkeley.edu
     - mavam@cs.berkeley.edu
     - mavam@eecs.berkeley.edu
-    - matthias.vallentin@cs.berkeley.edu
-    - matthias.vallentin@eecs.berkeley.edu
-  :icsi: 
+#    - matthias.vallentin@cs.berkeley.edu
+#    - matthias.vallentin@eecs.berkeley.edu
+  :icsi:
     :sendmail: msmtp --read-envelope-from -t --account=eecs
     :email: vallentin@icsi.berkeley.edu
     :name: Matthias Vallentin
