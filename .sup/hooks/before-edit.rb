@@ -7,6 +7,8 @@ header.values_at("To", "Cc", "Bcc").flatten.each do |recipient|
     me = "vallentin@icir.org"
   when /sup-talk|lists\.|zsh-users/
     me = "vallentin@icsi.berkeley.edu"
+  when /cal(-(sailing(-announce)?|windsurfing))?@yahoogroups.com/
+    me = "matthias@vallentin.net"
   end
 end
 header["From"] = Redwood::AccountManager.account_for(me).full_address if me
