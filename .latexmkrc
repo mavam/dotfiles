@@ -3,8 +3,8 @@
 #
 
 # Needed for the dot2texi package which invokes GraphViz.
-$latex = 'latex --shell-escape -interaction=nonstopmode';
-$pdflatex = 'pdflatex --shell-escape -interaction=nonstopmode';
+$latex = 'latex --shell-escape';
+$pdflatex = 'pdflatex --shell-escape';
 
 # 
 # Mac OS
