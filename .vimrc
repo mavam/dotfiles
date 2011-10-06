@@ -60,14 +60,16 @@ set copyindent          " Copy the structure of existing indentation
 set expandtab           " Expand tabs to spaces.
 set tabstop=4           " number Of spaces for a <Tab>.
 set softtabstop=4       " Number of spaces that a <Tab> counts for.
-set shiftwidth=4        " Tab indention 
+set shiftwidth=4        " Tab indention
 set textwidth=79        " Text width
 
 " Indentation Tweaks.
 " e-s = do not indent if opening bracket is not first character in a line.
 " g0  = do not indent C++ scope declarations.
 " t0  = do not indent a function's return type declaration.
-set cino=e-s,g0,t0
+" (0  = line up with next non-white character after unclosed parentheses...
+" W4  = ...but not if the last character in the line is an open parenthesis.
+set cinoptions=e-s,g0,t0,(0,W4
 
 " =============================================================================
 "                                   Spelling
