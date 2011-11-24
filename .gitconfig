@@ -7,3 +7,6 @@
 	branch = auto
 [merge]
 	tool = vimdiff
+[alias]
+    fix-submodules = submodule update --recursive --init
+    log1 = log --format=oneline

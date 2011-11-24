@@ -60,14 +60,16 @@ set copyindent          " Copy the structure of existing indentation
 set expandtab           " Expand tabs to spaces.
 set tabstop=4           " number Of spaces for a <Tab>.
 set softtabstop=4       " Number of spaces that a <Tab> counts for.
-set shiftwidth=4        " Tab indention 
+set shiftwidth=4        " Tab indention
 set textwidth=79        " Text width
 
 " Indentation Tweaks.
 " e-s = do not indent if opening bracket is not first character in a line.
 " g0  = do not indent C++ scope declarations.
 " t0  = do not indent a function's return type declaration.
-set cino=e-s,g0,t0
+" (0  = line up with next non-white character after unclosed parentheses...
+" W4  = ...but not if the last character in the line is an open parenthesis.
+set cinoptions=e-s,g0,t0,(0,W4
 
 " =============================================================================
 "                                   Spelling
@@ -124,6 +126,59 @@ nmap <Leader>$ :call Preserve("%s/\\s\\+$//e")<CR>
 
 " Indent entire file.
 nmap <Leader>= :call Preserve("normal gg=G")<CR>
+
+" =============================================================================
+"                                    Vundle
+" =============================================================================
+filetype off
+set rtp+=~/.vim/bundle/vundle
+call vundle#rc()
+
+" Vundle base
+Bundle 'gmarik/vundle'
+
+" LaTeX
+Bundle 'LaTeX-Suite-aka-Vim-LaTeX'
+let g:tex_flavor = 'latex' " Prevents Vim 7 from setting filetype to 'plaintex'.
+
+" Command-T
+Bundle 'git://git.wincent.com/command-t.git'
+let g:CommandTMatchWindowAtTop = 1  " Show window at top.
+
+" Solarized colorscheme
+Bundle 'altercation/vim-colors-solarized'
+let g:solarized_menu = 0
+let g:solarized_termtrans = 1
+let g:solarized_contrast = 'high'
+let g:solarized_contrast = 'high'
+let g:solarized_hitrail = 1
+if !has('gui_running')
+  let g:solarized_termcolors = 256
+end
+colorscheme solarized
+
+Bundle 'godlygeek/tabular'
+Bundle 'rson/vim-conque'
+Bundle 'rstacruz/sparkup'
+Bundle 'tpope/vim-endwise'
+Bundle 'tpope/vim-fugitive'
+Bundle 'tpope/vim-git'
+Bundle 'tpope/vim-haml'
+Bundle 'tpope/vim-markdown'
+Bundle 'tpope/vim-surround'
+Bundle 'tpope/vim-repeat'
+Bundle 'tpope/vim-speeddating'
+Bundle 'tpope/vim-unimpaired'
+Bundle 'vim-scripts/Vim-R-plugin'
+" Bundle 'xolox/vim-easytags'
+
+" FIXME: MBE has some issues with fugitive at the moment, hence commented.
+"Bundle 'fholgado/minibufexpl.vim'
+"let g:miniBufExplSplitBelow = 1
+"let g:miniBufExplMapCTabSwitchBufs = 1
+
+" Needs to be executed after Vundle.
+filetype plugin indent on
 
 " =============================================================================
 "                                Filetype Stuff
@@ -183,58 +238,5 @@ augroup encrypted
     " after the file has been written.
     autocmd BufWritePost,FileWritePost  *.gpg u
 augroup END
-
-" =============================================================================
-"                                    Vundle
-" =============================================================================
-filetype off
-set rtp+=~/.vim/bundle/vundle
-call vundle#rc()
-
-" Vundle base
-Bundle 'gmarik/vundle'
-
-" LaTeX
-Bundle 'LaTeX-Suite-aka-Vim-LaTeX'
-let g:tex_flavor = 'latex' " Prevents Vim 7 from setting filetype to 'plaintex'.
-
-" Command-T
-Bundle 'git://git.wincent.com/command-t.git'
-let g:CommandTMatchWindowAtTop = 1  " Show window at top.
-
-" Solarized colorscheme
-Bundle 'altercation/vim-colors-solarized'
-let g:solarized_menu = 0
-let g:solarized_termtrans = 1
-let g:solarized_contrast = 'high'
-let g:solarized_contrast = 'high'
-let g:solarized_hitrail = 1
-if !has('gui_running')
-  let g:solarized_termcolors = 256
-end
-colorscheme solarized
-
-Bundle 'godlygeek/tabular'
-Bundle 'rson/vim-conque'
-Bundle 'rstacruz/sparkup'
-Bundle 'tpope/vim-endwise'
-Bundle 'tpope/vim-fugitive'
-Bundle 'tpope/vim-git'
-Bundle 'tpope/vim-haml'
-Bundle 'tpope/vim-markdown'
-Bundle 'tpope/vim-surround'
-Bundle 'tpope/vim-repeat'
-Bundle 'tpope/vim-speeddating'
-Bundle 'tpope/vim-unimpaired'
-Bundle 'vim-scripts/Vim-R-plugin'
-" Bundle 'xolox/vim-easytags'
-
-" FIXME: MBE has some issues with fugitive at the moment, hence commented.
-"Bundle 'fholgado/minibufexpl.vim'
-"let g:miniBufExplSplitBelow = 1
-"let g:miniBufExplMapCTabSwitchBufs = 1
-
-" Needs to be executed after Vundle.
-filetype plugin indent on
 
 " vim: set fenc=utf-8 sw=2 sts=2 foldmethod=marker :
