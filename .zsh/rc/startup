@@ -11,32 +11,4 @@ if which screen &> /dev/null ; then
 	fi
 fi
 
-# Setup SSH and GPG agents. 
-function setup_agents
-{
-    ! which keychain &> /dev/null && return
-
-    local -a kargs; kargs=(--eval --host fix)
-    local gpg_keys=${${${(M)${(f)"$(gpg --list-secret-keys \
-        --list-options no-show-photos 2>/dev/null)"}:%sec*}#sec */}%% *}
-
-    case $1 in
-        "ssh") eval $(keychain $kargs --agents ssh ~/.ssh/**/*pub(:r));;
-        "gpg") eval $(keychain $kargs --agents gpg $gpg_keys);;
-        *)     eval $(keychain $kargs ~/.ssh/**/*pub(:r) $gpg_keys);;
-    esac
-}
-
-# Automatically start agents if they are already running.
-if [[ ${#$(findpids gpg-agent)} > 0 && ${#$(findpids ssh-agent)} > 0 ]]
-then
-    setup_agents
-elif [[ ${#$(findpids ssh-agent)} > 0 ]]
-then
-    setup_agents "ssh"
-elif [[ ${#$(findpids gpg-agent)} > 0 ]]
-then
-    setup_agents "gpg"
-fi
-
 # vim: ft=zsh
