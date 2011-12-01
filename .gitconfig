@@ -8,5 +8,9 @@
 [merge]
 	tool = vimdiff
 [alias]
-    fix-submodules = submodule update --recursive --init
     log1 = log --format=oneline
+    merge-branch = merge --log --no-commit --no-ff
+    push-this = push origin HEAD
+    fix-submodules = submodule update --recursive --init
+    recursive = "!sh -c 'for i in . `git submodule foreach -q --recursive pwd`; do cd $i && git $@; done' -"
+    recursive-sh = "!sh -c 'for i in . `git submodule foreach -q --recursive pwd`; do cd $i && $@; done' -"
