@@ -101,7 +101,8 @@ endfunction
 
 let mapleader=','   " Change the mapleader from '\' to ','.
 
-nnoremap <esc> :noh<return>
+" Clear last search highlighting
+nnoremap <CR> :noh<CR><CR>
 
 " Toggle list mode (display unprintable characters).
 nnoremap <F11> :set list!<CR>
