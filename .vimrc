@@ -58,8 +58,8 @@ set formatoptions=tcrqn " See :h 'fo-table for a detailed explanation.
 set nojoinspaces        " Don't insert two spaces when joining after [.?!].
 set copyindent          " Copy the structure of existing indentation
 set expandtab           " Expand tabs to spaces.
-set tabstop=4           " number Of spaces for a <Tab>.
-set softtabstop=4       " Number of spaces that a <Tab> counts for.
+set tabstop=4           " number of spaces for a <Tab>.
+"set softtabstop=4       " Number of spaces that a <Tab> counts for.
 set shiftwidth=4        " Tab indention
 set textwidth=79        " Text width
 
