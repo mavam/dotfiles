@@ -9,7 +9,7 @@ $pdflatex = 'pdflatex --shell-escape';
 # 
 # Mac OS
 #
-$pdf_previewer = "open -a /Applications/Skim.app";
+$pdf_previewer = "open -a Skim";
 $clean_ext = "paux lox pdfsync out";
 
 #
