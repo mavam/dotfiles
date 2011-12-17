@@ -5,7 +5,7 @@
 # List tmux sessions.
 if which tmux &> /dev/null; then
     tmux_sessions=$(tmux list-sessions)
-    if (( ${#tmux_sessions} )) ; then
+    if (( $#tmux_sessions )) ; then
         printf "$fg[green]%d tmux sessions:\n" ${#${(f)tmux_sessions}}
         printf "$fg[cyan]%s$reset_color\n" $tmux_sessions
     fi
@@ -20,7 +20,7 @@ function setup_agents
 
     # Locate SSH public keys.
     set -- ~/.ssh/**/*pub(N)
-    if (( $# > 0 )); then
+    if (( $# )); then
         local -a ssh_keys
         ssh_keys=(~/.ssh/**/*pub(:r))
         agents+="ssh"
@@ -29,11 +29,11 @@ function setup_agents
     # Locate GPG private keys.
     local gpg_keys=${${${(M)${(f)"$(gpg --list-secret-keys \
         --list-options no-show-photos 2>/dev/null)"}:%sec*}#sec */}%% *}
-    if (( $#gpg_keys > 0 )); then
+    if (( $#gpg_keys )); then
         agents+="gpg"
     fi
 
-    (( $#agents == 0 )) && return
+    ! (( $#agents )) && return
 
     eval $(keychain --eval --host fix --agents ${(j:,:)agents} \
         $ssh_keys $gpg_keys)
