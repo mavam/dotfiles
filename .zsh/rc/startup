@@ -2,13 +2,13 @@
 ## Startup
 ##
 
-# Notify if there is a detached screen.
-if which screen &> /dev/null ; then
-	#screen_pids=($(screen -ls | awk -F. '/[ \t]+[0-9]+/ {print $1}'))
-	screen_pids=(${${(M)${(f)"$(screen -ls)"}:#(#s)[[:space:]]##([0-9]##).*}/(#b)[[:space:]]#([0-9]##).*/$match[1]})
-	if (( ${#screen_pids} )) ; then
-		printf "%d screen(s) running: [%s]\n" $#screen_pids "${screen_pids}"
-	fi
+# List tmux sessions.
+if which tmux &> /dev/null; then
+    tmux_sessions=$(tmux list-sessions)
+    if (( ${#tmux_sessions} )) ; then
+        printf "$fg[green]%d tmux sessions:\n" ${#${(f)tmux_sessions}}
+        printf "$fg[cyan]%s$reset_color\n" $tmux_sessions
+    fi
 fi
 
 # vim: ft=zsh
