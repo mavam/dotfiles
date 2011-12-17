@@ -11,4 +11,37 @@ if which tmux &> /dev/null; then
     fi
 fi
 
+# Setup SSH and GPG agents
+function setup_agents
+{
+    ! which keychain &> /dev/null && return
+
+    local -a agents;
+
+    # Locate SSH public keys.
+    set -- ~/.ssh/**/*pub(N)
+    if (( $# > 0 )); then
+        local -a ssh_keys
+        ssh_keys=(~/.ssh/**/*pub(:r))
+        agents+="ssh"
+    fi
+
+    # Locate GPG private keys.
+    local gpg_keys=${${${(M)${(f)"$(gpg --list-secret-keys \
+        --list-options no-show-photos 2>/dev/null)"}:%sec*}#sec */}%% *}
+    if (( $#gpg_keys > 0 )); then
+        agents+="gpg"
+    fi
+
+    (( $#agents == 0 )) && return
+
+    eval $(keychain --eval --host fix --agents ${(j:,:)agents} \
+        $ssh_keys $gpg_keys)
+}
+
+# Automatically setup existing agents.
+if [[ ${#$(findpids gpg-agent)} > 0 || ${#$(findpids ssh-agent)} > 0 ]]; then
+    setup_agents
+fi
+
 # vim: ft=zsh
