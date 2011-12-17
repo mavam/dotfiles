@@ -6,8 +6,8 @@
 if which tmux &> /dev/null; then
     tmux_sessions=$(tmux list-sessions)
     if (( $#tmux_sessions )) ; then
-        printf "$fg[green]%d tmux sessions:\n" ${#${(f)tmux_sessions}}
-        printf "$fg[cyan]%s$reset_color\n" $tmux_sessions
+        echo "$fg_bold[green] * $fg_bold[magenta]tmux"
+        for s ($tmux_sessions) { printf "$fg_bold[green] * $reset_color %s\n" $s }
     fi
 fi
 
