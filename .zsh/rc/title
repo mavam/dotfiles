@@ -13,7 +13,7 @@ case $TERM in
             print -n "${(q)${ARGV[2,-1]}}\a"
         }
         ;;
-    screen)
+    screen*)
         title() 
         {
             print -nPR $'\033k'$1$'\033'\\
@@ -22,7 +22,7 @@ case $TERM in
         ;;
 esac     
 
-# Always show a static title (to rename screen windows).
+# Always show a static title (to rename screen/tmux windows).
 static-title()
 {
     unfunction precmd
@@ -37,8 +37,8 @@ precmd()
         return
     fi
 
-    # Reload SSH environment if in screen session.
-    [[ $TERM == "screen" ]] && ssh-fix
+    # Reload SSH environment if in screen/tmux session.
+    [[ $TERM =~ screen.* ]] && ssh-fix
 
     title "%20<..<%3~%<<"
 }
