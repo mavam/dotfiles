@@ -6,8 +6,8 @@
 if which tmux &> /dev/null; then
     tmux_sessions=$(tmux list-sessions)
     if (( $#tmux_sessions )) ; then
-        echo "$fg_bold[green] * $fg_bold[magenta]tmux"
-        for s ($tmux_sessions) { printf "$fg_bold[green] * $reset_color %s\n" $s }
+        print "$fg[magenta]tmux"
+        for s ($tmux_sessions) { printf "$fg[green] * $reset_color %s\n" $s }
     fi
 fi
 
@@ -35,7 +35,17 @@ function setup_agents
 
     ! (( $#agents )) && return
 
-    eval $(keychain --eval --host fix --agents ${(j:,:)agents} \
+    if [[ -n "$ssh_keys" ]] ; then
+        print "$fg[magenta]SSH keys"
+        for k ($ssh_keys) { printf "$fg[green] * $reset_color %s\n" $k }
+    fi
+
+    if [[ -n "$gpg_keys" ]] ; then
+        print "$fg[magenta]GPG keys"
+        for k ($gpg_keys) { printf "$fg[green] * $reset_color %s\n" $k }
+    fi
+
+    eval $(keychain -q --nogui --eval --host fix --agents ${(j:,:)agents} \
         $ssh_keys $gpg_keys)
 }
 
