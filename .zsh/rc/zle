@@ -10,7 +10,7 @@
 # that's the good guy <:
 bindkey -v
 
-# Ensures that I can delete over stuff that was done in a previous insert
+# Ensures that we can delete over stuff that was done in a previous insert
 # session, not proper vi action
 bindkey -M viins '' backward-delete-char
 bindkey -M viins '' backward-delete-char
@@ -74,20 +74,9 @@ _failsafe_hisb()
 zle -N _failsafe_hisb
 bindkey "^r" _failsafe_hisb
 
-# Insert the current date (yyyy-mm-dd) 
-_insert_date() { BUFFER="$BUFFER$(date '+%F')"; CURSOR=$#BUFFER }
-zle -N _insert_date
-bindkey "^Xd" _insert_date
-
 # Sudo the command line.
 _run_with_sudo() { LBUFFER="sudo $LBUFFER"; CURSOR=$#BUFFER }
 zle -N _run_with_sudo
 bindkey "^Xs" _run_with_sudo
-
-zle -N incremental-complete-word
-bindkey "^Xi" incremental-complete-word 
-
-zle -N insert-files
-bindkey "^Xf" insert-files
 
 # vim: ft=zsh
