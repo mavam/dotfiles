@@ -1,0 +1,4 @@
+map [b :bprev
+map ]b :bnext
+map <C-h> :bprev
+map <C-l> :bnext
