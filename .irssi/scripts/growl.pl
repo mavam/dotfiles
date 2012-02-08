@@ -40,6 +40,7 @@ $VERSION = '1.0.7';
 );
 
 # Notification Settings
+Irssi::settings_add_str($IRSSI{'name'}, 'growl_show_message_public_filter', '.*');
 Irssi::settings_add_bool($IRSSI{'name'}, 'growl_show_message_public', 0);
 Irssi::settings_add_bool($IRSSI{'name'}, 'growl_show_message_private', 1);
 Irssi::settings_add_bool($IRSSI{'name'}, 'growl_show_message_action', 1);
@@ -178,6 +179,8 @@ sub growl_notify {
 sub sig_message_public {
     return unless Irssi::settings_get_bool('growl_show_message_public');
     my ($server, $msg, $nick, $address, $target) = @_;
+    my $channel_filter = Irssi::settings_get_str('growl_show_message_public_filter');
+    return if $target !~ /$channel_filter/;
     growl_notify("Public", "Public Message: $target", "$nick: $msg", 0);
 }
 
