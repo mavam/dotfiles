@@ -40,7 +40,6 @@ $VERSION = '1.0.7';
 );
 
 # Notification Settings
-Irssi::settings_add_str($IRSSI{'name'}, 'growl_show_message_public_filter', '.*');
 Irssi::settings_add_bool($IRSSI{'name'}, 'growl_show_message_public', 0);
 Irssi::settings_add_bool($IRSSI{'name'}, 'growl_show_message_private', 1);
 Irssi::settings_add_bool($IRSSI{'name'}, 'growl_show_message_action', 1);
@@ -51,6 +50,7 @@ Irssi::settings_add_bool($IRSSI{'name'}, 'growl_show_notifylist', 1);
 Irssi::settings_add_bool($IRSSI{'name'}, 'growl_show_server', 1);
 Irssi::settings_add_bool($IRSSI{'name'}, 'growl_show_channel_topic', 1);
 Irssi::settings_add_bool($IRSSI{'name'}, 'growl_show_dcc', 1);
+Irssi::settings_add_str($IRSSI{'name'},  'growl_channel_filter', '.*');
 
 # Network Settings
 Irssi::settings_add_str($IRSSI{'name'}, 'growl_net_host', 'localhost');
@@ -106,6 +106,7 @@ sub cmd_help {
     Irssi::print('  %ygrowl_show_server%n : Notify on server connect and disconnect. (ON/OFF/TOGGLE)');
     Irssi::print('  %ygrowl_show_channel_topic%n : Notify on channel topic change. (ON/OFF/TOGGLE)');
     Irssi::print('  %ygrowl_show_dcc_request%n : Notify on DCC chat/file transfer messeges. (ON/OFF/TOGGLE)');
+    Irssi::print('  %ygrowl_channel_filter%n : Restrict public/action messages to certain channels');
 
     Irssi::print('%WNetwork Settings%n');
     Irssi::print('  %ygrowl_net_host%n : Set the Growl server host.');
@@ -179,7 +180,7 @@ sub growl_notify {
 sub sig_message_public {
     return unless Irssi::settings_get_bool('growl_show_message_public');
     my ($server, $msg, $nick, $address, $target) = @_;
-    my $channel_filter = Irssi::settings_get_str('growl_show_message_public_filter');
+    my $channel_filter = Irssi::settings_get_str('growl_channel_filter');
     return if $target !~ /$channel_filter/;
     growl_notify("Public", "Public Message: $target", "$nick: $msg", 0);
 }
@@ -199,6 +200,8 @@ sub sig_message_dcc {
 sub sig_ctcp_action {
     return unless Irssi::settings_get_bool('growl_show_message_action');
     my ($server, $args, $nick, $address, $target) = @_;
+    my $channel_filter = Irssi::settings_get_str('growl_channel_filter');
+    return if $target !~ /$channel_filter/;
     growl_notify("Action", "Action Message: $target", "$nick: $args", 1);
 }
 

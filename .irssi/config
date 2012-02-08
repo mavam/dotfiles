@@ -185,6 +185,14 @@ statusbar = {
         barend = { priority = "100"; alignment = "right"; };
       };
     };
+    awl_1 = {
+      position = "-1";
+      items = {
+        barstart = { priority = "100"; };
+        awl_1 = { };
+        barend = { priority = "100"; alignment = "right"; };
+      };
+    };
   };
 };
 settings = {
@@ -197,5 +205,7 @@ settings = {
     awl_sort = "-data_level";
     nicklist_height = "55";
     nicklist_width = "20";
+    growl_show_message_public = "yes";
+    growl_channel_filter = "bro";
   };
 };
