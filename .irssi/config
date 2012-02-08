@@ -15,6 +15,7 @@ channels = (
   { name = "#bro-ids"; chatnet = "freenode"; autojoin = "yes"; },
   { name = "##c++"; chatnet = "freenode"; autojoin = "yes"; },
   { name = "#boost"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#zeromq"; chatnet = "freenode"; autojoin = "yes"; },
   { name = "##spirit"; chatnet = "freenode"; autojoin = "yes"; },
   { name = "#tmux"; chatnet = "freenode"; autojoin = "yes"; },
   { name = "#vim"; chatnet = "freenode"; autojoin = "yes"; },
