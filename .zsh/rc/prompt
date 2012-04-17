@@ -67,14 +67,12 @@ function zsh_git_prompt_preexec
             ;;
     esac
 }
-add-zsh-hook preexec zsh_git_prompt_preexec
 
 # Called after directory change: assume that we have to update the git prompt.
 function zsh_git_prompt_chpwd 
 {
     PR_GIT_UPDATE=1
 }
-add-zsh-hook chpwd zsh_git_prompt_chpwd
 
 # Called before prompt generation. If needed, update the prompt info.
 function zsh_git_prompt_precmd 
@@ -85,13 +83,15 @@ function zsh_git_prompt_precmd
            PR_GIT_UPDATE=
    fi
 }
-add-zsh-hook precmd zsh_git_prompt_precmd
-
 
 # Prompt initialization
 # =====================
 if is-at-least 4.3.7
 then
+    add-zsh-hook preexec zsh_git_prompt_preexec
+    add-zsh-hook chpwd zsh_git_prompt_chpwd
+    add-zsh-hook precmd zsh_git_prompt_precmd
+
     promptinit
 
     setopt prompt_subst
