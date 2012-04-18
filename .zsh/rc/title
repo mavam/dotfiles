@@ -5,6 +5,8 @@
 # TODO: modularize aspects into separate functions and push each into the
 # corresponding execution array, e.g., preexec_functions.
 
+! is-at-least 4.3.7 && return
+
 case $TERM in
     xterm*|rxvt*)
         title() 
