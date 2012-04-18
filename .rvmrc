@@ -1,4 +1,4 @@
 # Use MacPorts (http://beginrescueend.com/integration/macports).
 export CFLAGS="-O2"
-export LDFLAGS="-L /opt/local/lib"
-export CPPFLAGS="-I /opt/local/include"
+export LDFLAGS="-L/opt/local/lib"
+export CPPFLAGS="-I/opt/local/include"
