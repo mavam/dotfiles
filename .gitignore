@@ -26,12 +26,16 @@ work
 .Trash/
 Icon?
 
+.bashrc
+.bash_logout
+.bash_profile
 .certs
 .CFUserTextEncoding
 .Xauthority
 .cups
 .dropbox
 .elinks
+.emacs
 .fetchmail*
 .font*
 .gem*
@@ -67,5 +71,11 @@ Icon?
 .zcompdump
 .*history
 .zsh/cache/
+.zsh/env/host
+.zsh/path/host
+.zsh/rc/host
+.zshenv.local
+.zshpath.local
+.zshrc.local
 
 *pyc

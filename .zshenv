@@ -61,10 +61,10 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 [[ -s ~/.rvm/scripts/rvm ]] && source ~/.rvm/scripts/rvm
 
 # Source OS-specific environment.
-[[ -f ~/.zsh/env/$OS ]] && source ~/.zsh/env/$OS
+[[ -f ~/.zsh/env/os/$OS ]] && source ~/.zsh/env/os/$OS
 
 # Source host-specific environment.
-[[ -f ~/.zsh/env/$HOST ]] && source ~/.zsh/env/$HOST
+[[ -f ~/.zsh/env/host/$HOST ]] && source ~/.zsh/env/host/$HOST
 
 # Source local environment.
 [[ -f ~/.zshenv.local ]] && source ~/.zshenv.local
