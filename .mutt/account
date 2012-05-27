@@ -1,6 +1,4 @@
-# ---------------------------------------------------------------------------- #
-#                              Personal constants
-# ---------------------------------------------------------------------------- #
+# Personal constants
 set realname="Matthias Vallentin"
 alternates '(matthias@vallentin.net|vallentin?@(icsi.berkeley.edu|icir.org)|matthias.vallentin@gmail.com|(vallentin|mavam|mpm)@berkeley.edu|(mavam|vallentin|matthias.vallentin)@(ee)?cs.berkeley.edu)'
 
@@ -13,11 +11,7 @@ set folder=~/.mail
 set spoolfile==INBOX
 set postponed==drafts
 
-# ---------------------------------------------------------------------------- #
-#                               Sender profiles
-# ---------------------------------------------------------------------------- #
-
-# Load the default profile.
+# Default profile.
 source ~/.mutt/profiles/icir
 
 # vim: ft=muttrc

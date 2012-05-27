@@ -1,0 +1,29 @@
+[general]
+ui = TTY.blinkenlights
+metadata = ~/.offlineimap
+accounts = GMail
+maxsyncaccounts = 1
+
+[Account GMail]
+localrepository = Local
+remoterepository = Remote
+autorefresh = 1
+quick = 5
+
+[Repository Local]
+type = Maildir
+localfolders = ~/.mail
+sep = /
+restoreatime = no
+
+[Repository Remote]
+type = IMAP
+ssl = yes
+remotehost = imap.gmail.com
+remoteuser = matthias@vallentin.net
+maxconnections = 1
+realdelete = no
+nametrans = lambda folder: re.sub('.*Drafts$', 'drafts', folder)
+folderfilter = lambda folder: re.search('INBOX|Drafts', folder)
+
+# vim: ft=cfg tw=0

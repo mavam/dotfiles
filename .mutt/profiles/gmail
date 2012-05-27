@@ -9,7 +9,7 @@ set from=matthias@vallentin.net
 set signature=~/.mutt/sigs/simple
 
 # SMTP settings.
-set smtp_url="smtps://matthias@vallentin.net@smtp.gmail.com:587/"
+set smtp_url="smtps://matthias@vallentin.net@smtp.gmail.com:465/"
 unset smtp_authenticators
 unset record
 

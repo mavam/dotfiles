@@ -4,15 +4,15 @@ set my_profile="icir"
 # Set the profile name in the status line.
 set status_format="%_h:  [%r]  %f [total:%?M?%M/?%m%?n? new:%n?%?o? old:%o?%?d? del:%d?%?F? flag:%F?%?t? tag:%t?%?p? post:%p?%?b? inc:%b?%?l? %l?]       (%s/%S)%> [profile: $my_profile] [%P]   "
 
-set hostname=icsi.berkeley.edu
+set hostname=icir.org
 set from=vallentin@icir.org
 set signature=~/.mutt/sigs/simple
 #set signature=~/.mutt/sigs/icir
 
 # SMTP settings.
-set record="=sent"
-set smtp_url=smtp://mavam@gateway.eecs.berkeley.edu:587
+set smtp_url="smtps://matthias@vallentin.net@smtp.gmail.com:465/"
 unset smtp_authenticators
+unset record
 
 # Next profile.
 macro generic <F7> ':source ~/.mutt/profiles/eecs<enter>'
