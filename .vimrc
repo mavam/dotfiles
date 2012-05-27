@@ -143,8 +143,9 @@ Bundle 'LaTeX-Suite-aka-Vim-LaTeX'
 let g:tex_flavor = 'latex' " Prevents Vim 7 from setting filetype to 'plaintex'.
 
 " Command-T
-Bundle 'git://git.wincent.com/command-t.git'
-let g:CommandTMatchWindowAtTop = 1  " Show window at top.
+" FIXME: Figure out why the C extension does not work.
+"Bundle 'git://git.wincent.com/command-t.git'
+"let g:CommandTMatchWindowAtTop = 1  " Show window at top.
 
 " Solarized colorscheme
 Bundle 'altercation/vim-colors-solarized'
@@ -177,6 +178,8 @@ Bundle 'vim-scripts/Vim-R-plugin'
 "Bundle 'fholgado/minibufexpl.vim'
 "let g:miniBufExplSplitBelow = 1
 "let g:miniBufExplMapCTabSwitchBufs = 1
+
+Bundle 'DamienCassou/textlint'
 
 " Needs to be executed after Vundle.
 filetype plugin indent on
