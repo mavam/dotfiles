@@ -100,9 +100,10 @@ statusbar = {
     topic_empty = " Irssi v$J - http://www.irssi.org";
 
     # all of these treated specially, they're only displayed when needed
-    lag = "{sb Lag: $0-}";
+    lag = "{sb Lag: %m$0-%n}";
     act = "{sb Act: $0-}";
-    more = "-- more --";
+    more = "%k%3-- more --%n";
+    # Solarized
   };
 
   # there's two type of statusbars. root statusbars are either at the top
@@ -190,14 +191,26 @@ statusbar = {
 settings = {
   core = { real_name = "Matthias"; user_name = "mavam"; nick = "mavam"; };
   "fe-text" = { actlist_sort = "refnum"; };
+  "fe-common/core" = {
+    theme = "solarized-universal";
+    hilight_color = "= %R";
+  };
   "perl/core/scripts" = {
     uberprompt_format = "%y$*%w$uber%c> ";
     awl_placement = "bottom";
     awl_position = "-1";
     awl_sort = "-data_level";
+    # For Solarized adv_windowlist.pl script
+    awl_display_key_active = "%k%2[$Q=$N:$C]%n";
+    awl_display_nokey_active = "%k%2[$N:$C]%n";
+    awl_display_key = "[$Q:$H$C$S]";
+    awl_display_nokey = "[$N:$H$C$S]";
     nicklist_height = "55";
     nicklist_width = "20";
     growl_show_message_public = "yes";
     growl_channel_filter = "bro";
   };
 };
+hilights = (
+  { text = "YOUR_NICKNAME"; color = "%M"; nick = "yes"; word = "yes"; }
+);
