@@ -1,12 +1,12 @@
 [general]
-ui = TTY.blinkenlights
+ui = blinkenlights
 metadata = ~/.offlineimap
-accounts = GMail
+accounts = Google
 maxsyncaccounts = 1
 
-[Account GMail]
+[Account Google]
 localrepository = Local
-remoterepository = Remote
+remoterepository = GmailProxied
 autorefresh = 1
 quick = 5
 
@@ -16,10 +16,22 @@ localfolders = ~/.mail
 sep = /
 restoreatime = no
 
-[Repository Remote]
+[Repository Gmail]
 type = IMAP
 ssl = yes
 remotehost = imap.gmail.com
+remoteuser = matthias@vallentin.net
+maxconnections = 1
+realdelete = no
+nametrans = lambda folder: re.sub('.*Drafts$', 'drafts', folder)
+folderfilter = lambda folder: re.search('INBOX|Drafts', folder)
+
+# Same as Remote, however, uses GMail's X-GM-LABEL to convert Gmail labels into
+# X-Label headers.
+[Repository GmailProxied]
+type = IMAP
+remotehost = localhost
+remoteport = 10143
 remoteuser = matthias@vallentin.net
 maxconnections = 1
 realdelete = no
