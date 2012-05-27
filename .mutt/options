@@ -234,7 +234,8 @@ set indent_string="> "
 #
 # ---> index_format partakes in folder-hooks!
 #set index_format="%4C %Z %{!%b %d} %-15.15F |%?M?#%4M&%5l? | %4c| %s %> %?N?|%3N|?"
-set index_format="%4C %Z %{!%b %d} |%?M?#%4M&%5c?| %-25.25F %s"
+#set index_format="%4C %Z %{!%b %d} |%?M?#%4M&%5c?| %-25.25F %s"
+set index_format="%4C %Z %{!%b %d} |%?M?#%4M&%5c?|%?y?%-10.10y&----------?| %-25.25F %s"
 
 # [mask] regular expression used in the file browser
 set mask="!^\\.[^.]"
