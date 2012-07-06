@@ -13,7 +13,7 @@ set wrapmargin=1        # [0] margin remaining at the right side of terminal
 # ---------------------------------------------------------------------------- #
 
 ignore *
-unignore From: 
+unignore From: Sender:
 unignore To: Cc: Bcc: Reply-To:
 unignore Subject: 
 unignore Date: 
