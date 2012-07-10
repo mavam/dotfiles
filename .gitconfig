@@ -8,6 +8,7 @@
 [merge]
 	tool = vimdiff
 [alias]
+    st = status --short
     log1 = log --format=oneline
     merge-branch = merge --log --no-commit --no-ff
     push-this = push origin HEAD
