@@ -8,6 +8,7 @@
 [merge]
 	tool = vimdiff
 [alias]
+    cdiff = diff --cached
     st = status --short
     log1 = log --format=oneline
     merge-branch = merge --log --no-commit --no-ff
