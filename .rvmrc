@@ -1,3 +1,0 @@
-export CFLAGS="-O2"
-export LDFLAGS="-L$HOME/.rvm/usr/lib -L/opt/local/lib"
-export CPPFLAGS="-I$HOME/.rvm/usr/include -I/opt/local/include"
