@@ -207,18 +207,18 @@ autocmd BufNewFile,BufRead *.[rRsS] set ft=r
 autocmd BufRead *.R{out,history} set ft=r
 
 " Custom file types
-autocmd BufRead,BufNewFile *.dox     set filetype=doxygen spell
-autocmd BufRead,BufNewFile *.mail    set filetype=mail
-autocmd BufRead,BufNewFile *.bro     set filetype=bro
-autocmd BufRead,BufNewFile *.ll      set filetype=llvm
-autocmd BufRead,BufNewFile Portfile  set filetype=tcl
+autocmd BufRead,BufNewFile *.dox      set filetype=doxygen spell
+autocmd BufRead,BufNewFile *.mail     set filetype=mail
+autocmd BufRead,BufNewFile *.bro      set filetype=bro
+autocmd BufRead,BufNewFile *.ll       set filetype=llvm
+autocmd BufRead,BufNewFile *.kramdown set filetype=markdown
+autocmd BufRead,BufNewFile Portfile   set filetype=tcl
 
 " Respect Doxygen comments.
 autocmd FileType c,cpp set comments-=://
 autocmd FileType c,cpp set comments+=:///
 autocmd FileType c,cpp set comments+=://
-
-autocmd Filetype ruby set sw=2 sts=2 ts=2
+autocmd Filetype c,cpp,ruby set sw=2 sts=2 ts=2
 autocmd Filetype mail set tw=72 spell
 autocmd Filetype tex set sw=2 sts=2 ts=2 iskeyword+=: spell
 
