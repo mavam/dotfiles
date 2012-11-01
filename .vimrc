@@ -138,6 +138,9 @@ nmap <Leader>$ :call Preserve("%s/\\s\\+$//e")<CR>
 " Indent entire file.
 nmap <Leader>= :call Preserve("normal gg=G")<CR>
 
+" Highlight text last pasted.
+nnoremap <expr> <Leader>p '`[' . strpart(getregtype(), 0, 1) . '`]'
+
 " =============================================================================
 "                                    Vundle
 " =============================================================================
