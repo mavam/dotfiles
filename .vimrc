@@ -109,7 +109,8 @@ vnoremap <silent> <Leader>r :<C-U>let old_reg_a=@a<CR>
 "                                 Key Bindings
 " =============================================================================
 
-let mapleader=','   " Change the mapleader from '\' to ','.
+let mapleader = ','
+let maplocalleader = '\'
 
 " Clear last search highlighting
 nnoremap <CR> :noh<CR><CR>
@@ -184,6 +185,7 @@ Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-repeat'
 Bundle 'tpope/vim-speeddating'
 Bundle 'tpope/vim-unimpaired'
+Bundle 'vim-scripts/Screen-vim---gnu-screentmux'
 Bundle 'vim-scripts/Vim-R-plugin'
 " Bundle 'xolox/vim-easytags'
 
@@ -196,6 +198,10 @@ Bundle 'DamienCassou/textlint'
 
 " Needs to be executed after Vundle.
 filetype plugin indent on
+
+" Tell Vim-R-plugin not to overwrite the existing tmux.conf
+let vimrplugin_notmuxconf = 1
+
 
 " =============================================================================
 "                                Filetype Stuff
