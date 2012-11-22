@@ -109,7 +109,8 @@ vnoremap <silent> <Leader>r :<C-U>let old_reg_a=@a<CR>
 "                                 Key Bindings
 " =============================================================================
 
-let mapleader=','   " Change the mapleader from '\' to ','.
+let mapleader = ','
+let maplocalleader = '\'
 
 " Clear last search highlighting
 nnoremap <CR> :noh<CR><CR>
@@ -137,6 +138,9 @@ nmap <Leader>$ :call Preserve("%s/\\s\\+$//e")<CR>
 
 " Indent entire file.
 nmap <Leader>= :call Preserve("normal gg=G")<CR>
+
+" Highlight text last pasted.
+nnoremap <expr> <Leader>p '`[' . strpart(getregtype(), 0, 1) . '`]'
 
 " =============================================================================
 "                                    Vundle
@@ -181,6 +185,7 @@ Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-repeat'
 Bundle 'tpope/vim-speeddating'
 Bundle 'tpope/vim-unimpaired'
+Bundle 'vim-scripts/Screen-vim---gnu-screentmux'
 Bundle 'vim-scripts/Vim-R-plugin'
 " Bundle 'xolox/vim-easytags'
 
@@ -193,6 +198,10 @@ Bundle 'DamienCassou/textlint'
 
 " Needs to be executed after Vundle.
 filetype plugin indent on
+
+" Tell Vim-R-plugin not to overwrite the existing tmux.conf
+let vimrplugin_notmuxconf = 1
+
 
 " =============================================================================
 "                                Filetype Stuff
@@ -207,17 +216,17 @@ autocmd BufNewFile,BufRead *.[rRsS] set ft=r
 autocmd BufRead *.R{out,history} set ft=r
 
 " Custom file types
-autocmd BufRead,BufNewFile *.dox     set filetype=doxygen spell
-autocmd BufRead,BufNewFile *.mail    set filetype=mail
-autocmd BufRead,BufNewFile *.bro     set filetype=bro
-autocmd BufRead,BufNewFile *.ll      set filetype=llvm
-autocmd BufRead,BufNewFile Portfile  set filetype=tcl
+autocmd BufRead,BufNewFile *.dox      set filetype=doxygen spell
+autocmd BufRead,BufNewFile *.mail     set filetype=mail
+autocmd BufRead,BufNewFile *.bro      set filetype=bro
+autocmd BufRead,BufNewFile *.ll       set filetype=llvm
+autocmd BufRead,BufNewFile *.kramdown set filetype=markdown
+autocmd BufRead,BufNewFile Portfile   set filetype=tcl
 
 " Respect Doxygen comments.
 autocmd FileType c,cpp set comments-=://
 autocmd FileType c,cpp set comments+=:///
 autocmd FileType c,cpp set comments+=://
-
 autocmd Filetype mail set sw=4 ts=4 tw=72 spell
 autocmd Filetype tex set iskeyword+=: spell
 
