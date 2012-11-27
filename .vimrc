@@ -58,9 +58,9 @@ set formatoptions=tcrqn " See :h 'fo-table for a detailed explanation.
 set nojoinspaces        " Don't insert two spaces when joining after [.?!].
 set copyindent          " Copy the structure of existing indentation
 set expandtab           " Expand tabs to spaces.
-set tabstop=4           " number of spaces for a <Tab>.
-"set softtabstop=4       " Number of spaces that a <Tab> counts for.
-set shiftwidth=4        " Tab indention
+set tabstop=2           " number of spaces for a <Tab>.
+"set softtabstop=2       " Number of spaces that a <Tab> counts for.
+set shiftwidth=2        " Tab indention
 set textwidth=79        " Text width
 
 " Indentation Tweaks.
@@ -227,9 +227,8 @@ autocmd BufRead,BufNewFile Portfile   set filetype=tcl
 autocmd FileType c,cpp set comments-=://
 autocmd FileType c,cpp set comments+=:///
 autocmd FileType c,cpp set comments+=://
-autocmd Filetype c,cpp,ruby set sw=2 sts=2 ts=2
-autocmd Filetype mail set tw=72 spell
-autocmd Filetype tex set sw=2 sts=2 ts=2 iskeyword+=: spell
+autocmd Filetype mail set sw=4 ts=4 tw=72 spell
+autocmd Filetype tex set iskeyword+=: spell
 
 " Prepend CTRL on Alt-key mappings: Alt-{B,C,L,I}
 "autocmd Filetype tex imap <C-M-b> <Plug>Tex_MathBF
