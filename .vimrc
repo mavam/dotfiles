@@ -223,10 +223,13 @@ autocmd BufRead,BufNewFile *.ll       set filetype=llvm
 autocmd BufRead,BufNewFile *.kramdown set filetype=markdown
 autocmd BufRead,BufNewFile Portfile   set filetype=tcl
 
-" Respect Doxygen comments.
+" Respect (Br|D)oxygen comments.
 autocmd FileType c,cpp set comments-=://
 autocmd FileType c,cpp set comments+=:///
 autocmd FileType c,cpp set comments+=://
+autocmd FileType bro set comments-=:#
+autocmd FileType bro set comments+=:##
+autocmd FileType bro set comments+=:#
 autocmd Filetype mail set sw=4 ts=4 tw=72 spell
 autocmd Filetype tex set iskeyword+=: spell
 
