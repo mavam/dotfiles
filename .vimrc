@@ -12,6 +12,7 @@ set incsearch           " Jumps to search word as you type.
 set smartcase           " Override ignorecase when searching uppercase.
 set modeline            " Enables modelines.
 set wildmode=longest,list:full " How to complete <Tab> matches.
+set tildeop             " Makes ~ an operator.
 
 " Low priority for these files in tab-completion.
 set suffixes+=.aux,.bbl,.blg,.dvi,.log,.pdf,.fdb_latexmk     " LaTeX
