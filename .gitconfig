@@ -7,6 +7,8 @@
 	branch = auto
 [merge]
 	tool = vimdiff
+[push]
+	default = matching
 [alias]
     cdiff = diff --cached
     st = status --short
