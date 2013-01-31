@@ -58,6 +58,7 @@ PR_GIT_UPDATE=1
 # the word 'git'.
 function zsh_git_prompt_preexec 
 {
+  typeset -gi EXEC_START=SECONDS
   case "$(history $HISTCMD)" in 
     *git*)
       PR_GIT_UPDATE=1
@@ -74,6 +75,8 @@ function zsh_git_prompt_chpwd
 # Called before prompt generation. If needed, update the prompt info.
 function zsh_git_prompt_precmd 
 {
+  typeset -gi EXEC_DELTA=SECONDS-EXEC_START
+  typeset -gi EXEC_START=SECONDS
   if [[ -n "$PR_GIT_UPDATE" ]]
   then
     vcs_info 'prompt'
