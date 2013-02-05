@@ -4,10 +4,10 @@
 
 # List tmux sessions.
 if which tmux &> /dev/null; then
-    tmux_sessions=$(tmux list-sessions 2> /dev/null)
+    local tmux_sessions="$(tmux list-sessions 2> /dev/null)"
     if (( $#tmux_sessions )) ; then
         print "$fg[magenta]tmux"
-        for s ($tmux_sessions) { printf "$fg[green] * $reset_color %s\n" $s }
+        for s (${(f)tmux_sessions}) { printf "$fg[green] * $reset_color %s\n" $s }
     fi
 fi
 

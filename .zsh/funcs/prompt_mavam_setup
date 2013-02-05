@@ -73,6 +73,7 @@ prompt_mavam_precmd()
     local escape colno lineno
 
     # Using psvar here protects against unwanted promptsubst expansions.
+    psvar[8]="${EXEC_DELTA}"
     psvar[9]=''
 
     # Reset the truncation widths for upcoming computations.
@@ -124,13 +125,14 @@ prompt_mavam_ps1()
     setopt localoptions noxtrace noksharrays
 
     # Set up the prompt components.
-    local -h host dir ec fillbar date indicator git
+    local -h host dir fillbar indicator date ec timing
     host="%(!.%{$fg[root]%}%m.%{$fg[user]%}%n%{$fg[a]%}@%{$fg[host]%}%m)$fg[rs]"
     dir="%(!.%{$fg[root]%}%8~.%{$fg[dir]%}%8~)$fg[rs]"
-    ec="%(?..%{$fg[red]%}%U%?)$fg[rs]"
     fillbar='$ch[on]%9v$ch[off]'
     indicator="%{$fg[ch]%}(%{$fg[indicator]%}%#%{$fg[ch]%})$fg[rs]"
     date="%{$fg[date]%}%D{%H:%M:%S %y-%m-%d}"
+    ec="%(?.%{$fg[green]%}.%{$fg[red]%})%?$fg[rs]"
+    timing="$fg[date]"'$ch[on]%8v$ch[off]'"s$fg[rs]"
 
     # Assemble the left prompt.
     local -ah prompt
@@ -157,8 +159,9 @@ prompt_mavam_ps1()
     # Assemble the right prompt.
     local -ah rprompt
     rprompt=(
-        "$ec "
         "$fg[ch]("
+        "${timing} → $ec"
+        "$fg[ch])("
         "$date"
         "$fg[ch])"
         '$ch[on]$ch[hbar]$ch[lr]$ch[off]'
