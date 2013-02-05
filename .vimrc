@@ -13,6 +13,7 @@ set smartcase           " Override ignorecase when searching uppercase.
 set modeline            " Enables modelines.
 set wildmode=longest,list:full " How to complete <Tab> matches.
 "set tildeop             " Makes ~ an operator.
+set virtualedit=block   " Support moving in empty space in block mode.
 
 " Low priority for these files in tab-completion.
 set suffixes+=.aux,.bbl,.blg,.dvi,.log,.pdf,.fdb_latexmk     " LaTeX
