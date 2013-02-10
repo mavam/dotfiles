@@ -76,7 +76,7 @@ set cinoptions=e-s,g0,t0,(0,W4
 " =============================================================================
 "                                   Spelling
 " =============================================================================
-if v:version >= 700
+if has("spell")
   set spelllang=en,de,pt,fr
   set spellfile=~/.vim/spellfile.add
 endif
@@ -147,34 +147,20 @@ nnoremap <expr> <Leader>p '`[' . strpart(getregtype(), 0, 1) . '`]'
 " =============================================================================
 "                                    Vundle
 " =============================================================================
+
+if !isdirectory(expand("~/.vim/bundle/vundle/.git"))
+  silent !mkdir -p ~/.vim/bundle > /dev/null 2>&1
+  !git clone https://github.com/gmarik/vundle ~/.vim/bundle/vundle
+endif
+
 filetype off
 set rtp+=~/.vim/bundle/vundle
 call vundle#rc()
 
-" Vundle base
 Bundle 'gmarik/vundle'
-
-" LaTeX
+Bundle 'DamienCassou/textlint'
 Bundle 'LaTeX-Suite-aka-Vim-LaTeX'
-let g:tex_flavor = 'latex' " Prevents Vim 7 from setting filetype to 'plaintex'.
-
-" Command-T
-" FIXME: Figure out why the C extension does not work.
-"Bundle 'git://git.wincent.com/command-t.git'
-"let g:CommandTMatchWindowAtTop = 1  " Show window at top.
-
-" Solarized colorscheme
 Bundle 'altercation/vim-colors-solarized'
-let g:solarized_menu = 0
-let g:solarized_termtrans = 1
-let g:solarized_contrast = 'high'
-let g:solarized_contrast = 'high'
-let g:solarized_hitrail = 1
-if !has('gui_running')
-  let g:solarized_termcolors = 256
-end
-colorscheme solarized
-
 Bundle 'godlygeek/tabular'
 Bundle 'rson/vim-conque'
 Bundle 'rstacruz/sparkup'
@@ -191,19 +177,31 @@ Bundle 'vim-scripts/Screen-vim---gnu-screentmux'
 Bundle 'vim-scripts/Vim-R-plugin'
 " Bundle 'xolox/vim-easytags'
 
-" FIXME: MBE has some issues with fugitive at the moment, hence commented.
-"Bundle 'fholgado/minibufexpl.vim'
-"let g:miniBufExplSplitBelow = 1
-"let g:miniBufExplMapCTabSwitchBufs = 1
 
-Bundle 'DamienCassou/textlint'
+if !isdirectory(expand("~/.vim/bundle/vim-fugitive"))
+  BundleInstall
+  q
+endif
+
+" Solarized
+let g:solarized_menu = 0
+let g:solarized_termtrans = 1
+let g:solarized_contrast = 'high'
+let g:solarized_contrast = 'high'
+let g:solarized_hitrail = 1
+if !has('gui_running')
+  let g:solarized_termcolors = 256
+end
+colorscheme solarized
+
+" LaTeX Suite: Prevents Vim 7 from setting filetype to 'plaintex'.
+let g:tex_flavor = 'latex'
+
+" Vim R plugin: do not overwrite an existing tmux.conf.
+let vimrplugin_notmuxconf = 1
 
 " Needs to be executed after Vundle.
 filetype plugin indent on
-
-" Tell Vim-R-plugin not to overwrite the existing tmux.conf
-let vimrplugin_notmuxconf = 1
-
 
 " =============================================================================
 "                                Filetype Stuff
@@ -217,8 +215,7 @@ endif
 autocmd BufNewFile,BufRead *.[rRsS] set ft=r
 autocmd BufRead *.R{out,history} set ft=r
 
-" Custom file types
-autocmd BufRead,BufNewFile *.dox      set filetype=doxygen spell
+autocmd BufRead,BufNewFile *.dox      set filetype=doxygen
 autocmd BufRead,BufNewFile *.mail     set filetype=mail
 autocmd BufRead,BufNewFile *.bro      set filetype=bro
 autocmd BufRead,BufNewFile *.ll       set filetype=llvm
@@ -232,8 +229,14 @@ autocmd FileType c,cpp set comments+=://
 autocmd FileType bro set comments-=:#
 autocmd FileType bro set comments+=:##
 autocmd FileType bro set comments+=:#
-autocmd Filetype mail set sw=4 ts=4 tw=72 spell
-autocmd Filetype tex set iskeyword+=: spell
+autocmd Filetype mail set sw=4 ts=4 tw=72
+autocmd Filetype tex set iskeyword+=:
+
+if has("spell")
+  autocmd BufRead,BufNewFile *.dox  set spell
+  autocmd Filetype mail             set spell
+  autocmd Filetype tex              set spell
+endif
 
 " Prepend CTRL on Alt-key mappings: Alt-{B,C,L,I}
 "autocmd Filetype tex imap <C-M-b> <Plug>Tex_MathBF
