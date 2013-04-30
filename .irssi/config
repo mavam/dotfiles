@@ -1,25 +1,36 @@
-servers = (
-  {
-    address = "irc.freenode.net";
-    chatnet = "Freenode";
-    port = "6697";
-    use_ssl = "yes";
-    ssl_verify = "no";
-    autoconnect = "yes";
-  }
-);
+# This file contains the majority of my irssi config. It does not include
+# the list of servers, since that fragment contains my freenode password. See
+# ~/.irssi/run for details.
+#
+#servers = (
+#  {
+#    address = "irc.freenode.net";
+#    chatnet = "Freenode";
+#    port = "6697";
+#    use_ssl = "yes";
+#    ssl_verify = "no";
+#    autoconnect = "yes";
+#    password = "mavam:xxx";
+#  }
+#);
 
-chatnets = { freenode = { type = "IRC"; nick = "mavam"; }; };
+chatnets = {
+  freenode = {
+    type = "IRC";
+    nick = "mavam";
+  };
+};
 
 channels = (
-  { name = "#bro-ids"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "##c++"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#boost"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#zeromq"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "##spirit"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#tmux"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#vim"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#zsh"; chatnet = "freenode"; autojoin = "yes"; }
+  { name = "#berke1337"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#Bro";       chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#haskell";   chatnet = "freenode"; autojoin = "yes"; },
+  { name = "##c++";      chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#boost";     chatnet = "freenode"; autojoin = "yes"; },
+  { name = "##spirit";   chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#tmux";      chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#vim";       chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#zsh";       chatnet = "freenode"; autojoin = "yes"; }
 );
 
 aliases = {
@@ -212,5 +223,5 @@ settings = {
   };
 };
 hilights = (
-  { text = "YOUR_NICKNAME"; color = "%M"; nick = "yes"; word = "yes"; }
+  { text = "mavam"; color = "%M"; nick = "yes"; word = "yes"; }
 );

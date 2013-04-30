@@ -40,6 +40,7 @@ Icon?
 .font*
 .gem*
 .gnupg
+.irssi/config.sensitive.asc
 .keychain
 .lesshst
 .ncftp
