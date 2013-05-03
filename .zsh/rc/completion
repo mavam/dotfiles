@@ -2,7 +2,7 @@
 ##  Completion
 ##
 
-compinit -iu  # -i: silently ignore insecure dirs/files
+compinit -i -u
 
 # context string: ':completion:[function]:[completer]:[command]:[arg]' [tag]
 
