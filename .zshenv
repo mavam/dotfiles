@@ -58,7 +58,7 @@ export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[01;32m'
 
 # Setup RVM environment.
-[[ -s ~/.rvm/scripts/rvm ]] && source ~/.rvm/scripts/rvm
+[[ -s ~/.rvm/scripts/rvm && $UID != "0" ]] && source ~/.rvm/scripts/rvm
 
 # Source OS-specific environment.
 [[ -f ~/.zsh/env/$OS ]] && source ~/.zsh/env/$OS
