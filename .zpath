@@ -37,20 +37,25 @@ fpath=( ~/.zsh/funcs $fpath )
 path=( ~/bin $path )
 manpath=( ~/man $manpath )
 
+# Add Ruby gem binary dirs.
+if [[ -d ~/.gem && -d ~/.gem/ruby ]]; then
+  foreach dir (~/.gem/ruby/*) { [[ -d $dir/bin ]] && path=( $dir/bin $path ) }
+fi
+
 # Removes non-existent directories from an array.
 clean-path ()
 {             
-    local element
-    local build
-    build=()
-    # Make sure that this works even with variables containing IFS characters,
-    # if you're crazy enough to setopt shwordsplit.
-    eval '
-    foreach element in "$'"$1"'[@]"; do
-        [[ -d "$element" ]] && build=("$build[@]" "$element")
-    done
-    '"$1"'=( "$build[@]" )
-    '
+  local element
+  local build
+  build=()
+  # Make sure that this works even with variables containing IFS characters,
+  # if you're crazy enough to setopt shwordsplit.
+  eval '
+  foreach element in "$'"$1"'[@]"; do
+      [[ -d "$element" ]] && build=("$build[@]" "$element")
+  done
+  '"$1"'=( "$build[@]" )
+  '
 }
 
 # Finally, clean the path variables.

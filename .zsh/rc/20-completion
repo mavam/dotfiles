@@ -88,4 +88,7 @@ zstyle ':completion:*:(ssh|scp):*:hosts-ipaddr' ignored-patterns \
 zstyle ':completion:*:(ssh|scp):*:users' ignored-patterns \
     '_*' adm bin daemon dbus halt lp named rpc rpcuser shutdown sync 
 
+# Search
+zle_highlight=( special:'fg=yellow,standout' isearch:'fg=yellow,standout' )
+
 # vim: ft=zsh

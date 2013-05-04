@@ -1,24 +1,24 @@
-source ~/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
+# Loads a plugin.
+load_plugin()
+{
+  path=$1
+  source ~/.zsh/plugins/$path/*.plugin.zsh
+}
 
+load_plugin zsh-syntax-highlighting
+
+# Syntax highlighting
+ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
 ZSH_HIGHLIGHT_STYLES[path]='fg=cyan'
 ZSH_HIGHLIGHT_STYLES[alias]='fg=cyan,bold'
 #ZSH_HIGHLIGHT_STYLES[function]='none'
 #ZSH_HIGHLIGHT_STYLES[globbing]='fg=magenta'
 #ZSH_HIGHLIGHT_STYLES[history-expansion]='fg=magenta'
 #ZSH_HIGHLIGHT_STYLES[hashed-command]='none'
-
 ZSH_HIGHLIGHT_STYLES[bracket-level-1]='fg=cyan,bold'
 ZSH_HIGHLIGHT_STYLES[bracket-level-2]='fg=green,bold'
 ZSH_HIGHLIGHT_STYLES[bracket-level-3]='fg=magenta,bold'
 ZSH_HIGHLIGHT_STYLES[bracket-level-4]='fg=yellow,bold'
-
-## Search highlighting.
-zle_highlight=(
-  special:'fg=yellow,standout'
-  isearch:'fg=yellow,standout'
-)
-
 ZSH_HIGHLIGHT_PATTERNS+=('rm -rf *' 'fg=white,bold,bg=red')
 
 # vim: ft=zsh
