@@ -1,8 +1,8 @@
 # Loads a plugin.
 load_plugin()
 {
-  path=$1
-  source ~/.zsh/plugins/$path/*.plugin.zsh
+  local plugin=$1
+  source ~/.zsh/plugins/$plugin/*.plugin.zsh
 }
 
 load_plugin zsh-syntax-highlighting
