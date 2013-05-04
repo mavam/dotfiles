@@ -27,9 +27,6 @@ manpath=(
 # Function path.
 fpath=( ~/.zsh/funcs $fpath )
 
-# Source OS-specific path configuration.
-[[ -f ~/.zsh/path/$OS ]] && source ~/.zsh/path/$OS
-
 # Source local paths.
 [[ -f ~/.zpath.local ]] && source ~/.zpath.local
 

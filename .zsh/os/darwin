@@ -10,8 +10,13 @@
 
 # Default MacPorts installations.
 if [[ -d /opt/local ]] ; then 
-    path=( /opt/local/bin /opt/local/sbin $path )
-    manpath=( /opt/local/share/man $manpath )
+  path=( /opt/local/bin /opt/local/sbin $path )
+  manpath=( /opt/local/share/man $manpath )
+fi
+
+# Fast MacVim invocation.
+if whence mvim > /dev/null; then
+  alias m=mvim
 fi
 
 # vim: ft=zsh
