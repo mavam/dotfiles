@@ -65,7 +65,7 @@ alias lsa='ls -ld .*'
 alias ..='cd ..'
 
 alias d='dirs -v'
-pu() { pushd $1 > /dev/null; dirs -v; }
+pu() { pushd $1 > /dev/null 2>&1; dirs -v; }
 alias po='popd > /dev/null; dirs -v'
 alias 1='pu'
 alias 2='pu -2'
