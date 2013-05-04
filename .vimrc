@@ -158,7 +158,7 @@ set rtp+=~/.vim/bundle/vundle
 call vundle#rc()
 
 Bundle 'gmarik/vundle'
-Bundle 'DamienCassou/textlint'
+"Bundle 'DamienCassou/textlint'
 Bundle 'LaTeX-Suite-aka-Vim-LaTeX'
 Bundle 'altercation/vim-colors-solarized'
 Bundle 'godlygeek/tabular'
@@ -179,7 +179,7 @@ Bundle 'vim-scripts/Vim-R-plugin'
 
 
 if !isdirectory(expand("~/.vim/bundle/vim-fugitive"))
-  BundleInstall
+  BundleInstall!
   q
 endif
 
