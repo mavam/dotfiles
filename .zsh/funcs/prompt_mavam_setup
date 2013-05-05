@@ -140,14 +140,10 @@ prompt_mavam_ps1()
 prompt_mavam_setup()
 {
   setopt localoptions nolocaltraps noksharrays unset
-  typeset -gA fg ch
-
 	prompt_opts=( cr subst percent )
 
-	setopt localoptions noksharrays
-	typeset -g PROMPT_ALTCHAR
-	: ${PROMPT_ALTCHAR:=yes}
-
+  local use_altchar=yes
+  local -A colors
   repeat 1 case "$1:l" in
     (off|disable)
       add-zsh-hook -D precmd "prompt_mavam_precmd"
@@ -157,24 +153,34 @@ prompt_mavam_setup()
       unset RPROMPT
       return 1
       ;;
-    (on|enable)
-      shift
-      [[ $prompt_theme[1] = mavam ]] && break
-      ;&
 	  (-a|noaltchar)
-      PROMPT_ALTCHAR=no
-      ;;
-    (-A|altchar)
-      PROMPT_ALTCHAR=yes
+      shift
+      use_altchar='no'
       ;;
     (*)
       ;;
   esac
 
+  # Setup colors. We reuse the fg color map.
+  if [[ $UID == "0" ]] ; then
+    fg[frame]="%F{${1:-red}}"
+  else
+    fg[frame]="%F{${1:-blue}}"
+  fi
+  if [[ -z "$SSH_CONNECTION" ]]; then
+    fg[indicator]="%F{${2:-green}}"   # Local
+  else
+    fg[indicator]="%F{${2:-magenta}}" # Remote
+  fi
+  fg[widget]="%F{${3:-cyan}}"
+  fg[text]="%F{${4:-yellow}}"
+  fg[reset]="%f%k%u%b"
+
   # Setup the map with special characters we use in the prompt.
   local -Ah altchar
   set -A altchar ${(s..)terminfo[acsc]}
-	if [[ "$PROMPT_ALTCHAR" == "yes" ]] ; then
+  typeset -gA ch
+	if [[ "$use_altchar" == "yes" ]] ; then
     ch[charset]="%{$terminfo[enacs]%}"
     ch[on]="%{$terminfo[smacs]%}"
     ch[off]="%{$terminfo[rmacs]%}"
@@ -198,21 +204,6 @@ prompt_mavam_setup()
     ch[circle]="*"
     ch[arrow]="->"
 	fi
-
-  # Setup colors. We reuse the fg color map.
-  if [[ $UID == "0" ]] ; then
-    fg[frame]="%F{${1:-red}}"
-  else
-    fg[frame]="%F{${1:-blue}}"
-  fi
-  if [[ -z "$SSH_CONNECTION" ]]; then
-    fg[indicator]="%F{${2:-green}}"   # Local prompt
-  else
-    fg[indicator]="%F{${2:-magenta}}" # Remote prompt
-  fi
-  fg[widget]="%F{${3:-cyan}}"
-  fg[text]="%F{${4:-yellow}}"
-  fg[reset]="%f%k%u%b"
 
   # VCS styling
   # %s   The VCS in use (git, hg, svn, etc.).
