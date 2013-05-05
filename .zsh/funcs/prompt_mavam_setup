@@ -1,171 +1,138 @@
-# Prompt based on Bart Schäfer's prompt and inspired by Phil Gold.
 zmodload -i zsh/parameter || return 1
 
 prompt_mavam_help()
 {
-  setopt localoptions nocshnullcmd noshnullcmd
-  is-at-least 4.2.2 || print 'Requires Zsh version 4.2.2'$'\n'
-  <<-\EOF
-      This prompt gives the effect of left and right prompts on the upper
-      line of a two-line prompt. 
-
-          prompt mavam [on|off] [color...]
-
-      You may provide up to five colors as arguments to control 
-          1) Border (blue)
-          2) User and host (cyan)
-          3) The '@' character between the above two (green)
-          4) Directory (cyan)
-          5) Time and date (default)
-      where the color names in parentheses denote the default choice.
-      The defaults look best on a dark background.
-
-      The "off" token temporarily disables the theme; "on" restores it.
-EOF
-  [[ $(read -sek 1 "?${(%):-%S[press return]%s}") == [Qq] ]] &&
-      print -nP '\r%E' && return
-      <<-\EOF
-
-      The "upper left prompt" looks like:
-          -(user@machine)-
-      The second and third color arguments control the look. If the user
-      is root, the name is omitted and the machine displayed in red.
-
-      The "upper right prompt" looks like:
-          -(/home/foo)-
-      The fourth color is used for the date, and the fifth for the time.
-      The exit code is only displayed if non-zero. As with RPS1, first the
-      date and then the time disappear as the upper left prompt grows too
-      wide.  The clock is not live; it changes only after each command, as
-      does the rest of the prompt.
-
-      The "lower right prompt" looks like:
-          [exit status] (16:22:58 10-06-03)- 
-      The fifth color control time and date. Whenever the previous
-      process terminates with a non-zero exit code, the return number is
-      displayed left of the time and date.
-
-      The "lower left prompt" looks like:
-          -(%)- 
-      This prompt is the indicator which is '%' as user and '#' as root.
-      It changes the color from white to yellow on a remote SSH shell.
-EOF
-  [[ $(read -sek 1 "?${(%):-%S[press return]%s}") == [Qq] ]] &&
-      print -nP '\r%E' && return
-      <<-\EOF
-
-      When setopt nopromptcr is in effect, an ANSI terminal protocol
-      exchange is attempted in order to determine the current cursor
-      column, and the width of the upper prompt is adjusted accordingly.
-      If your terminal is not ANSI compliant, this may cause unexpected
-      behavior, and in any case it may consume typeahead.  (Recommended
-      workaround is to setopt promptcr.)
-EOF
-  [[ $(read -sek 1 "?${(%):-%S[done]%s}") == $'\n' ]] ||
-      print -nP '\n%E'
+  print TODO
 }
 
-integer PSCOL=1
+# Indicates whether we should update (potentially stale) VCS info.
+# 
+PROMPT_MAVAM_GIT_UPDATE=1
+
+# Called before command excution. 
+# Updates the git prompt if the command involved the word 'git'.
+function prompt_mavam_preexec 
+{
+  typeset -gi PROMPT_MAVAM_START=SECONDS
+  case "$(history $HISTCMD)" in 
+    *git*)
+      PROMPT_MAVAM_GIT_UPDATE=1
+      ;;
+  esac
+}
+
+# Called after directory change.
+# If we change a directory, we have to recompute the git prompt.
+function prompt_mavam_chpwd 
+{
+  PROMPT_MAVAM_GIT_UPDATE=1
+}
 
 prompt_mavam_precmd()
 {
   setopt localoptions noxtrace noksharrays unset
-  local escape colno lineno
 
-  # Using psvar here protects against unwanted promptsubst expansions.
-  psvar[8]="${EXEC_DELTA}"
-  psvar[9]=''
-
-  # Reset the truncation widths for upcoming computations.
-  ((PSCOL == 1)) || { PSCOL=1 ; prompt_mavam_ps1 }
-  if [[ -o promptcr ]]
-  then
-    # Emulate the 4.3.x promptsp option if it isn't available.
-    eval '[[ -o promptsp ]] 2>/dev/null' ||
-      print -nP "${(l.COLUMNS.. .)}\e[s${(pl.COLUMNS..\b.)}%E\e[u" >$TTY
-  else
-    IFS='[;' read -s -d R escape\?$'\e[6n' lineno PSCOL <$TTY
+  # Update the git prompt if needed
+  if [[ -n "$PROMPT_MAVAM_GIT_UPDATE" ]] ; then
+    vcs_info 'prompt'
+    PROMPT_MAVAM_GIT_UPDATE=
   fi
-  ((PSCOL == 1)) || prompt_mavam_ps1
-  ((colno = COLUMNS-PSCOL))
 
-  # Compute the padding between upper left and right prompts, i.e., the
-  # length of the horizontal bar in the middle. This works by removing all
-  # escape characters from $PS1, expand $PS1, count the actual number of
-  # characters, and subtract them from the TTY width.
-  
-  # Character regex to remove escape and color sequences.
-  local remove='(%([BSUbfksu]|[FB]{*})|$(fg|ch)\[*[a-z]\])' 
+  # Compute the real size of the git info widget.
+  local zero='(%([BSUbfksu]|[FB]{*})|$(fg|ch)\[*[a-z]\])'
+  local -i width2=${#${(S%%)${vcs_info_msg_0_}//$~zero/}}
+  ((width2 += 2)) # Account for surrounding parentheses.
 
-  # Variables that occur inside the prompt whose lengths needs to be computed
-  # and subtracted from the column length.
-  local -a regular
-  regular=(vcs_info_msg_0_)
+  # Compute the widths of the remaining widgets we have in the top line.
+  local -i width1=${#${(%%)psvar[1]}}
+  local -i width3=${#${(%%)psvar[3]}}
 
-  foreach var ($regular)
-  {
-    eval x=\$$var
-    local width=${#${(%%)${(S)x//$~remove/}}}
-    (( width > 0 )) && ((colno -= width))
-  }
+  # Penalize long paths so that truncation does not always occur.
+  ((width1 > 50)) && ((width1 = 50))
 
-  foreach var ($regular) { remove+="|\$$var" }
-  ((colno -= ${#${(f)${(%%)${(S)PS1//$~remove/}}}[1]} + 4))
-
-  if ((colno > 0))
-  then
-    # FIXME: instead of 'q', the padding function should use $ch[hbar], but
-    # my zsh magic is not elaborate enough to figure out why.
-    psvar[9]="${(l:colno::q:)}"
+  # Now compute the fill width.
+  # We always subtract the constant value 5 because the top row has two framing
+  # characters on both ends, plus we leave a space on the very right side.
+  local -i fill
+  ((fill = COLUMNS - 5 - (width1 + width2 + width3)))
+  # If the fill is negative, we first get rid of the VCS info.
+  if ((fill < 0)) ; then
+    ((fill += width2))
+    ((width2 = 1))
   fi
+  # If that's not enough, the hostname goes.
+  if ((fill < 0)) ; then
+    ((fill += width3))
+    ((width3 = 1))
+  fi
+  # If that still doesn't suffice, then we need to work with the path as well.
+  if ((fill < 0)) ; then
+    ((width1 += fill))
+    ((fill = 0))
+  fi
+
+  ((width1 -= 2))  # Subtract 2 for the surrounding parentheses
+  psvar[4]=$width1
+  psvar[5]=$width2
+  psvar[6]=$width3
+  psvar[7]=$fill
+  ((psvar[9] = SECONDS - PROMPT_MAVAM_START))
+
+  # Reset the timer.
+  typeset -gi PROMPT_MAVAM_START=SECONDS
 }
 
 prompt_mavam_ps1()
 {
-  setopt localoptions noxtrace noksharrays
+  setopt localoptions noxtrace noksharrays promptsubst
 
-  # Set up the prompt components.
-  local -h host dir fillbar indicator date ec timing
-  host="%(!.%{$fg[root]%}%m.%{$fg[user]%}%n%{$fg[a]%}@%{$fg[host]%}%m)$fg[rs]"
-  dir="%(!.%{$fg[root]%}%8~.%{$fg[dir]%}%8~)$fg[rs]"
-  fillbar='$ch[on]%9v$ch[off]'
-  indicator="%{$fg[ch]%}(%{$fg[indicator]%}%#%{$fg[ch]%})$fg[rs]"
-  date="%{$fg[date]%}%D{%H:%M:%S %y-%m-%d}"
-  ec="%(?.%{$fg[green]%}.%{$fg[red]%})%?$fg[rs]"
-  timing="$fg[date]"'$ch[on]%8v$ch[off]'"s$fg[rs]"
+  # The corresponding precmd function uses these values for length computation.
+  psvar[1]="(%~)"
+  psvar[3]="(%(!.%m.%n@%m))"
 
   # Assemble the left prompt.
   local -ah prompt
   prompt=(
-    "%$[COLUMNS-PSCOL]>..>"  # Begin truncation (upper left prompt)
-    '$ch[charset]$fg[ch]$ch[on]$ch[ul]$ch[hbar]$ch[off]'
-    "$fg[ch]("
-    "%B"
-    "$dir"
-    "$fg[ch])"
-    "%<<"                    # End truncation (end upper left prompt)
-    "$fillbar"               # Pad line to upper right position
+    # Upper left corner.
+    "$fg[frame]"
+    '$ch[charset]$ch[on]$ch[ul]$ch[hbar]$ch[off]'
+    # Add the current directory.
+    "(%B$fg[widget]%\$[psvar[4]]<..<%~%<<$fg[reset]$fg[frame])"
+    # Set the fill bar in the middle, consisting of psvar[7] characters.
+    '$ch[on]'
+    "\${(l.\$psvar[7]..$ch[hbar].)}"
+    '$ch[off]'
+    # If we're in a version-controlled directory, display its info.
+    "%\$[psvar[5]]>>$fg[frame]($fg[text]"
     '$vcs_info_msg_0_'
-    "$fg[ch]("
-    "$host"
-    "$fg[ch])"
-    '$fg[ch]$ch[on]$ch[hbar]$ch[ur]$ch[off]'
+    "$fg[frame])%<<"
+    # user@host string.
+    "%\$[psvar[6]]>>"
+    "$fg[frame]("
+    "$fg[widget]%(!.%m.%n$fg[indicator]@$fg[widget]%m)$fg[reset]"
+    "$fg[frame])"
+    "%<<"
+    # Upper right and lower left corner, separated by a linebreak.
+    '$ch[on]$ch[hbar]$ch[ur]$ch[off]'
     $'\n'
-    '$fg[ch]$ch[on]$ch[ll]$ch[hbar]$ch[off]'
-    "$indicator "
+    '$ch[on]$ch[ll]$ch[hbar]$ch[off]'
+    # Prompt indicator.
+    "($fg[indicator]%#$fg[frame])$fg[reset] "
     )
   PROMPT="${(j::)prompt}"
 
   # Assemble the right prompt.
   local -ah rprompt
+  local -h ec
+  ec="%(?.%{$fg[green]%}.%{$fg[red]%})%?$fg[reset]"
   rprompt=(
-    "$fg[ch]("
-    "${timing} → $ec"
-    "$fg[ch])("
-    "$date"
-    "$fg[ch])"
+    # Timing and status code.
+    "$fg[frame]($fg[widget]" '$psvar[9]' "s$fg[reset] $ch[arrow] $ec$fg[frame])"
+    # Date and time.
+    "($fg[widget]%D{%H:%M:%S %y-%m-%d}$fg[frame])"
+    # Bottom right corner.
     '$ch[on]$ch[hbar]$ch[lr]$ch[off]'
-    "$fg[rs]"
+    "$fg[reset]"
     )
   RPROMPT="${(j::)rprompt}"
 }
@@ -175,95 +142,122 @@ prompt_mavam_setup()
   setopt localoptions nolocaltraps noksharrays unset
   typeset -gA fg ch
 
-  # A few extra niceties...
+	prompt_opts=( cr subst percent )
+
+	setopt localoptions noksharrays
+	typeset -g PROMPT_ALTCHAR
+	: ${PROMPT_ALTCHAR:=yes}
+
   repeat 1 case "$1:l" in
     (off|disable)
+      add-zsh-hook -D precmd "prompt_mavam_precmd"
+      add-zsh-hook -D preexec "prompt_mavam_preexec"
+      add-zsh-hook -D chpwd "prompt_mavam_chpwd"
       PROMPT="%n@%m %# "
       unset RPROMPT
-      add-zsh-hook -D precmd "prompt_*_precmd"
       return 1
       ;;
     (on|enable)
       shift
       [[ $prompt_theme[1] = mavam ]] && break
       ;&
+	  (-a|noaltchar)
+      PROMPT_ALTCHAR=no
+      ;;
+    (-A|altchar)
+      PROMPT_ALTCHAR=yes
+      ;;
     (*)
-      # Use the fg assoc to hold our selected colors ...
-      # This used to be provided by the function colors, but is now
-      # set directly from here.  There should be no clash if both
-      # are in use.
-      fg[root]="%F{red}"
-      fg[ec]="%F{red}"
-      fg[ch]="%F{${1:-blue}}"
-      fg[user]="%F{${2:-cyan}}"
-      fg[a]="%F{${3:-green}}"
-      fg[host]="%F{${2:-cyan}}"
-      fg[dir]="%F{${4:-cyan}}"
-      fg[date]="%F{${5:-white}}"
-      fg[rs]="%f%k%u%b"
-      if [[ -z "$SSH_CONNECTION" ]]; then
-          fg[indicator]=$fg[a]        # Local prompt
-      else
-          fg[indicator]="%F{red}"     # Remote prompt
-      fi
-
-      # VCS styling
-      # %s   The VCS in use (git, hg, svn, etc.).
-      # %b   Information about the current branch.
-      # %a   An  identifier  that  describes  the action. Only makes sense in
-      #      actionformats.
-      # %i   The current revision number or identifier. For hg the  hgrevfor-
-      #      mat style may be used to customize the output.
-      # %c   The  string from the stagedstr style if there are staged changes
-      #      in the repository.
-      # %u   The string from the unstagedstr  style  if  there  are  unstaged
-      #      changes in the repository.
-      # %R   The base directory of the repository.
-      # %r   The repository name. If %R is /foo/bar/repoXY, %r is repoXY.
-      # %S   A    subdirectory    within    a    repository.   If   $PWD   is
-      #      /foo/bar/repoXY/beer/tasty, %S is beer/tasty.
-      # %m   A "misc" replacement. It is at the discretion of the backend  to
-      #      decide what this replacement expands to. It is currently used by
-      #      the hg and git backends to display patch information from the mq
-      #      and stgit extensions.
-      local fmt_branch="$fg[ch](%F{green}%b%u%c$fg[ch])"
-      local fmt_action="$fg[ch](${branch}-%F{red}%a$fg[ch])"
-      zstyle ':vcs_info:*:prompt:*' enable git svn hg 
-      zstyle ':vcs_info:*:prompt:*' check-for-changes true    # Expensive!
-      zstyle ':vcs_info:*:prompt:*' stagedstr     "%F{green}●"
-      zstyle ':vcs_info:*:prompt:*' unstagedstr   "%F{red}●"
-      zstyle ':vcs_info:*:prompt:*' actionformats "${fmt_action}"
-      zstyle ':vcs_info:*:prompt:*' formats       "${fmt_branch}"
-      zstyle ':vcs_info:*:prompt:*' nvcsformats   ""
-      #zstyle ':vcs_info:*:prompt:*' branchformat "%b$fg[ch]:%F{yellow}%r"
-
-      # Use the ch assoc to hold special characters.
-      local -Ah altchar
-      set -A altchar ${(s..)terminfo[acsc]}
-      ch[charset]="%{$terminfo[enacs]%}"
-      ch[on]="%{$terminfo[smacs]%}"
-      ch[off]="%{$terminfo[rmacs]%}"
-      ch[hbar]=${altchar[q]:--}
-      ch[ul]=${altchar[l]:--}
-      ch[ll]=${altchar[m]:--}
-      ch[lr]=${altchar[j]:--}
-      ch[ur]=${altchar[k]:--}
-
-      # PS2 (used in loops, statements, ...)
-      PS2="%(4_:... :)%3_ $fg[ch]>$fg[rs] "   
-
-      # Correction prompt
-      SPROMPT="zsh: correct '%B%R%b' to '%B%r%b'? (%Un%uo|%Uy%ues|%Ua%ubort|%Ue%udit) " 
       ;;
   esac
 
-  prompt_mavam_ps1
+  # Setup the map with special characters we use in the prompt.
+  local -Ah altchar
+  set -A altchar ${(s..)terminfo[acsc]}
+	if [[ "$PROMPT_ALTCHAR" == "yes" ]] ; then
+    ch[charset]="%{$terminfo[enacs]%}"
+    ch[on]="%{$terminfo[smacs]%}"
+    ch[off]="%{$terminfo[rmacs]%}"
+    ch[hbar]=${altchar[q]:--}
+    ch[ul]=${altchar[l]:--}
+    ch[ll]=${altchar[m]:--}
+    ch[lr]=${altchar[j]:--}
+    ch[ur]=${altchar[k]:--}
+    # FIXME: Use altchar character as opposed to UTF-8.
+    ch[circle]="●"
+    ch[arrow]="→"
+	else
+    ch[charset]=""
+    ch[on]=""
+    ch[off]=""
+    ch[hbar]="-"
+    ch[ul]="+"
+    ch[ll]="+"
+    ch[lr]="+"
+    ch[ur]="+"
+    ch[circle]="*"
+    ch[arrow]="->"
+	fi
+
+  # Setup colors. We reuse the fg color map.
+  if [[ $UID == "0" ]] ; then
+    fg[frame]="%F{${1:-red}}"
+  else
+    fg[frame]="%F{${1:-blue}}"
+  fi
+  if [[ -z "$SSH_CONNECTION" ]]; then
+    fg[indicator]="%F{${2:-green}}"   # Local prompt
+  else
+    fg[indicator]="%F{${2:-magenta}}" # Remote prompt
+  fi
+  fg[widget]="%F{${3:-cyan}}"
+  fg[text]="%F{${4:-yellow}}"
+  fg[reset]="%f%k%u%b"
+
+  # VCS styling
+  # %s   The VCS in use (git, hg, svn, etc.).
+  # %b   Information about the current branch.
+  # %a   An  identifier  that  describes  the action. Only makes sense in
+  #      actionformats.
+  # %i   The current revision number or identifier. For hg the  hgrevfor-
+  #      mat style may be used to customize the output.
+  # %c   The  string from the stagedstr style if there are staged changes
+  #      in the repository.
+  # %u   The string from the unstagedstr  style  if  there  are  unstaged
+  #      changes in the repository.
+  # %R   The base directory of the repository.
+  # %r   The repository name. If %R is /foo/bar/repoXY, %r is repoXY.
+  # %S   A    subdirectory    within    a    repository.   If   $PWD   is
+  #      /foo/bar/repoXY/beer/tasty, %S is beer/tasty.
+  # %m   A "misc" replacement. It is at the discretion of the backend  to
+  #      decide what this replacement expands to. It is currently used by
+  #      the hg and git backends to display patch information from the mq
+  #      and stgit extensions.
+  local fmt_branch="%b%u%c"
+  local fmt_action="${branch}-%F{red}%a"
+  zstyle ':vcs_info:*:prompt:*' enable git svn hg
+  zstyle ':vcs_info:*:prompt:*' check-for-changes true    # Expensive!
+  zstyle ':vcs_info:*:prompt:*' stagedstr     "%F{green}$ch[circle]"
+  zstyle ':vcs_info:*:prompt:*' unstagedstr   "%F{red}$ch[circle]"
+  zstyle ':vcs_info:*:prompt:*' actionformats "${fmt_action}"
+  zstyle ':vcs_info:*:prompt:*' formats       "${fmt_branch}"
+  zstyle ':vcs_info:*:prompt:*' nvcsformats   ""
+  #zstyle ':vcs_info:*:prompt:*' branchformat "%b$fg[frame]:%F{yellow}%r"
+
+  # PS2 (used in loops, statements, ...)
+  PS2="%(4_:... :)%3_ $fg[frame]>$fg[reset] "
+
+  # Correction prompt
+  SPROMPT="zsh: correct '%B%R%b' to '%B%r%b'? (%Un%uo|%Uy%ues|%Ua%ubort|%Ue%udit) "
 
   # No RPS1 by default because prompt_off_setup doesn't fix it.
   (($#RPS1 && $# > 4)) && RPS1="%F{$5}$RPS1%f"
 
-  # Paste our special commands into precmd
+  prompt_mavam_ps1
+
   add-zsh-hook precmd prompt_mavam_precmd
+  add-zsh-hook preexec prompt_mavam_preexec
+  add-zsh-hook chpwd prompt_mavam_chpwd
 
   return 0
 }

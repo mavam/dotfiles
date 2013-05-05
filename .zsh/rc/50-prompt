@@ -2,56 +2,13 @@
 ##  Prompt
 ## 
 
-# Git integration
-# ===============
-# Update the vcs_info_msg_ magic variables, but only as little as possible.
-#
-# This variable dictates wether we are going to do the git prompt update
-# before printing the next prompt. This can save up to 10 secs of work.
-PR_GIT_UPDATE=1
-
-# Called before command excution: update the git prompt if the command involved
-# the word 'git'.
-function zsh_git_prompt_preexec 
-{
-  typeset -gi EXEC_START=SECONDS
-  case "$(history $HISTCMD)" in 
-    *git*)
-      PR_GIT_UPDATE=1
-      ;;
-  esac
-}
-
-# Called after directory change: assume that we have to update the git prompt.
-function zsh_git_prompt_chpwd 
-{
-  PR_GIT_UPDATE=1
-}
-
-# Called before prompt generation. If needed, update the prompt info.
-function zsh_git_prompt_precmd 
-{
-  typeset -gi EXEC_DELTA=SECONDS-EXEC_START
-  typeset -gi EXEC_START=SECONDS
-  if [[ -n "$PR_GIT_UPDATE" ]]
-  then
-    vcs_info 'prompt'
-    PR_GIT_UPDATE=
-  fi
-}
-
 # Prompt initialization
 # =====================
 # See ~/.zsh/funcs/prompt_mavam_setup for details.
-if is-at-least 4.3.7
-then
-  add-zsh-hook preexec zsh_git_prompt_preexec
-  add-zsh-hook chpwd zsh_git_prompt_chpwd
-  add-zsh-hook precmd zsh_git_prompt_precmd
+if is-at-least 4.3.7 ; then
   promptinit
-  setopt prompt_subst
   prompt mavam
-  #prompt mavam blue cyan green green yellow
+  #prompt mavam yellow red white
 else
   local none=$'%{\e[0m%}'
   local black=$'%{\e[0;30m%}'
