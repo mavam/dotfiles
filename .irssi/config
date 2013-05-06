@@ -211,7 +211,7 @@ settings = {
     uberprompt_format = "%y$*%w$uber%c> ";
     awl_placement = "bottom";
     awl_position = "-1";
-    awl_sort = "-data_level";
+    awl_sort = "refnum";
     # For Solarized adv_windowlist.pl script
     awl_display_key_active = "%k%2[$Q=$N:$C]%n";
     awl_display_nokey_active = "%k%2[$N:$C]%n";
