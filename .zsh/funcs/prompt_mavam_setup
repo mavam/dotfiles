@@ -41,7 +41,6 @@ prompt_mavam_precmd()
   # Compute the real size of the git info widget.
   local zero='(%([BSUbfksu]|[FB]{*})|$(fg|ch)\[*[a-z]\])'
   local -i width2=${#${(S%%)${vcs_info_msg_0_}//$~zero/}}
-  ((width2 += 2)) # Account for surrounding parentheses.
 
   # Compute the widths of the remaining widgets we have in the top line.
   local -i width1=${#${(%%)psvar[1]}}
@@ -103,9 +102,9 @@ prompt_mavam_ps1()
     "\${(l.\$psvar[7]..$ch[hbar].)}"
     '$ch[off]'
     # If we're in a version-controlled directory, display its info.
-    "%\$[psvar[5]]>>$fg[frame]($fg[text]"
+    "%\$[psvar[5]]>>"
     '$vcs_info_msg_0_'
-    "$fg[frame])%<<"
+    "%<<"
     # user@host string.
     "%\$[psvar[6]]>>"
     "$fg[frame]("
@@ -224,7 +223,10 @@ prompt_mavam_setup()
   #      decide what this replacement expands to. It is currently used by
   #      the hg and git backends to display patch information from the mq
   #      and stgit extensions.
-  local fmt_branch="%b%u%c"
+
+  # Note that we add the surrounding parenthesis to the format string to
+  # facilitate truncation when we're not inside a directory with a git repo.
+  local fmt_branch="$fg[frame]($fg[text]%b%u%c$fg[frame])"
   local fmt_action="${branch}-%F{red}%a"
   zstyle ':vcs_info:*:prompt:*' enable git svn hg
   zstyle ':vcs_info:*:prompt:*' check-for-changes true    # Expensive!
