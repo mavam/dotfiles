@@ -6,7 +6,7 @@
 typeset -U path cdpath fpath manpath
 
 # System $PATH.
-path=( 
+path=(
     /usr/local/bin
     /usr/bin
     /bin
@@ -27,21 +27,36 @@ manpath=(
 # Function path.
 fpath=( ~/.zsh/funcs $fpath )
 
+# OS-specific paths.
+case "$OS" in
+  darwin)
+    # MacTeX binaries.
+    [[ -d /usr/texbin ]] && path=( $path /usr/texbin )
+
+    # Apple's X11 binaries.
+    [[ -d /usr/X11R6/bin ]] && path=( $path /usr/X11R6/bin )
+
+    # Default MacPorts installations.
+    if [[ -d /opt/local ]] ; then
+      path=( /opt/local/bin /opt/local/sbin $path )
+      manpath=( /opt/local/share/man $manpath )
+    fi
+    ;;
+esac
+
 # Source local paths.
 [[ -f ~/.zpath.local ]] && source ~/.zpath.local
 
 # Home prefix has highest precedence, thus sourced last.
 path=( ~/bin $path )
 manpath=( ~/man $manpath )
-
-# Add Ruby gem binary dirs.
 if [[ -d ~/.gem && -d ~/.gem/ruby ]]; then
   foreach dir (~/.gem/ruby/*) { [[ -d $dir/bin ]] && path=( $dir/bin $path ) }
 fi
 
 # Removes non-existent directories from an array.
 clean-path ()
-{             
+{
   local element
   local build
   build=()

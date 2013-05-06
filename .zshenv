@@ -60,8 +60,17 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 # Setup RVM environment.
 [[ -s ~/.rvm/scripts/rvm && $UID != "0" ]] && source ~/.rvm/scripts/rvm
 
-# Source OS-specific environment.
-[[ -f ~/.zsh/env/$OS ]] && source ~/.zsh/env/$OS
+# OS-specific environment.
+case "$OS" in
+  linux-gnu)
+    # Prefer X Input Method (XIM) instead of SCIM in order to activate
+    # .XCompose. Note: using it might also require invoking 'sude im-switch -c'
+    # on some distributions.
+    export GTK_IM_MODULE=xim
+    export QT_IM_MODULE=xim
+    ;;
+esac
+
 
 # Source local environment.
 [[ -f ~/.zshenv.local ]] && source ~/.zshenv.local
