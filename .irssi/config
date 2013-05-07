@@ -1,6 +1,8 @@
 # This file contains the majority of my irssi config. It does not include
-# the list of servers, since that fragment contains my freenode password. See
-# ~/.irssi/run for details.
+# the commented part below, since that includes my freenode password and
+# personal details.
+#
+# See ~/.irssi/run for details.
 #
 #servers = (
 #  {
@@ -13,26 +15,17 @@
 #    password = "mavam:xxx";
 #  }
 #);
-
-chatnets = {
-  freenode = {
-    type = "IRC";
-    nick = "mavam";
-  };
-};
-
-channels = (
-  { name = "#berke1337"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#Bro";       chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#haskell";   chatnet = "freenode"; autojoin = "yes"; },
-  { name = "##c++";      chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#boost";     chatnet = "freenode"; autojoin = "yes"; },
-  { name = "##spirit";   chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#tmux";      chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#vim";       chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#zsh";       chatnet = "freenode"; autojoin = "yes"; }
-  { name = "#vast";      chatnet = "freenode"; autojoin = "yes"; }
-);
+#
+#chatnets = {
+#  freenode = {
+#    type = "IRC";
+#    nick = "mavam";
+#  };
+#};
+#
+#channels = (
+#  { name = "#Bro";       chatnet = "freenode"; autojoin = "yes"; },
+#);
 
 aliases = {
   J = "join";
