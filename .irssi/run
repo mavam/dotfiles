@@ -8,7 +8,7 @@ cfg='/tmp/irssi-config'
 set -e
 touch $cfg
 chmod 600 $cfg
-gpg --no-tty -d ~/.irssi/config.sensitive.asc > $cfg
+gpg --no-tty -d ~/.irssi/config.sensitive.gpg > $cfg
 cat ~/.irssi/config >> $cfg
 (sleep 2 && rm $cfg) &
 exec irssi --config=$cfg
