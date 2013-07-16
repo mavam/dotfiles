@@ -2,6 +2,11 @@
 ##  Miscellaneous Functions
 ##
 
+fixme()
+{
+  grep -ir fixme *
+}
+
 todo()
 {
   grep -ir todo *
