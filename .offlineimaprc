@@ -1,5 +1,5 @@
 [general]
-ui = blinkenlights
+ui = TTYUI
 metadata = ~/.offlineimap
 accounts = Google
 maxsyncaccounts = 1
