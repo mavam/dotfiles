@@ -1,119 +1,124 @@
-## 
+##
 ##  Miscellaneous Functions
 ##
 
-todo() 
+fixme()
 {
-    grep -ir todo *
-} 
+  grep -ir fixme *
+}
+
+todo()
+{
+  grep -ir todo *
+}
 
 # Define a custom tree command if it doesn't exist.
 if [[ ! -x  $(whence -p tree) ]]; then
-    tree() 
-    { 
-        find . | sed -e 's/[^\/]*\//|----/g' -e 's/---- |/    |/g' | less
-    }
-fi 
+  tree()
+  {
+    find . | sed -e 's/[^\/]*\//|----/g' -e 's/---- |/    |/g' | less
+  }
+fi
 
-# checks whether a PCRE matches a value. 
+# checks whether a PCRE matches a value.
 # synopsis: % regcheck '\^.{3} EUR' '500 EUR'
-regcheck() 
+regcheck()
 {
-    if [[ -n $(zmodload -i zsh/pcre) ]]; then
-        if [[ -z $2 ]]; then
-            pcre_compile $1 
-            pcre_match $2 && echo "regex matches" || echo "regex does not match"
-        else
-            echo "usage: $0 <regex> <match-string>"
-        fi
+  if [[ -n $(zmodload -i zsh/pcre) ]]; then
+    if [[ -z $2 ]]; then
+      pcre_compile $1
+      pcre_match $2 && echo "regex matches" || echo "regex does not match"
+    else
+      echo "usage: $0 <regex> <match-string>"
     fi
+  fi
 }
 
 # synopsis: findpids [prog] (slightly adapted keychain version)
-findpids() 
+findpids()
 {
-    local me=$(whoami) || return 1
-    unset fp_psout
+  local me=$(whoami) || return 1
+  unset fp_psout
 
-    # Different systems require different invocations of ps.  Try to generalize
-    # the best we can.  The only requirement is that the agent command name
-    # appears in the line, and the PID is the first item on the line.
-    [[ -n "$OSTYPE" ]] || return 1
+  # Different systems require different invocations of ps.  Try to generalize
+  # the best we can.  The only requirement is that the agent command name
+  # appears in the line, and the PID is the first item on the line.
+  [[ -n "$OSTYPE" ]] || return 1
 
-    # Try systems where we know what to do first.
-    case "$OSTYPE" in
-        AIX|*bsd*|*BSD*|CYGWIN|darwin*|Linux|OSF1)
-            fp_psout=`ps x 2>/dev/null` ;;      # BSD syntax
-        HP-UX)
-            fp_psout=`ps -u $me 2>/dev/null` ;; # SysV syntax
-        SunOS)
-            case `uname -r` in
-                [56]*)
-                    fp_psout=`ps -u $me 2>/dev/null` ;; # SysV syntax
-                *)
-                    fp_psout=`ps x 2>/dev/null` ;;      # BSD syntax
-            esac ;;
-    esac
+  # Try systems where we know what to do first.
+  case "$OSTYPE" in
+    AIX|*bsd*|*BSD*|CYGWIN|darwin*|Linux|OSF1)
+      fp_psout=`ps x 2>/dev/null` ;;      # BSD syntax
+    HP-UX)
+      fp_psout=`ps -u $me 2>/dev/null` ;; # SysV syntax
+    SunOS)
+      case `uname -r` in
+        [56]*)
+          fp_psout=`ps -u $me 2>/dev/null` ;; # SysV syntax
+        *)
+          fp_psout=`ps x 2>/dev/null` ;;      # BSD syntax
+      esac ;;
+  esac
 
-    # If we didn't get a match above, try a list of possibilities...
-    # The first one will probably fail on systems supporting only BSD syntax.
-    if [[ -z "$fp_psout" ]]; then
-        fp_psout=`UNIX95=1 ps -u $me -o pid,comm 2>/dev/null | grep '^ *[0-9]'`
-        [[ -z "$fp_psout" ]] && fp_psout=`ps x 2>/dev/null`
-    fi
+  # If we didn't get a match above, try a list of possibilities...
+  # The first one will probably fail on systems supporting only BSD syntax.
+  if [[ -z "$fp_psout" ]]; then
+    fp_psout=`UNIX95=1 ps -u $me -o pid,comm 2>/dev/null | grep '^ *[0-9]'`
+    [[ -z "$fp_psout" ]] && fp_psout=`ps x 2>/dev/null`
+  fi
 
-    # Return the list of pids; ignore case for Cygwin.
-    # Check only 8 characters since Solaris truncates at that length.
-    # Ignore defunct ssh-agents (bug 28599)
-    if [[ -n "$fp_psout" ]]; then
-        echo "$fp_psout" | \
-        awk "BEGIN{IGNORECASE=1} /defunct/{next} /$1/{print \$1}" | xargs
-        return 0
-    fi
+  # Return the list of pids; ignore case for Cygwin.
+  # Check only 8 characters since Solaris truncates at that length.
+  # Ignore defunct ssh-agents (bug 28599)
+  if [[ -n "$fp_psout" ]]; then
+    echo "$fp_psout" | \
+      awk "BEGIN{IGNORECASE=1} /defunct/{next} /$1/{print \$1}" | xargs
+    return 0
+  fi
 
-    # If none worked, we're stuck
-    error "Unable to use \"ps\" to scan for $1 processes"
-    return 1
+  # If none worked, we're stuck
+  error "Unable to use \"ps\" to scan for $1 processes"
+  return 1
 }
 
 # display colors
 _cols()
 {
-    local esc="\033["
-    print "\t 40\t 41\t 42\t 43\t 44\t 45\t 46\t 47"
-    for fore in 30 31 32 33 34 35 36 37; do
-        local line1="$fore  "
-        local line2="    "
-        for back in 40 41 42 43 44 45 46 47; do
-            local line1="${line1}${esc}${back};${fore}m Normal  ${esc}0m"
-            local line2="${line2}${esc}${back};${fore};1m Bold    ${esc}0m"
-        done
-        print "$line1\n$line2"
+  local esc="\033["
+  print "\t 40\t 41\t 42\t 43\t 44\t 45\t 46\t 47"
+  for fore in 30 31 32 33 34 35 36 37; do
+    local line1="$fore  "
+    local line2="    "
+    for back in 40 41 42 43 44 45 46 47; do
+      local line1="${line1}${esc}${back};${fore}m Normal  ${esc}0m"
+      local line2="${line2}${esc}${back};${fore};1m Bold    ${esc}0m"
     done
+    print "$line1\n$line2"
+  done
 }
 
 # Prints out lines that are common among $# files.
 intersection()
 {
-    local sort="sort -S 1G"
-    case $# in
-        (0) true;;
-        (2) $sort -u "$1"; $sort -u "$2";;
-        (*) $sort -u "$1"; shift; intersection "$@";;
-    esac | $sort | uniq -d
-} 
+  local sort="sort -S 1G"
+  case $# in
+    (0) true;;
+    (2) $sort -u "$1"; $sort -u "$2";;
+    (*) $sort -u "$1"; shift; intersection "$@";;
+  esac | $sort | uniq -d
+}
 
 # Thirsty ?
 beer()
 {
-    print "         _.._..,_,_"        
-    print "        (          )"
-    print "         ]~,\"-.-~~["        
-    print "       .=])' (;  ([    Prost!"
-    print "       | ]:: '    ["
-    print "       '=]): .)  (["
-    print "         |:: '    |"
-    print "          ~~----~~"
+  print "         _.._..,_,_"
+  print "        (          )"
+  print "         ]~,\"-.-~~["
+  print "       .=])' (;  ([    Prost!"
+  print "       | ]:: '    ["
+  print "       '=]): .)  (["
+  print "         |:: '    |"
+  print "          ~~----~~"
 }
 
 # Saves SSH environment variables in a file. Use this function to save the
@@ -121,32 +126,32 @@ beer()
 # 'ssh-fix' (see below)
 ssh-grab()
 {
-    local prefix="${HOME}/.tmux"
-    local file="ssh-session-vars"
+  local prefix="${HOME}/.tmux"
+  local file="ssh-session-vars"
 
-    if [[ -n "${SSH_CLIENT}" ]] ; then
-        mkdir -m 700 -p ${prefix}
+  if [[ -n "${SSH_CLIENT}" ]] ; then
+    mkdir -m 700 -p ${prefix}
 
-        # Variables to save
-        local -a ssh_vars
-        ssh_vars=(SSH_CLIENT SSH_TTY SSH_AUTH_SOCK SSH_CONNECTION DISPLAY)
+    # Variables to save
+    local -a ssh_vars
+    ssh_vars=(SSH_CLIENT SSH_TTY SSH_AUTH_SOCK SSH_CONNECTION DISPLAY)
 
-        for x in ${ssh_vars} ; do
-            (eval echo $x=\$$x) | sed  's/=/="/
-            s/$/"/
-            s/^/export /'
-        done 1> "${prefix}/${file}"
-    fi
+    for x in ${ssh_vars} ; do
+      (eval echo $x=\$$x) | sed  's/=/="/
+      s/$/"/
+      s/^/export /'
+    done 1> "${prefix}/${file}"
+  fi
 }
 
 # Restores SSH environment variables to reinstate SSH agent-forwarding.
 ssh-fix()
 {
-    local prefix="${HOME}/.tmux"
-    local file="ssh-session-vars"
-    local fullpath=${prefix}/${file}
+  local prefix="${HOME}/.tmux"
+  local file="ssh-session-vars"
+  local fullpath=${prefix}/${file}
 
-    [[ -f ${fullpath} ]] && source ${fullpath}
+  [[ -f ${fullpath} ]] && source ${fullpath}
 }
 
 # Assign a glob expression to a variable. First creates an empty array variable
@@ -157,17 +162,17 @@ ssh-fix()
 #     zsh: no match
 # *after* emptying the previous value of $show.
 show()
-{ 
-    show=()
-    show=( $~* )
-    print -rc $show 
+{
+  show=()
+  show=( $~* )
+  print -rc $show
 }
 alias show "noglob show"
 
 # Combining the power of tail -f and the less pager.
 ltail()
 {
-    tail -f $1 | less -S
+  tail -f $1 | less -S
 }
 
 # vim: ft=zsh

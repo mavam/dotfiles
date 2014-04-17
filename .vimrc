@@ -21,6 +21,9 @@ set suffixes+=.info,.out,.o,.lo
 
 set viminfo='20,\"500
 
+" No header when printing.
+set printoptions+=header:0
+
 scriptencoding utf-8
 
 " =============================================================================
@@ -162,7 +165,7 @@ Bundle 'gmarik/vundle'
 Bundle 'LaTeX-Suite-aka-Vim-LaTeX'
 Bundle 'altercation/vim-colors-solarized'
 Bundle 'godlygeek/tabular'
-Bundle 'rson/vim-conque'
+Bundle 'basepi/vim-conque'
 Bundle 'rstacruz/sparkup'
 Bundle 'tpope/vim-endwise'
 Bundle 'tpope/vim-fugitive'
@@ -231,6 +234,12 @@ autocmd FileType bro set comments+=:##
 autocmd FileType bro set comments+=:#
 autocmd Filetype mail set sw=4 ts=4 tw=72
 autocmd Filetype tex set iskeyword+=:
+
+" Bro-specific coding style.
+augroup BroProject
+  autocmd FileType bro set noexpandtab cino='>1s,f1s,{1s'
+  au BufRead,BufEnter ~/work/bro/**/*{cc,h} set noexpandtab cino='>1s,f1s,{1s'
+augroup END
 
 if has("spell")
   autocmd BufRead,BufNewFile *.dox  set spell
