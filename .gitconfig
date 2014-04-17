@@ -12,7 +12,7 @@
 [alias]
     cdiff = diff --cached
     st = status --short
-    log1 = log --format=oneline
+    log1 = log --all --graph --decorate --oneline --abbrev-commit
     merge-branch = merge --log --no-commit --no-ff
     push-this = push origin HEAD
     fix-submodules = submodule update --recursive --init
