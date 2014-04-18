@@ -1,20 +1,24 @@
 [user]
 	name = Matthias Vallentin
 	email = vallentin@icir.org
+
 [color]
 	diff = auto
 	status = auto
 	branch = auto
+
 [merge]
 	tool = vimdiff
+
 [push]
 	default = matching
+
 [alias]
-    cdiff = diff --cached
-    st = status --short
-    log1 = log --all --graph --decorate --oneline --abbrev-commit
-    merge-branch = merge --log --no-commit --no-ff
-    push-this = push origin HEAD
-    fix-submodules = submodule update --recursive --init
-    recursive = "!sh -c 'for i in . `git submodule foreach -q --recursive pwd`; do cd $i && git $@; done' -"
-    recursive-sh = "!sh -c 'for i in . `git submodule foreach -q --recursive pwd`; do cd $i && $@; done' -"
+  cdiff = diff --cached
+  st = status --short
+  log1 = log --all --graph --decorate --oneline --abbrev-commit
+  merge-branch = merge --log --no-commit --no-ff
+  push-this = push origin HEAD
+  fix-submodules = submodule update --recursive --init
+  recursive = "!sh -c 'for i in . `git submodule foreach -q --recursive pwd`; do cd $i && git $@; done' -"
+  recursive-sh = "!sh -c 'for i in . `git submodule foreach -q --recursive pwd`; do cd $i && $@; done' -"
