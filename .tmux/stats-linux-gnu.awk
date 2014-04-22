@@ -27,7 +27,9 @@ BEGIN \
   }
   else if (/Mem/)
   {
-    mem = sprintf("mem %s / %s", $4, $2)
+    split($4, used, "k")
+    split($2, total, "k")
+    mem = sprintf("mem %sM / %sM", int(used[1] / 1024), int(total[1] / 1024))
   }
 }
 
