@@ -151,11 +151,6 @@ nnoremap <expr> <Leader>p '`[' . strpart(getregtype(), 0, 1) . '`]'
 "                                    Vundle
 " =============================================================================
 
-if !isdirectory(expand("~/.vim/bundle/vundle/.git"))
-  silent !mkdir -p ~/.vim/bundle > /dev/null 2>&1
-  !git clone https://github.com/gmarik/vundle ~/.vim/bundle/vundle
-endif
-
 filetype off
 set rtp+=~/.vim/bundle/vundle
 call vundle#rc()
