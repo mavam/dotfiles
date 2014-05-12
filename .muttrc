@@ -19,4 +19,4 @@ source ~/.mutt/options
 # Conditional sourcing
 source `FILE=$HOME/.mutt/aliases; if [ ! -f $FILE ]; then FILE=/dev/null;fi;echo "$FILE"`
 source `FILE=$HOME/.mutt/lists; if [ ! -f $FILE ]; then FILE=/dev/null;fi;echo "$FILE"`
-#source `FILE=$HOME/.mutt/sidebar; if [ ! $(mutt -v | grep sidebar) ]; then FILE=/dev/null;fi;echo "$FILE"`
+source `FILE=$HOME/.mutt/sidebar; if [ ! $(mutt -v | grep sidebar) ]; then FILE=/dev/null;fi;echo "$FILE"`

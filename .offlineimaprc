@@ -6,7 +6,7 @@ maxsyncaccounts = 1
 
 [Account Google]
 localrepository = Local
-remoterepository = GmailProxied
+remoterepository = Gmail
 autorefresh = 1
 quick = 5
 
@@ -19,6 +19,9 @@ restoreatime = no
 [Repository Gmail]
 type = IMAP
 ssl = yes
+cert_fingerprint = 89091347184d41768bfc0da9fad94bfe882dd358
+cert_fingerprint = 0f7a6d02be71cf3d263feb781cb091d9f2c5af78
+cert_fingerprint = 22b4c96075592f0e0e20134ae008ae4a5f0177a6
 remotehost = imap.gmail.com
 remoteuser = matthias@vallentin.net
 maxconnections = 1
