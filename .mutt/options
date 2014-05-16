@@ -78,7 +78,7 @@ set sort_alias=alias
 # [sort_aux] how threads are sorted in relation to other threads, how the
 # branches of the thread trees are sorted
 #   same as `$sort`, except reverse == last
-set sort_aux=date-sent
+set sort_aux=last-date-received
 
 # [sort_browser] how to sort entries in the file browser
 #   alpha (alphabetically)
