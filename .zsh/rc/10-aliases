@@ -86,6 +86,7 @@ alias zcp='noglob zmv -C'
 alias zln='noglob zmv -L'
 alias zmv='noglob zmv'
 
+alias attach='ssh-grab && tmux attach'
 alias hist-full='history -E 1'
 alias funcs='declare -f'
 
