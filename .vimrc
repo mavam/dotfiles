@@ -179,7 +179,7 @@ Plugin 'vim-scripts/Vim-R-plugin'
 call vundle#end()
 
 if !isdirectory(expand("~/.vim/bundle/vim-fugitive"))
-  BundleInstall!
+  PluginInstall!
   q
 endif
 
