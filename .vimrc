@@ -194,6 +194,9 @@ if !has('gui_running')
 end
 colorscheme solarized
 
+" Active lightline.
+set laststatus=2
+
 " LaTeX Suite: Prevents Vim 7 from setting filetype to 'plaintex'.
 let g:tex_flavor = 'latex'
 
