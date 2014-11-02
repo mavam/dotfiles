@@ -101,7 +101,7 @@ function! Preserve(command)
 endfunction
 
 " Reverse letters in a word, e.g, "foo" -> "oof".
-vnoremap <silent> <Leader>r :<C-U>let old_reg_a=@a<CR>
+vnoremap <silent> <leader>r :<C-U>let old_reg_a=@a<CR>
  \:let old_reg=@"<CR>
  \gv"ay
  \:let @a=substitute(@a, '.\(.*\)\@=',
@@ -114,8 +114,8 @@ vnoremap <silent> <Leader>r :<C-U>let old_reg_a=@a<CR>
 "                                 Key Bindings
 " =============================================================================
 
-let mapleader = ','
-let maplocalleader = '\'
+let mapleader = ' '
+let maplocalleader = '\\'
 
 " Clear last search highlighting
 nnoremap <CR> :noh<CR><CR>
@@ -139,13 +139,13 @@ nmap <D-6> g^
 nmap <D-0> g^
 
 " Remove trailing whitespace.
-nmap <Leader>$ :call Preserve("%s/\\s\\+$//e")<CR>
+nmap <leader>$ :call Preserve("%s/\\s\\+$//e")<CR>
 
 " Indent entire file.
-nmap <Leader>= :call Preserve("normal gg=G")<CR>
+nmap <leader>= :call Preserve("normal gg=G")<CR>
 
 " Highlight text last pasted.
-nnoremap <expr> <Leader>p '`[' . strpart(getregtype(), 0, 1) . '`]'
+nnoremap <expr> <leader>p '`[' . strpart(getregtype(), 0, 1) . '`]'
 
 " =============================================================================
 "                                    Vundle
