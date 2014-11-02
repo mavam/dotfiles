@@ -153,35 +153,37 @@ nnoremap <expr> <Leader>p '`[' . strpart(getregtype(), 0, 1) . '`]'
 
 filetype off
 set rtp+=~/.vim/bundle/vundle
-call vundle#rc()
+call vundle#begin()
 
-Bundle 'gmarik/vundle'
-"Bundle 'DamienCassou/textlint'
-Bundle 'LaTeX-Suite-aka-Vim-LaTeX'
-Bundle 'altercation/vim-colors-solarized'
-Bundle 'godlygeek/tabular'
-Bundle 'basepi/vim-conque'
-Bundle 'rstacruz/sparkup'
-Bundle 'tpope/vim-endwise'
-Bundle 'tpope/vim-fugitive'
-Bundle 'tpope/vim-git'
-Bundle 'tpope/vim-haml'
-Bundle 'tpope/vim-markdown'
-Bundle 'tpope/vim-surround'
-Bundle 'tpope/vim-repeat'
-Bundle 'tpope/vim-speeddating'
-Bundle 'tpope/vim-unimpaired'
-Bundle 'vim-scripts/Screen-vim---gnu-screentmux'
-Bundle 'vim-scripts/Vim-R-plugin'
-" Bundle 'xolox/vim-easytags'
+"Plugin 'DamienCassou/textlint'
+Plugin 'gmarik/Vundle.vim'
+Plugin 'LaTeX-Suite-aka-Vim-LaTeX'
+Plugin 'altercation/vim-colors-solarized'
+Plugin 'godlygeek/tabular'
+Plugin 'basepi/vim-conque'
+Plugin 'itchyny/lightline.vim'
+Plugin 'rstacruz/sparkup'
+Plugin 'tpope/vim-endwise'
+Plugin 'tpope/vim-fugitive'
+Plugin 'tpope/vim-git'
+Plugin 'tpope/vim-haml'
+Plugin 'tpope/vim-markdown'
+Plugin 'tpope/vim-surround'
+Plugin 'tpope/vim-repeat'
+Plugin 'tpope/vim-speeddating'
+Plugin 'tpope/vim-unimpaired'
+Plugin 'vim-scripts/Screen-vim---gnu-screentmux'
+Plugin 'vim-scripts/Vim-R-plugin'
+" Plugin 'xolox/vim-easytags'
 
+call vundle#end()
 
 if !isdirectory(expand("~/.vim/bundle/vim-fugitive"))
   BundleInstall!
   q
 endif
 
-" Solarized
+" Customize solarized color scheme.
 let g:solarized_menu = 0
 let g:solarized_termtrans = 1
 let g:solarized_contrast = 'high'
