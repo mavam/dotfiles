@@ -85,37 +85,10 @@ if has("spell")
 endif
 
 " =============================================================================
-"                               Custom Functions
-" =============================================================================
-
-function! Preserve(command)
-  " Preparation: save last search, and cursor position.
-  let _s=@/
-  let l = line(".")
-  let c = col(".")
-  " Do the business:
-  execute a:command
-  " Clean up: restore previous search history, and cursor position
-  let @/=_s
-  call cursor(l, c)
-endfunction
-
-" Reverse letters in a word, e.g, "foo" -> "oof".
-vnoremap <silent> <leader>r :<C-U>let old_reg_a=@a<CR>
- \:let old_reg=@"<CR>
- \gv"ay
- \:let @a=substitute(@a, '.\(.*\)\@=',
- \ '\=@a[strlen(submatch(1))]', 'g')<CR>
- \gvc<C-R>a<Esc>
- \:let @a=old_reg_a<CR>
- \:let @"=old_reg<CR>
-
-" =============================================================================
 "                                 Key Bindings
 " =============================================================================
 
 let mapleader = ' '
-let maplocalleader = '\\'
 
 " Clear last search highlighting
 nnoremap <CR> :noh<CR><CR>
@@ -146,6 +119,32 @@ nmap <leader>= :call Preserve("normal gg=G")<CR>
 
 " Highlight text last pasted.
 nnoremap <expr> <leader>p '`[' . strpart(getregtype(), 0, 1) . '`]'
+
+" =============================================================================
+"                               Custom Functions
+" =============================================================================
+
+function! Preserve(command)
+  " Preparation: save last search, and cursor position.
+  let _s=@/
+  let l = line(".")
+  let c = col(".")
+  " Do the business.
+  execute a:command
+  " Clean up: restore previous search history, and cursor position
+  let @/=_s
+  call cursor(l, c)
+endfunction
+
+" Reverse letters in a word, e.g, "foo" -> "oof".
+vnoremap <silent> <leader>r :<C-U>let old_reg_a=@a<CR>
+ \:let old_reg=@"<CR>
+ \gv"ay
+ \:let @a=substitute(@a, '.\(.*\)\@=',
+ \ '\=@a[strlen(submatch(1))]', 'g')<CR>
+ \gvc<C-R>a<Esc>
+ \:let @a=old_reg_a<CR>
+ \:let @"=old_reg<CR>
 
 " =============================================================================
 "                                    Vundle
