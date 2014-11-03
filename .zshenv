@@ -7,8 +7,6 @@ umask 022
 
 # OS and hostname
 (( ${+OS} ))        || export OS="${OSTYPE%%[0-9.]*}"
-(( ${+OSVERSION} )) || export OSVERSION="${OSTYPE#$OS}"
-(( ${+OSMAJOR} ))   || export OSMAJOR="${OSVERSION%%.*}"
 (( ${+HOSTNAME} ))  || export HOSTNAME=$(uname -n)
 
 [[ -f ~/.zpath ]] && source ~/.zpath
