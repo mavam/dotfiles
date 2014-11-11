@@ -73,7 +73,6 @@ bind index,pager }        next-thread
 macro index,pager R       "<read-thread><previous-undeleted><next-new-then-unread>" "Mark current thread as read and go to next unread message"
 
 # Message handling
-bind index,pager  ,l      edit-label
 bind index,pager   P      recall-message
 bind index,pager  ,r      reply
 bind index,pager   r      group-reply
