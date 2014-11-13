@@ -71,3 +71,69 @@ StatCcdf <- proto::proto(ggplot2:::Stat, {
   required_aes <- c("x")
   default_geom <- function(.) GeomStep
 })
+
+# Extract the top k most dominant frequencies from a periodogram. When
+# neighborhood has a value greater than zero, this many neighboring frequencies
+# left and right of a dominant frequency are also removed before considering
+# the next most dominant one.
+# periodogram: a periodogram object, e.g., as returned by spec.pgram().
+# k: the number of most dominant frequencies to extract.
+#    neighborhood: when selecting a dominant function, remove that many
+#    neighbors around this frequency as well.
+top.frequencies <- function(periodogram, k=3, neighborhood=0) {
+    spc <- periodogram$spec
+    frq <- periodogram$freq
+
+    topk <- c()
+    while (length(topk) < k)
+    {
+        top <- which.max(spc)
+        topk[length(topk)+1] <- frq[top]
+        if (neighborhood > 0)
+        {
+            idx <- seq(top - neighborhood, top + neighborhood)
+            spc <- spc[-idx]
+            frq <- frq[-idx]
+        } else {
+            spc <- spc[-top]
+            frq <- frq[-top]
+        }
+    }
+
+    topk
+}
+
+# Fit a periodic linear model with the given frequencies to a time series.
+# Avoiding an intercept term in the fit can be achieved via setting
+# intercept=F.
+# x: the time series
+# f: vector of frequencies to fit.
+# intercept: whether to include an intercept term in the regression.
+periodic.fit <- function(x, frequencies, intercept=T) {
+  idx <- 1:length(x)
+  sin.fit <- function(f) sin(2*pi*idx*f)
+  cos.fit <- function(f) cos(2*pi*idx*f)
+
+  f <- lapply(frequencies, function(f) cbind(cos.fit(f), sin.fit(f)))
+  covariates <- sapply(1:length(f), function(i) paste("f[[", i, "]]", sep=""))
+  add <- function(a, b) paste(a, b, sep= " + ")
+  covariates <- Reduce(add, covariates)
+
+  form <- "x ~"
+  if (! intercept)
+    form <- paste(form, 0, "+")
+  form <- paste(form, covariates)
+
+  lm(as.formula(form))
+}
+
+# Example usage of the above two functions.
+#x1 = 2*cos(2*pi*1:100*6/100)  + 3*sin(2*pi*1:100*6/100)
+#x2 = 4*cos(2*pi*1:100*10/100) + 5*sin(2*pi*1:100*10/100)
+#x3 = 6*cos(2*pi*1:100*40/100) + 7*sin(2*pi*1:100*40/100)
+#x = x1 + x2 + x3
+#spc = spec.pgram(x, taper=0, log="no")
+#freqs = top.frequencies(spc)
+#fit = periodic.fit(x, freqs)
+#plot.ts(x)
+#lines(fitted(fit), col="red", lty=2)
