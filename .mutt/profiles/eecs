@@ -13,9 +13,6 @@ set signature=~/.mutt/sigs/simple
 #set record="=sent"
 #set smtp_url=smtps://mpm@calmail.berkeley.edu
 #set smtp_authenticators="login"
-set smtp_url="smtps://matthias@vallentin.net@smtp.gmail.com:465/"
-unset smtp_authenticators
-unset record
 
 # Next profile.
 macro generic <F7> ':source ~/.mutt/profiles/cal<enter>'

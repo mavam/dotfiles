@@ -1,6 +1,6 @@
 # Personal constants
 set realname="Matthias Vallentin"
-alternates '(matthias@vallentin.net|vallentin?@(icsi.berkeley.edu|icir.org)|matthias.vallentin@gmail.com|(vallentin|mavam|mpm)@berkeley.edu|(mavam|vallentin|matthias.vallentin)@(ee)?cs.berkeley.edu)'
+alternates '(matthias@vallentin.net|vallentin?@(icsi.berkeley.edu|icir.org)|matthias.vallentin@gmail.com|(vallentin|mavam|mpm)@berkeley.edu|(mavam|vallentin|matthias.vallentin)@(ee)?cs.berkeley.edu|matt?(hias)?@bro.org)'
 
 unmy_hdr *
 my_hdr X-PGP-Fingerprint: 8A3B 1323 B469 CCBA 54D3  3BCC D5E7 8DF5 9C8D 4B41
@@ -21,11 +21,13 @@ set imap_user = 'matthias@vallentin.net'
 set spoolfile = imaps://imap.gmail.com/INBOX
 set folder = imaps://imap.gmail.com/
 set postponed="imaps://imap.gmail.com/[Gmail]/Drafts"
-unset record # We're sending via Google's SMTP server.
-#set record="imaps://imap.gmail.com/[Gmail]/Sent Mail"
 set message_cachedir = ~/.mutt/cache_body
 set header_cache = ~/.mutt/cache_header
 
+set smtp_url="smtps://matthias@vallentin.net@smtp.gmail.com:465/"
+set smtp_authenticators='gssapi:login'
+unset record # Because Google's SMTP server already saves a copy.
+#set record="imaps://imap.gmail.com/[Gmail]/Sent Mail"
 
 # Default profile.
 source ~/.mutt/profiles/icir
