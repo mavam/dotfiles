@@ -201,6 +201,7 @@ let g:tex_flavor = 'latex'
 
 let vimrplugin_notmuxconf = 1 "do not overwrite an existing tmux.conf.
 let vimrplugin_assign = 0     "do not replace '_' with '<-'.
+let vimrplugin_vsplit = 1     "split R vertically.
 
 " Needs to be executed after Vundle.
 filetype plugin indent on
