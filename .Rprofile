@@ -10,11 +10,12 @@ options(repos=structure(c(CRAN="http://cran.cnr.berkeley.edu/")))
       install.packages("devtools")
       library(devtools)
       install_github(c('jalvesaq/colorout', 'jalvesaq/VimCom'))
-      install.packages("ggplot2")
+      install.packages(c("setwidth", "ggplot2"))
     }
 
     library(ggplot2)
     library(colorout)
+    library(setwidth)
     library(vimcom)
   }
 }

@@ -199,8 +199,8 @@ set laststatus=2
 " LaTeX Suite: Prevents Vim 7 from setting filetype to 'plaintex'.
 let g:tex_flavor = 'latex'
 
-" Vim R plugin: do not overwrite an existing tmux.conf.
-let vimrplugin_notmuxconf = 1
+let vimrplugin_notmuxconf = 1 "do not overwrite an existing tmux.conf.
+let vimrplugin_assign = 0     "do not replace '_' with '<-'.
 
 " Needs to be executed after Vundle.
 filetype plugin indent on
