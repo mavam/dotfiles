@@ -20,6 +20,40 @@ options(repos=structure(c(CRAN="http://cran.cnr.berkeley.edu/")))
   }
 }
 
+# Displays a vector of colors.
+swatch <- function(x) {
+  par(mai=c(0.2, max(strwidth(x, "inch") + 0.4, na.rm = TRUE), 0.2, 0.4))
+  barplot(rep(1, length(x)), col=rev(x), space = 0.1, axes=FALSE,
+          names.arg=rev(x), cex.names=0.8, horiz=T, las=1)
+}
+
+# Generates a diverging color palette of a given size.
+#   - http://tools.medialab.sciences-po.fr/iwanthue
+#   - https://gist.github.com/johnbaums/45b49da5e260a9fc1cd7
+iwanthue <- function(n, hmin=0, hmax=360, cmin=0, cmax=180, lmin=0, lmax=100) {
+  require(colorspace)
+  stopifnot(hmin >= 0, cmin >= 0, lmin >= 0,
+            hmax <= 360, cmax <= 180, lmax <= 100,
+            hmin <= hmax, cmin <= cmax, lmin <= lmax,
+            n > 0)
+  lab <- LAB(as.matrix(expand.grid(seq(0, 100, 1),
+                                   seq(-100, 100, 5),
+                                   seq(-110, 100, 5))))
+  if (any((hmin != 0 || cmin != 0 || lmin != 0 ||
+           hmax != 360 || cmax != 180 || lmax != 100))) {
+    hcl <- as(lab, 'polarLUV')
+    hcl_coords <- coords(hcl)
+    hcl <- hcl[which(hcl_coords[, 'H'] <= hmax & hcl_coords[, 'H'] >= hmin &
+                       hcl_coords[, 'C'] <= cmax & hcl_coords[, 'C'] >= cmin &
+                       hcl_coords[, 'L'] <= lmax & hcl_coords[, 'L'] >= lmin), ]
+    #hcl <- hcl[-which(is.na(coords(hcl)[, 2]))]
+    lab <- as(hcl, 'LAB')
+  }
+  lab <- lab[which(!is.na(hex(lab))), ]
+  clus <- kmeans(coords(lab), n, iter.max=50)
+  hex(LAB(clus$centers))
+}
+
 ccdf <- function(x) {
   x <- sort(x)
   n <- length(x)
