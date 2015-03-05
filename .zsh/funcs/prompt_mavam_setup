@@ -163,8 +163,10 @@ prompt_mavam_setup()
   # Setup colors. We reuse the fg color map.
   if [[ $UID == "0" ]] ; then
     fg[frame]="%F{${1:-red}}"
-  else
+  elif [[ -n "$SSH_CONNECTION" ]]; then
     fg[frame]="%F{${1:-blue}}"
+  else
+    fg[frame]="%F{${1:-cyan}}"
   fi
   if [[ -z "$SSH_CONNECTION" ]]; then
     fg[indicator]="%F{${2:-green}}"   # Local
