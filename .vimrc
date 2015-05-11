@@ -73,8 +73,8 @@ set textwidth=79        " Text width
 " g0  = do not indent C++ scope declarations.
 " t0  = do not indent a function's return type declaration.
 " (0  = line up with next non-white character after unclosed parentheses...
-" W4  = ...but not if the last character in the line is an open parenthesis.
-set cinoptions=e-s,g0,t0,(0,W4
+" W2  = ...but not if the last character in the line is an open parenthesis.
+set cinoptions=e-s,g0,t0,(0,W2
 
 " =============================================================================
 "                                   Spelling
