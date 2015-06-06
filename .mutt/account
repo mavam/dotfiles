@@ -17,6 +17,7 @@ set pgp_sign_as="0x9C8D4B41"
 #
 # GMail via IMAPS.
 #
+set imap_check_subscribed=yes # automatically retrieve labels
 set imap_user = 'matthias@vallentin.net'
 set spoolfile = imaps://imap.gmail.com/INBOX
 set folder = imaps://imap.gmail.com/

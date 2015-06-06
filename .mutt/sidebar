@@ -1,6 +1,6 @@
 set sidebar_visible="yes"
-set sidebar_width=28
-set sidebar_delim='|'
+set sidebar_width=32
+set sidebar_delim=' '
 
 color sidebar_new yellow black
 
@@ -8,8 +8,6 @@ bind index,pager  K  sidebar-prev
 bind index,pager  J  sidebar-next
 bind index,pager  E  sidebar-open
 
-#macro index B ':toggle sidebar_visible^M'
-#macro pager B ':toggle sidebar_visible^M'
 macro index B   '<enter-command>toggle sidebar_visible<enter><refresh>'
 macro pager B   '<enter-command>toggle sidebar_visible<enter><redraw-screen>'
 
