@@ -1,2 +1,3 @@
+bind index,pager  F  edit-label # edit [f]older
 
-bind index,pager  ,l      edit-label
+# vim: ft=muttrc

@@ -1,44 +1,62 @@
 [general]
 ui = TTYUI
 metadata = ~/.offlineimap
+pythonfile = ~/.offlineimap.py
 accounts = Google
-maxsyncaccounts = 1
+maxsyncaccounts = 2
+fsync = false
 
 [Account Google]
 localrepository = Local
 remoterepository = Gmail
-autorefresh = 1
-quick = 5
+synclabels = yes
+labelsheader = X-Label
+ignorelabels = \Inbox, \Starred, \Sent, \Draft, \Spam, \Trash, \Important
+autorefresh = 2
+quick = 10
 
 [Repository Local]
-type = Maildir
+type = GmailMaildir
 localfolders = ~/.mail
 sep = /
-restoreatime = no
+nametrans = lambda folder: {'drafts':   '[Gmail]/Drafts',
+                            'sent':     '[Gmail]/Sent Mail',
+                            'spam':     '[Gmail]/Spam',
+                            'flagged':  '[Gmail]/Starred',
+                            'trash':    '[Gmail]/Trash',
+                            'archive':  '[Gmail]/All Mail',
+                            }.get(folder, folder)
+
 
 [Repository Gmail]
-type = IMAP
-ssl = yes
-cert_fingerprint = 89091347184d41768bfc0da9fad94bfe882dd358
-cert_fingerprint = 0f7a6d02be71cf3d263feb781cb091d9f2c5af78
-cert_fingerprint = 22b4c96075592f0e0e20134ae008ae4a5f0177a6
-remotehost = imap.gmail.com
-remoteuser = matthias@vallentin.net
+type = Gmail
+sslcacertfile = ~/.offlineimap.certs.pem
 maxconnections = 1
 realdelete = no
-nametrans = lambda folder: re.sub('.*Drafts$', 'drafts', folder)
-folderfilter = lambda folder: re.search('INBOX|Drafts', folder)
+remoteuser = matthias@vallentin.net
+remotepasseval = get_keychain_pass('offlineimap')
+nametrans = lambda folder: {'[Gmail]/Drafts':    'drafts',
+                            '[Gmail]/Sent Mail': 'sent',
+                            '[Gmail]/Starred':   'flagged',
+                            '[Gmail]/Spam':      'spam',
+                            '[Gmail]/Trash':     'trash',
+                            '[Gmail]/All Mail':  'archive',
+                            }.get(folder, folder)
+folderfilter = lambda folder: folder not in ['[Gmail]/Important',
+#                                             'logs',
+                                             ]
 
-# Same as Remote, however, uses GMail's X-GM-LABEL to convert Gmail labels into
-# X-Label headers.
-[Repository GmailProxied]
-type = IMAP
-remotehost = localhost
-remoteport = 10143
-remoteuser = matthias@vallentin.net
-maxconnections = 1
-realdelete = no
-nametrans = lambda folder: re.sub('.*Drafts$', 'drafts', folder)
-folderfilter = lambda folder: re.search('INBOX|Drafts', folder)
+# Generate a file listing all mailboxes for mutt. 
+[mbnames]
+enabled = yes
+filename = ~/.mutt/mailboxes
+# Enumerating all Gmail mailboxes at the top is a lazy way to adjust the
+# mailbox order. The right way would be to use the option *sort_keyfunc* and
+# pass it Python lambda that does the sorting.
+#sort_keyfunc = lambda d: (d['accountname'], d['foldername'])
+header = "mailboxes +INBOX +sent +flagged +trash +spam +archive\nmailboxes "
+peritem = "+%(foldername)s"
+sep = "\nmailboxes "
+footer = "\n"
 
 # vim: ft=cfg tw=0

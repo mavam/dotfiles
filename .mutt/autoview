@@ -1,7 +1,3 @@
-#
-# auto_view
-#
-
 alternative_order text/enriched text/plain text image/*
 
 auto_view text/html

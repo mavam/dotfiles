@@ -1,25 +1,8 @@
-# HTML
-text/html; elinks -dump %s; copiousoutput
-text/html; w3m -v -F -T text/html %s; copiousoutput; nametemplate=%s.html
-text/html; lynx -dump %s; copiousoutput; nametemplate=%s.html
-text/html; ~/.mutt/scripts/view_attachment.sh %s html
+text/html;      qlmanage -p %s > /dev/null 2>&1; nametemplate=%s.html
+text/html;      w3m -v -F -T text/html %s; nametemplate=%s.html; copiousoutput
 
-# PS/PDF
-document/pdf; ~/.mutt/scripts/view_attachment.sh %s pdf
-application/pdf; ~/.mutt/scripts/view_attachment.sh %s pdf
-application/postscript; ~/.mutt/scripts/view_attachment.sh %s pdf
+image/*;        qlmanage -p %s > /dev/null 2>&1
+audio/*;        qlmanage -p %s > /dev/null 2>&1
+video/*;        qlmanage -p %s > /dev/null 2>&1
 
-# Multimedia
-image/*; ~/.mutt/scripts/view_attachment.sh %s -
-video/*; ~/.mutt/scripts/view_attachment.sh %s -
-
-# Text
-text/*; view -Mf '%s' ; edit=vim -f '%s'; compose=vim -f '%s'; needsterminal
-
-# Microsoft
-application/msword; ~/.mutt/scripts/view_attachment.sh %s -
-
-# Unidentified
-application/octet-stream; ~/.mutt/scripts/view_attachment.sh %s -
-application/*; ~/.mutt/scripts/view_attachment.sh %s -
-mime_lookup application/octet-stream
+application/*;  open %s
