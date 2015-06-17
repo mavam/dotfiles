@@ -83,6 +83,7 @@ unset wait_key          # Ask to press a key after shell-escape, pipes, etc.
 
 # muttprint may need: perl -MCPAN -e 'install Text::Iconv'
 set print_command="~/.mutt/scripts/muttprint -1 -C 'ps2pdf - - | open -a preview -f'"
+set query_command="lbdbq %s"
 
 #------------------------------------------------------------------------------
 #                                   sorting
