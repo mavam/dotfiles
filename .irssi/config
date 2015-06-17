@@ -1,31 +1,30 @@
-# This file contains the majority of my irssi config. It does not include
-# the commented part below, since that includes my freenode password and
-# personal details.
-#
-# See ~/.irssi/run for details.
-#
-#servers = (
-#  {
-#    address = "irc.freenode.net";
-#    chatnet = "Freenode";
-#    port = "6697";
-#    use_ssl = "yes";
-#    ssl_verify = "no";
-#    autoconnect = "yes";
-#    password = "mavam:xxx";
-#  }
-#);
-#
-#chatnets = {
-#  freenode = {
-#    type = "IRC";
-#    nick = "mavam";
-#  };
-#};
-#
-#channels = (
-#  { name = "#Bro";       chatnet = "freenode"; autojoin = "yes"; },
-#);
+servers = (
+  {
+    address = "irc.freenode.net";
+    chatnet = "Freenode";
+    port = "6697";
+    use_ssl = "yes";
+    ssl_verify = "no";
+    autoconnect = "yes";
+  }
+);
+
+chatnets = {
+  freenode = {
+    type = "IRC";
+    nick = "mavam";
+    autosendcmd = "/IDENTIFY mavam@irc.freenode.net";
+  };
+};
+
+channels = (
+  { name = "##c++"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#Bro"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#freebsd"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#berke1337"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#vast"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#caf"; chatnet = "freenode"; autojoin = "yes"; }
+);
 
 aliases = {
   J = "join";
@@ -216,6 +215,6 @@ settings = {
     growl_channel_filter = "bro";
   };
 };
-hilights = (
+hilights = ( 
   { text = "mavam"; color = "%M"; nick = "yes"; word = "yes"; }
 );
