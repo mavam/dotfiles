@@ -23,7 +23,7 @@ sub cmd_identify {
   }
 
   if ($data) {
-    chomp(my $password = `security find-generic-password -w -s "irssi" -c "irss" -a "$data" 2>&1`);
+    chomp(my $password = `security find-generic-password -w -s "irssi" -a "$data" 2>&1`);
     if ($? != 0) {
       Irssi::print("Unable to retrieve password for account '$data':\n$password", MSGLEVEL_CLIENTERROR);
       return;
