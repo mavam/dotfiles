@@ -5,6 +5,7 @@
 bind generic      g    noop
 bind generic      gg   first-entry
 bind generic      G    last-entry
+bind index,pager  gf   change-folder
 macro index,pager gi  "<change-folder>!<enter>" "go to INBOX"
 macro index,pager gp  <change-folder>!!<enter> "go to previous mailbox"
 macro index,pager ga  <change-folder>=archive<enter> "go to ARCHIVE"
@@ -80,20 +81,20 @@ macro index       LL  <limit>all<enter>  "Reset disply limit to all mail"
 bind index,pager  P   print-message
 bind index,pager  R   reply
 bind index,pager  r   group-reply
-bind index        a   noop
 bind index,pager  s   flag-message  # [s]tar message
 macro index,pager S   <save-message>=spam<enter>        "mark message as spam"
-macro index,pager C   <copy-message>?<toggle-mailboxes>/ "copy message to a mailbox"
-macro index,pager A   <save-message>?<toggle-mailboxes>/ "move message to a mailbox"
+macro index,pager a   <save-message>?<toggle-mailboxes>/ "move message to a mailbox"
+macro index,pager c   <copy-message>?<toggle-mailboxes>/ "copy message to a mailbox"
 macro index,pager I   <tag-pattern>~U<enter><clear-flag>N<clear-flag>* "mark all as read ([i]gnore)"
 macro index,pager xU  <tag-pattern>~U<enter><clear-flag>N<clear-flag>* "mark all read as unread"
 macro index,pager xD  <tag-pattern>~D<enter><clear-flag>D<clear-flag>* "undelete all items"
 
-# Gmail delete: first label message as trash, then delete it.
+# Gmail delete: if we're not in the trash folder, move the messsage there.
+# Otherwise do nothing.
 folder-hook .        'macro index,pager d <save-message>=trash<enter> "move message to trash"'
-folder-hook "=trash" 'macro index,pager d <delete-message>'
+folder-hook "=trash" 'bind index,pager d noop'
 
-# GMail archive: remove INBOX label (only available in INBOX)
+# GMail archive: remove INBOX label, but only when we're in the INBOX.
 #folder-hook .        'bind index,pager  y noop'
 folder-hook "!"      'macro index,pager y <delete-message> "archive message, i.e., remove INBOX label"'
 
