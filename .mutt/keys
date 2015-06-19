@@ -34,17 +34,22 @@ bind index        zc   collapse-thread
 bind index        zM   collapse-all
 bind index        zR   collapse-all
 
-bind index,pager  p   previous-thread
-bind index,pager  n   next-thread
-bind index,pager  \; next-new
-macro index,pager \'   <read-thread><previous-undeleted><next-new-then-unread> "Mark current thread as read and go to next unread message"
-bind pager        g   noop
+# Movement
+bind index        h   previous-thread
+bind pager        h   previous-line
+bind index        l   next-thread
+bind pager        l   next-line
+bind index,pager  [   half-up
+bind index,pager  ]   half-down
+bind index,pager  p   previous-page
+bind index,pager  n   next-page
+bind index,pager  \;  next-new
+macro index,pager \'  <read-thread><previous-undeleted><next-new-then-unread> "Mark current thread as read and go to next unread message"
+bind index        gg  first-entry
 bind pager        gg  top
 bind pager        G   bottom
-bind pager        [   half-up
-bind pager        ]   half-down
-bind pager        l   next-line
-bind pager        h   previous-line
+bind index        G   last-entry
+
 bind pager        H   display-toggle-weed   # toggle display of full headers
 macro pager       -  "<enter-command>set display_filter=~/.mutt/scripts/message-format.pl<enter><exit><display-message><enter-command>unset display_filter<enter>" "Pretty-print message via par"
 macro pager       w   "<enter-command>set invsmart_wrap invmarkers<enter>"    "Toggle wrap stuff"
