@@ -28,7 +28,7 @@ sub cmd_identify {
       Irssi::print("Unable to retrieve password for account '$data':\n$password", MSGLEVEL_CLIENTERROR);
       return;
     }
-    $server->command("MSG NickServ identify $password");
+    $server->command("^MSG NickServ identify $password");
     Irssi::print("Sent identification for $data to NickServ.", MSGLEVEL_CLIENTNOTICE);
   } else {
     Irssi::print("Account name required.", MSGLEVEL_CLIENTERROR);
