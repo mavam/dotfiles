@@ -28,11 +28,8 @@ macro pager       ,a  "<pipe-message>lbdb-fetchaddr<enter>"          "Store addr
 macro pager       ,p  "<pipe-entry>gpg --keyserver search.keyserver.net --recv-key <enter>"  "Get PGP key"
 
 # Folding
-bind index        z    noop
-bind index        zo   collapse-thread
-bind index        zc   collapse-thread
-bind index        zM   collapse-all
-bind index        zR   collapse-all
+bind index        z    collapse-thread
+bind index        Z    collapse-all
 
 # Movement
 bind index        h   previous-thread
@@ -97,7 +94,7 @@ macro index,pager xD  <tag-pattern>~D<enter><clear-flag>D<clear-flag>* "undelete
 # compose a message. Unfortunately we also need a second signature with an
 # extra newline at the bottom, the forwarded mail does not contain a newline
 # between the last line of the signature and the following forwarded message.
-# (If my signature did not consist only of my first name, I probably simply
+# (If my signature did not consist of my first name only, I'd probably simply
 # drop it when forwarding mails.)
 macro index,pager f   ":set sig_on_top<enter>:set signature=~/.mutt/signature.forward<enter><forward-message>" "forward message"
 macro index,pager R   ":unset sig_on_top<enter>:set signature=~/.mutt/signature<enter><reply>" "reply to message"
