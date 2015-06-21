@@ -49,7 +49,11 @@ bind index,pager  \;  next-new
 # By unsetting resolve for the time of this command, we avoid advancing to the
 # next message after executing a command that modifies the current
 # message/thread. (Thanks to Michael Tatge from mutt-users)
-macro index,pager \' '<enter-command>set my_resolve=$resolve<enter>\
+macro index \' '<enter-command>set my_resolve=$resolve<enter>\
+<enter-command>unset resolve<enter><read-thread><next-new-then-unread>\
+<enter-command>set resolve=$my_resolve<enter>' \
+"read thread and display next unread message"
+macro pager \' '<enter-command>set my_resolve=$resolve<enter>\
 <enter-command>unset resolve<enter><read-thread><next-new-then-unread>\
 <enter-command>set resolve=$my_resolve<enter><display-message>' \
 "read thread and display next unread message"
@@ -103,10 +107,10 @@ macro index,pager xD  <tag-pattern>~D<enter><clear-flag>D<clear-flag>* "undelete
 # between the last line of the signature and the following forwarded message.
 # (If my signature did not consist of my first name only, I'd probably simply
 # drop it when forwarding mails.)
-macro index,pager f   ":set sig_on_top<enter>:set signature=~/.mutt/signature.forward<enter><forward-message>" "forward message"
-macro index,pager R   ":unset sig_on_top<enter>:set signature=~/.mutt/signature<enter><reply>" "reply to message"
-macro index,pager r   ":unset sig_on_top<enter>:set signature=~/.mutt/signature<enter><group-reply>" "group-reply to message"
-macro index,pager m   ":unset sig_on_top<enter>:set signature=~/.mutt/signature<enter><mail>" "compose message"
+macro index,pager f   "<enter-command>set sig_on_top<enter><enter-command>set signature=~/.mutt/signature.forward<enter><forward-message>" "forward message"
+macro index,pager R   "<enter-command>unset sig_on_top<enter><enter-command>set signature=~/.mutt/signature<enter><reply>" "reply to message"
+macro index,pager r   "<enter-command>unset sig_on_top<enter><enter-command>set signature=~/.mutt/signature<enter><group-reply>" "group-reply to message"
+macro index,pager m   "<enter-command>unset sig_on_top<enter><enter-command>set signature=~/.mutt/signature<enter><mail>" "compose message"
 
 # Gmail delete: if we're not in the trash folder, move the messsage there.
 # Otherwise do nothing.

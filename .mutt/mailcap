@@ -1,3 +1,5 @@
+text/plain;     less -S
+
 text/html;      qlmanage -p %s > /dev/null 2>&1; nametemplate=%s.html
 text/html;      w3m -v -F -T text/html %s; nametemplate=%s.html; copiousoutput
 

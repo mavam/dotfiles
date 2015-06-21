@@ -56,7 +56,7 @@ unset collapse_unread   # don't collapse threads containing unread messages
 unset confirmappend     # prompt when appending messages to a mailbox
 set delete=yes          # really delete messages when syncing a mailbox
 set edit_headers        # allow editing headers of outgoing messages
-set envelope_from=yes
+set envelope_from=yes   # use From: header to derive envelope's sender
 set fast_reply          # skip prompt for recipients and subject
 set history=200         # [10] size of the string history buffer
 set include=yes         # always include messages when replying
@@ -64,11 +64,10 @@ unset mark_old          # Do not distinguish between old and new unread mails
 set move=no             # do not move read messages from spool to $mbox
 set net_inc=5           # [10] large transfers update their progress every 'x'
 set pipe_split          # pipe messages one by one
-set pipe_decode         # weed headers and attempt to decode PGP/MIME first
-set print=ask-yes
+set print=ask-yes       # confirm printing
 set print_split=yes     # execute print command once for each message printed
 unset prompt_after      # prompt for command when pager exits
-set quit=ask-yes
+set quit=ask-yes        # confirm exit
 set recall=no           # don't ask to recall postponed mails
 set reverse_alias=yes   # display real name instead of email
 set reverse_name=yes
