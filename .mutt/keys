@@ -16,6 +16,7 @@ bind index,pager  gd  recall-message    # [g]o to [d]rafts
 macro index,pager gl  <change-folder>?<toggle-mailboxes>/ "go to LABEL"
 macro index,pager gv  "<pipe-message>vim +':set ft=mail' - <enter>"  "view the message in vim"
 macro index,pager gV  "<pipe-message>mvim +':set ft=mail' - <enter>" "view the message in MacVim"
+macro index,pager gm  "<pipe-message>~/.mutt/scripts/open-gmail<enter>" "view the message in GMail"
 macro generic     g/  "<enter-command>set my_search = \`~/.mutt/scripts/mutt-mairix.sh\`<return><enter-command>push \$my_search<return>"
 
 bind generic      ,   noop
