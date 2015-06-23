@@ -1,3 +1,4 @@
-bind index,pager  F  edit-label # edit [f]older
+# FIXME: somehow this doesn't work properly and messes up the original email.
+#bind index,pager  F  edit-label # edit [f]older
 
 # vim: ft=muttrc
