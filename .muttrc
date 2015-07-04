@@ -318,6 +318,9 @@ source ~/.mutt/keys
 set alias_file = `FILE=$HOME/.mutt/aliases; if [ ! -f $FILE ]; then FILE=/dev/null;fi;echo "$FILE"`
 source $alias_file
 
+# Hooks
+source `FILE=$HOME/.mutt/hooks; if [ ! -f $FILE ]; then FILE=/dev/null;fi;echo "$FILE"`
+
 # Lists
 source `FILE=$HOME/.mutt/lists; if [ ! -f $FILE ]; then FILE=/dev/null;fi;echo "$FILE"`
 
