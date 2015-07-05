@@ -37,7 +37,6 @@ bindkey "^[[B" down-line-or-search		# down arrow: fwd-history-search
 bindkey "^[e" expand-cmd-path			# C-e for expanding path of typed cmd
 bindkey " " magic-space					# do history expansion on space
 bindkey "^@" push-line					# C-<space> push line on buffer stack
-bindkey "^k" run-help					# C-k: man <...>
 bindkey "^v" quoted-insert
 
 # Emacs compatibility
@@ -78,5 +77,27 @@ bindkey "^r" _failsafe_hisb
 _run_with_sudo() { LBUFFER="sudo $LBUFFER"; CURSOR=$#BUFFER }
 zle -N _run_with_sudo
 bindkey "^Xs" _run_with_sudo
+
+# Restore a CTRL+C'ed command line via <undo>.
+zle-line-init()
+{
+  if [[ -n $ZLE_LINE_ABORTED ]]; then
+    _last_aborted_line=$ZLE_LINE_ABORTED
+  fi
+  if [[ -n $_last_aborted_line ]]
+  then
+    local savebuf="$BUFFER" savecur="$CURSOR"
+    BUFFER="$_last_aborted_line"
+    CURSOR="$#BUFFER"
+    zle split-undo
+    BUFFER="$savebuf" CURSOR="$savecur"
+  fi
+}
+zle -N zle-line-init
+zle-line-finish()
+{
+  unset _last_aborted_line
+}
+zle -N zle-line-finish
 
 # vim: ft=zsh
