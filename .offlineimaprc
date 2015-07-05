@@ -55,7 +55,7 @@ filename = ~/.mutt/mailboxes
 # mailbox order. The right way would be to use the option *sort_keyfunc* and
 # pass it Python lambda that does the sorting.
 #sort_keyfunc = lambda d: (d['accountname'], d['foldername'])
-header = "mailboxes +INBOX +sent +flagged +trash +spam +archive\nmailboxes "
+header = "mailboxes +INBOX +sent +flagged +drafts +trash +spam +archive\nmailboxes "
 peritem = "+%(foldername)s"
 sep = "\nmailboxes "
 footer = "\n"
