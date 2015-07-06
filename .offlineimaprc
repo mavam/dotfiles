@@ -20,12 +20,12 @@ postsynchook = maildir-notifier ~/.mail/INBOX
 type = GmailMaildir
 localfolders = ~/.mail
 sep = /
-nametrans = lambda folder: {'drafts':   '[Gmail]/Drafts',
-                            'sent':     '[Gmail]/Sent Mail',
-                            'spam':     '[Gmail]/Spam',
-                            'flagged':  '[Gmail]/Starred',
-                            'trash':    '[Gmail]/Trash',
-                            'archive':  '[Gmail]/All Mail',
+nametrans = lambda folder: {'gmail/drafts':   '[Gmail]/Drafts',
+                            'gmail/sent':     '[Gmail]/Sent Mail',
+                            'gmail/spam':     '[Gmail]/Spam',
+                            'gmail/flagged':  '[Gmail]/Starred',
+                            'gmail/trash':    '[Gmail]/Trash',
+                            'gmail/archive':  '[Gmail]/All Mail',
                             }.get(folder, folder)
 
 
@@ -36,12 +36,12 @@ maxconnections = 1
 realdelete = no
 remoteuser = matthias@vallentin.net
 remotepasseval = get_keychain_pass('offlineimap')
-nametrans = lambda folder: {'[Gmail]/Drafts':    'drafts',
-                            '[Gmail]/Sent Mail': 'sent',
-                            '[Gmail]/Starred':   'flagged',
-                            '[Gmail]/Spam':      'spam',
-                            '[Gmail]/Trash':     'trash',
-                            '[Gmail]/All Mail':  'archive',
+nametrans = lambda folder: {'[Gmail]/Drafts':    'gmail/drafts',
+                            '[Gmail]/Sent Mail': 'gmail/sent',
+                            '[Gmail]/Starred':   'gmail/flagged',
+                            '[Gmail]/Spam':      'gmail/spam',
+                            '[Gmail]/Trash':     'gmail/trash',
+                            '[Gmail]/All Mail':  'gmail/archive',
                             }.get(folder, folder)
 folderfilter = lambda folder: folder not in ['[Gmail]/Important',
 #                                             'logs',
@@ -55,7 +55,7 @@ filename = ~/.mutt/mailboxes
 # mailbox order. The right way would be to use the option *sort_keyfunc* and
 # pass it Python lambda that does the sorting.
 #sort_keyfunc = lambda d: (d['accountname'], d['foldername'])
-header = "mailboxes +INBOX +sent +flagged +drafts +trash +spam +archive\nmailboxes "
+header = "mailboxes +INBOX +gmail/sent +gmail/flagged +gmail/drafts +gmail/archive +gmail/trash +gmail/spam\nmailboxes "
 peritem = "+%(foldername)s"
 sep = "\nmailboxes "
 footer = "\n"

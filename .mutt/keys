@@ -8,10 +8,10 @@ bind generic      G    last-entry
 bind index,pager  gf   change-folder
 macro index,pager gi  "<change-folder>!<enter>" "go to INBOX"
 macro index,pager gp  <change-folder>!!<enter> "go to previous mailbox"
-macro index,pager ga  <change-folder>=archive<enter> "go to ARCHIVE"
-macro index,pager gs  <change-folder>=sent<enter> "go to SENT"
-macro index,pager gS  <change-folder>=spam<enter> "go to SPAM"
-macro index,pager gt  <change-folder>=trash<enter> "go to SENT"
+macro index,pager ga  <change-folder>=gmail/archive<enter> "go to ARCHIVE"
+macro index,pager gs  <change-folder>=gmail/sent<enter> "go to SENT"
+macro index,pager gS  <change-folder>=gmail/spam<enter> "go to SPAM"
+macro index,pager gt  <change-folder>=gmail/trash<enter> "go to TRASH"
 bind index,pager  gd  recall-message    # [g]o to [d]rafts
 macro index,pager gl  <change-folder>?<toggle-mailboxes>/ "go to LABEL"
 macro index,pager gv  "<pipe-message>vim +':set ft=mail' - <enter>"  "view the message in vim"
@@ -94,7 +94,7 @@ macro index       LL  <limit>all<enter>  "Reset disply limit to all mail"
 
 bind index,pager  s   flag-message  # [s]tar message
 bind index,pager  P   print-message
-macro index,pager S   <save-message>=spam<enter>         "mark message as spam"
+macro index,pager S   <save-message>=gmail/spam<enter>   "mark message as spam"
 macro index,pager a   <save-message>?<toggle-mailboxes>/ "move message to a mailbox"
 macro index,pager c   <copy-message>?<toggle-mailboxes>/ "copy message to a mailbox"
 macro index,pager I   <tag-pattern>~U<enter><clear-flag>N<clear-flag>* "mark all as read ([i]gnore)"
@@ -128,7 +128,10 @@ folder-hook "!"      'macro index,pager y <delete-message> "archive message, i.e
 
 bind editor   <space>   noop # Accepts IMAP folder names with spaces.
 
-bind attach   <return>  view-mailcap # View attachments properly.
+bind attach   <enter>   view-mailcap # View attachments properly.
 bind attach   i         exit # consistent with pager
+
+bind compose  f         edit-from
+bind compose  <Esc>f    edit-fcc
 
 # vim: ft=muttrc
