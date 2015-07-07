@@ -115,8 +115,8 @@ macro index,pager m   "<enter-command>unset sig_on_top<enter><enter-command>set 
 
 # Gmail delete: if we're not in the trash folder, move the messsage there.
 # Otherwise do nothing.
-folder-hook .        'macro index,pager d <save-message>=trash<enter> "move message to trash"'
-folder-hook "=trash" 'bind index,pager d noop'
+folder-hook .              'macro index,pager d <save-message>=gmail/trash<enter> "move message to trash"'
+folder-hook "=gmail/trash" 'bind index,pager d noop'
 
 # GMail archive: remove INBOX label, but only when we're in the INBOX.
 #folder-hook .        'bind index,pager  y noop'
