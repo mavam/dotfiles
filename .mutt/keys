@@ -21,7 +21,7 @@ macro generic     g/  "<enter-command>set my_search = \`~/.mutt/scripts/mutt-mai
 
 bind generic      ,   noop
 macro generic     ,r  "<enter-command>source ~/.muttrc<enter>"       "Reload .muttrc"
-macro generic     ,o  "<shell-escape>offlineimap -qof INBOX<enter>"  "run offlineimap to sync INBOX"
+macro generic     ,o  "<shell-escape>offlineimap -oq -k mbnames:enabled=no -f INBOX<enter>"  "run offlineimap to sync INBOX"
 macro generic     ,O  "<shell-escape>offlineimap -o<enter>"          "run offlineimap to sync all mail"
 macro pager       ,u  "<pipe-entry>urlview<enter>"                   "extract links with urlview"
 macro pager       \cu "<pipe-entry>urlview<enter>"                   "extract links with urlview"

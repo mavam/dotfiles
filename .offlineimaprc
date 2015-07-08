@@ -14,6 +14,7 @@ labelsheader = X-Label
 ignorelabels = \Inbox, \Starred, \Sent, \Draft, \Spam, \Trash, \Important
 autorefresh = 2
 quick = 10
+# https://gist.github.com/mavam/298d8d181e4c0b33b7a4
 postsynchook = maildir-notifier ~/.mail/INBOX
 
 [Repository Local]
