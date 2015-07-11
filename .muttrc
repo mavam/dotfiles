@@ -194,9 +194,9 @@ color index      color244   color234  ~R # read messages
 color index      color244   color234  ~l # mailing lists
 color index      color107   color234  ~P # mail from myself
 color index      color136   color234  ~p # mail to myself
+color index      color166   color234  ~k # PGP key material included
 color index      color79    color234  ~g # PGP signed
 color index      color76    color234  ~G # PGP encrypted
-color index      color166   color234  ~k # PGP key material included
 color index      color35    color234  ~V # cryptographically verified
 color index      color33    color234  ~N # new
 color index      color33    color234  ~O # old
