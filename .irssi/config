@@ -20,10 +20,12 @@ chatnets = {
 channels = (
   { name = "##c++"; chatnet = "freenode"; autojoin = "yes"; },
   { name = "#Bro"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#freebsd"; chatnet = "freenode"; autojoin = "yes"; },
   { name = "#berke1337"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#vast"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#caf"; chatnet = "freenode"; autojoin = "yes"; }
+  { name = "#mutt"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#zsh"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#R"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#freebsd"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#freebsd-ports"; chatnet = "freenode"; autojoin = "yes"; }
 );
 
 aliases = {
