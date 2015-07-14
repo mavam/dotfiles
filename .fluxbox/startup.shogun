@@ -1,9 +1,0 @@
-#
-# MacBook startup script (host: shinobi)
-#
-
-# Color Profile
-xcalib /mnt/OSX/Library/ColorSync/Profiles/Displays/Color\ LCD-42716C0.icc
-
-# gpomme
-[[ -x $(which gpomme 2> /dev/null) ]] && gpomme &
