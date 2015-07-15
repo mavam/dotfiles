@@ -11,7 +11,7 @@
 	tool = vimdiff
 
 [push]
-	default = matching
+	default = simple
 
 [alias]
   cdiff = diff --cached
