@@ -28,18 +28,11 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
+hash -d D=highlighters/main/test-data
 
-# Define default styles.
-: ${ZSH_HIGHLIGHT_STYLES[root]:=standout}
+BUFFER='ls ~D/path-tilde-named.zsh'
 
-# Whether the root highlighter should be called or not.
-_zsh_highlight_root_highlighter_predicate()
-{
-  _zsh_highlight_buffer_modified
-}
-
-# root highlighting function.
-_zsh_highlight_root_highlighter()
-{
-  if [[ $(command id -u) -eq 0 ]] { region_highlight+=("0 $#BUFFER $ZSH_HIGHLIGHT_STYLES[root]") }
-}
+expected_region_highlight=(
+  "1 2  $ZSH_HIGHLIGHT_STYLES[command]" # ls
+  "4 23 $ZSH_HIGHLIGHT_STYLES[path]"    # ~D/path-tilde-named.zsh
+)

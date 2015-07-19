@@ -28,18 +28,12 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
+BUFFER='ps aux | grep java'
 
-# Define default styles.
-: ${ZSH_HIGHLIGHT_STYLES[root]:=standout}
-
-# Whether the root highlighter should be called or not.
-_zsh_highlight_root_highlighter_predicate()
-{
-  _zsh_highlight_buffer_modified
-}
-
-# root highlighting function.
-_zsh_highlight_root_highlighter()
-{
-  if [[ $(command id -u) -eq 0 ]] { region_highlight+=("0 $#BUFFER $ZSH_HIGHLIGHT_STYLES[root]") }
-}
+expected_region_highlight=(
+  "1  2  $ZSH_HIGHLIGHT_STYLES[command]" # ps
+  "4  6  $ZSH_HIGHLIGHT_STYLES[default]" # aux
+  "8  8  $ZSH_HIGHLIGHT_STYLES[default]" # |
+  "9  12 $ZSH_HIGHLIGHT_STYLES[command]" # grep
+  "14 17 $ZSH_HIGHLIGHT_STYLES[default]" # java
+)

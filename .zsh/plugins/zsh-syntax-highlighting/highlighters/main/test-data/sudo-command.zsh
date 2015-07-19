@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 # -------------------------------------------------------------------------------------------------
-# Copyright (c) 2010-2011 zsh-syntax-highlighting contributors
+# Copyright (c) 2010-2013 zsh-syntax-highlighting contributors
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -28,18 +28,12 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
+BUFFER='sudo -u otheruser ls /'
 
-# Define default styles.
-: ${ZSH_HIGHLIGHT_STYLES[root]:=standout}
-
-# Whether the root highlighter should be called or not.
-_zsh_highlight_root_highlighter_predicate()
-{
-  _zsh_highlight_buffer_modified
-}
-
-# root highlighting function.
-_zsh_highlight_root_highlighter()
-{
-  if [[ $(command id -u) -eq 0 ]] { region_highlight+=("0 $#BUFFER $ZSH_HIGHLIGHT_STYLES[root]") }
-}
+expected_region_highlight=(
+  "1 4 $ZSH_HIGHLIGHT_STYLES[precommand]" # sudo
+  "6 7 $ZSH_HIGHLIGHT_STYLES[single-hyphen-option]" # -u
+  "9 17 $ZSH_HIGHLIGHT_STYLES[default]" # otheruser
+  "19 20 $ZSH_HIGHLIGHT_STYLES[command]" # ls
+  "22 22 $ZSH_HIGHLIGHT_STYLES[path]" # /
+)
