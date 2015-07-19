@@ -46,8 +46,8 @@ bindkey "^p" up-history					# C-p: prev command in history
 bindkey "^a" beginning-of-line			# C-a: jump to the beginning of line
 bindkey "^e" end-of-line				# C-e: jump to end of line
 bindkey "^u" kill-whole-line			# C-u: kill whole line
-bindkey "f" forward-word				# Alt-f: forward word
-bindkey "b" backward-word				# Alt-b: backward word
+bindkey "^f" forward-word				# Alt-f: forward word
+bindkey "^b" backward-word				# Alt-b: backward word
 
 magic-space-rationalise-dot() {
     case "$KEYS" in

@@ -19,6 +19,12 @@ if is-at-least 4.3.7; then
   ZSH_HIGHLIGHT_STYLES[bracket-level-3]='fg=magenta,bold'
   ZSH_HIGHLIGHT_STYLES[bracket-level-4]='fg=yellow,bold'
   ZSH_HIGHLIGHT_PATTERNS+=('rm -rf *' 'fg=white,bold,bg=red')
+
+  load_plugin zsh-autosuggestions
+  zle-line-init() {
+    zle autosuggest-start
+  }
+  zle -N zle-line-init
 fi
 
 # vim: ft=zsh
