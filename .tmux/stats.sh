@@ -9,4 +9,4 @@ elif [ "$OS" == "freebsd" ]; then
   stats=$(top -I -b | head -n 5)
 fi
 
-printf %s "$stats" | awk -f ~/.tmux/stats-$OS.awk
+printf %s "$stats" | awk -v ORS="" -v sep=" ● " -f ~/.tmux/stats-$OS.awk

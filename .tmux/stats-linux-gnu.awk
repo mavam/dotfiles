@@ -1,7 +1,5 @@
 BEGIN \
 {
-  ORS=""
-  sep=" ● "
   load=""
   cpu=""
   mem=""

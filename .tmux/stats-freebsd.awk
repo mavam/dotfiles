@@ -1,7 +1,5 @@
 BEGIN \
 {
-  ORS = ""
-  sep = " ● "
   proc = ""
   load = ""
   cpu = ""
