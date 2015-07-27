@@ -5,26 +5,27 @@ load_plugin()
   source ~/.zsh/plugins/$plugin/*.plugin.zsh
 }
 
-if is-at-least 4.3.7; then
-  load_plugin zsh-syntax-highlighting
-  ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
-  ZSH_HIGHLIGHT_STYLES[path]='fg=cyan'
-  ZSH_HIGHLIGHT_STYLES[alias]='fg=cyan,bold'
-  #ZSH_HIGHLIGHT_STYLES[function]='none'
-  #ZSH_HIGHLIGHT_STYLES[globbing]='fg=magenta'
-  #ZSH_HIGHLIGHT_STYLES[history-expansion]='fg=magenta'
-  #ZSH_HIGHLIGHT_STYLES[hashed-command]='none'
-  ZSH_HIGHLIGHT_STYLES[bracket-level-1]='fg=cyan,bold'
-  ZSH_HIGHLIGHT_STYLES[bracket-level-2]='fg=green,bold'
-  ZSH_HIGHLIGHT_STYLES[bracket-level-3]='fg=magenta,bold'
-  ZSH_HIGHLIGHT_STYLES[bracket-level-4]='fg=yellow,bold'
-  ZSH_HIGHLIGHT_PATTERNS+=('rm -rf *' 'fg=white,bold,bg=red')
+# Syntax highlighting
+load_plugin zsh-syntax-highlighting
+ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
+ZSH_HIGHLIGHT_STYLES[path]='fg=cyan'
+ZSH_HIGHLIGHT_STYLES[alias]='fg=cyan,bold'
+#ZSH_HIGHLIGHT_STYLES[function]='none'
+#ZSH_HIGHLIGHT_STYLES[globbing]='fg=magenta'
+#ZSH_HIGHLIGHT_STYLES[history-expansion]='fg=magenta'
+#ZSH_HIGHLIGHT_STYLES[hashed-command]='none'
+ZSH_HIGHLIGHT_STYLES[bracket-level-1]='fg=cyan,bold'
+ZSH_HIGHLIGHT_STYLES[bracket-level-2]='fg=green,bold'
+ZSH_HIGHLIGHT_STYLES[bracket-level-3]='fg=magenta,bold'
+ZSH_HIGHLIGHT_STYLES[bracket-level-4]='fg=yellow,bold'
+ZSH_HIGHLIGHT_PATTERNS+=('rm -rf *' 'fg=white,bold,bg=red')
 
-  load_plugin zsh-autosuggestions
-  zle-line-init() {
-    zle autosuggest-start
-  }
-  zle -N zle-line-init
-fi
+# Auto-suggestions
+load_plugin zsh-autosuggestions
+zle-line-init() {
+  zle-line-init-undo-ctrl-c # see 30-zle
+  zle autosuggest-start
+}
+zle -N zle-line-init
 
 # vim: ft=zsh

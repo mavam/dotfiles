@@ -78,8 +78,13 @@ _run_with_sudo() { LBUFFER="sudo $LBUFFER"; CURSOR=$#BUFFER }
 zle -N _run_with_sudo
 bindkey "^Xs" _run_with_sudo
 
+#
 # Restore a CTRL+C'ed command line via <undo>.
-zle-line-init()
+#
+
+# Because plugins also use zle-line-int(), we only define the undo function
+# here and include it in 99-plugins.
+zle-line-init-undo-ctrl-c()
 {
   if [[ -n $ZLE_LINE_ABORTED ]]; then
     _last_aborted_line=$ZLE_LINE_ABORTED
@@ -93,7 +98,7 @@ zle-line-init()
     BUFFER="$savebuf" CURSOR="$savecur"
   fi
 }
-zle -N zle-line-init
+
 zle-line-finish()
 {
   unset _last_aborted_line
