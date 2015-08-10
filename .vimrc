@@ -80,7 +80,7 @@ set cinoptions=e-s,g0,t0,(0,W2
 "                                   Spelling
 " =============================================================================
 if has("spell")
-  set spelllang=en,de,pt,fr
+  set spelllang=en,de,fr
   set spellfile=~/.vim/spellfile.add
 endif
 
