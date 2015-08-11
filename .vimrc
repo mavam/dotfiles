@@ -69,12 +69,12 @@ set shiftwidth=2        " Tab indention
 set textwidth=79        " Text width
 
 " Indentation Tweaks.
-" e-s = do not indent if opening bracket is not first character in a line.
-" g0  = do not indent C++ scope declarations.
+" l1  = align with case label isntead of steatement after it in the same line.
+" N-s = Do not indent namespaces.
 " t0  = do not indent a function's return type declaration.
 " (0  = line up with next non-white character after unclosed parentheses...
 " W2  = ...but not if the last character in the line is an open parenthesis.
-set cinoptions=e-s,g0,t0,(0,W2
+set cinoptions=l1,N-s,t0,(0,W2
 
 " =============================================================================
 "                                   Spelling
