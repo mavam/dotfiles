@@ -4,15 +4,18 @@ options(repos=structure(c(CRAN="http://cran.cnr.berkeley.edu/")))
   if (interactive()) {
     library(utils)
     installed <- installed.packages()[,1]
-    pkgs <- c("devtools", "colorout", "vimcom", "ggplot2")
-    lacking <- pkgs[!(pkgs %in% installed)]
-    if (length(lacking) > 0) {
+    standard <- c("setwidth", "dplyr", "ggplot2")
+    for (lacking in standard[! standard %in% installed])
+      install.packages(lacking)
+    if (! "devtools" %in% installed)
       install.packages("devtools")
-      library(devtools)
-      install_github(c('jalvesaq/colorout', 'jalvesaq/VimCom'))
-      install.packages(c("setwidth", "ggplot2"))
-    }
-
+    library(devtools)
+    github <- c('jalvesaq/colorout', 'jalvesaq/VimCom')
+    github.pkgs <- lapply(strsplit(github, "/"), function(x) tolower(x[2]))
+    for (lacking in github[! unlist(github.pkgs) %in% installed])
+      install_github(lacking)
+    # Load commonly used packages by default.
+    library(dplyr)
     library(ggplot2)
     library(colorout)
     library(setwidth)
