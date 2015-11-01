@@ -131,7 +131,15 @@ bind editor   <space>   noop # Accepts IMAP folder names with spaces.
 bind attach   <enter>   view-mailcap # View attachments properly.
 bind attach   i         exit # consistent with pager
 
-bind compose  f         edit-from
-bind compose  <Esc>f    edit-fcc
+# Convenient selection of apt From header right before sending.
+bind  compose f   noop
+macro compose fb '<edit-from>^UMatthias Vallentin <matthias@bro.org><enter>'
+macro compose fB '<edit-from>^UMatthias Vallentin <matthias@broala.com><enter>'
+macro compose fi '<edit-from>^UMatthias Vallentin <vallentin@icir.org><enter>'
+macro compose fI '<edit-from>^UMatthias Vallentin <vallentin@icsi.berkeley.edu><enter>'
+macro compose fl '<edit-from>^UMatthias Vallentin <mvallentin@lbl.gov><enter>'
+macro compose fu '<edit-from>^UMatthias Vallentin <vallentin@cs.berkeley.edu><enter>'
+macro compose fU '<edit-from>^UMatthias Vallentin <vallentin@berkeley.edu><enter>'
+macro compose fv '<edit-from>^UMatthias Vallentin <matthias@vallentin.net><enter>'
 
 # vim: ft=muttrc
