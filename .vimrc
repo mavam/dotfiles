@@ -154,8 +154,8 @@ filetype off
 set rtp+=~/.vim/bundle/vundle
 call vundle#begin()
 
-"Plugin 'DamienCassou/textlint'
-Plugin 'gmarik/Vundle.vim'
+Plugin 'VundleVim/Vundle.vim'
+
 Plugin 'LaTeX-Suite-aka-Vim-LaTeX'
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'godlygeek/tabular'

@@ -1,0 +1,9 @@
+[submodule ".zsh/plugins/zsh-syntax-highlighting"]
+	path = .zsh/plugins/zsh-syntax-highlighting
+	url = git@github.com:zsh-users/zsh-syntax-highlighting.git
+[submodule ".zsh/plugins/zsh-autosuggestions"]
+	path = .zsh/plugins/zsh-autosuggestions
+	url = git@github.com:tarruda/zsh-autosuggestions.git
+[submodule ".vim/bundle/vundle"]
+	path = .vim/bundle/vundle
+	url = git@github.com:VundleVim/Vundle.vim.git
