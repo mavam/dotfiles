@@ -3,23 +3,18 @@ options(repos=structure(c(CRAN="http://cran.cnr.berkeley.edu/")))
 .First <- function() {
   if (interactive()) {
     library(utils)
-    installed <- installed.packages()[,1]
-    standard <- c("setwidth", "dplyr", "ggplot2")
-    for (lacking in standard[! standard %in% installed])
-      install.packages(lacking)
-    if (! "devtools" %in% installed)
-      install.packages("devtools")
-    library(devtools)
-    github <- c('jalvesaq/colorout', 'jalvesaq/VimCom')
-    github.pkgs <- lapply(strsplit(github, "/"), function(x) tolower(x[2]))
-    for (lacking in github[! unlist(github.pkgs) %in% installed])
-      install_github(lacking)
-    # Load commonly used packages by default.
-    library(dplyr)
-    library(ggplot2)
-    library(colorout)
-    library(setwidth)
-    library(vimcom)
+    import <- function(pkg, gh=NULL) {
+      if (!require(pkg, quietly=TRUE, character.only=TRUE)) {
+        if (is.null(gh))
+          install.packages(pkg)
+        else
+          install_github(gh)
+      }
+    }
+    import("devtools")
+    import("setwidth")
+    import("colorout", "jalvesaq/colorout")
+    import("vimcom", "jalvesaq/VimCom")
   }
 }
 
@@ -71,45 +66,50 @@ ccdf <- function(x) {
   rval
 }
 
-stat_ccdf <- function (mapping = NULL, data = NULL, geom = "step",
-                       position = "identity", n = NULL, ...) {
-  StatCcdf$new(mapping = mapping, data = data, geom = geom,
-               position = position, n = n, ...)
-}
-
-StatCcdf <- proto::proto(ggplot2:::Stat, {
-  objname <- "ccdf"
-
-  calculate <- function(., data, scales, n = NULL, ...) {
-    # If n is NULL, use raw values; otherwise interpolate
-    if (is.null(n)) {
-      xvals <- unique(data$x)
-    } else {
-      xvals <- seq(min(data$x), max(data$x), length.out = n)
-    }
-
-    y <- ccdf(data$x)(xvals)
-
-    # make point with y = 0, from plot.stepfun
-    rx <- range(xvals)
-    if (length(xvals) > 1L) {
-      dr <- max(0.08 * diff(rx), median(diff(xvals)))
-    } else {
-      dr <- abs(xvals)/16
-    }
-
-    x0 <- rx[1] - dr
-    x1 <- rx[2] + dr
-    y0 <- 1
-    y1 <- 0
-
-    data.frame(x = c(x0, xvals, x1), y = c(y0, y, y1))
-  }
-
-  default_aes <- function(.) aes(y = ..y..)
-  required_aes <- c("x")
-  default_geom <- function(.) GeomStep
-})
+#stat_ccdf <- function(mapping = NULL, data = NULL, geom = "step",
+#                      position = "identity", n = NULL, na.rm = FALSE,
+#                      show.legend = NA, inherit.aes = TRUE, ...) {
+#  layer(
+#    data = data,
+#    mapping = mapping,
+#    stat = StatCcdf,
+#    geom = geom,
+#    position = position,
+#    show.legend = show.legend,
+#    inherit.aes = inherit.aes,
+#    params = list(
+#      n = n,
+#      na.rm = na.rm,
+#      ...
+#    )
+#  )
+#}
+#
+#StatCcdf <- ggproto("StatCcdf", Stat,
+#  compute_group = function(data, scales, n = NULL) {
+#    # If n is NULL, use raw values; otherwise interpolate
+#    if (is.null(n)) {
+#      xvals <- unique(data$x)
+#    } else {
+#      xvals <- seq(min(data$x), max(data$x), length.out = n)
+#    }
+#    y <- ccdf(data$x)(xvals)
+#    # make point with y = 0, from plot.stepfun
+#    rx <- range(xvals)
+#    if (length(xvals) > 1L) {
+#      dr <- max(0.08 * diff(rx), median(diff(xvals)))
+#    } else {
+#      dr <- abs(xvals)/16
+#    }
+#    x0 <- rx[1] - dr
+#    x1 <- rx[2] + dr
+#    y0 <- 0
+#    y1 <- 1
+#    data.frame(x = c(x0, xvals, x1), y = c(y0, y, y1))
+#  },
+#  default_aes = aes(y = ..y..),
+#  required_aes = c("x")
+#)
 
 # Extract the top k most dominant frequencies from a periodogram. When
 # neighborhood has a value greater than zero, this many neighboring frequencies
