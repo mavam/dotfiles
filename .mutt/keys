@@ -43,8 +43,10 @@ bind index        G   last-entry
 bind pager        G   bottom
 bind index,pager  [   half-up
 bind index,pager  ]   half-down
-bind index,pager  p   previous-page
-bind index,pager  n   next-page
+bind index,pager  {   previous-page
+bind index,pager  }   next-page
+bind index,pager  p   search-opposite
+bind index,pager  n   search-next
 bind index,pager  \;  next-new
 
 # By unsetting resolve for the time of this command, we avoid advancing to the
