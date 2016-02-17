@@ -5,10 +5,12 @@ options(repos=structure(c(CRAN="http://cran.cnr.berkeley.edu/")))
     library(utils)
     import <- function(pkg, gh=NULL) {
       if (!require(pkg, quietly=TRUE, character.only=TRUE)) {
-        if (is.null(gh))
+        if (is.null(gh)) {
           install.packages(pkg)
-        else
+        } else {
+          library(devtools)
           install_github(gh)
+        }
       }
     }
     import("devtools")
