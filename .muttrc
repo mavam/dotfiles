@@ -31,7 +31,6 @@ source `FILE=$HOME/.mutt/mailboxes; if [ ! -f $FILE ]; then FILE=/dev/null;fi;ec
 set smtp_authenticators='gssapi:login'
 set smtp_url="smtps://matthias@vallentin.net@smtp.gmail.com:465/"
 set smtp_pass=`security find-generic-password -s mutt -w`
-unset record # Gmail's SMTP server already saves a copy
 
 #------------------------------------------------------------------------------
 #                                  personal
@@ -133,6 +132,9 @@ push V
 
 # Always collapse threads when entering a folder.
 folder-hook '.' 'push <collapse-all>'
+
+# Gmail-style threading: always save replies in current folder.
+folder-hook '.' 'set record="^"'
 
 unset help
 #set display_filter=~/.mutt/scripts/message-format.pl
