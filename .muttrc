@@ -39,7 +39,7 @@ set smtp_pass=`security find-generic-password -s mutt -w`
 set realname="Matthias Vallentin"
 set signature=~/.mutt/signature
 set from=vallentin@icir.org
-alternates '(matthias@vallentin.net|vallentin?@(icsi.berkeley.edu|icir.org)|matthias.vallentin@gmail.com|(vallentin|mavam|mpm)@berkeley.edu|(mavam|vallentin|matthias.vallentin)@(ee)?cs.berkeley.edu|matt?(hias)?@bro.org|matthias@broala.com)'
+alternates '(matthias@vallentin.net|vallentin?@(icsi.berkeley.edu|icir.org)|mvallentin@lbl.gov|(vallentin|mavam|mpm)@berkeley.edu|(mavam|vallentin|matthias.vallentin)@(ee)?cs.berkeley.edu|matt?(hias)?@bro.org|matthias@broala.com)'
 
 set pgp_sign_as="0x9C8D4B41"
 my_hdr X-PGP-Fingerprint: 8A3B 1323 B469 CCBA 54D3  3BCC D5E7 8DF5 9C8D 4B41
