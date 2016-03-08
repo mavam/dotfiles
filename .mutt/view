@@ -1,0 +1,41 @@
+#!/bin/sh
+#
+# Shell script to view an attachment. Very similar to the popular script
+# view_attachment.sh, but simpler.
+
+dir="/tmp/mutt"
+filename=$(basename $1)
+type=$2
+app=$3
+
+# Only keep last attachment.
+mkdir -m 700 -p "$dir"
+rm -rf "$dir"/*
+
+# Detect type if not given.
+if [ -z "$type" ]; then
+  type=$(file -bi $1 | sed -e 's/^[^\/]*\///' -e 's/;.*$//')
+fi
+
+# If the type is '-' then we don't want to mess with type.
+# Otherwise we are rebuilding the name.  Either from the
+# type that was passed in or from the type we discerned.
+if [ "$type" = "-" ]; then
+  file="$filename"
+else
+  file="$file.$type"
+fi
+
+file="$dir/$file"
+
+# Copy the file to our new spot so mutt can't delete it
+# before the app has a chance to view it.
+cp $1 "$file"
+
+# If there's no 'open with' then we can let preview do it's thing.
+# Otherwise we've been told what to use.  So do an open -a.
+if [ -z "$app" ]; then
+  open "$file"
+else
+  open -a "$app" "$file"
+fi
