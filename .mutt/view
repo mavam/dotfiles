@@ -23,7 +23,8 @@ fi
 if [ "$type" = "-" ]; then
   file="$filename"
 else
-  file="$file.$type"
+  stem=$(echo $filename | cut -d . -f 1)
+  file="$stem.$type"
 fi
 
 file="$dir/$file"

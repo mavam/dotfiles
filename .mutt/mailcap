@@ -7,4 +7,4 @@ image/*;        qlmanage -p %s > /dev/null 2>&1
 audio/*;        qlmanage -p %s > /dev/null 2>&1
 video/*;        qlmanage -p %s > /dev/null 2>&1
 
-application/*;  ~/.mutt/view %s -
+application/*;  ~/.mutt/view %s
