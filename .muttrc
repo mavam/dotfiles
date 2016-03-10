@@ -84,6 +84,7 @@ set thorough_search     # decode headers and attachments before searching
 set timeout=10          # [300]
 set uncollapse_jump     # Jump to unread message when uncollapse
 unset wait_key          # Ask to press a key after shell-escape, pipes, etc.
+set mime_forward=ask-no # Prompt whether to forward email as a whole
 
 # muttprint may need: perl -MCPAN -e 'install Text::Iconv'
 set print_command="~/.mutt/scripts/muttprint -1 -C 'ps2pdf - - | open -a preview -f'"
