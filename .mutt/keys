@@ -143,5 +143,6 @@ macro compose fl '<edit-from>^UMatthias Vallentin <mvallentin@lbl.gov><enter>'
 macro compose fu '<edit-from>^UMatthias Vallentin <vallentin@cs.berkeley.edu><enter>'
 macro compose fU '<edit-from>^UMatthias Vallentin <vallentin@berkeley.edu><enter>'
 macro compose fv '<edit-from>^UMatthias Vallentin <matthias@vallentin.net><enter>'
+bind  compose F   edit-fcc
 
 # vim: ft=muttrc
