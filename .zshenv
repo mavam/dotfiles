@@ -57,6 +57,12 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 
 # OS-specific environment.
 case "$OS" in
+  darwin)
+    # Ignore reading of /etc/profile, which messes with $PATH. We re-enable
+    # reading other system-wide zsh files in ~/.zprofile. See
+    # http://www.zsh.org/mla/users/2015/msg00725.html for details.
+    setopt no_global_rcs
+    ;;
   linux-gnu)
     # Prefer X Input Method (XIM) instead of SCIM in order to activate
     # .XCompose. Note: using it might also require invoking 'sude im-switch -c'
