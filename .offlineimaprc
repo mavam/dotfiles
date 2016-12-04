@@ -32,7 +32,7 @@ nametrans = lambda folder: {'gmail/drafts':   '[Gmail]/Drafts',
 
 [Repository Gmail]
 type = Gmail
-sslcacertfile = ~/.offlineimap.certs.pem
+sslcacertfile = /usr/local/etc/openssl/cert.pem
 maxconnections = 1
 realdelete = no
 remoteuser = matthias@vallentin.net
