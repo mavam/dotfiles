@@ -29,9 +29,11 @@ Icon?
 .bashrc
 .bash_logout
 .bash_profile
-.certs
+.bundle
 .CFUserTextEncoding
-.Xauthority
+.cache
+.certs
+.config
 .cups
 .dropbox
 .elinks
@@ -49,9 +51,11 @@ Icon?
 .mail
 .msmtp*
 .mutt/aliases
-.mutt/cache
+.mutt/hooks
 .mutt/lists
 .mutt/mailboxes
+.npm/
+.offlineimap/
 .procmail/
 .qt
 .slrn/
@@ -72,5 +76,6 @@ Icon?
 .zshenv.local
 .zshpath.local
 .zshrc.local
+.Xauthority
 
 *pyc
