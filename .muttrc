@@ -352,7 +352,7 @@ source `FILE=$HOME/.mutt/hooks; if [ ! -f $FILE ]; then FILE=/dev/null;fi;echo "
 source `FILE=$HOME/.mutt/lists; if [ ! -f $FILE ]; then FILE=/dev/null;fi;echo "$FILE"`
 
 # Patch-specific configuration
-source `FILE=$HOME/.mutt/sidebar; if [ ! $(mutt -v | grep sidebar) ]; then FILE=/dev/null;fi;echo "$FILE"`
+source `FILE=$HOME/.mutt/sidebar; if [ ! $(mutt -v | grep -i sidebar) ]; then FILE=/dev/null;fi;echo "$FILE"`
 source `FILE=$HOME/.mutt/xlabel;  if [ ! $(mutt -v | grep xlabel) ]; then FILE=/dev/null;fi;echo "$FILE"`
 
 # vim: ft=muttrc
