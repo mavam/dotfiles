@@ -48,9 +48,7 @@ my_hdr X-PGP-Fingerprint: 8A3B 1323 B469 CCBA 54D3  3BCC D5E7 8DF5 9C8D 4B41
 #                                   general
 #------------------------------------------------------------------------------
 
-#set header_cache     = ~/.mutt/cache/headers
-#set message_cachedir = ~/.mutt/cache/messages
-set certificate_file = ~/.mutt/cache/certificates
+set certificate_file = `CDIR=$HOME/.mutt/cache; if [ ! -d "$CDIR" ]; then mkdir "$CDIR"; fi; echo "$CDIR/certificates"`
 set mailcap_path     = ~/.mutt/mailcap
 
 unset abort_nosubject   # abort composing when no subject is given
