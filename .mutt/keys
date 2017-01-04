@@ -146,12 +146,10 @@ bind attach   i         exit # consistent with pager
 # Convenient selection of apt From header right before sending.
 bind  compose f   noop
 macro compose fb '<edit-from>^UMatthias Vallentin <matthias@bro.org><enter>'
-macro compose fB '<edit-from>^UMatthias Vallentin <matthias@broala.com><enter>'
 macro compose fi '<edit-from>^UMatthias Vallentin <vallentin@icir.org><enter>'
 macro compose fI '<edit-from>^UMatthias Vallentin <vallentin@icsi.berkeley.edu><enter>'
 macro compose fl '<edit-from>^UMatthias Vallentin <mvallentin@lbl.gov><enter>'
-macro compose fu '<edit-from>^UMatthias Vallentin <vallentin@cs.berkeley.edu><enter>'
-macro compose fU '<edit-from>^UMatthias Vallentin <vallentin@berkeley.edu><enter>'
+macro compose fu '<edit-from>^UMatthias Vallentin <matthias@berkeley.edu><enter>'
 macro compose fv '<edit-from>^UMatthias Vallentin <matthias@vallentin.net><enter>'
 bind  compose F   edit-fcc
 
