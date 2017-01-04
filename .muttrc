@@ -65,6 +65,7 @@ set envelope_from=yes   # use From: header to derive envelope's sender
 set fast_reply          # skip prompt for recipients and subject
 set history=200         # [10] size of the string history buffer
 set include=yes         # always include messages when replying
+set mail_check_stats    # periodically calculate message statistics of mboxes
 unset mark_old          # Do not distinguish between old and new unread mails
 set move=no             # do not move read messages from spool to $mbox
 set net_inc=5           # [10] large transfers update their progress every 'x'
@@ -145,6 +146,14 @@ set narrow_tree
 set wrapmargin=1        # [0] margin remaining at the right side of terminal
 set to_chars=" +TCFL"
 
+# Sidebar
+set sidebar_divider_char=" "
+set sidebar_folder_indent=yes
+set sidebar_short_path=yes
+set sidebar_visible=yes
+set sidebar_width=28
+set sidebar_format="%B%* %N"
+
 ignore *
 unignore From: Sender: Reply-To:
 unignore To: Cc: Bcc:
@@ -190,6 +199,15 @@ color error      color124    color234 # error messages
 color tree       color239    color234 # thread tree arrow
 color tilde      color245    color234 # pager tilde
 color search     color166    color234 # highlighted text in pager
+
+# Sidebar
+color sidebar_divider    color244    color235
+color sidebar_indicator  color244    color235
+color sidebar_highlight  color234    color136
+color sidebar_new        color33     color234
+#color sidebar_ordinary   color244    color234
+color sidebar_flagged    color124    color234
+color sidebar_spoolfile  color37     color234
 
 # Slight deviations from solarized color scheme.
 color index      color244   color234  ~A # all = default
@@ -352,7 +370,6 @@ source `FILE=$HOME/.mutt/hooks; if [ ! -f $FILE ]; then FILE=/dev/null;fi;echo "
 source `FILE=$HOME/.mutt/lists; if [ ! -f $FILE ]; then FILE=/dev/null;fi;echo "$FILE"`
 
 # Patch-specific configuration
-source `FILE=$HOME/.mutt/sidebar; if [ ! $(mutt -v | grep -i sidebar) ]; then FILE=/dev/null;fi;echo "$FILE"`
 source `FILE=$HOME/.mutt/xlabel;  if [ ! $(mutt -v | grep xlabel) ]; then FILE=/dev/null;fi;echo "$FILE"`
 
 # vim: ft=muttrc

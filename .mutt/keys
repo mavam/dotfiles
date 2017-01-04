@@ -49,6 +49,16 @@ bind index,pager  p   search-opposite
 bind index,pager  n   search-next
 bind index,pager  \;  next-new
 
+# Sidebar
+bind index,pager  B  sidebar-toggle-visible
+bind index,pager  K  sidebar-prev
+bind index,pager  J  sidebar-next
+bind index,pager  >  sidebar-next-new
+bind index,pager  <  sidebar-prev-new
+bind index,pager  (  sidebar-page-up
+bind index,pager  )  sidebar-page-down
+bind index,pager  E  sidebar-open
+
 # By unsetting resolve for the time of this command, we avoid advancing to the
 # next message after executing a command that modifies the current
 # message/thread. (Thanks to Michael Tatge from mutt-users)
