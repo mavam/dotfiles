@@ -149,7 +149,7 @@ set sidebar_folder_indent=yes
 set sidebar_short_path=yes
 set sidebar_visible=yes
 set sidebar_width=28
-set sidebar_format="%B%* %N"
+set sidebar_format="%B%* %!%N"
 
 ignore *
 unignore From: Sender: Reply-To:
@@ -202,8 +202,7 @@ color sidebar_divider    color244    color235
 color sidebar_indicator  color244    color235
 color sidebar_highlight  color234    color136
 color sidebar_new        color33     color234
-#color sidebar_ordinary   color244    color234
-color sidebar_flagged    color124    color234
+color sidebar_flagged    color37     color234
 color sidebar_spoolfile  color37     color234
 
 # Slight deviations from solarized color scheme.
