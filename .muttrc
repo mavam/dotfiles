@@ -86,7 +86,7 @@ set mime_forward=ask-no # Prompt whether to forward email as a whole
 
 # muttprint may need: perl -MCPAN -e 'install Text::Iconv'
 set print_command="~/.mutt/scripts/muttprint -1 -C 'ps2pdf - - | open -a preview -f'"
-set query_command="lbdbq %s"
+set query_command="lbdbq %s 2> /dev/null"
 
 #------------------------------------------------------------------------------
 #                                   sorting
