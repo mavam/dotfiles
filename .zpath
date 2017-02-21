@@ -32,6 +32,7 @@ case "$OS" in
   darwin)
     # MacTeX binaries.
     [[ -d /usr/texbin ]] && path=( $path /usr/texbin )
+    [[ -d /Library/TeX/texbin ]] && path=( $path /Library/Tex/texbin )
 
     # Apple's X11 binaries.
     [[ -d /usr/X11R6/bin ]] && path=( $path /usr/X11R6/bin )
