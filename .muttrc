@@ -28,8 +28,10 @@ set postponed = =gmail/drafts
 source `FILE=$HOME/.mutt/mailboxes; if [ ! -f $FILE ]; then FILE=/dev/null;fi;echo "$FILE"`
 
 # Outgoing: Gmail's SMTP
-set smtp_authenticators='gssapi:login'
-set smtp_url="smtps://matthias@vallentin.net@smtp.gmail.com:465/"
+#set smtp_authenticators='gssapi:login'
+#set smtp_url="smtps://matthias@vallentin.net@smtp.gmail.com:465/"
+set smtp_authenticators="plain"
+set smtp_url="smtps://vallentin@berkeley.edu@smtp.gmail.com:465/"
 set smtp_pass=`security find-generic-password -s mutt -w`
 
 #------------------------------------------------------------------------------
