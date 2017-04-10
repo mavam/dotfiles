@@ -12,11 +12,14 @@
 
 [push]
 	default = simple
+  followTags = true
 
 [alias]
+  prune = fetch --prune
   cdiff = diff --cached
   st = status --short
   log1 = log --all --graph --decorate --oneline --abbrev-commit
+  glog = log --graph --pretty=format:'%Cred%h%Creset%C(yellow)%d%Creset %s %Cgreen(%cr) %C(cyan)<%an>%Creset'
   merge-branch = merge --log --no-commit --no-ff
   push-this = push origin HEAD
   fix-submodules = submodule update --recursive --init
@@ -27,6 +30,13 @@
 	clean = git-lfs clean %f
 	smudge = git-lfs smudge %f
 	required = true
+
+[diff]
+  tool = icdiff
+[difftool]
+  prompt = false
+[difftool "icdiff"]
+  cmd = /usr/local/bin/icdiff --line-numbers $LOCAL $REMOTE
 
 [rerere]
 	enabled = true
