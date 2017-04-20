@@ -156,8 +156,8 @@ call vundle#begin()
 
 Plugin 'VundleVim/Vundle.vim'
 
-Plugin 'LaTeX-Suite-aka-Vim-LaTeX'
 Plugin 'altercation/vim-colors-solarized'
+Plugin 'christoomey/vim-tmux-navigator'
 Plugin 'godlygeek/tabular'
 Plugin 'basepi/vim-conque'
 Plugin 'itchyny/lightline.vim'
@@ -171,12 +171,11 @@ Plugin 'tpope/vim-surround'
 Plugin 'tpope/vim-repeat'
 Plugin 'tpope/vim-speeddating'
 Plugin 'tpope/vim-unimpaired'
-Plugin 'vim-scripts/Screen-vim---gnu-screentmux'
 Plugin 'vim-scripts/Vim-R-plugin'
-" Plugin 'xolox/vim-easytags'
 
 call vundle#end()
 
+" Install plugins on first empty launch.
 if !isdirectory(expand("~/.vim/bundle/vim-fugitive"))
   PluginInstall!
   q
@@ -196,9 +195,15 @@ colorscheme solarized
 " Active lightline.
 set laststatus=2
 
-" LaTeX Suite: Prevents Vim 7 from setting filetype to 'plaintex'.
-let g:tex_flavor = 'latex'
+" Tmux navigator
+let g:tmux_navigator_no_mappings = 1
+nnoremap <silent> <c-h> :TmuxNavigateLeft<cr>
+nnoremap <silent> <c-j> :TmuxNavigateDown<cr>
+nnoremap <silent> <c-k> :TmuxNavigateUp<cr>
+nnoremap <silent> <c-l> :TmuxNavigateRight<cr>
+nnoremap <silent> <c-\> :TmuxNavigatePrevious<cr>
 
+" R plugin
 let vimrplugin_notmuxconf = 1 "do not overwrite an existing tmux.conf.
 let vimrplugin_assign = 0     "do not replace '_' with '<-'.
 let vimrplugin_vsplit = 1     "split R vertically.
