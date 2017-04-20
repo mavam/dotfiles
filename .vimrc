@@ -164,7 +164,7 @@ Plugin 'VundleVim/Vundle.vim'
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'christoomey/vim-tmux-navigator'
 Plugin 'godlygeek/tabular'
-Plugin 'basepi/vim-conque'
+Plugin 'benmills/vimux'
 Plugin 'itchyny/lightline.vim'
 Plugin 'rstacruz/sparkup'
 Plugin 'tpope/vim-endwise'
@@ -207,6 +207,15 @@ nnoremap <silent> <c-j> :TmuxNavigateDown<cr>
 nnoremap <silent> <c-k> :TmuxNavigateUp<cr>
 nnoremap <silent> <c-l> :TmuxNavigateRight<cr>
 nnoremap <silent> <c-\> :TmuxNavigatePrevious<cr>
+
+" Vimux
+map <leader>vp :VimuxPromptCommand<CR>
+map <Leader>vl :VimuxRunLastCommand<CR>
+map <Leader>vi :VimuxInspectRunner<CR>
+map <Leader>vq :VimuxCloseRunner<CR>
+map <Leader>vz :VimuxZoomRunner<CR>
+map <leader>vm :VimuxRunCommand("make")<CR>
+map <leader>vn :VimuxRunCommand("ninja")<CR>
 
 " R plugin
 let vimrplugin_notmuxconf = 1 "do not overwrite an existing tmux.conf.
