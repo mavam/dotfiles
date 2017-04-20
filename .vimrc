@@ -88,7 +88,10 @@ endif
 "                                 Key Bindings
 " =============================================================================
 
-let mapleader = ' '
+" vv to generate new vertical split
+nnoremap <silent> vv <C-w>v
+nnoremap <silent> v2 :set columns=161<CR><C-w>v
+nnoremap <silent> v3 :set columns=242<CR><C-w>v<C-w>v
 
 " Clear last search highlighting
 nnoremap <CR> :noh<CR><CR>
@@ -110,6 +113,8 @@ nmap <D-k> gk
 nmap <D-4> g$
 nmap <D-6> g^
 nmap <D-0> g^
+
+let mapleader = ' '
 
 " Remove trailing whitespace.
 nmap <leader>$ :call Preserve("%s/\\s\\+$//e")<CR>
