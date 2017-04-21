@@ -235,6 +235,20 @@ function! LightlineFugitive()
   return ''
 endfunction
 
+" Tmuxline
+let g:tmuxline_theme = 'lightline_insert'
+" We use :TmuxlineSnapshot to generate the file .tmux/tmuxline.conf.
+" Thereafter, we need to do a bit of patching to improve the integration of
+" tmxu-mem-cpu-load.
+let g:tmuxline_preset = {
+  \'a'    : '#S',
+  \'b'    : '#(whoami)',
+  \'c'    : ['%Y-%m-%d', '%H:%M'],
+  \'win'  : ['#I', '#W'],
+  \'cwin' : ['#I', '#W'],
+  \'x'    : '#(tmux-mem-cpu-load -q -g 5 --interval 2)',
+  \'y'    : '#h'}
+
 " Customize solarized color scheme.
 let g:solarized_menu = 0
 let g:solarized_termtrans = 1
