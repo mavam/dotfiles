@@ -24,6 +24,7 @@ set viminfo='20,\"500
 " No header when printing.
 set printoptions+=header:0
 
+set encoding=utf-8
 scriptencoding utf-8
 
 " =============================================================================
@@ -39,8 +40,7 @@ if has('gui_running')
     set columns=80
     set lines=25
     set guioptions-=T   " Remove the toolbar.
-    set guifont=Monaco:h11
-    set transparency=5
+    set guifont=Meslo\ LG\ M\ DZ\ Regular\ for\ Powerline:h12
 
     " Disable MacVim-specific Cmd/Alt key mappings.
     if has("gui_macvim")
@@ -162,9 +162,10 @@ call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
 
 Plugin 'altercation/vim-colors-solarized'
-Plugin 'christoomey/vim-tmux-navigator'
-Plugin 'godlygeek/tabular'
 Plugin 'benmills/vimux'
+Plugin 'christoomey/vim-tmux-navigator'
+Plugin 'edkolev/tmuxline.vim'
+Plugin 'godlygeek/tabular'
 Plugin 'itchyny/lightline.vim'
 Plugin 'rstacruz/sparkup'
 Plugin 'tpope/vim-endwise'
@@ -172,9 +173,9 @@ Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-git'
 Plugin 'tpope/vim-haml'
 Plugin 'tpope/vim-markdown'
-Plugin 'tpope/vim-surround'
 Plugin 'tpope/vim-repeat'
 Plugin 'tpope/vim-speeddating'
+Plugin 'tpope/vim-surround'
 Plugin 'tpope/vim-unimpaired'
 Plugin 'vim-scripts/Vim-R-plugin'
 
@@ -186,6 +187,54 @@ if !isdirectory(expand("~/.vim/bundle/vim-fugitive"))
   q
 endif
 
+" Lightline with powerline fonts.
+" (Check :h lightline-problem-9 for font issues.)
+set laststatus=2
+let g:lightline = {
+      \ 'colorscheme': 'wombat',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'fugitive', 'readonly', 'filename', 'modified' ] ]
+      \ },
+      \ 'component_function': {
+      \   'fugitive': 'LightlineFugitive',
+      \   'readonly': 'LightlineReadonly',
+      \   'modified': 'LightlineModified'
+      \ },
+      \ 'separator': { 'left': "\ue0b0", 'right': "\ue0b2" },
+      \ 'subseparator': { 'left': "\ue0b1", 'right': "\ue0b3" }
+      \ }
+
+function! LightlineModified()
+  if &filetype == "help"
+    return ""
+  elseif &modified
+    return "+"
+  elseif &modifiable
+    return ""
+  else
+    return ""
+  endif
+endfunction
+
+function! LightlineReadonly()
+  if &filetype == "help"
+    return ""
+  elseif &readonly
+    return "\ue0a2"
+  else
+    return ""
+  endif
+endfunction
+
+function! LightlineFugitive()
+  if exists("*fugitive#head")
+    let branch = fugitive#head()
+    return branch !=# '' ? "\ue0a0 ".branch : ''
+  endif
+  return ''
+endfunction
+
 " Customize solarized color scheme.
 let g:solarized_menu = 0
 let g:solarized_termtrans = 1
@@ -196,9 +245,6 @@ if !has('gui_running')
   let g:solarized_termcolors = 256
 end
 colorscheme solarized
-
-" Active lightline.
-set laststatus=2
 
 " Tmux navigator
 let g:tmux_navigator_no_mappings = 1
