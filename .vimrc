@@ -136,6 +136,7 @@ Plug 'edkolev/tmuxline.vim'
 Plug 'godlygeek/tabular'
 Plug 'itchyny/lightline.vim'
 Plug 'lervag/vimtex'
+Plug 'rhysd/vim-clang-format'
 Plug 'rstacruz/sparkup'
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-fugitive'
@@ -256,6 +257,10 @@ map <leader>vn :VimuxRunCommand("ninja")<CR>
 let vimrplugin_notmuxconf = 1 "do not overwrite an existing tmux.conf.
 let vimrplugin_assign = 0     "do not replace '_' with '<-'.
 let vimrplugin_vsplit = 1     "split R vertically.
+
+" -- Clang Format ------------------------------------------------------------
+
+map <leader>f :ClangFormat<CR>
 
 " =============================================================================
 "                                Filetype Stuff
