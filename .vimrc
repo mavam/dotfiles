@@ -303,13 +303,14 @@ autocmd FileType c,cpp set comments+=://
 autocmd FileType bro set comments-=:#
 autocmd FileType bro set comments+=:##
 autocmd FileType bro set comments+=:#
+autocmd FileType bro set noexpandtab cino='>1s,f1s,{1s'
 autocmd Filetype mail set sw=4 ts=4 tw=72
 autocmd Filetype tex set iskeyword+=:
 
 " Bro-specific coding style.
 augroup BroProject
   autocmd FileType bro set noexpandtab cino='>1s,f1s,{1s'
-  au BufRead,BufEnter ~/work/bro/**/*{cc,h} set noexpandtab cino='>1s,f1s,{1s'
+  au BufRead,BufEnter ~/code/bro/**/*{cc,h} set noexpandtab cino='>1s,f1s,{1s'
 augroup END
 
 if has("spell")
