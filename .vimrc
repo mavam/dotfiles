@@ -152,38 +152,32 @@ vnoremap <silent> <leader>r :<C-U>let old_reg_a=@a<CR>
  \:let @"=old_reg<CR>
 
 " =============================================================================
-"                                    Vundle
+"                                    Plugins
 " =============================================================================
 
-filetype off
-set rtp+=~/.vim/bundle/vundle
-call vundle#begin()
-
-Plugin 'VundleVim/Vundle.vim'
-
-Plugin 'altercation/vim-colors-solarized'
-Plugin 'benmills/vimux'
-Plugin 'christoomey/vim-tmux-navigator'
-Plugin 'edkolev/tmuxline.vim'
-Plugin 'godlygeek/tabular'
-Plugin 'itchyny/lightline.vim'
-Plugin 'rstacruz/sparkup'
-Plugin 'tpope/vim-endwise'
-Plugin 'tpope/vim-fugitive'
-Plugin 'tpope/vim-git'
-Plugin 'tpope/vim-haml'
-Plugin 'tpope/vim-markdown'
-Plugin 'tpope/vim-repeat'
-Plugin 'tpope/vim-speeddating'
-Plugin 'tpope/vim-surround'
-Plugin 'tpope/vim-unimpaired'
-Plugin 'vim-scripts/Vim-R-plugin'
-
-call vundle#end()
+call plug#begin('~/.vim/plugged')
+Plug 'altercation/vim-colors-solarized'
+Plug 'benmills/vimux'
+Plug 'christoomey/vim-tmux-navigator'
+Plug 'edkolev/tmuxline.vim'
+Plug 'godlygeek/tabular'
+Plug 'itchyny/lightline.vim'
+Plug 'rstacruz/sparkup'
+Plug 'tpope/vim-endwise'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-git'
+Plug 'tpope/vim-haml'
+Plug 'tpope/vim-markdown'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-speeddating'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-unimpaired'
+Plug 'vim-scripts/Vim-R-plugin'
+call plug#end()
 
 " Install plugins on first empty launch.
-if !isdirectory(expand("~/.vim/bundle/vim-fugitive"))
-  PluginInstall!
+if !isdirectory(expand("~/.vim/plugged"))
+  PlugInstall!
   q
 endif
 
@@ -281,9 +275,6 @@ map <leader>vn :VimuxRunCommand("ninja")<CR>
 let vimrplugin_notmuxconf = 1 "do not overwrite an existing tmux.conf.
 let vimrplugin_assign = 0     "do not replace '_' with '<-'.
 let vimrplugin_vsplit = 1     "split R vertically.
-
-" Needs to be executed after Vundle.
-filetype plugin indent on
 
 " =============================================================================
 "                                Filetype Stuff

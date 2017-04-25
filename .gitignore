@@ -64,7 +64,7 @@ Icon?
 .svk/
 *.sw?
 .unison/*
-.vim/bundle
+.vim/plugged
 .vim/spell*
 .viminfo
 .zcompdump
