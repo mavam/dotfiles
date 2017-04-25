@@ -1,8 +1,8 @@
 " =============================================================================
 "                               General settings
 " =============================================================================
-set nocompatible        " iMproved.
 
+set nocompatible        " iMproved.
 set autoindent          " Copy indent from current line on starting a new line.
 set backspace=indent,eol,start " Backspacing over everything in insert mode.
 set hidden              " Allow for putting dirty buffers in background.
@@ -27,9 +27,15 @@ set printoptions+=header:0
 set encoding=utf-8
 scriptencoding utf-8
 
+if has("spell")
+  set spelllang=en,de,fr
+  set spellfile=~/.vim/spellfile.add
+endif
+
 " =============================================================================
 "                                   Styling
 " =============================================================================
+
 set background=dark     " Syntax highlighting for a dark terminal background.
 set hlsearch            " Highlight search results.
 set ruler               " Show the cursor position all the time.
@@ -59,6 +65,7 @@ endif
 " =============================================================================
 "                                  Formatting
 " =============================================================================
+
 set formatoptions=tcrqn " See :h 'fo-table for a detailed explanation.
 set nojoinspaces        " Don't insert two spaces when joining after [.?!].
 set copyindent          " Copy the structure of existing indentation
@@ -77,16 +84,10 @@ set textwidth=79        " Text width
 set cinoptions=l1,N-s,t0,(0,W2
 
 " =============================================================================
-"                                   Spelling
-" =============================================================================
-if has("spell")
-  set spelllang=en,de,fr
-  set spellfile=~/.vim/spellfile.add
-endif
-
-" =============================================================================
 "                                 Key Bindings
 " =============================================================================
+
+let mapleader = ' '
 
 " vv to generate new vertical split
 nnoremap <silent> vv <C-w>v
@@ -114,8 +115,6 @@ nmap <D-4> g$
 nmap <D-6> g^
 nmap <D-0> g^
 
-let mapleader = ' '
-
 " Remove trailing whitespace.
 nmap <leader>$ :call Preserve("%s/\\s\\+$//e")<CR>
 
@@ -124,32 +123,6 @@ nmap <leader>= :call Preserve("normal gg=G")<CR>
 
 " Highlight text last pasted.
 nnoremap <expr> <leader>p '`[' . strpart(getregtype(), 0, 1) . '`]'
-
-" =============================================================================
-"                               Custom Functions
-" =============================================================================
-
-function! Preserve(command)
-  " Preparation: save last search, and cursor position.
-  let _s=@/
-  let l = line(".")
-  let c = col(".")
-  " Do the business.
-  execute a:command
-  " Clean up: restore previous search history, and cursor position
-  let @/=_s
-  call cursor(l, c)
-endfunction
-
-" Reverse letters in a word, e.g, "foo" -> "oof".
-vnoremap <silent> <leader>r :<C-U>let old_reg_a=@a<CR>
- \:let old_reg=@"<CR>
- \gv"ay
- \:let @a=substitute(@a, '.\(.*\)\@=',
- \ '\=@a[strlen(submatch(1))]', 'g')<CR>
- \gvc<C-R>a<Esc>
- \:let @a=old_reg_a<CR>
- \:let @"=old_reg<CR>
 
 " =============================================================================
 "                                    Plugins
@@ -175,14 +148,15 @@ Plug 'tpope/vim-unimpaired'
 Plug 'vim-scripts/Vim-R-plugin'
 call plug#end()
 
-" Install plugins on first empty launch.
+" Install plugins on first launch.
 if !isdirectory(expand("~/.vim/plugged"))
-  PlugInstall!
+  PlugInstall
   q
 endif
 
-" Lightline with powerline fonts.
-" (Check :h lightline-problem-9 for font issues.)
+" -- Lightline ---------------------------------------------------------------
+
+" Check :h lightline-problem-9 for font issues.
 set laststatus=2
 let g:lightline = {
       \ 'colorscheme': 'wombat',
@@ -229,7 +203,8 @@ function! LightlineFugitive()
   return ''
 endfunction
 
-" Tmuxline
+" -- Tmuxline ----------------------------------------------------------------
+
 let g:tmuxline_theme = 'lightline_insert'
 " We use :TmuxlineSnapshot to generate the file .tmux/tmuxline.conf.
 " Thereafter, we need to do a bit of patching to improve the integration of
@@ -243,18 +218,22 @@ let g:tmuxline_preset = {
   \'x'    : '#(tmux-mem-cpu-load -q -g 5 --interval 2)',
   \'y'    : '#h'}
 
-" Customize solarized color scheme.
+" -- Solarized colors --------------------------------------------------------
+
 let g:solarized_menu = 0
 let g:solarized_termtrans = 1
 let g:solarized_contrast = 'high'
 let g:solarized_contrast = 'high'
 let g:solarized_hitrail = 1
+
 if !has('gui_running')
   let g:solarized_termcolors = 256
 end
+
 colorscheme solarized
 
-" Tmux navigator
+" -- Tmux Navigator ----------------------------------------------------------
+
 let g:tmux_navigator_no_mappings = 1
 nnoremap <silent> <c-h> :TmuxNavigateLeft<cr>
 nnoremap <silent> <c-j> :TmuxNavigateDown<cr>
@@ -262,7 +241,7 @@ nnoremap <silent> <c-k> :TmuxNavigateUp<cr>
 nnoremap <silent> <c-l> :TmuxNavigateRight<cr>
 nnoremap <silent> <c-\> :TmuxNavigatePrevious<cr>
 
-" Vimux
+" -- Vimux -------------------------------------------------------------------
 map <leader>vp :VimuxPromptCommand<CR>
 map <Leader>vl :VimuxRunLastCommand<CR>
 map <Leader>vi :VimuxInspectRunner<CR>
@@ -271,7 +250,8 @@ map <Leader>vz :VimuxZoomRunner<CR>
 map <leader>vm :VimuxRunCommand("make")<CR>
 map <leader>vn :VimuxRunCommand("ninja")<CR>
 
-" R plugin
+" -- Vim R plugin ------------------------------------------------------------
+
 let vimrplugin_notmuxconf = 1 "do not overwrite an existing tmux.conf.
 let vimrplugin_assign = 0     "do not replace '_' with '<-'.
 let vimrplugin_vsplit = 1     "split R vertically.
@@ -279,10 +259,6 @@ let vimrplugin_vsplit = 1     "split R vertically.
 " =============================================================================
 "                                Filetype Stuff
 " =============================================================================
-
-if &t_Co > 2 || has('gui_running')
-  syntax on
-endif
 
 " R stuff
 autocmd BufNewFile,BufRead *.[rRsS] set ft=r
@@ -319,12 +295,6 @@ if has("spell")
   autocmd Filetype tex              set spell
 endif
 
-" Prepend CTRL on Alt-key mappings: Alt-{B,C,L,I}
-"autocmd Filetype tex imap <C-M-b> <Plug>Tex_MathBF
-"autocmd Filetype tex imap <C-M-c> <Plug>Tex_MathCal
-"autocmd Filetype tex imap <C-M-l> <Plug>Tex_LeftRight
-"autocmd Filetype tex imap <C-M-i> <Plug>Tex_InsertItem
-
 " Transparent editing of gpg encrypted files.
 " By Wouter Hanegraaff <wouter@blub.net>
 augroup encrypted
@@ -349,5 +319,31 @@ augroup encrypted
     " after the file has been written.
     autocmd BufWritePost,FileWritePost  *.gpg u
 augroup END
+
+" =============================================================================
+"                               Custom Functions
+" =============================================================================
+
+function! Preserve(command)
+  " Preparation: save last search, and cursor position.
+  let _s=@/
+  let l = line(".")
+  let c = col(".")
+  " Do the business.
+  execute a:command
+  " Clean up: restore previous search history, and cursor position
+  let @/=_s
+  call cursor(l, c)
+endfunction
+
+" Reverse letters in a word, e.g, "foo" -> "oof".
+vnoremap <silent> <leader>r :<C-U>let old_reg_a=@a<CR>
+ \:let old_reg=@"<CR>
+ \gv"ay
+ \:let @a=substitute(@a, '.\(.*\)\@=',
+ \ '\=@a[strlen(submatch(1))]', 'g')<CR>
+ \gvc<C-R>a<Esc>
+ \:let @a=old_reg_a<CR>
+ \:let @"=old_reg<CR>
 
 " vim: set fenc=utf-8 sw=2 sts=2 foldmethod=marker :
