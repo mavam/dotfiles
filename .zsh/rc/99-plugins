@@ -24,7 +24,6 @@ ZSH_HIGHLIGHT_PATTERNS+=('rm -rf *' 'fg=white,bold,bg=red')
 load_plugin zsh-autosuggestions
 zle-line-init() {
   zle-line-init-undo-ctrl-c # see 30-zle
-  zle autosuggest-start
 }
 zle -N zle-line-init
 
