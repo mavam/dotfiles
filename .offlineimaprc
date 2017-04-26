@@ -44,9 +44,7 @@ nametrans = lambda folder: {'[Gmail]/Drafts':    'gmail/drafts',
                             '[Gmail]/Trash':     'gmail/trash',
                             '[Gmail]/All Mail':  'gmail/archive',
                             }.get(folder, folder)
-folderfilter = lambda folder: folder not in ['[Gmail]/Important',
-#                                             'logs',
-                                             ]
+folderfilter = lambda folder: folder not in ['[Gmail]/Important']
 
 # Generate a file listing all mailboxes for mutt. 
 [mbnames]
