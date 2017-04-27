@@ -115,14 +115,37 @@ nmap <D-4> g$
 nmap <D-6> g^
 nmap <D-0> g^
 
+" Helper function to preserve history and cursor position.
+function! Preserve(command)
+  " Preparation: save last search, and cursor position.
+  let _s=@/
+  let l = line(".")
+  let c = col(".")
+  " Do the business.
+  execute a:command
+  " Clean up: restore previous search history, and cursor position
+  let @/=_s
+  call cursor(l, c)
+endfunction
+
 " Remove trailing whitespace.
-nmap <leader>$ :call Preserve("%s/\\s\\+$//e")<CR>
+nmap <Leader>$ :call Preserve("%s/\\s\\+$//e")<CR>
 
 " Indent entire file.
-nmap <leader>= :call Preserve("normal gg=G")<CR>
+nmap <Leader>= :call Preserve("normal gg=G")<CR>
 
 " Highlight text last pasted.
-nnoremap <expr> <leader>p '`[' . strpart(getregtype(), 0, 1) . '`]'
+nnoremap <expr> <Leader>p '`[' . strpart(getregtype(), 0, 1) . '`]'
+
+" Reverse letters in a word, e.g, "foo" -> "oof".
+vnoremap <silent> <Leader>r :<C-U>let old_reg_a=@a<CR>
+ \:let old_reg=@"<CR>
+ \gv"ay
+ \:let @a=substitute(@a, '.\(.*\)\@=',
+ \ '\=@a[strlen(submatch(1))]', 'g')<CR>
+ \gvc<C-R>a<Esc>
+ \:let @a=old_reg_a<CR>
+ \:let @"=old_reg<CR>
 
 " =============================================================================
 "                                    Plugins
@@ -245,15 +268,15 @@ nnoremap <silent> <c-\> :TmuxNavigatePrevious<cr>
 
 " -- Vimux -------------------------------------------------------------------
 
-map <leader>vc :VimuxPromptCommand<CR>
+map <Leader>vc :VimuxPromptCommand<CR>
 map <Leader>vl :VimuxRunLastCommand<CR>
 map <Leader>vp :VimuxSendKeys("C-p Enter")<CR>
 map <Leader>vc :VimuxInterruptRunner<CR>
 map <Leader>vi :VimuxInspectRunner<CR>
 map <Leader>vq :VimuxCloseRunner<CR>
 map <Leader>vz :VimuxZoomRunner<CR>
-map <leader>vm :VimuxRunCommand("make")<CR>
-map <leader>vn :VimuxRunCommand("ninja")<CR>
+map <Leader>vm :VimuxRunCommand("make")<CR>
+map <Leader>vn :VimuxRunCommand("ninja")<CR>
 
 " -- Vim R plugin ------------------------------------------------------------
 
@@ -263,7 +286,7 @@ let vimrplugin_vsplit = 1     "split R vertically.
 
 " -- Clang Format ------------------------------------------------------------
 
-map <leader>f :ClangFormat<CR>
+map <Leader>f :ClangFormat<CR>
 
 " =============================================================================
 "                                Filetype Stuff
@@ -328,31 +351,5 @@ augroup encrypted
     " after the file has been written.
     autocmd BufWritePost,FileWritePost  *.gpg u
 augroup END
-
-" =============================================================================
-"                               Custom Functions
-" =============================================================================
-
-function! Preserve(command)
-  " Preparation: save last search, and cursor position.
-  let _s=@/
-  let l = line(".")
-  let c = col(".")
-  " Do the business.
-  execute a:command
-  " Clean up: restore previous search history, and cursor position
-  let @/=_s
-  call cursor(l, c)
-endfunction
-
-" Reverse letters in a word, e.g, "foo" -> "oof".
-vnoremap <silent> <leader>r :<C-U>let old_reg_a=@a<CR>
- \:let old_reg=@"<CR>
- \gv"ay
- \:let @a=substitute(@a, '.\(.*\)\@=',
- \ '\=@a[strlen(submatch(1))]', 'g')<CR>
- \gvc<C-R>a<Esc>
- \:let @a=old_reg_a<CR>
- \:let @"=old_reg<CR>
 
 " vim: set fenc=utf-8 sw=2 sts=2 foldmethod=marker :
