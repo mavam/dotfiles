@@ -244,8 +244,11 @@ nnoremap <silent> <c-l> :TmuxNavigateRight<cr>
 nnoremap <silent> <c-\> :TmuxNavigatePrevious<cr>
 
 " -- Vimux -------------------------------------------------------------------
-map <leader>vp :VimuxPromptCommand<CR>
+
+map <leader>vc :VimuxPromptCommand<CR>
 map <Leader>vl :VimuxRunLastCommand<CR>
+map <Leader>vp :VimuxSendKeys("C-p Enter")<CR>
+map <Leader>vc :VimuxInterruptRunner<CR>
 map <Leader>vi :VimuxInspectRunner<CR>
 map <Leader>vq :VimuxCloseRunner<CR>
 map <Leader>vz :VimuxZoomRunner<CR>
