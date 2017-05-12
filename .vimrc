@@ -170,7 +170,7 @@ Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
-Plug 'vim-scripts/Vim-R-plugin'
+Plug 'jalvesaq/Nvim-R'
 call plug#end()
 
 " Install plugins on first launch.
@@ -278,11 +278,18 @@ map <Leader>vz :VimuxZoomRunner<CR>
 map <Leader>vm :VimuxRunCommand("make")<CR>
 map <Leader>vn :VimuxRunCommand("ninja")<CR>
 
-" -- Vim R plugin ------------------------------------------------------------
+" -- Nvim-R ------------------------------------------------------------------
 
-let vimrplugin_notmuxconf = 1 "do not overwrite an existing tmux.conf.
-let vimrplugin_assign = 0     "do not replace '_' with '<-'.
-let vimrplugin_vsplit = 1     "split R vertically.
+" Make sure we can communicate with the plugin.
+let R_in_buffer = 0
+let R_applescript = 0
+let R_tmux_split = 1
+
+" Do not replace '_' with '<-'.
+let R_assign = 0
+
+" Use existing tmux.conf.
+let R_notmuxconf = 1
 
 " -- Clang Format ------------------------------------------------------------
 
