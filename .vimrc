@@ -284,6 +284,7 @@ map <Leader>vn :VimuxRunCommand("ninja")<CR>
 let R_in_buffer = 0
 let R_applescript = 0
 let R_tmux_split = 1
+let R_min_editor_width = 42 "trigger vertical split
 
 " Do not replace '_' with '<-'.
 let R_assign = 0
