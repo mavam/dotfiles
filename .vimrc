@@ -270,6 +270,7 @@ nnoremap <silent> <c-\> :TmuxNavigatePrevious<cr>
 
 map <Leader>vc :VimuxPromptCommand<CR>
 map <Leader>vl :VimuxRunLastCommand<CR>
+map <Leader>vo :call VimuxOpenRunner()<CR>
 map <Leader>vp :call VimuxSendKeys("C-p Enter")<CR>
 map <Leader>vc :VimuxInterruptRunner<CR>
 map <Leader>vi :VimuxInspectRunner<CR>
