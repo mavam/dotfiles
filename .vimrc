@@ -3,12 +3,8 @@
 " =============================================================================
 
 set nocompatible        " iMproved.
-set autoindent          " Copy indent from current line on starting a new line.
-set backspace=indent,eol,start " Backspacing over everything in insert mode.
 set hidden              " Allow for putting dirty buffers in background.
-set history=1024        " Lines of command history
 set ignorecase          " Case-insensitive search
-set incsearch           " Jumps to search word as you type.
 set smartcase           " Override ignorecase when searching uppercase.
 set modeline            " Enables modelines.
 set wildmode=longest,list:full " How to complete <Tab> matches.
@@ -24,7 +20,6 @@ set viminfo='20,\"500
 " No header when printing.
 set printoptions+=header:0
 
-set encoding=utf-8
 scriptencoding utf-8
 
 if has("spell")
@@ -38,7 +33,6 @@ endif
 
 set background=dark     " Syntax highlighting for a dark terminal background.
 set hlsearch            " Highlight search results.
-set ruler               " Show the cursor position all the time.
 set showbreak=…         " Highlight non-wrapped lines.
 set showcmd             " Display incomplete command in bottom right corner.
 
@@ -52,8 +46,6 @@ if has('gui_running')
     if has("gui_macvim")
       let macvim_skip_cmd_opt_movement = 1
     endif
-else
-    set t_Co=256        " We use 256 color terminal emulators these days.
 endif
 
 " Folding
@@ -167,6 +159,7 @@ Plug 'tpope/vim-git'
 Plug 'tpope/vim-haml'
 Plug 'tpope/vim-markdown'
 Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
@@ -182,7 +175,6 @@ endif
 " -- Lightline ---------------------------------------------------------------
 
 " Check :h lightline-problem-9 for font issues.
-set laststatus=2
 let g:lightline = {
       \ 'colorscheme': 'wombat',
       \ 'active': {
