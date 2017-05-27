@@ -143,6 +143,14 @@ vnoremap <silent> <Leader>r :<C-U>let old_reg_a=@a<CR>
 "                                    Plugins
 " =============================================================================
 
+" Install Plug if not present.
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !mkdir -p ~/.vim/autoload
+  silent !curl -fLo ~/.vim/autoload/plug.vim
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall
+endif
+
 call plug#begin('~/.vim/plugged')
 Plug 'altercation/vim-colors-solarized'
 Plug 'benmills/vimux'
@@ -166,12 +174,6 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'jalvesaq/Nvim-R'
 call plug#end()
-
-" Install plugins on first launch.
-if !isdirectory(expand("~/.vim/plugged"))
-  PlugInstall
-  q
-endif
 
 " -- Lightline ---------------------------------------------------------------
 
