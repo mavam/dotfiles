@@ -2,49 +2,22 @@
 ##  Miscellaneous Functions
 ##
 
-fixme()
-{
+fixme() {
   grep -ir fixme *
 }
 
-todo()
-{
+todo() {
   grep -ir todo *
 }
 
-# Define a custom tree command if it doesn't exist.
-if [[ ! -x  $(whence -p tree) ]]; then
-  tree()
-  {
-    find . | sed -e 's/[^\/]*\//|----/g' -e 's/---- |/    |/g' | less
-  }
-fi
-
-# checks whether a PCRE matches a value.
-# synopsis: % regcheck '\^.{3} EUR' '500 EUR'
-regcheck()
-{
-  if [[ -n $(zmodload -i zsh/pcre) ]]; then
-    if [[ -z $2 ]]; then
-      pcre_compile $1
-      pcre_match $2 && echo "regex matches" || echo "regex does not match"
-    else
-      echo "usage: $0 <regex> <match-string>"
-    fi
-  fi
-}
-
 # synopsis: findpids [prog] (slightly adapted keychain version)
-findpids()
-{
+findpids() {
   local me=$(whoami) || return 1
   unset fp_psout
-
   # Different systems require different invocations of ps.  Try to generalize
   # the best we can.  The only requirement is that the agent command name
   # appears in the line, and the PID is the first item on the line.
   [[ -n "$OSTYPE" ]] || return 1
-
   # Try systems where we know what to do first.
   case "$OSTYPE" in
     AIX|*bsd*|*BSD*|CYGWIN|darwin*|Linux|OSF1)
@@ -59,14 +32,12 @@ findpids()
           fp_psout=`ps x 2>/dev/null` ;;      # BSD syntax
       esac ;;
   esac
-
   # If we didn't get a match above, try a list of possibilities...
   # The first one will probably fail on systems supporting only BSD syntax.
   if [[ -z "$fp_psout" ]]; then
     fp_psout=`UNIX95=1 ps -u $me -o pid,comm 2>/dev/null | grep '^ *[0-9]'`
     [[ -z "$fp_psout" ]] && fp_psout=`ps x 2>/dev/null`
   fi
-
   # Return the list of pids; ignore case for Cygwin.
   # Check only 8 characters since Solaris truncates at that length.
   # Ignore defunct ssh-agents (bug 28599)
@@ -75,15 +46,13 @@ findpids()
       awk "BEGIN{IGNORECASE=1} /defunct/{next} /$1/{print \$1}" | xargs
     return 0
   fi
-
   # If none worked, we're stuck
   error "Unable to use \"ps\" to scan for $1 processes"
   return 1
 }
 
 # display colors
-_cols()
-{
+show_colors() {
   local esc="\033["
   print "\t 40\t 41\t 42\t 43\t 44\t 45\t 46\t 47"
   for fore in 30 31 32 33 34 35 36 37; do
@@ -98,8 +67,7 @@ _cols()
 }
 
 # Prints out lines that are common among $# files.
-intersection()
-{
+intersection() {
   local sort="sort -S 1G"
   case $# in
     (0) true;;
@@ -108,34 +76,17 @@ intersection()
   esac | $sort | uniq -d
 }
 
-# Thirsty ?
-beer()
-{
-  print "         _.._..,_,_"
-  print "        (          )"
-  print "         ]~,\"-.-~~["
-  print "       .=])' (;  ([    Prost!"
-  print "       | ]:: '    ["
-  print "       '=]): .)  (["
-  print "         |:: '    |"
-  print "          ~~----~~"
-}
-
 # Saves SSH environment variables in a file. Use this function to save the
 # SSH environment in order to restore it later inside tmux windows using
 # 'ssh-fix' (see below)
-ssh-grab()
-{
+ssh-grab() {
   local prefix="${HOME}/.tmux"
   local file="ssh-session-vars"
-
   if [[ -n "${SSH_CLIENT}" ]] ; then
     mkdir -m 700 -p ${prefix}
-
     # Variables to save
     local -a ssh_vars
     ssh_vars=(SSH_CLIENT SSH_TTY SSH_AUTH_SOCK SSH_CONNECTION DISPLAY)
-
     for x in ${ssh_vars} ; do
       (eval echo $x=\$$x) | sed  's/=/="/
       s/$/"/
@@ -145,12 +96,10 @@ ssh-grab()
 }
 
 # Restores SSH environment variables to reinstate SSH agent-forwarding.
-ssh-fix()
-{
+ssh-fix() {
   local prefix="${HOME}/.tmux"
   local file="ssh-session-vars"
   local fullpath=${prefix}/${file}
-
   [[ -f ${fullpath} ]] && source ${fullpath}
 }
 
@@ -161,35 +110,24 @@ ssh-fix()
 # conjunction with CSH_NULL_GLOB, when the glob fails, this produces
 #     zsh: no match
 # *after* emptying the previous value of $show.
-show()
-{
+show() {
   show=()
   show=( $~* )
   print -rc $show
 }
 alias show "noglob show"
 
-# Combining the power of tail -f and the less pager.
-ltail()
-{
-  tail -f $1 | less -S
+# checks whether a PCRE matches a value.
+# synopsis: % regcheck '\^.{3} EUR' '500 EUR'
+check() {
+  if [[ -n $(zmodload -i zsh/pcre) ]]; then
+    if [[ -z $2 ]]; then
+      pcre_compile $1
+      pcre_match $2 && echo "regex matches" || echo "regex does not match"
+    else
+      echo "usage: $0 <regex> <match-string>"
+    fi
+  fi
 }
-
-# vim: ft=zsh
-
-
-# Colorize STDERR.
-#zmodload zsh/terminfo zsh/system 2> /dev/null
-#color_err ()
-#{
-#    # sysread & syswrite are part of zsh/system
-#    while sysread std_err_color
-#    do
-#      syswrite -o 2 "${fg[yellow]}${std_err_color}${terminfo[sgr0]}"
-#    done
-#}
-#
-## sysread is not available on the iPhone.
-#[[ "$MACHTYPE" != "arm" ]] && is-at-least 4.3.4 && exec 2> >( color_err )
 
 # vim: ft=zsh
