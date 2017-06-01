@@ -7,38 +7,33 @@ typeset -U path cdpath fpath manpath
 
 # System $PATH.
 path=(
-    /usr/local/bin
-    /usr/bin
-    /bin
-    /usr/local/sbin
-    /usr/sbin
-    /sbin
-    /usr/X11R6/bin
-    /usr/ucb            # SunOS
-    /usr/sww/bin        # SunOS
+  /usr/local/bin
+  /usr/bin
+  /bin
+  /usr/local/sbin
+  /usr/sbin
+  /sbin
+  /usr/X11R6/bin
+  /usr/ucb            # SunOS
+  /usr/sww/bin        # SunOS
 )
 
 # Man pages.
 manpath=(
-    /usr/local/man
-    /usr/man
+  /usr/local/man
+  /usr/man
 )
 
-# Function path.
-fpath=( ~/.zsh/funcs $fpath )
-
 # OS-specific paths.
-case "$OS" in
-  darwin)
+case $OSTYPE in
+  darwin*)
     # MacTeX binaries.
     [[ -d /usr/texbin ]] && path=( $path /usr/texbin )
     [[ -d /Library/TeX/texbin ]] && path=( $path /Library/Tex/texbin )
-
     # Apple's X11 binaries.
     [[ -d /usr/X11R6/bin ]] && path=( $path /usr/X11R6/bin )
-
     # Default MacPorts installations.
-    if [[ -d /opt/local ]] ; then
+    if [[ -d /opt/local ]]; then
       path=( /opt/local/bin /opt/local/sbin $path )
       manpath=( /opt/local/share/man $manpath )
     fi
@@ -46,7 +41,9 @@ case "$OS" in
 esac
 
 # Source local paths.
-[[ -f ~/.zpath.local ]] && source ~/.zpath.local
+if [[ -f ~/.zpath.local ]]; then
+  source ~/.zpath.local
+fi
 
 # Home prefix has highest precedence, thus sourced last.
 path=( ~/bin $path )
@@ -56,8 +53,7 @@ if [[ -d ~/.gem && -d ~/.gem/ruby ]]; then
 fi
 
 # Removes non-existent directories from an array.
-clean-path ()
-{
+clean-path () {
   local element
   local build
   build=()
