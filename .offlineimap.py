@@ -11,3 +11,21 @@ import subprocess
 def get_keychain_pass(name):
   cmd = ['security', 'find-generic-password', '-s', name, '-w']
   return subprocess.check_output(cmd).strip()
+
+folder_mapping = {
+  'INBOX':              'INBOX',
+  '[Gmail]/Drafts':     'gmail/drafts',
+  '[Gmail]/Sent Mail':  'gmail/sent',
+  '[Gmail]/Spam':       'gmail/spam',
+  '[Gmail]/Starred':    'gmail/starred',
+  '[Gmail]/Trash':      'gmail/trash',
+  '[Gmail]/All Mail':   'gmail/archive'
+}
+
+def folder_cmp(xs):
+  def f(x, y):
+    try:
+      return cmp(xs.index(x), xs.index(y))
+    except ValueError:
+      return 0
+  return f

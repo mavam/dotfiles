@@ -21,14 +21,8 @@ postsynchook = maildir-notifier ~/.mail/INBOX
 type = GmailMaildir
 localfolders = ~/.mail
 sep = /
-nametrans = lambda folder: {'gmail/drafts':   '[Gmail]/Drafts',
-                            'gmail/sent':     '[Gmail]/Sent Mail',
-                            'gmail/spam':     '[Gmail]/Spam',
-                            'gmail/flagged':  '[Gmail]/Starred',
-                            'gmail/trash':    '[Gmail]/Trash',
-                            'gmail/archive':  '[Gmail]/All Mail',
-                            }.get(folder, folder)
-
+foldersort = folder_cmp(folder_mapping.values())
+nametrans = lambda x: {v: k for k, v in folder_mapping.items()}.get(x, x)
 
 [Repository Gmail]
 type = Gmail
@@ -37,14 +31,9 @@ maxconnections = 1
 realdelete = no
 remoteuser = matthias@vallentin.net
 remotepasseval = get_keychain_pass('offlineimap')
-nametrans = lambda folder: {'[Gmail]/Drafts':    'gmail/drafts',
-                            '[Gmail]/Sent Mail': 'gmail/sent',
-                            '[Gmail]/Starred':   'gmail/flagged',
-                            '[Gmail]/Spam':      'gmail/spam',
-                            '[Gmail]/Trash':     'gmail/trash',
-                            '[Gmail]/All Mail':  'gmail/archive',
-                            }.get(folder, folder)
-folderfilter = lambda folder: folder not in ['[Gmail]/Important']
+foldersort = folder_cmp(folder_mapping.keys())
+folderfilter = lambda x: x not in ['[Gmail]/Important']
+nametrans = lambda x: folder_mapping.get(x, x)
 
 # Generate a file listing all mailboxes for mutt. 
 [mbnames]
