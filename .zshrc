@@ -187,6 +187,9 @@ if zplug check 'zsh-users/zsh-history-substring-search'; then
   bindkey -M vicmd 'j' history-substring-search-down
 fi
 
+# Do not require a space when attempting to tab-complete.
+bindkey '^i' expand-or-complete-prefix
+
 # =============================================================================
 #                                 Completions
 # =============================================================================
