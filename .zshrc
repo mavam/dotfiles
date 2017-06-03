@@ -47,6 +47,7 @@ source "${ZPLUG_HOME}/init.zsh"
 zplug 'plugins/bundler', from:oh-my-zsh
 zplug 'plugins/colored-man-pages', from:oh-my-zsh
 zplug 'plugins/extract', from:oh-my-zsh
+zplug 'plugins/fancy-ctrl-z', from:oh-my-zsh
 zplug 'plugins/git', from:oh-my-zsh
 zplug 'plugins/globalias', from:oh-my-zsh
 zplug 'plugins/httpie', from:oh-my-zsh
