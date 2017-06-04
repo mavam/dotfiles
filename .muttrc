@@ -114,7 +114,7 @@ set editor="vim +\`awk ' /^$/ {print i+2; exit} {i++}' %s\` +':set textwidth=72'
 set folder_format="%2C %t %N %F %2l %-8.8u %-8.8g %8s %d %f"
 set forward_format="Fwd: %s"
 set indent_string="> "
-set index_format="%4C %Z %{!%b %d} %?M?#%4M&%5c? %-25.25F %s%?Y? <%Y>?"
+set index_format="%4C %Z %{!%b %d} %?M?#%4M&%5c? %-20.20F %s%?Y? <%Y>?"
 set mask="!^\\.[^.]"
 set message_format="%s"
 set pager_format="-%Z- %C/%m: %-20.20n   %s"
