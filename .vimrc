@@ -223,6 +223,10 @@ function! LightlineFugitive()
   return ''
 endfunction
 
+" -- vimtex ------------------------------------------------------------------
+
+let g:vimtex_view_method = 'skim'
+
 " -- Tmuxline ----------------------------------------------------------------
 
 let g:tmuxline_theme = 'lightline_insert'
