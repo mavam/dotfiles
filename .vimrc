@@ -247,7 +247,6 @@ let g:tmuxline_preset = {
 let g:solarized_menu = 0
 let g:solarized_termtrans = 1
 let g:solarized_contrast = 'high'
-let g:solarized_contrast = 'high'
 let g:solarized_hitrail = 1
 
 if !has('gui_running')
