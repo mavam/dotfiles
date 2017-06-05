@@ -239,7 +239,7 @@ let g:tmuxline_preset = {
   \'c'    : ['%Y-%m-%d', '%H:%M'],
   \'win'  : ['#I', '#W'],
   \'cwin' : ['#I', '#W'],
-  \'x'    : '#(tmux-mem-cpu-load -q -g 5 --interval 2)',
+  \'x'    : '#(tmux-mem-cpu-load -q -g 5 -m 2 -i 2)',
   \'y'    : '#h'}
 
 " -- Solarized colors --------------------------------------------------------
