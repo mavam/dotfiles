@@ -161,6 +161,7 @@ Plug 'itchyny/lightline.vim'
 Plug 'lervag/vimtex'
 Plug 'rhysd/vim-clang-format'
 Plug 'rstacruz/sparkup'
+Plug 'ryanoasis/vim-devicons'
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-git'
@@ -187,11 +188,34 @@ let g:lightline = {
       \ 'component_function': {
       \   'fugitive': 'LightlineFugitive',
       \   'readonly': 'LightlineReadonly',
-      \   'modified': 'LightlineModified'
+      \   'modified': 'LightlineModified',
+      \   'filetype': 'IconizedFiletype',
+      \   'fileformat': 'IconizedFileformat'
       \ },
       \ 'separator': { 'left': "\ue0b0", 'right': "\ue0b2" },
       \ 'subseparator': { 'left': "\ue0b1", 'right': "\ue0b3" }
       \ }
+
+
+function! IconizedFiletype()
+  if winwidth(0) > 70
+    if strlen(&filetype)
+      return &filetype . ' ' . WebDevIconsGetFileTypeSymbol()
+    else
+      return 'no ft'
+    endif
+  else
+    return ''
+  endif
+endfunction
+
+function! IconizedFileformat()
+  if winwidth(0) > 70
+    return &fileformat . ' ' . WebDevIconsGetFileFormatSymbol()
+  else
+    return ''
+  endif
+endfunction
 
 function! LightlineModified()
   if &filetype == "help"
