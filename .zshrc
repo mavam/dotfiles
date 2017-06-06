@@ -18,7 +18,7 @@ POWERLEVEL9K_MULTILINE_SECOND_PROMPT_PREFIX="%F{blue}\u2570\uf460%F{white} "
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir_joined dir_writable_joined)
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(command_execution_time vcs
                                     background_jobs_joined time_joined
-                                    user_joined host_joined )
+                                    user_joined host_joined os_icon_joined)
 POWERLEVEL9K_VCS_CLEAN_BACKGROUND="clear"
 POWERLEVEL9K_VCS_CLEAN_FOREGROUND="green"
 POWERLEVEL9K_VCS_MODIFIED_BACKGROUND="clear"
@@ -57,8 +57,10 @@ POWERLEVEL9K_HOST_LOCAL_BACKGROUND='clear'
 POWERLEVEL9K_HOST_LOCAL_FOREGROUND='cyan'
 POWERLEVEL9K_HOST_REMOTE_BACKGROUND='clear'
 POWERLEVEL9K_HOST_REMOTE_FOREGROUND='magenta'
-POWERLEVEL9K_HOST_ICON="\uF109 " # 
+#POWERLEVEL9K_HOST_ICON="\uF109 " # 
 POWERLEVEL9K_SSH_ICON="\uF489 "  # 
+POWERLEVEL9K_OS_ICON_BACKGROUND="clear"
+POWERLEVEL9K_OS_ICON_FOREGROUND="blue"
 
 
 # zsh-syntax-highlighting
