@@ -1,7 +1,0 @@
-!
-! MacBook Pro 15" USA
-!
-
-keycode  58 = grave asciitilde degree degree
-
-! vim: ft=xmodmap
