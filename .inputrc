@@ -1,8 +1,0 @@
-# Enable UTF-8.
-set input-meta on
-set output-meta on
-set convert-meta off
-
-# Use vi-mode.
-set editing-mode vi
-set keymap vi-insert

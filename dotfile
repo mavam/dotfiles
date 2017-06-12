@@ -1,0 +1,161 @@
+#!/bin/sh
+
+dir="$(cd "$(dirname "$0")" && pwd)"
+prefix="$HOME"
+
+usage() {
+  printf "usage: %s [options] <command> [arguments] <tag...>\n" $(basename $0)
+  echo
+  echo "options:"
+  echo "    -p <prefix>  prefix directory [$prefix]"
+  echo
+  echo "commands:"
+  echo "    diff         compare tag(s) with existing ones"
+  echo "    help         display this help"
+  echo "    install      symlink the given tag(s)"
+  echo "    uninstall    remove symlinks for the given tag(s)"
+  echo
+  echo "arguments:"
+  echo "    -a           apply command to all available tag(s)"
+  echo "    -f           force operation"
+  echo
+}
+
+log() {
+  red="\e[0;31m"
+  green="\e[0;32m"
+  yellow="\e[0;33m"
+  blue="\e[0;34m"
+  magenta="\e[0;35m"
+  cyan="\e[0;36m"
+  reset="\e[0;0m"
+  if [ "$1" = "red" ] || [ "$1" = "error" ]; then
+    color=$red
+  elif [ "$1" = "green" ]; then
+    color=$green
+  elif [ "$1" = "yellow" ]; then
+    color=$yellow
+  elif [ "$1" = "blue" ]; then
+    color=$blue
+  elif [ "$1" = "cyan" ] || [ "$1" = "info" ]; then
+    color=$cyan
+  elif [ "$1" = "magenta" ]; then
+    color=$magenta
+  else
+    color=$reset
+  fi
+  shift
+  printf "$color%s$reset\n" "$*"
+}
+
+execute() {
+  command=$1
+  tag=$2
+  if ! [ -d "$dir/$tag" ]; then
+    log error "no such tag: $tag"
+    exit 1
+  fi
+  if [ "$command" = "install" ]; then
+    # Check existence of *all* entries first.
+    if [ -z "$force" ]; then
+      for entry in $(ls -A $dir/$tag); do
+        if [ -e "$prefix/$entry" ]; then
+          log error "prefix already contains entry: $entry"
+          exit 1
+        fi
+      done
+    fi
+    log info "installing $tag into $prefix"
+    for entry in $(ls -A $dir/$tag); do
+      src="$dir/$tag/$entry"
+      dst="$prefix/$entry"
+      log info "  + $entry"
+      ln -sf "$src" "$dst"
+    done
+  elif [ "$command" = "uninstall" ]; then
+    # Make sure that we only remove symlinks.
+    if [ -z "$force" ]; then
+      for entry in $(ls -A $dir/$tag); do
+        if ! [ -L "$prefix/$entry" ]; then
+          log error "not an installed symlink: $entry"
+          exit 1
+        fi
+      done
+    fi
+    log info "uninstalling $tag from $prefix"
+    for entry in $(ls -A $dir/$tag); do
+      log info "  - $entry"
+      rm -rf "$prefix/$entry"
+    done
+  elif [ "$command" = "diff" ]; then
+    diff=diff
+    if which colordiff > /dev/null 2>&1; then
+      diff=colordiff
+    fi
+    for entry in $(ls -A $dir/$tag); do
+      $diff -u "$dir/$tag/$entry" "$prefix/$entry" | less -SR
+    done
+  elif [ -z "$command" ]; then
+    log error "no command given"
+    exit 1
+  else
+    log error "unknown command: $command"
+    exit 1
+  fi
+}
+
+main() {
+  # Parse options.
+  while getopts "hp:" opt; do
+    case "$opt" in
+      h)
+        usage
+        exit 0
+        ;;
+      p)
+        prefix="$OPTARG"
+        ;;
+    esac
+  done
+  shift $(expr $OPTIND - 1)
+  if ! [ -d "$prefix" ]; then
+    log error "no such prefix: $prefix"
+    exit 1
+  fi
+  # Parse command.
+  command=$1
+  shift
+  if [ "$command" = "help" ]; then
+    usage
+    exit 0
+  fi
+  # Parse arguments.
+  while getopts "af" opt; do
+    case "$opt" in
+      a)
+        all=1
+        ;;
+      f)
+        force=1
+        ;;
+    esac
+  done
+  shift $(expr $OPTIND - 1)
+  if [ -n "$all" ]; then
+    cd $dir
+    set -- *
+    cd -
+  fi
+  if [ "${#@}" -eq 0 ]; then
+    log error "no tag(s) provided"
+    exit 1
+  fi
+  # Execute command on every tag.
+  for tag in "$@"; do
+    if ! [ -f "$dir/$tag" ]; then
+      execute "$command" "$tag"
+    fi
+  done
+}
+
+main "$@"

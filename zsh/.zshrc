@@ -62,7 +62,6 @@ POWERLEVEL9K_SSH_ICON="\uF489 "  # 
 POWERLEVEL9K_OS_ICON_BACKGROUND="clear"
 POWERLEVEL9K_OS_ICON_FOREGROUND="blue"
 
-
 # zsh-syntax-highlighting
 ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
 ZSH_HIGHLIGHT_PATTERNS+=('rm -rf *' 'fg=white,bold,bg=red')
@@ -85,16 +84,17 @@ fi
 
 source "${ZPLUG_HOME}/init.zsh"
 
-zplug 'plugins/bundler', from:oh-my-zsh
+zplug 'plugins/bundler', from:oh-my-zsh, if:'which bundle'
 zplug 'plugins/colored-man-pages', from:oh-my-zsh
 zplug 'plugins/extract', from:oh-my-zsh
 zplug 'plugins/fancy-ctrl-z', from:oh-my-zsh
-zplug 'plugins/git', from:oh-my-zsh
+zplug 'plugins/git', from:oh-my-zsh, if:'which git'
 zplug 'plugins/globalias', from:oh-my-zsh
-zplug 'plugins/httpie', from:oh-my-zsh
-zplug 'plugins/nanoc', from:oh-my-zsh
-zplug 'plugins/nmap', from:oh-my-zsh
-zplug 'plugins/tmux', from:oh-my-zsh
+#zplug 'plugins/gpg-agent', from:oh-my-zsh, if:'which gpg-agent'
+zplug 'plugins/httpie', from:oh-my-zsh, if:'which httpie'
+zplug 'plugins/nanoc', from:oh-my-zsh, if:'which nanoc'
+zplug 'plugins/nmap', from:oh-my-zsh, if:'which nmap'
+zplug 'plugins/tmux', from:oh-my-zsh, if:'which tmux'
 zplug 'plugins/vi-mode', from:oh-my-zsh
 
 #zplug 'b4b4r07/enhancd', use:init.sh
@@ -112,7 +112,6 @@ fi
 
 zplug load
 
-# dircolors-solarized
 if zplug check 'seebi/dircolors-solarized'; then
   if which gdircolors > /dev/null 2>&1; then
     alias dircolors='gdircolors'
@@ -251,7 +250,7 @@ intersect() {
 #                                   Startup
 # =============================================================================
 
-# Load SSH and GPG agents
+# Load SSH and GPG agents via keychain.
 setup_agents() {
   local ssh_keys=(~/.ssh/**/*pub(:r))
   local gpg_keys=${${${(M)${(f)"$(gpg --list-secret-keys \
@@ -262,6 +261,7 @@ setup_agents() {
   fi
 }
 setup_agents
+unfunction setup_agents
 
 # Source local customizations.
 if [[ -f ~/.zshrc.local ]]; then

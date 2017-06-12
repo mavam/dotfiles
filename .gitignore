@@ -1,2 +1,1 @@
-# Ignore everything that isn't added with -f.
-*
+*.sw?
