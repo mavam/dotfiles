@@ -56,36 +56,52 @@ execute() {
     exit 1
   fi
   if [ "$command" = "install" ]; then
-    # Check existence of *all* entries first.
-    if [ -z "$force" ]; then
-      for entry in $(ls -A $dir/$tag); do
-        if [ -e "$prefix/$entry" ]; then
-          log error "prefix already contains entry: $entry"
-          exit 1
-        fi
-      done
+    if [ -n "$force" ]; then
+      ln="ln -shF"
+    else
+      ln="ln -shi"
     fi
     log info "installing $tag into $prefix"
     for entry in $(ls -A $dir/$tag); do
-      src="$dir/$tag/$entry"
-      dst="$prefix/$entry"
-      log info "  + $entry"
-      ln -sf "$src" "$dst"
-    done
-  elif [ "$command" = "uninstall" ]; then
-    # Make sure that we only remove symlinks.
-    if [ -z "$force" ]; then
-      for entry in $(ls -A $dir/$tag); do
-        if ! [ -L "$prefix/$entry" ]; then
-          log error "not an installed symlink: $entry"
+      # If the target exists and is a directory, we keep it and install the
+      # files inside. Otherwise we simply create the symlink
+      if [ -d "$prefix/$entry" ]; then
+        if ! [ -d "$dir/$tag/$entry" ]; then
+          log error "source is a file but target a directory"
           exit 1
         fi
-      done
+        for file in $(ls -A $dir/$tag/$entry); do
+          eval "$ln \"$dir/$tag/$entry/$file\" \"$prefix/$entry\""
+          log info "  + $entry/$file"
+        done
+      else
+        eval "$ln \"$dir/$tag/$entry\" \"$prefix\""
+        log info "  + $entry"
+      fi
+    done
+  elif [ "$command" = "uninstall" ]; then
+    if [ -n "$force" ]; then
+      rm="rm -rf"
+    else
+      rm="rm"
     fi
     log info "uninstalling $tag from $prefix"
     for entry in $(ls -A $dir/$tag); do
-      log info "  - $entry"
-      rm -rf "$prefix/$entry"
+      # Analoguous to install command: if we have a non-symlink directory, we
+      # look for installed symlinks inside to remove.
+      if [ -d "$prefix/$entry" ]; then
+        if ! [ -d "$dir/$tag/$entry" ]; then
+          log error "source is a file but target a directory"
+          exit 1
+        fi
+        for file in $(ls -A $dir/$tag/$entry); do
+          log info "  - $entry/$file"
+          eval "$rm \"$prefix/$entry/$file\""
+        done
+      elif [ -L "$prefix/$entry" ]; then
+        log info "  - $entry"
+        eval "$rm \"$prefix/$entry\""
+      fi
     done
   elif [ "$command" = "diff" ]; then
     diff=diff
