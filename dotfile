@@ -48,6 +48,10 @@ log() {
   printf "$color%s$reset\n" "$*"
 }
 
+list() {
+  git ls-files "$1" | awk -F / "$2" | uniq
+}
+
 execute() {
   command=$1
   tag=$2
@@ -62,7 +66,7 @@ execute() {
       ln="ln -s"
     fi
     log info "installing $tag into $prefix"
-    for entry in $(ls -A $dir/$tag); do
+    for entry in $(list "$tag" '{print $2}'); do
       # If the target exists and is a directory, we keep it and install the
       # files inside. Otherwise we simply create the symlink
       if [ -d "$prefix/$entry" ]; then
@@ -70,9 +74,9 @@ execute() {
           log error "source is a file but target a directory"
           exit 1
         fi
-        for file in $(ls -A $dir/$tag/$entry); do
-          eval "$ln \"$dir/$tag/$entry/$file\" \"$prefix/$entry\""
-          log info "  + $entry/$file"
+        for file in $(list "$tag/$entry" '{print $2 "/" $3}'); do
+          eval "$ln \"$dir/$tag/$file\" \"$prefix/$entry\""
+          log info "  + $file"
         done
       else
         eval "$ln \"$dir/$tag/$entry\" \"$prefix\""
@@ -86,7 +90,7 @@ execute() {
       rm="rm"
     fi
     log info "uninstalling $tag from $prefix"
-    for entry in $(ls -A $dir/$tag); do
+    for entry in $(git ls-files "$tag" | awk -F / '{print $2}' | uniq); do
       # Analoguous to install command: if we have a non-symlink directory, we
       # look for installed symlinks inside to remove.
       if [ -d "$prefix/$entry" ]; then
@@ -94,9 +98,9 @@ execute() {
           log error "source is a file but target a directory"
           exit 1
         fi
-        for file in $(ls -A $dir/$tag/$entry); do
-          log info "  - $entry/$file"
-          eval "$rm \"$prefix/$entry/$file\""
+        for file in $(list "$tag/$entry" '{print $2 "/" $3}'); do
+          log info "  - $file"
+          eval "$rm \"$prefix/$file\""
         done
       elif [ -L "$prefix/$entry" ]; then
         log info "  - $entry"
@@ -108,7 +112,7 @@ execute() {
     if which colordiff > /dev/null 2>&1; then
       diff=colordiff
     fi
-    for entry in $(ls -A $dir/$tag); do
+    for entry in $(list "$tag" '{print $2}'); do
       $diff -u "$dir/$tag/$entry" "$prefix/$entry" | less -SR
     done
   elif [ -z "$command" ]; then
@@ -121,6 +125,7 @@ execute() {
 }
 
 main() {
+  cd "$dir"
   # Parse options.
   while getopts "hp:" opt; do
     case "$opt" in
