@@ -130,6 +130,7 @@ main() {
     exit 0
   fi
   # Parse arguments.
+  OPTIND=1
   while getopts "af" opt; do
     case "$opt" in
       a)
