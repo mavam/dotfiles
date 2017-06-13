@@ -57,9 +57,9 @@ execute() {
   fi
   if [ "$command" = "install" ]; then
     if [ -n "$force" ]; then
-      ln="ln -shF"
+      ln="ln -sf"
     else
-      ln="ln -shi"
+      ln="ln -s"
     fi
     log info "installing $tag into $prefix"
     for entry in $(ls -A $dir/$tag); do
