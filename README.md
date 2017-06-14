@@ -18,25 +18,25 @@ First, clone this repository somewhere:
     git clone git@github.com:mavam/dotfiles.git ~/.dotfiles
     cd .dotfiles
 
-Then, use the POSIX shell script [dotfile](dotfile) for installing
+Then, use the POSIX shell script [dots](dots) for installing
 (= symlinking) and removing subsets of dotfiles according to your needs. For
 example, install all dotfiles as follows:
 
-    ./dotfile install -a
+    ./dots install -a
 
 Alternatively, install only dotfiles for vim and zsh:
 
-    ./dotfile install vim zsh
+    ./dots install vim zsh
 
 Similarly, to removing all symlinked directories:
 
-    ./dotfile uninstall -a
+    ./dots uninstall -a
 
 The installer script does not override existing dotfiles, unless the command
 line includes the `-f` switch. When in doubt what the installation of a subset
 of the dotfiles would look like, it is possible to look at the diff first:
 
-    ./dotfile diff -a
+    ./dots diff -a
 
 [tmux]: https://github.com/tmux/tmux
 [vim]: http://www.vim.org
