@@ -255,12 +255,15 @@ intersect() {
 
 # Load SSH and GPG agents via keychain.
 setup_agents() {
-  local ssh_keys=(~/.ssh/**/*pub(:r))
-  local gpg_keys=${${${(M)${(f)"$(gpg --list-secret-keys \
+  local -a ssh_keys gpg_keys
+  ssh_keys=(~/.ssh/**/*pub(.N:r))
+  gpg_keys=${${${(M)${(f)"$(gpg --list-secret-keys \
     --list-options no-show-photos 2>/dev/null)"}:%sec*}#sec */}%% *}
-  if [[ -n "$ssh_keys" ]] || [[ -n "$gpg_keys" ]]; then
-    eval $(keychain -q --nogui --eval --host fix \
-           --agents ssh,gpg $ssh_keys $gpg_keys)
+  if which keychain > /dev/null 2>&1; then
+    if (( $#ssh_keys > 0 )) || (( $#gpg_keys > 0 )); then
+      eval $(keychain -q --nogui --eval --host fix \
+             --agents ssh,gpg $ssh_keys $gpg_keys)
+    fi
   fi
 }
 setup_agents
