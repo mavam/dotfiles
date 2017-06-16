@@ -162,6 +162,7 @@ Plug 'lervag/vimtex'
 Plug 'rhysd/vim-clang-format'
 Plug 'rstacruz/sparkup'
 Plug 'ryanoasis/vim-devicons'
+Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-git'
@@ -300,6 +301,11 @@ map <Leader>vq :VimuxCloseRunner<CR>
 map <Leader>vz :VimuxZoomRunner<CR>
 map <Leader>vm :VimuxRunCommand("make")<CR>
 map <Leader>vn :VimuxRunCommand("ninja")<CR>
+
+" -- vim-dispatch ------------------------------------------------------------
+
+" Build via make.
+nmap <Leader>b :Make<CR>
 
 " -- Nvim-R ------------------------------------------------------------------
 
