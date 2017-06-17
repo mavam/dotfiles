@@ -292,6 +292,15 @@ nnoremap <silent> <c-\> :TmuxNavigatePrevious<cr>
 
 " -- Vimux -------------------------------------------------------------------
 
+" Combine VimuxZoomRunner and VimuxInspectRunner in one function.
+function! VimuxZoomInspectRunner()
+  if exists("g:VimuxRunnerIndex")
+    call _VimuxTmux("select-"._VimuxRunnerType()." -t ".g:VimuxRunnerIndex)
+    call _VimuxTmux("resize-pane -Z -t ".g:VimuxRunnerIndex)
+    call _VimuxTmux("copy-mode")
+  endif
+endfunction
+
 map <Leader>vc :VimuxPromptCommand<CR>
 map <Leader>vl :VimuxRunLastCommand<CR>
 map <Leader>vo :call VimuxOpenRunner()<CR>
@@ -302,6 +311,7 @@ map <Leader>vq :VimuxCloseRunner<CR>
 map <Leader>vz :VimuxZoomRunner<CR>
 map <Leader>vm :VimuxRunCommand("make")<CR>
 map <Leader>vn :VimuxRunCommand("ninja")<CR>
+map <Leader>v<Space> :call VimuxZoomInspectRunner()<CR>
 
 " -- vim-dispatch ------------------------------------------------------------
 
