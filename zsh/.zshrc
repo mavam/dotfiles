@@ -176,7 +176,7 @@ fi
 # Directory management
 alias la='ls -a'
 alias ll='ls -l'
-alias lal='ls -l'
+alias lal='ls -al'
 alias d='dirs -v'
 alias 1='pu'
 alias 2='pu -2'
