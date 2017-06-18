@@ -103,6 +103,7 @@ zplug 'plugins/vi-mode', from:oh-my-zsh
 #zplug 'b4b4r07/enhancd', use:init.sh
 zplug 'b4b4r07/zsh-vimode-visual', defer:3
 zplug 'bhilburn/powerlevel9k', use:powerlevel9k.zsh-theme, at:next
+zplug 'knu/zsh-manydots-magic', use:manydots-magic, defer:2
 zplug 'seebi/dircolors-solarized', ignore:"*", as:plugin
 zplug 'zsh-users/zsh-autosuggestions', at:develop
 zplug 'zsh-users/zsh-completions', defer:2
