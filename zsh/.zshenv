@@ -24,8 +24,9 @@ export CVS_RSH="ssh"
 export CVSEDITOR="vim"
 export RSYNC_RSH="ssh"
 
-# GPG
-export GPG_TTY=$TTY
+# Avoid issues with `gpg` as installed via Homebrew.
+# https://stackoverflow.com/a/42265848/96656
+export GPG_TTY=$(tty);
 
 # OS-specific environment.
 case $OSTYPE in
