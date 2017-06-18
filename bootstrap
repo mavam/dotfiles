@@ -205,6 +205,7 @@ log "installing Homebrew bundles"
 cd "$(dirname "$0")"
 brew bundle
 cd -
+brew cleanup
 
 log "setting Zsh as login shell"
 chsh -s $(which zsh)
