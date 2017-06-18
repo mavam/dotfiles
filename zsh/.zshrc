@@ -194,6 +194,18 @@ po() { popd > /dev/null 2>&1; dirs -v }
 grep() { $(whence -p grep) --colour=auto $@ }
 egrep() { $(whence -p egrep) --colour=auto $@ }
 
+# OS-specific aliases
+if [[ $OSTYPE = darwin* ]]; then
+  # Lock screen (e.g., when leaving computer).
+  alias afk="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"
+  # Hide/show all desktop icons (useful when presenting)
+  alias hidedesktop="defaults write com.apple.finder CreateDesktop -bool false \
+    && killall Finder"
+  alias showdesktop="defaults write com.apple.finder CreateDesktop -bool true \
+    && killall Finder"
+fi
+
+
 # =============================================================================
 #                                Key Bindings
 # =============================================================================
