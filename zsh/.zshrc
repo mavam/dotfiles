@@ -141,6 +141,7 @@ WORDCHARS="\'*?_-.[]~=/&;!#$%^(){}<>\'"
 HISTFILE=~/.zsh_history
 HISTSIZE=100000
 SAVEHIST=100000
+setopt autocd                   # Allow changing directories without `cd`
 setopt append_history           # Don't overwrite history
 setopt extended_history         # Also record time and duration of commands.
 setopt share_history            # Share history between multiple shells
