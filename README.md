@@ -8,19 +8,24 @@
 Proper dotfiles are the very heart of an efficient working environment.
 
 This repository ships a set of configuration files for modern command line
-tools, such as [tmux][tmux], [vim][vim], and [zsh][zsh].
+tools, such as [tmux][tmux], [vim][vim], and [zsh][zsh]. Additionally, it
+provides a portable script for managing dotfiles and quickly getting up and
+runninng on a new machine.
 
 Usage
 =====
 
-First, clone this repository somewhere:
+Begin with cloning this repository somewhere:
 
     git clone git@github.com:mavam/dotfiles.git ~/.dotfiles
     cd .dotfiles
 
-Then, use the POSIX shell script [dots](dots) for installing
-(= symlinking) and removing subsets of dotfiles according to your needs. For
-example, install all dotfiles as follows:
+Dotfile Management
+------------------
+
+The POSIX shell script [dots](dots) installs (= symlinks) and removes subsets
+of dotfiles according to your needs. For example, install all dotfiles as
+follows:
 
     ./dots install -a
 
@@ -28,15 +33,40 @@ Alternatively, install only dotfiles for vim and zsh:
 
     ./dots install vim zsh
 
-Similarly, to removing all symlinked directories:
+Similarly, remove all installed dotfiles:
 
     ./dots uninstall -a
 
-The installer script does not override existing dotfiles, unless the command
+The installer script does not override existing dotfiles unless the command
 line includes the `-f` switch. When in doubt what the installation of a subset
 of the dotfiles would look like, it is possible to look at the diff first:
 
     ./dots diff -a
+
+System Bootstrapping
+--------------------
+
+In addition to managing dotfiles, the script [bootstrap](bootstrap) facilitates
+getting up and running on a new machine:
+
+    ./bootstrap
+
+The script performs the following actions:
+
+1. Perform OS-specific adjustments
+2. Install Homebrew plus all [bundled packages](Brewfile)
+3. Set [zsh][zsh] as login shell
+4. Install [vim][vim] and [tmux][tmux] plugins
+
+On macOS, (1) includes:
+
+1. Adjust various default settings, e.g.:
+  - Improve security and privacy settings
+  - Disable boot sound
+  - Reduce UI effects for improved speed
+  - Make the keyboard faster
+2. Perform a software update
+3. Install XCode
 
 [tmux]: https://github.com/tmux/tmux
 [vim]: http://www.vim.org
