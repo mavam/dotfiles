@@ -173,18 +173,16 @@ done 2>/dev/null &
 # Perform OS-specific adjustments.
 case "$(uname -s)" in
   Darwin)
-    homebrew="Homebrew/install/master/install"
     # Close any open System Preferences panes, to prevent them from overriding
     # settings we’re about to change.
     osascript -e 'tell application "System Preferences" to quit'
     log "adjusting macOS defaults"
     adjust_macos_defaults
-    # Perform pending software updates.
     log "performing software update"
     sudo softwareupdate -i -a > /dev/null 2>&1
-    # Install XCode.
-    log "installing XCode"
+    log "installing XCode comand line developer tools"
     xcode-select --install > /dev/null 2>&1
+    homebrew="Homebrew/install/master/install"
     ;;
   Linux)
     homebrew="Linuxbrew/install/master/install"
@@ -196,7 +194,10 @@ case "$(uname -s)" in
     ;;
 esac
 
-if ! which brew > /dev/null 2>&1; then
+if which brew > /dev/null 2>&1; then
+  log "upgrading existing Homebrew packages"
+  brew upgrade
+else
   log "installing Homebrew"
   ruby -e "$(curl -fsSL https://raw.githubusercontent.com/$homebrew)"
 fi
@@ -204,8 +205,8 @@ fi
 log "installing Homebrew bundles"
 cd "$(dirname "$0")"
 brew bundle
-cd -
 brew cleanup
+cd -
 
 log "setting Zsh as login shell"
 chsh -s $(which zsh)
