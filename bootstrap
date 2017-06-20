@@ -2,6 +2,8 @@
 #
 # This script prepares a productive environment for a user.
 
+set -e
+
 log() {
   yellow="\e[0;33m"
   magenta="\e[0;35m"
@@ -161,6 +163,85 @@ adjust_macos_defaults() {
   # - https://github.com/mathiasbynens/dotfiles/blob/master/.macos
 }
 
+# Configures the postfix MTA as a GMail relay.
+#
+# It's a good idea to send a test message to make sure the setup works as
+# expected:
+#
+#    echo postfix test | mail -s test you@gmail.com 
+#
+# Since macOS Sierra, there are no more logfiles and debugging requires
+# invoking this command instead:
+#
+#   sudo log stream --predicate '(process == "smtpd") || (process == "smtp")'
+#
+# If you have a message in the `mailq` that doesn't find its way out, try to
+# force a flush via `sendmail -q` while watching the log stream output.
+setup_postfix_as_gmail_relay() {
+  # Configure SASL authentication.
+  if ! sudo test -f /etc/postfix/sasl/sasl_passwd; then
+    log "enter your Gmail address:"
+    IFS= read -r email
+    log "enter your Gmail password:"
+    IFS= read -rs password
+    if ! sudo test -d /etc/postfix/sasl; then
+      sudo mkdir -m 600 /etc/postfix/sasl
+    else
+      sudo chmod -R 600 /etc/postfix/sasl
+    fi
+    sasl_passwd="[smtp.gmail.com]:587 $email:$password"
+    echo "$sasl_passwd" | sudo tee /etc/postfix/sasl/sasl_passwd > /dev/null
+    sudo chown root:wheel /etc/postfix/sasl/sasl_passwd
+    sudo chmod 600 /etc/postfix/sasl/sasl_passwd
+    sudo postmap /etc/postfix/sasl/sasl_passwd
+    sudo postmap /etc/postfix/generic
+  fi
+  # Configure main.cf.
+  if ! fgrep -q 'smtp.gmail.com' /etc/postfix/main.cf; then
+    set +e
+    read -d '' main_cf_gmail << EOT
+# -------------------
+# Gmail configuration
+# -------------------
+
+# Google refuses email from IPv6 addresses without reverse name.
+inet_protocols = ipv4
+
+# Set Gmail SMTP relay.
+relayhost = [smtp.gmail.com]:587
+
+# Enable SASL authentication in the Postfix SMTP client.
+smtpd_sasl_auth_enable = yes
+smtp_sasl_auth_enable = yes
+smtp_sasl_password_maps = hash:/etc/postfix/sasl/sasl_passwd
+smtp_sasl_security_options = noanonymous
+smtp_sasl_mechanism_filter = AUTH LOGIN
+
+# Use Homebrew's openssl certificates.
+smtp_tls_CApath = /usr/local/etc/openssl/certs
+smtp_tls_CAfile = /usr/local/etc/openssl/cert.pem
+
+# Enable TLS.
+smtp_use_tls = yes
+smtp_tls_security_level = encrypt
+EOT
+    read -d '' main_cf_header << EOT
+# -------------------
+# Basic configuration
+# -------------------
+EOT
+    set -e
+    skip="inet_protocols|use_sacl_cache|mydomain_fallback"
+    skip="${skip}|imap_submit_cred_file"
+    main_cf_base=$(awk '$1 !~ /^#|^$/' /etc/postfix/main.cf | egrep -v "$skip")
+    main_cf="$main_cf_header\n\n$main_cf_base\n\n$main_cf_gmail"
+    sudo cp /etc/postfix/main.cf /etc/postfix/main.cf.orig
+    echo "$main_cf" | sudo tee /etc/postfix/main.cf > /dev/null
+    sudo postfix stop
+    sudo postfix start
+  fi
+}
+
 # Ask for the administrator password once at the beginning and keep it alive.
 log "please enter your password to proceed"
 sudo -v
@@ -216,5 +297,10 @@ vim +PlugInstall +qall
 
 log "installig Tmux plugins"
 ~/.tmux/plugins/tpm/bin/install_plugins
+
+if ! fgrep -q stmp.gmail.com /etc/postfix/main.cf; then
+  log "configuring postfix as Gmail relay"
+  setup_postfix_as_gmail_relay
+fi
 
 log "done"
