@@ -269,6 +269,9 @@ intersect() {
 
 # Load SSH and GPG agents via keychain.
 setup_agents() {
+  if [[ $UID -eq 0 ]]; then
+    return
+  fi
   local -a ssh_keys gpg_keys
   ssh_keys=(~/.ssh/**/*pub(.N:r))
   gpg_keys=${${${(M)${(f)"$(gpg --list-secret-keys \
