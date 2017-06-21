@@ -251,7 +251,7 @@ color quoted3    color124    default
 color quoted4    color166    default
 
 # Protocols
-color body  color61  default "(finger|ftp|http|https|telnet)://[^ >]+"
+color body  color61  default "(finger|ftp|http|https|telnet)://[^ >()]+"
 color body  color61  default "news:[^ \">\t\r\n]*"
 # *Bold* text
 color body  color245 default "(^|[[:space:]])\\*[^[:space:]]+\\*([[:space:]]|$)"
