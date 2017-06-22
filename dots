@@ -6,16 +6,19 @@ prefix="$HOME"
 usage() {
   printf "usage: %s [options] <command> [arguments] <tag...>\n" $(basename $0)
   echo
-  echo "options:"
+  echo "options"
+  echo
   echo "    -p <prefix>  prefix directory [$prefix]"
   echo
-  echo "commands:"
+  echo "commands"
+  echo
   echo "    diff         compare tag(s) with existing ones"
   echo "    help         display this help"
   echo "    install      symlink the given tag(s)"
   echo "    uninstall    remove symlinks for the given tag(s)"
   echo
-  echo "arguments:"
+  echo "arguments"
+  echo
   echo "    -a           apply command to all available tag(s)"
   echo "    -f           force operation"
   echo
