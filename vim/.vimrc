@@ -24,7 +24,7 @@ scriptencoding utf-8
 
 if has("spell")
   set spelllang=en,de,fr
-  set spellfile=~/.vim/spellfile.add
+  set spellfile=~/.vim/spell/spellfile.add
 endif
 
 " =============================================================================
