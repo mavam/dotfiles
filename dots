@@ -116,7 +116,7 @@ execute() {
       diff=colordiff
     fi
     for entry in $(list "$tag" '{print $2}'); do
-      $diff -u "$dir/$tag/$entry" "$prefix/$entry" | less -SR
+      $diff -ru "$dir/$tag/$entry" "$prefix/$entry" | grep -v '^Only in'
     done
   elif [ -z "$command" ]; then
     log error "no command given"
