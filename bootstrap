@@ -237,7 +237,9 @@ EOT
     main_cf="$main_cf_header\n\n$main_cf_base\n\n$main_cf_gmail"
     sudo cp /etc/postfix/main.cf /etc/postfix/main.cf.orig
     echo "$main_cf" | sudo tee /etc/postfix/main.cf > /dev/null
-    sudo postfix stop
+    if sudo postfix status 2> /dev/null; then
+      sudo postfix stop 2> /dev/null
+    fi
     sudo postfix start
   fi
 }
@@ -262,7 +264,7 @@ case "$(uname -s)" in
     log "performing software update"
     sudo softwareupdate -i -a > /dev/null 2>&1
     log "installing XCode comand line developer tools"
-    xcode-select --install > /dev/null 2>&1
+    xcode-select --install > /dev/null 2>&1 || true
     homebrew="Homebrew/install/master/install"
     ;;
   Linux)
@@ -290,13 +292,21 @@ brew cleanup
 cd -
 
 log "setting Zsh as login shell"
-chsh -s $(which zsh)
+zsh=$(which zsh)
+if ! fgrep -q "$zsh" /etc/shells; then
+  log "adding $zsh to /etc/shells"
+  echo "$zsh" | sudo tee -a /etc/shells > /dev/null
+fi
+sudo chsh -s "$zsh" $USER
 
 log "installig Vim plugins"
 vim +PlugInstall +qall
 
-log "installig Tmux plugins"
-~/.tmux/plugins/tpm/bin/install_plugins
+if [ ! -d ~/.tmux/plugins/tpm ]; then
+  log "installig Tmux plugins"
+  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+  ~/.tmux/plugins/tpm/bin/install_plugins
+fi
 
 if ! fgrep -q stmp.gmail.com /etc/postfix/main.cf; then
   log "configuring postfix as Gmail relay"
