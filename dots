@@ -93,7 +93,7 @@ execute() {
       rm="rm"
     fi
     log info "uninstalling $tag from $prefix"
-    for entry in $(git ls-files "$tag" | awk -F / '{print $2}' | uniq); do
+    for entry in $(list "$tag" '{print $2}'); do
       # Analoguous to install command: if we have a non-symlink directory, we
       # look for installed symlinks inside to remove.
       if [ -d "$prefix/$entry" ]; then
