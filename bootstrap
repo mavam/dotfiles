@@ -160,6 +160,9 @@ adjust_macos_defaults() {
   # Enable the debug menu in Disk Utility.
   defaults write com.apple.DiskUtility DUDebugMenuEnabled -bool true
   defaults write com.apple.DiskUtility advanced-image-options -bool true
+  # Load iTerm2 configuration from a predictable location.
+  defaults write com.googlecode.iterm2.plist PrefsCustomFolder -string "~/.iterm2"
+  defaults write com.googlecode.iterm2.plist LoadPrefsFromCustomFolder -bool true
 }
 
 # Configures the postfix MTA as a GMail relay.
