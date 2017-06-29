@@ -122,6 +122,8 @@ adjust_macos_defaults() {
     General -bool true \
     OpenWith -bool true \
     Privileges -bool true
+  # Allow text selection in Quick Look.
+  defaults write com.apple.finder QLEnableTextSelection -bool true
   # -- Safari -----------------------------------------------------------------
   # Privacy: don’t send search queries to Apple.
   defaults write com.apple.Safari UniversalSearchEnabled -bool false
