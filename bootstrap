@@ -12,7 +12,9 @@ log() {
   printf "$magenta>$red>$yellow>$reset %s\n" "$*" 1>&2
 }
 
-# MacOS-specific system changes.
+# MacOS-specific system changes. Further inspiration:
+# - https://github.com/holman/dotfiles/blob/master/macos/set-defaults.sh
+# - https://github.com/mathiasbynens/dotfiles/blob/master/.macos
 adjust_macos_defaults() {
   # -- Updates ----------------------------------------------------------------
   # Enable Debug Menu in the Mac App Store
@@ -158,9 +160,6 @@ adjust_macos_defaults() {
   # Enable the debug menu in Disk Utility.
   defaults write com.apple.DiskUtility DUDebugMenuEnabled -bool true
   defaults write com.apple.DiskUtility advanced-image-options -bool true
-  # Further inspiration for adjustment of defaults:
-  # - https://github.com/holman/dotfiles/blob/master/macos/set-defaults.sh
-  # - https://github.com/mathiasbynens/dotfiles/blob/master/.macos
 }
 
 # Configures the postfix MTA as a GMail relay.
