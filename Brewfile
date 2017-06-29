@@ -1,4 +1,5 @@
 tap "caskroom/cask"
+tap "caskroom/fonts"
 tap "homebrew/bundle"
 tap "homebrew/core"
 tap "homebrew/dupes"
@@ -58,9 +59,13 @@ brew "w3m"
 brew "wget"
 brew "zplug", args: ["HEAD"]
 brew "zsh"
+
 cask "flux"
 cask "gitter"
 cask "google-chrome"
+cask "font-inconsolata-nerd-font"
+cask "font-meslo-nerd-font"
+cask "font-sourcecodepro-nerd-font"
 cask "iterm2"
 cask "key-codes"
 cask "mactex"
@@ -79,6 +84,7 @@ cask "skype"
 cask "slack"
 cask "suspicious-package"
 cask "zoomus"
+
 mas "Keynote", id: 409183694
 mas "Numbers", id: 409203825
 mas "Pages", id: 409201541
