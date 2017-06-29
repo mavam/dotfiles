@@ -285,9 +285,9 @@ else
   ruby -e "$(curl -fsSL https://raw.githubusercontent.com/$homebrew)"
 fi
 
-log "installing Homebrew bundles"
+log "installing bundled Homebrew packages"
 cd "$(dirname "$0")"
-brew bundle
+brew bundle || true
 brew cleanup
 cd -
 
