@@ -241,6 +241,11 @@ EOT
     fi
     sudo postfix start
   fi
+  log "send test mail to $email? [Y/n]"
+  IFS= read -rs -n 1 foo
+  if [ "$foo" = $'\n' ] || [ "$foo" = "y" ]; then
+    echo Test | mail -s "Postfix Test @ $(hostname -s) - $(date)" $email
+  fi
 }
 
 # Ask for the administrator password once at the beginning and keep it alive.
