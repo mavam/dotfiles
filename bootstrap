@@ -4,6 +4,23 @@
 
 set -e
 
+usage() {
+  printf "usage: %s [aspect...] \n" $(basename $0)
+  echo
+  echo "aspects"
+  echo
+  echo "    system       adjust system defaults for productivity"
+  echo "    homebrew     setup Homebrew and install bundled packages"
+  echo "    dotfiles     setup dotfiles and install plugins"
+  echo "    postfix      setup postfix as GMail relay"
+  echo "    tmux         install Tmux plugins"
+  echo "    vim          install Vim plugins"
+  echo "    zsh          setup Zsh as login shell"
+  echo
+  echo "without any arguments, all aspects will be setup (in the above order)"
+  echo
+}
+
 log() {
   yellow="\e[0;33m"
   magenta="\e[0;35m"
@@ -12,10 +29,23 @@ log() {
   printf "$magenta>$red>$yellow>$reset %s\n" "$*" 1>&2
 }
 
+# Keeps sudo priviledge alive throughout the execution of this script.
+enter_sudo_mode() {
+  if ! sudo -n true 2> /dev/null; then
+    log "please enter your password to maintain a sudo session"
+    sudo -v
+    while true; do
+      sudo -n true
+      sleep 60
+      kill -0 "$$" || exit
+    done 2>/dev/null &
+  fi
+}
+
 # MacOS-specific system changes. Further inspiration:
 # - https://github.com/holman/dotfiles/blob/master/macos/set-defaults.sh
 # - https://github.com/mathiasbynens/dotfiles/blob/master/.macos
-adjust_macos_defaults() {
+setup_macos() {
   # -- Updates ----------------------------------------------------------------
   # Enable Debug Menu in the Mac App Store
   defaults write com.apple.appstore ShowDebugMenu -bool true
@@ -36,7 +66,7 @@ adjust_macos_defaults() {
   # -- System -----------------------------------------------------------------
   # Disable the sound effects on boot.
   sudo nvram SystemAudioVolume=" "
-  # Disable volume key feedback
+  # Disable volume key feedback.
   defaults write NSGlobalDomain com.apple.sound.beep.feedback -float 0
   # Disable the over-the-top focus ring animation.
   defaults write NSGlobalDomain NSUseAnimatedFocusRing -bool false
@@ -169,12 +199,38 @@ adjust_macos_defaults() {
   defaults write com.googlecode.iterm2.plist LoadPrefsFromCustomFolder -bool true
 }
 
+setup_homebrew() {
+  if which brew > /dev/null 2>&1; then
+    log "upgrading existing Homebrew packages"
+    brew upgrade
+  else
+    log "installing Homebrew"
+    case "$(uname -s)" in
+      Darwin)
+        homebrew="Homebrew/install/master/install"
+        ;;
+      Linux)
+        homebrew="Linuxbrew/install/master/install"
+        exit 1
+        ;;
+      *)
+        log "$OS not yet supported"
+        exit 1
+        ;;
+    esac
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/$homebrew)"
+  fi
+  log "installing bundled Homebrew packages"
+  brew bundle "--file=$(dirname "$0")/Brewfile" || true
+  brew cleanup
+}
+
 # Configures the postfix MTA as a GMail relay.
 #
 # It's a good idea to send a test message to make sure the setup works as
 # expected:
 #
-#    echo postfix test | mail -s test you@gmail.com 
+#    echo postfix test | mail -s test you@gmail.com
 #
 # Since macOS Sierra, there are no more logfiles and debugging requires
 # invoking this command instead:
@@ -183,7 +239,7 @@ adjust_macos_defaults() {
 #
 # If you have a message in the `mailq` that doesn't find its way out, try to
 # force a flush via `sendmail -q` while watching the log stream output.
-setup_postfix_as_gmail_relay() {
+setup_postfix() {
   # Configure SASL authentication.
   if ! sudo test -f /etc/postfix/sasl/sasl_passwd; then
     log "enter your Gmail address:"
@@ -255,73 +311,78 @@ EOT
   fi
 }
 
-# Ask for the administrator password once at the beginning and keep it alive.
-log "please enter your password to proceed"
-sudo -v
-while true; do
-  sudo -n true
-  sleep 60
-  kill -0 "$$" || exit
-done 2>/dev/null &
+setup_tmux() {
+  if [ ! -d ~/.tmux/plugins/tpm ]; then
+    log "installig Tmux plugins"
+    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    ~/.tmux/plugins/tpm/bin/install_plugins
+  fi
+}
 
-# Perform OS-specific adjustments.
-case "$(uname -s)" in
-  Darwin)
-    # Close any open System Preferences panes, to prevent them from overriding
-    # settings we’re about to change.
-    osascript -e 'tell application "System Preferences" to quit'
-    log "adjusting macOS defaults"
-    adjust_macos_defaults
-    log "performing software update"
-    sudo softwareupdate -i -a > /dev/null 2>&1
-    log "installing XCode comand line developer tools"
-    xcode-select --install > /dev/null 2>&1 || true
-    homebrew="Homebrew/install/master/install"
-    ;;
-  Linux)
-    homebrew="Linuxbrew/install/master/install"
-    exit 1
-    ;;
-  *)
-    log "$OS not yet supported"
-    exit 1
-    ;;
-esac
+setup_vim() {
+  log "installig Vim plugins"
+  vim +PlugInstall +qall
+}
 
-if which brew > /dev/null 2>&1; then
-  log "upgrading existing Homebrew packages"
-  brew upgrade
-else
-  log "installing Homebrew"
-  ruby -e "$(curl -fsSL https://raw.githubusercontent.com/$homebrew)"
-fi
+setup_zsh() {
+  log "setting Zsh as login shell"
+  zsh=$(which zsh)
+  if ! fgrep -q "$zsh" /etc/shells; then
+    log "adding $zsh to /etc/shells"
+    echo "$zsh" | sudo tee -a /etc/shells > /dev/null
+  fi
+  sudo chsh -s "$zsh" $USER
+}
 
-log "installing bundled Homebrew packages"
-cd "$(dirname "$0")"
-brew bundle || true
-brew cleanup
-cd -
+main() {
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    usage
+    exit 0
+  fi
+  enter_sudo_mode
+  command=$1
+  if [ "$command" = "system" ] || [ -z "$command" ]; then
+    case "$(uname -s)" in
+      Darwin)
+        # Close any open System Preferences panes, to prevent them from
+        # overriding settings we’re about to change.
+        osascript -e 'tell application "System Preferences" to quit'
+        log "adjusting macOS defaults"
+        setup_macos
+        log "performing software update"
+        sudo softwareupdate -i -a > /dev/null 2>&1
+        log "installing XCode comand line developer tools"
+        xcode-select --install > /dev/null 2>&1 || true
+        ;;
+      *)
+        log "$OS not yet supported"
+        exit 1
+        ;;
+    esac
+  fi
+  if [ "$command" = "homebrew" ] || [ -z "$command" ]; then
+    setup_homebrew
+  fi
+  if [ "$command" = "dotfiles" ] || [ -z "$command" ]; then
+    sh "$(dirname "$0")/dots" install -a
+  fi
+  if [ "$command" = "postfix" ] || [ -z "$command" ]; then
+    if ! fgrep -q stmp.gmail.com /etc/postfix/main.cf; then
+      log "configuring postfix as Gmail relay"
+      setup_postfix
+    else
+      log "postfix already as Gmail relay configured"
+    fi
+  fi
+  if [ "$command" = "tmux" ] || [ -z "$command" ]; then
+    setup_tmux
+  fi
+  if [ "$command" = "vim" ] || [ -z "$command" ]; then
+    setup_vim
+  fi
+  if [ "$command" = "zsh" ] || [ -z "$command" ]; then
+    setup_zsh
+  fi
+}
 
-log "setting Zsh as login shell"
-zsh=$(which zsh)
-if ! fgrep -q "$zsh" /etc/shells; then
-  log "adding $zsh to /etc/shells"
-  echo "$zsh" | sudo tee -a /etc/shells > /dev/null
-fi
-sudo chsh -s "$zsh" $USER
-
-log "installig Vim plugins"
-vim +PlugInstall +qall
-
-if [ ! -d ~/.tmux/plugins/tpm ]; then
-  log "installig Tmux plugins"
-  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-  ~/.tmux/plugins/tpm/bin/install_plugins
-fi
-
-if ! fgrep -q stmp.gmail.com /etc/postfix/main.cf; then
-  log "configuring postfix as Gmail relay"
-  setup_postfix_as_gmail_relay
-fi
-
-log "done"
+main "$@"

@@ -47,27 +47,34 @@ System Bootstrapping
 --------------------
 
 In addition to managing dotfiles, the script [bootstrap](bootstrap) facilitates
-getting up and running on a new machine:
+getting up and running on a new machine. Passing `-h` shows the available
+aspects available for configuration:
+
+1. `system`: adjust system defaults for productivity
+1. `homebrew`:setup [Homebrew][homebrew] and install bundled packages
+1. `dotfiles`: setup dotfiles via `./dots install -a`
+1. `postfix`: setup [postfix][postfix] as GMail relay
+1. `tmux`: install [tmux][tmux] plugins
+1. `vim`: install [vim][vim] plugins
+1. `zsh`: setup [zsh][zsh] as login shell
+
+Invoking
 
     ./bootstrap
 
-The script performs the following actions:
-
-1. Perform OS-specific adjustments
-2. Install Homebrew plus all [bundled packages](Brewfile)
-3. Set [zsh][zsh] as login shell
-4. Install [vim][vim] and [tmux][tmux] plugins
-
-On macOS, (1) includes:
+without any arguments sets up all aspects in the above order. On macOS, (1)
+includes:
 
 1. Adjust various default settings, e.g.:
-  - Improve security and privacy settings
-  - Disable boot sound
-  - Reduce UI effects for improved speed
-  - Make the keyboard faster
+   - Improve security and privacy settings
+   - Disable boot sound
+   - Reduce UI effects for improved speed
+   - Make the keyboard faster
 2. Perform a software update
 3. Install XCode
 
+[homebrew]: https://brew.sh
+[postfix]: http://www.postfix.org
 [tmux]: https://github.com/tmux/tmux
 [vim]: http://www.vim.org
 [zsh]: http://www.zsh.org
