@@ -206,6 +206,23 @@ if [[ $OSTYPE = darwin* ]]; then
     && killall Finder"
   alias showdesktop="defaults write com.apple.finder CreateDesktop -bool true \
     && killall Finder"
+  # Combine PDFs on the command line.
+  pdfcat() {
+    if [[ $# -lt 2 ]]; then
+      echo "usage: $0 merged.pdf input0.pdf [input1.pdf ...]" > /dev/stderr
+      return 1
+    fi
+    local output="$1"
+    shift
+    # Try pdfunite first (from Homebrew package poppler), because it's much
+    # faster and doesn't perform stupid page rotations.
+    if which pdfunite > /dev/null 2>&1; then
+      pdfunite "$@" "$output"
+    else
+      local join='/System/Library/Automator/Combine PDF Pages.action/Contents/Resources/join.py'
+      "$join" -o "$output" "$@" && open "$output"
+    fi
+  }
 fi
 
 
