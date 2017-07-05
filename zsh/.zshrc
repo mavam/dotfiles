@@ -272,6 +272,17 @@ zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 #                                    Other
 # =============================================================================
 
+# Overwrite oh-my-zsh's version of `globalias', which makes globbing and
+# on-the-fly shell programming painful. The only difference to the original
+# function definition is that we do not use the `expand-word' widget.
+# See https://github.com/robbyrussell/oh-my-zsh/issues/6123 for discussion.
+globalias() {
+   zle _expand_alias
+   #zle expand-word
+   zle self-insert
+}
+zle -N globalias
+
 # Utility that prints out lines that are common among $# files.
 intersect() {
   local sort='sort -S 1G'
