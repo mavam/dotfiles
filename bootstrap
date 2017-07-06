@@ -314,6 +314,9 @@ setup_tmux() {
     log "installig Tmux plugins"
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
     ~/.tmux/plugins/tpm/bin/install_plugins
+  else
+    log "updating Tmux plugins"
+    ~/.tmux/plugins/tpm/bin/update_plugins
   fi
 }
 
