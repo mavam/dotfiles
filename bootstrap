@@ -311,7 +311,7 @@ EOT
 
 setup_tmux() {
   if [ ! -d ~/.tmux/plugins/tpm ]; then
-    log "installig Tmux plugins"
+    log "installing Tmux plugins"
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
     ~/.tmux/plugins/tpm/bin/install_plugins
   else
@@ -321,8 +321,14 @@ setup_tmux() {
 }
 
 setup_vim() {
-  log "installig Vim plugins"
-  vim +PlugInstall +qall
+  log "installing Vim plugins"
+  if [ ! -e "$HOME/.vim/autoload/plug.vim" ]; then
+    curl -fLo "$HOME/.vim/autoload/plug.vim" --create-dirs \
+      https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  else
+    vim -E -s +PlugUpgrade +qa
+  fi
+  vim +PlugUpdate +PlugCLean! +qa
 }
 
 setup_zsh() {
