@@ -304,12 +304,12 @@ setup_agents() {
   fi
   local -a ssh_keys gpg_keys
   ssh_keys=(~/.ssh/**/*pub(.N:r))
-  gpg_keys=${${${(M)${(f)"$(gpg --list-secret-keys \
-    --list-options no-show-photos 2>/dev/null)"}:%sec*}#sec */}%% *}
+  gpg_keys=$(gpg -K --with-colons 2>/dev/null \
+               | awk -F : '$1 == "sec" { print $5 }')
   if which keychain > /dev/null 2>&1; then
     if (( $#ssh_keys > 0 )) || (( $#gpg_keys > 0 )); then
       eval $(keychain -q --nogui --eval --host fix \
-             --agents ssh,gpg $ssh_keys $gpg_keys)
+        --agents ssh,gpg $ssh_keys ${(f)gpg_keys})
     fi
   fi
 }
