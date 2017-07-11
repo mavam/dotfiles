@@ -31,10 +31,16 @@ endif
 "                                   Styling
 " =============================================================================
 
-set background=dark     " Syntax highlighting for a dark terminal background.
 set hlsearch            " Highlight search results.
 set showbreak=…         " Highlight non-wrapped lines.
 set showcmd             " Display incomplete command in bottom right corner.
+
+" Choose background based on terminal emulator color scheme.
+if $ITERM_PROFILE =~# "light"
+  set background=light
+else
+  set background=dark
+endif
 
 if has('gui_running')
     set columns=80
@@ -182,7 +188,7 @@ call plug#end()
 
 " Check :h lightline-problem-9 for font issues.
 let g:lightline = {
-      \ 'colorscheme': 'wombat',
+      \ 'colorscheme': 'solarized',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'fugitive', 'readonly', 'filename', 'modified' ] ]
