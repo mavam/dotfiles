@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>AllowClipboardAccess</key>
-	<true/>
+	<false/>
 	<key>AppleAntiAliasingThreshold</key>
 	<integer>1</integer>
 	<key>AppleScrollAnimationEnabled</key>
@@ -451,6 +451,13 @@
 			<key>Text</key>
 			<string>0x1b 0x20</string>
 		</dict>
+		<key>0x4e-0x120000</key>
+		<dict>
+			<key>Action</key>
+			<integer>26</integer>
+			<key>Text</key>
+			<string>7EA1EBE0-E332-4717-B244-274A438313F1</string>
+		</dict>
 		<key>0x9-0x40000</key>
 		<dict>
 			<key>Action</key>
@@ -552,7 +559,7 @@
 	<key>NSFontPanelAttributes</key>
 	<string>1, 4</string>
 	<key>NSNavLastRootDirectory</key>
-	<string>~/Dropbox/data/iTerm2</string>
+	<string>~</string>
 	<key>NSNavPanelExpandedSizeForOpenMode</key>
 	<string>{851, 448}</string>
 	<key>NSQuotedKeystrokeBinding</key>
@@ -589,7 +596,7 @@
 	<key>NSWindow Frame NSFontPanel</key>
 	<string>223 426 683 317 0 0 1440 877 </string>
 	<key>NSWindow Frame SharedPreferences</key>
-	<string>291 291 796 473 0 0 1440 877 </string>
+	<string>291 277 796 473 0 0 1440 877 </string>
 	<key>NSWindow Frame iTerm Window 0</key>
 	<string>36 500 570 377 0 0 1440 878 </string>
 	<key>NSWindow Frame iTerm Window 1</key>
@@ -1182,7 +1189,7 @@
 			<key>Mouse Reporting</key>
 			<true/>
 			<key>Name</key>
-			<string>mavam (dark)</string>
+			<string>dark</string>
 			<key>Non Ascii Font</key>
 			<string>Monaco 12</string>
 			<key>Non-ASCII Anti Aliased</key>
@@ -1816,7 +1823,7 @@
 			<key>Mouse Reporting</key>
 			<true/>
 			<key>Name</key>
-			<string>mavam (light)</string>
+			<string>light</string>
 			<key>Non Ascii Font</key>
 			<string>Monaco 12</string>
 			<key>Non-ASCII Anti Aliased</key>
@@ -1894,11 +1901,13 @@
 	<key>NoSyncInstallationId</key>
 	<string>AA0CCF63-63D3-4916-96A5-B8CCF98F8C58</string>
 	<key>NoSyncLastTipTime</key>
-	<real>520362045.47207499</real>
+	<real>520795868.414837</real>
 	<key>NoSyncPermissionToShowTip</key>
 	<true/>
 	<key>NoSyncTimeOfFirstLaunchOfVersionWithTip</key>
 	<real>517978735.104496</real>
+	<key>NoSyncTipsDisabled</key>
+	<true/>
 	<key>NoSyncTipsToNotShow</key>
 	<array>
 		<string>000</string>
@@ -1927,6 +1936,9 @@
 		<string>0022</string>
 		<string>0023</string>
 		<string>0024</string>
+		<string>0025</string>
+		<string>0026</string>
+		<string>0027</string>
 	</array>
 	<key>NoSyncWarnAboutAmbiguousWidth</key>
 	<true/>
@@ -1972,7 +1984,7 @@
 		</dict>
 	</dict>
 	<key>PrefsCustomFolder</key>
-	<string>/Users/mavam/Dropbox/data/iTerm2</string>
+	<string>~/.iterm2</string>
 	<key>SUEnableAutomaticChecks</key>
 	<false/>
 	<key>SUFeedAlternateAppNameKey</key>
