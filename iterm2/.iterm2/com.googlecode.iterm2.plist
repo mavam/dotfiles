@@ -458,6 +458,20 @@
 			<key>Text</key>
 			<string>7EA1EBE0-E332-4717-B244-274A438313F1</string>
 		</dict>
+		<key>0x6b-0x140000</key>
+		<dict>
+			<key>Action</key>
+			<integer>37</integer>
+			<key>Text</key>
+			<string>8CBCB7EF-F1E2-4EF0-A5B6-16656C2C24F1</string>
+		</dict>
+		<key>0x6c-0x140000</key>
+		<dict>
+			<key>Action</key>
+			<integer>37</integer>
+			<key>Text</key>
+			<string>7EA1EBE0-E332-4717-B244-274A438313F1</string>
+		</dict>
 		<key>0x9-0x40000</key>
 		<dict>
 			<key>Action</key>
