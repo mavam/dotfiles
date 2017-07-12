@@ -293,6 +293,14 @@ intersect() {
   esac | $sort | uniq -d
 }
 
+# Changes an iTerm profile by sending a proprietary escape code that iTerm
+# intercepts. This function additionally updates ITERM_PROFILE environment
+# variable.
+iterm-profile() {
+  echo -ne "\033]50;SetProfile=$1\a"
+  export ITERM_PROFILE="$1"
+}
+
 # =============================================================================
 #                                   Startup
 # =============================================================================
