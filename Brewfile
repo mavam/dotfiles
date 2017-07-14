@@ -7,6 +7,7 @@ tap "homebrew/science"
 tap "homebrew/services"
 
 brew "bro"
+brew "chainsawbaby/formula/bash-snippets"
 brew "clang-format"
 brew "cmake"
 brew "colordiff"
