@@ -154,6 +154,12 @@ setup_macos() {
     Privileges -bool true
   # Allow text selection in Quick Look.
   defaults write com.apple.finder QLEnableTextSelection -bool true
+  # Do not warn before emptying the trash.
+  defaults write com.apple.finder WarnOnEmptyTrash -bool false
+  # Do not warn when moving files out of iCloud.
+  defaults write com.apple.finder FXEnableRemoveFromICloudDriveWarning -bool false
+  # Do not warn before emptying the trash.
+  defaults write com.apple.finder WarnOnEmptyTrash -bool false
   # -- Safari -----------------------------------------------------------------
   # Privacy: don’t send search queries to Apple.
   defaults write com.apple.Safari UniversalSearchEnabled -bool false
