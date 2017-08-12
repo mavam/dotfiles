@@ -128,6 +128,14 @@ if zplug check 'seebi/dircolors-solarized'; then
   fi
 fi
 
+if zplug check 'zsh-users/zsh-autosuggestions'; then
+  # For some reason, the offered completion winds up having the same color as
+  # the terminal background color (when using a dark profile). Therefore, we
+  # switch to gray.
+  # See https://github.com/zsh-users/zsh-autosuggestions/issues/182.
+  ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=gray'
+fi
+
 # =============================================================================
 #                                   Options
 # =============================================================================
