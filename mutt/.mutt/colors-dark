@@ -1,0 +1,5 @@
+# Color defintions for a dark terminal theme.
+
+color indicator  color234    color136 # selection bar
+
+# vim: ft=muttrc
