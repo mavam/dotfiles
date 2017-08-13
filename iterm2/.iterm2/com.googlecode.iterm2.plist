@@ -451,14 +451,14 @@
 			<key>Text</key>
 			<string>0x1b 0x20</string>
 		</dict>
-		<key>0x6b-0x140000</key>
+		<key>0x6b-0x180000</key>
 		<dict>
 			<key>Action</key>
 			<integer>37</integer>
 			<key>Text</key>
 			<string>8CBCB7EF-F1E2-4EF0-A5B6-16656C2C24F1</string>
 		</dict>
-		<key>0x6c-0x140000</key>
+		<key>0x6c-0x180000</key>
 		<dict>
 			<key>Action</key>
 			<integer>37</integer>
@@ -580,7 +580,7 @@
 	<key>NSFontPanelAttributes</key>
 	<string>1, 4</string>
 	<key>NSNavLastRootDirectory</key>
-	<string>~</string>
+	<string>~/.dotfiles/iterm2/.iterm2</string>
 	<key>NSNavPanelExpandedSizeForOpenMode</key>
 	<string>{851, 448}</string>
 	<key>NSQuotedKeystrokeBinding</key>
@@ -614,12 +614,17 @@
 	</data>
 	<key>NSTableView Supports v2 KeyBingingTable</key>
 	<true/>
+	<key>NSToolbar Configuration com.apple.NSColorPanel</key>
+	<dict>
+		<key>TB Is Shown</key>
+		<integer>1</integer>
+	</dict>
 	<key>NSWindow Frame NSFontPanel</key>
 	<string>223 426 683 317 0 0 1440 877 </string>
 	<key>NSWindow Frame SharedPreferences</key>
-	<string>291 277 796 473 0 0 1440 877 </string>
+	<string>290 372 796 473 0 0 1440 877 </string>
 	<key>NSWindow Frame iTerm Window 0</key>
-	<string>36 500 570 377 0 0 1440 878 </string>
+	<string>215 122 1067 699 0 0 1440 877 </string>
 	<key>NSWindow Frame iTerm Window 1</key>
 	<string>853 34 570 377 0 0 1440 877 </string>
 	<key>NSWindow Frame iTerm Window 10</key>
@@ -2015,6 +2020,8 @@
 	<key>SUHasLaunchedBefore</key>
 	<true/>
 	<key>SUSendProfileInfo</key>
+	<false/>
+	<key>ShowFullScreenTabBar</key>
 	<false/>
 	<key>SmartPlacement</key>
 	<true/>
