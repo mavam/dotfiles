@@ -451,13 +451,6 @@
 			<key>Text</key>
 			<string>0x1b 0x20</string>
 		</dict>
-		<key>0x4e-0x120000</key>
-		<dict>
-			<key>Action</key>
-			<integer>26</integer>
-			<key>Text</key>
-			<string>7EA1EBE0-E332-4717-B244-274A438313F1</string>
-		</dict>
 		<key>0x6b-0x140000</key>
 		<dict>
 			<key>Action</key>
@@ -469,6 +462,20 @@
 		<dict>
 			<key>Action</key>
 			<integer>37</integer>
+			<key>Text</key>
+			<string>7EA1EBE0-E332-4717-B244-274A438313F1</string>
+		</dict>
+		<key>0x6e-0x180000</key>
+		<dict>
+			<key>Action</key>
+			<integer>26</integer>
+			<key>Text</key>
+			<string>7EA1EBE0-E332-4717-B244-274A438313F1</string>
+		</dict>
+		<key>0x74-0x180000</key>
+		<dict>
+			<key>Action</key>
+			<integer>27</integer>
 			<key>Text</key>
 			<string>7EA1EBE0-E332-4717-B244-274A438313F1</string>
 		</dict>
