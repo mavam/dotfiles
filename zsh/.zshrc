@@ -279,6 +279,10 @@ zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 # When doing `cd ../<TAB>`, don't offer the current directory as an option.
 zstyle ':completion:*:cd:*' ignore-parents parent pwd
 
+# Show a menu (with arrow keys) to select the process to kill.
+zstyle ':completion:*:*:kill:*' menu yes select
+zstyle ':completion:*:kill:*'   force-list always
+
 # =============================================================================
 #                                    Other
 # =============================================================================
