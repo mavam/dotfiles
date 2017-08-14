@@ -103,7 +103,6 @@ zplug 'plugins/colored-man-pages', from:oh-my-zsh
 zplug 'plugins/extract', from:oh-my-zsh
 zplug 'plugins/fancy-ctrl-z', from:oh-my-zsh
 zplug 'plugins/git', from:oh-my-zsh, if:'which git'
-zplug 'plugins/globalias', from:oh-my-zsh
 #zplug 'plugins/gpg-agent', from:oh-my-zsh, if:'which gpg-agent'
 zplug 'plugins/httpie', from:oh-my-zsh, if:'which httpie'
 zplug 'plugins/nanoc', from:oh-my-zsh, if:'which nanoc'
@@ -145,16 +144,23 @@ if zplug check 'zsh-users/zsh-autosuggestions'; then
   ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=gray'
 fi
 
-# Overwrite oh-my-zsh's version of `globalias', which makes globbing and
-# on-the-fly shell programming painful. The only difference to the original
-# function definition is that we do not use the `expand-word' widget.
+# Our custom version of oh-my-zsh's globalias plugin. Unlike the OMZ version,
+# we do not use the `expand-word' widget and prevent a few whitelisted commands
+# from being expanded.
 # See https://github.com/robbyrussell/oh-my-zsh/issues/6123 for discussion.
 globalias() {
-   zle _expand_alias
-   #zle expand-word
-   zle self-insert
+  local -a whitelist
+  whitelist=(ls grep egrep)
+  if [[ ! $LBUFFER =~ "(^|[;|&])\s*(${(j:|:)whitelist})" ]]; then
+    zle _expand_alias
+  fi
+  zle self-insert
 }
 zle -N globalias
+bindkey -M emacs ' ' globalias
+bindkey -M viins ' ' globalias
+bindkey -M isearch ' ' magic-space # normal space during searches
+
 
 # =============================================================================
 #                                   Options
@@ -192,14 +198,10 @@ setopt extended_glob
 #                                   Aliases
 # =============================================================================
 
-# In the definitions below, you will see use of function definitions instead of
-# aliases for some cases. We use this method to avoid expansion of the alias in
-# combination with the globalias plugin.
-
 # Directory coloring
 if which gls > /dev/null 2>&1; then
   # Prefer GNU version, since it respects dircolors.
-  ls() { gls --group-directories-first --color=auto $@ }
+  alias ls='gls --group-directories-first --color=auto'
 elif [[ $OSTYPE = (darwin|freebsd)* ]]; then
   export CLICOLOR="YES" # Equivalent to passing -G to ls.
   export LSCOLORS="exgxdHdHcxaHaHhBhDeaec"
@@ -223,8 +225,8 @@ pu() { pushd $1 > /dev/null 2>&1; dirs -v; }
 po() { popd > /dev/null 2>&1; dirs -v }
 
 # Generic command adaptations.
-grep() { $(whence -p grep) --colour=auto $@ }
-egrep() { $(whence -p egrep) --colour=auto $@ }
+alias grep='grep --colour=auto'
+alias egrep='egrep--colour=auto'
 
 # OS-specific aliases
 if [[ $OSTYPE = darwin* ]]; then
