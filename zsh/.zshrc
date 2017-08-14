@@ -1,4 +1,13 @@
 # =============================================================================
+#                          Pre-Plugin Configuration
+# =============================================================================
+
+# Automagically quote URLs. This obviates the need to quote them manually when
+# pasting or typing URLs.
+autoload -Uz url-quote-magic
+zle -N self-insert url-quote-magic
+
+# =============================================================================
 #                                   Plugins
 # =============================================================================
 
@@ -135,6 +144,17 @@ if zplug check 'zsh-users/zsh-autosuggestions'; then
   # See https://github.com/zsh-users/zsh-autosuggestions/issues/182.
   ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=gray'
 fi
+
+# Overwrite oh-my-zsh's version of `globalias', which makes globbing and
+# on-the-fly shell programming painful. The only difference to the original
+# function definition is that we do not use the `expand-word' widget.
+# See https://github.com/robbyrussell/oh-my-zsh/issues/6123 for discussion.
+globalias() {
+   zle _expand_alias
+   #zle expand-word
+   zle self-insert
+}
+zle -N globalias
 
 # =============================================================================
 #                                   Options
@@ -286,17 +306,6 @@ zstyle ':completion:*:kill:*'   force-list always
 # =============================================================================
 #                                    Other
 # =============================================================================
-
-# Overwrite oh-my-zsh's version of `globalias', which makes globbing and
-# on-the-fly shell programming painful. The only difference to the original
-# function definition is that we do not use the `expand-word' widget.
-# See https://github.com/robbyrussell/oh-my-zsh/issues/6123 for discussion.
-globalias() {
-   zle _expand_alias
-   #zle expand-word
-   zle self-insert
-}
-zle -N globalias
 
 # Utility that prints out lines that are common among $# files.
 intersect() {
