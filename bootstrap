@@ -46,6 +46,7 @@ enter_sudo_mode() {
 # - https://github.com/holman/dotfiles/blob/master/macos/set-defaults.sh
 # - https://github.com/mathiasbynens/dotfiles/blob/master/.macos
 setup_macos() {
+  enter_sudo_mode
   # -- Updates ----------------------------------------------------------------
   # Enable Debug Menu in the Mac App Store
   defaults write com.apple.appstore ShowDebugMenu -bool true
@@ -246,6 +247,7 @@ setup_homebrew() {
 # If you have a message in the `mailq` that doesn't find its way out, try to
 # force a flush via `sendmail -q` while watching the log stream output.
 setup_postfix() {
+  enter_sudo_mode
   # Setup SASL authentication.
   log "enter your Gmail address:"
   IFS= read -r email
@@ -352,7 +354,6 @@ main() {
     usage
     exit 0
   fi
-  enter_sudo_mode
   command=$1
   if [ "$command" = "system" ] || [ -z "$command" ]; then
     case "$(uname -s)" in
