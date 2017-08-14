@@ -172,18 +172,18 @@ HISTFILE=~/.zsh_history
 HISTSIZE=100000
 SAVEHIST=100000
 setopt autocd                   # Allow changing directories without `cd`
-setopt append_history           # Don't overwrite history
+setopt append_history           # Do not overwrite history
 setopt extended_history         # Also record time and duration of commands.
 setopt share_history            # Share history between multiple shells
 setopt hist_expire_dups_first   # Clear duplicates when trimming internal hist.
-setopt hist_find_no_dups        # Don't display duplicates during searches.
+setopt hist_find_no_dups        # Do not display duplicates during searches.
 setopt hist_ignore_dups         # Ignore consecutive duplicates.
 setopt hist_ignore_all_dups     # Remember only one unique copy of the command.
 setopt hist_reduce_blanks       # Remove superfluous blanks.
 setopt hist_save_no_dups        # Omit older commands in favor of newer ones.
 
 # Changing directories
-setopt pushd_ignore_dups        # Don't push copies of the same dir on stack.
+setopt pushd_ignore_dups        # Do not push copies of the same dir on stack.
 setopt pushd_minus              # Reference stack entries with '-'.
 
 setopt extended_glob
@@ -352,5 +352,3 @@ unfunction setup_agents
 if [[ -f ~/.zshrc.local ]]; then
   source ~/.zshrc.local
 fi
-
-# vim: ft=zsh
