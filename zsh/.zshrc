@@ -205,6 +205,8 @@ if which gls > /dev/null 2>&1; then
 elif [[ $OSTYPE = (darwin|freebsd)* ]]; then
   export CLICOLOR="YES" # Equivalent to passing -G to ls.
   export LSCOLORS="exgxdHdHcxaHaHhBhDeaec"
+else
+  alias ls='ls --group-directories-first --color=auto'
 fi
 
 # Directory management
