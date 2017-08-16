@@ -108,7 +108,6 @@ zplug 'plugins/httpie', from:oh-my-zsh, if:'which httpie'
 zplug 'plugins/nanoc', from:oh-my-zsh, if:'which nanoc'
 zplug 'plugins/nmap', from:oh-my-zsh, if:'which nmap'
 zplug 'plugins/tmux', from:oh-my-zsh, if:'which tmux'
-zplug 'plugins/vi-mode', from:oh-my-zsh
 
 #zplug 'b4b4r07/enhancd', use:init.sh
 zplug 'b4b4r07/zsh-vimode-visual', defer:3
@@ -263,6 +262,8 @@ fi
 #                                Key Bindings
 # =============================================================================
 
+bindkey -v
+
 # Common CTRL bindings.
 bindkey '^a' beginning-of-line
 bindkey '^e' end-of-line
@@ -271,6 +272,8 @@ bindkey '^b' backward-word
 bindkey '^k' kill-line
 bindkey '^d' delete-char
 bindkey '^y' accept-and-hold
+bindkey '^?' backward-delete-char
+bindkey '^h' backward-delete-char
 bindkey '^w' backward-kill-word
 bindkey '^u' backward-kill-line
 
