@@ -210,7 +210,7 @@ setup_homebrew() {
   if which brew > /dev/null 2>&1; then
     log "upgrading existing Homebrew packages"
     brew upgrade
-  else
+  elif which ruby > /dev/null 2>&1; then
     log "installing Homebrew"
     case "$(uname -s)" in
       Darwin)
@@ -226,6 +226,9 @@ setup_homebrew() {
         ;;
     esac
     ruby -e "$(curl -fsSL https://raw.githubusercontent.com/$homebrew)"
+  else
+    log "cannot install Homebrew (ruby not found)"
+    exit 1
   fi
   log "installing bundled Homebrew packages"
   brew bundle "--file=$(dirname "$0")/Brewfile" || true
