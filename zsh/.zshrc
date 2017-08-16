@@ -150,7 +150,7 @@ fi
 # See https://github.com/robbyrussell/oh-my-zsh/issues/6123 for discussion.
 globalias() {
   local -a whitelist
-  whitelist=(ls grep egrep)
+  whitelist=(ls grep egrep which)
   if [[ ! $LBUFFER =~ "(^|[;|&])\s*(${(j:|:)whitelist})" ]]; then
     zle _expand_alias
   fi
