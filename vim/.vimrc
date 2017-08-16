@@ -264,7 +264,7 @@ let g:vimtex_view_method = 'skim'
 let g:tmuxline_theme = 'lightline_insert'
 " We use :TmuxlineSnapshot to generate the file .tmux/tmuxline.conf.
 " Thereafter, we need to do a bit of patching to improve the integration of
-" tmxu-mem-cpu-load.
+" tmxu-mem-cpu-load. (https://github.com/edkolev/tmuxline.vim/issues/78)
 let g:tmuxline_preset = {
   \'a'    : '#S',
   \'b'    : '#(whoami)',
