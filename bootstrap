@@ -105,6 +105,8 @@ setup_macos() {
   sudo defaults write /Library/Preferences/com.apple.loginwindow showInputMenu -bool true
   # Disable shadow in screenshots.
   defaults write com.apple.screencapture disable-shadow -bool true
+  # Turn off Dashboard.
+  defaults write com.apple.dashboard mcx-disabled -boolean true
   # Don't automatically rearrange Spaces based on most recent use.
   defaults write com.apple.dock mru-spaces -bool false
   # Automatically hide and show the Dock.
