@@ -138,6 +138,8 @@ if zplug check 'seebi/dircolors-solarized'; then
 fi
 
 if zplug check 'zsh-users/zsh-autosuggestions'; then
+  # Enable asynchronous fetching of suggestions.
+  ZSH_AUTOSUGGEST_USE_ASYNC=1
   # For some reason, the offered completion winds up having the same color as
   # the terminal background color (when using a dark profile). Therefore, we
   # switch to gray.
