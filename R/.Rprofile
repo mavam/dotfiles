@@ -14,7 +14,6 @@ options(repos=structure(c(CRAN="http://cran.cnr.berkeley.edu/")))
       }
     }
     import("devtools")
-    import("setwidth")
     import("colorout", "jalvesaq/colorout")
     import("vimcom", "jalvesaq/VimCom")
   }
