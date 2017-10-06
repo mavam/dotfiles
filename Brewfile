@@ -12,6 +12,7 @@ brew "cmake"
 brew "colordiff"
 brew "coreutils"
 brew "doxygen"
+brew "ffmpeg"
 brew "figlet"
 brew "flatbuffers", args: ["HEAD"]
 brew "gcc"
@@ -58,11 +59,13 @@ brew "vim", args: ["with-client-server", "with-override-system-vi"]
 brew "watch"
 brew "w3m"
 brew "wget"
+brew "youtube-dl"
 brew "zplug", args: ["HEAD"]
 brew "zsh"
 
 cask "flux"
 cask "gitter"
+cask "google-backup-and-sync"
 cask "google-chrome"
 cask "font-inconsolata-nerd-font"
 cask "font-meslo-nerd-font"
