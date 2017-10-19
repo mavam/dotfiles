@@ -363,6 +363,12 @@ map <Leader>f :ClangFormat<CR>
 "                                Filetype Stuff
 " =============================================================================
 
+" Emails. Add trailing whitespace for f=f encoding.
+augroup mail_trailing_whitespace
+  autocmd!
+  autocmd FileType mail setlocal formatoptions+=w
+augroup END
+
 " R stuff
 autocmd BufNewFile,BufRead *.[rRsS] set ft=r
 autocmd BufRead *.R{out,history} set ft=r

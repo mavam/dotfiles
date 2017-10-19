@@ -27,6 +27,7 @@ set delete=yes          # really delete messages when syncing a mailbox
 set edit_headers        # allow editing headers of outgoing messages
 set envelope_from=yes   # use From: header to derive envelope's sender
 set fast_reply          # skip prompt for recipients and subject
+set text_flowed         # use f=f message encoding
 set history=200         # [10] size of the string history buffer
 set include=yes         # always include messages when replying
 set mail_check_stats    # periodically calculate message statistics of mboxes
