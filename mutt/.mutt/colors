@@ -37,7 +37,6 @@ color search     color166    default # highlighted text in pager
 # Sidebar
 color sidebar_divider    color244    default
 color sidebar_indicator  color136    default
-color sidebar_highlight  color234    color136
 color sidebar_new        color33     default
 color sidebar_flagged    color37     default
 color sidebar_spoolfile  color37     default
