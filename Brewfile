@@ -63,6 +63,7 @@ brew "youtube-dl"
 brew "zplug", args: ["HEAD"]
 brew "zsh"
 
+cask "adguard"
 cask "flux"
 cask "gitter"
 cask "google-chrome"
