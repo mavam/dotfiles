@@ -217,18 +217,9 @@ fi
 alias la='ls -a'
 alias ll='ls -l'
 alias lal='ls -al'
-alias d='dirs -v'
-alias 1='pu'
-alias 2='pu -2'
-alias 3='pu -3'
-alias 4='pu -4'
-alias 5='pu -5'
-alias 6='pu -6'
-alias 7='pu -7'
-alias 8='pu -8'
-alias 9='pu -9'
-pu() { pushd $1 > /dev/null 2>&1; dirs -v; }
-po() { popd > /dev/null 2>&1; dirs -v }
+alias dirs='dirs -v'
+push() { pushd $1 > /dev/null 2>&1; dirs -v; }
+pop() { popd > /dev/null 2>&1; dirs -v }
 
 # Generic command adaptations.
 alias grep='grep --colour=auto'
