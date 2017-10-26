@@ -273,6 +273,11 @@ bindkey '^h' backward-delete-char
 bindkey '^w' backward-kill-word
 bindkey '^u' backward-kill-line
 
+# More convenient acceptance of suggested command line.
+if zplug check 'zsh-users/zsh-autosuggestions'; then
+  bindkey '^ ' autosuggest-execute
+fi
+
 # History
 if zplug check 'zsh-users/zsh-history-substring-search'; then
   zmodload zsh/terminfo
