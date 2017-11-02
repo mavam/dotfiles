@@ -105,29 +105,18 @@ macro index       LL  <limit>all<enter>  "Reset disply limit to all mail"
 # Message handling
 #
 
+bind index,pager  f   forward-message
 bind index,pager  s   flag-message  # [s]tar message
+bind index,pager  m   mail
 bind index,pager  P   print-message
+bind index,pager  r   group-reply
+bind index,pager  R   reply
 macro index,pager S   <save-message>=gmail/spam<enter>   "mark message as spam"
 macro index,pager a   <save-message>?<toggle-mailboxes>/ "move message to a mailbox"
 macro index,pager c   <copy-message>?<toggle-mailboxes>/ "copy message to a mailbox"
 macro index,pager I   <tag-pattern>~U<enter><clear-flag>N<clear-flag>* "mark all as read ([i]gnore)"
 macro index,pager xU  <tag-pattern>~U<enter><clear-flag>N<clear-flag>* "mark all read as unread"
 macro index,pager xD  <tag-pattern>~D<enter><clear-flag>D<clear-flag>* "undelete all items"
-
-# This rather complicated macro sequence places the signature on top when
-# forwarding a message and leaves at the bottom for all other commands that
-# compose a message. Unfortunately we also need a second signature with an
-# extra newline at the bottom, the forwarded mail does not contain a newline
-# between the last line of the signature and the following forwarded message.
-# (If my signature did not consist of my first name only, I'd probably simply
-# drop it when forwarding mails.)
-macro index,pager f   "<enter-command>set sig_on_top<enter><enter-command>set signature=~/.mutt/signature.forward<enter><forward-message>" "forward message"
-macro index,pager r   "<enter-command>unset sig_on_top<enter><enter-command>set signature=~/.mutt/signature.english<enter><group-reply>" "group-reply to message"
-macro index,pager ,r  "<enter-command>unset sig_on_top<enter><enter-command>set signature=~/.mutt/signature.german<enter><group-reply>" "group-reply to message"
-macro index,pager R   "<enter-command>unset sig_on_top<enter><enter-command>set signature=~/.mutt/signature.english<enter><reply>" "reply to message"
-macro index,pager ,R  "<enter-command>unset sig_on_top<enter><enter-command>set signature=~/.mutt/signature.german<enter><reply>" "reply to message"
-macro index,pager m   "<enter-command>unset sig_on_top<enter><enter-command>set signature=~/.mutt/signature.english<enter><mail>" "compose message"
-macro index,pager ,m  "<enter-command>unset sig_on_top<enter><enter-command>set signature=~/.mutt/signature.german<enter><mail>" "compose message"
 
 # Gmail delete: if we're not in the trash folder, move the messsage there.
 # Otherwise do nothing.
