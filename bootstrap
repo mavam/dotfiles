@@ -247,28 +247,55 @@ setup_homebrew() {
 # Since macOS Sierra, there are no more logfiles and debugging requires
 # invoking this command instead:
 #
-#   sudo log stream --predicate '(process == "smtpd") || (process == "smtp")'
+#   sudo log stream --predicate '(process == "smtpd") || (process == "smtp")' --debug
 #
 # If you have a message in the `mailq` that doesn't find its way out, try to
 # force a flush via `sendmail -q` while watching the log stream output.
 setup_postfix() {
   enter_sudo_mode
-  # Setup SASL authentication.
-  log "enter your Gmail address:"
-  IFS= read -r email
-  log "enter your Gmail password:"
-  IFS= read -rs password
-  if ! sudo test -d /etc/postfix/sasl; then
-    sudo mkdir -m 600 /etc/postfix/sasl
+  more=y
+  while [ "$more" = "y" ]; do
+    log "enter your Gmail or G Suite email address:"
+    IFS= read -r email
+    log "enter your password:"
+    IFS= read -rs password
+    if [ -z "$default" ]; then
+      log "make this account the default relay? [y/N]"
+      IFS= read -r default
+      if [ "$default" = "y" ]; then
+        default="[smtp.gmail.com]:587 $email:$password"
+      fi
+    fi
+    # Sender mapping: because we may have multiple accounts, we specify a mail
+    # server per sender address (which is always the same for GMail).
+    sender_relay="$email [smtp.gmail.com]:587"
+    echo "$sender_relay" | sudo tee -a /etc/postfix/sender_relay > /dev/null
+    # Add a SASL password entry.
+    if ! sudo test -d /etc/postfix/sasl; then
+      sudo mkdir -m 600 /etc/postfix/sasl
+    else
+      sudo chmod -R 600 /etc/postfix/sasl
+    fi
+    # Password:
+    sasl_passwd="$email $email:$password"
+    echo "$sasl_passwd" | sudo tee -a /etc/postfix/sasl/sasl_passwd > /dev/null
+    # Continue with another account.
+    log "add another account? [y/N]"
+    IFS= read -r more
+  done
+  # Setup default relay host.
+  if [ -z "$default"]; then
+    log "missing default account"
+    exit 1;
   else
-    sudo chmod -R 600 /etc/postfix/sasl
+    echo "\n$default" | sudo tee -a /etc/postfix/sasl/sasl_passwd > /dev/null
   fi
-  sasl_passwd="[smtp.gmail.com]:587 $email:$password"
-  echo "$sasl_passwd" | sudo tee /etc/postfix/sasl/sasl_passwd > /dev/null
+  # Adjust file permissions.
   sudo chown root:wheel /etc/postfix/sasl/sasl_passwd
   sudo chmod 600 /etc/postfix/sasl/sasl_passwd
-  sudo postmap /etc/postfix/sasl/sasl_passwd
-  sudo postmap /etc/postfix/generic
+  sudo postmap /etc/postfix/sender_relay \
+               /etc/postfix/sasl/sasl_passwd \
+               /etc/postfix/generic
   # Setup SMTP relay.
   set +e
   read -d '' main_cf_gmail << EOT
@@ -288,6 +315,11 @@ smtp_sasl_auth_enable = yes
 smtp_sasl_password_maps = hash:/etc/postfix/sasl/sasl_passwd
 smtp_sasl_security_options = noanonymous
 smtp_sasl_mechanism_filter = AUTH LOGIN
+
+# Support multiple accounts via sender-dependent authentication.
+# See also: https://gist.github.com/zmwangx/2c56aa32be68daf48c2f
+smtp_sender_dependent_authentication = yes
+sender_dependent_relayhost_maps = hash:/etc/postfix/sender_relay
 
 # Use Homebrew's openssl certificates.
 smtp_tls_CApath = /usr/local/etc/openssl/certs
