@@ -29,6 +29,9 @@ macro pager       \cu "<pipe-entry>urlview<enter>"                   "extract li
 macro pager       ,a  "<pipe-message>lbdb-fetchaddr<enter>"          "Store address details in lbdb"
 macro pager       ,p  "<pipe-entry>gpg --keyserver search.keyserver.net --recv-key <enter>"  "Get PGP key"
 
+macro generic     ,k  "<enter-command>source ~/.mutt/colors-dark<enter>"  "Load colors for dark terminal profile"
+macro generic     ,l  "<enter-command>source ~/.mutt/colors-light<enter>" "Load colors for light terminal profile"
+
 # Folding
 bind index        z    collapse-thread
 bind index        Z    collapse-all
