@@ -256,6 +256,27 @@ function! LightlineFugitive()
   return ''
 endfunction
 
+" Adapt dark/light colorscheme when switching the background.
+" See https://github.com/itchyny/lightline.vim/issues/178 for details.
+augroup LightlineColorscheme
+  autocmd!
+  autocmd ColorScheme * call s:lightline_update()
+augroup END
+function! s:lightline_update()
+  if !exists('g:loaded_lightline')
+    return
+  endif
+  try
+    if g:colors_name =~# 'solarized'
+      runtime autoload/lightline/colorscheme/solarized.vim
+      call lightline#init()
+      call lightline#colorscheme()
+      call lightline#update()
+    endif
+  catch
+  endtry
+endfunction
+
 " -- fzf ---------------------------------------------------------------------
 
 " Mapping selecting mappings.
