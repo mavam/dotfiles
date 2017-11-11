@@ -299,18 +299,18 @@ let g:vimtex_view_method = 'skim'
 
 " -- Tmuxline ----------------------------------------------------------------
 
-let g:tmuxline_theme = 'lightline_insert'
-" We use :TmuxlineSnapshot to generate the file .tmux/tmuxline.conf.
+let g:tmuxline_theme = 'lightline'
+" We use :TmuxlineSnapshot to generate .tmux/tmuxline-(light|dark).conf.
 " Thereafter, we need to do a bit of patching to improve the integration of
 " tmxu-mem-cpu-load. (https://github.com/edkolev/tmuxline.vim/issues/78)
 let g:tmuxline_preset = {
-  \'a'    : '#S',
-  \'b'    : '#(whoami)',
-  \'c'    : ['%Y-%m-%d', '%H:%M'],
-  \'win'  : ['#I', '#W'],
-  \'cwin' : ['#I', '#W'],
-  \'x'    : '#(tmux-mem-cpu-load -q -g 5 -m 2 -i 2)',
-  \'y'    : '#h'}
+  \'a'       : '#S',
+  \'x'       : ' %Y-%m-%d  %H:%M',
+  \'y'       : '#(tmux-mem-cpu-load -q -g 5 -m 2 -i 2)',
+  \'z'       : ' #h',
+  \'win'     : ['#I', '#W'],
+  \'cwin'    : ['#I', '#W'],
+  \'options' : {'status-justify' : 'left'}}
 
 " -- Solarized colors --------------------------------------------------------
 
