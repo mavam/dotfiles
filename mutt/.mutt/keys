@@ -8,10 +8,9 @@ bind generic      G    last-entry
 bind index,pager  gf   change-folder
 macro index,pager gi  "<change-folder>!<enter>" "go to INBOX"
 macro index,pager gp  <change-folder>!!<enter> "go to previous mailbox"
-macro index,pager ga  <change-folder>=gmail/archive<enter> "go to ARCHIVE"
-macro index,pager gs  <change-folder>=gmail/sent<enter> "go to SENT"
-macro index,pager gS  <change-folder>=gmail/spam<enter> "go to SPAM"
-macro index,pager gt  <change-folder>=gmail/trash<enter> "go to TRASH"
+macro index,pager gs  <change-folder>=[Gmail]/Sent\ Mail<enter> "go to SENT"
+macro index,pager gS  <change-folder>=[Gmail]/Spam<enter> "go to SPAM"
+macro index,pager gt  <change-folder>=[Gmail]/Trash<enter> "go to TRASH"
 bind index,pager  gd  recall-message    # [g]o to [d]rafts
 macro index,pager gl  <change-folder>?<toggle-mailboxes>/ "go to LABEL"
 macro index,pager gv  "<pipe-message>vim +':set ft=mail' - <enter>"  "view the message in vim"
@@ -22,7 +21,7 @@ macro generic     g/  "<enter-command>set my_search = \`~/.mutt/scripts/mutt-mai
 
 bind generic      ,   noop
 macro generic     ,,  "<enter-command>source ~/.muttrc<enter>"       "Reload .muttrc"
-macro generic     ,o  "<shell-escape>offlineimap -oq -k mbnames:enabled=no -f INBOX<enter>"  "run offlineimap to sync INBOX"
+macro generic     ,o  "<shell-escape>offlineimap -oq -f INBOX<enter>"  "run offlineimap to sync INBOX"
 macro generic     ,O  "<shell-escape>offlineimap -o<enter>"          "run offlineimap to sync all mail"
 macro pager       ,u  "<pipe-entry>urlview<enter>"                   "extract links with urlview"
 macro pager       \cu "<pipe-entry>urlview<enter>"                   "extract links with urlview"
@@ -116,7 +115,7 @@ bind index,pager  m   mail
 bind index,pager  P   print-message
 bind index,pager  r   group-reply
 bind index,pager  R   reply
-macro index,pager S   <save-message>=gmail/spam<enter>   "mark message as spam"
+macro index,pager S   <save-message>=[Gmail]/Spam<enter>   "mark message as spam"
 macro index,pager a   <save-message>?<toggle-mailboxes>/ "move message to a mailbox"
 macro index,pager c   <copy-message>?<toggle-mailboxes>/ "copy message to a mailbox"
 macro index,pager I   <tag-pattern>~U<enter><clear-flag>N<clear-flag>* "mark all as read ([i]gnore)"
@@ -125,8 +124,8 @@ macro index,pager xD  <tag-pattern>~D<enter><clear-flag>D<clear-flag>* "undelete
 
 # Gmail delete: if we're not in the trash folder, move the messsage there.
 # Otherwise do nothing.
-folder-hook .              'macro index,pager d <save-message>=gmail/trash<enter> "move message to trash"'
-folder-hook "=gmail/trash" 'bind index,pager d noop'
+folder-hook .              'macro index,pager d <save-message>=[Gmail]/Trash<enter> "move message to trash"'
+folder-hook "=[Gmail/Trash]" 'bind index,pager d noop'
 
 # GMail archive: remove INBOX label, but only when we're in the INBOX.
 #folder-hook .        'bind index,pager  y noop'
