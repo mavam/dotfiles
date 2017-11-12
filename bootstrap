@@ -101,6 +101,8 @@ setup_macos() {
   defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
   # Disable auto-correct.
   defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
+  # Accelerated playback when adjusting the window size (Cocoa applications).
+  defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
   # Show language menu in the top right corner of the boot screen.
   sudo defaults write /Library/Preferences/com.apple.loginwindow showInputMenu -bool true
   # Disable shadow in screenshots.
@@ -113,6 +115,10 @@ setup_macos() {
   defaults write com.apple.dock autohide -bool true
   # Remove the auto-hiding Dock delay
   defaults write com.apple.dock autohide-delay -float 0
+  # Disable animations when you open an application from the Dock.
+  defaults write com.apple.dock launchanim -bool false
+  # Disable animations when opening and closing windows.
+  defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
   # -- Keyboard ---------------------------------------------------------------
   # Set a really fast key repeat.
   defaults write NSGlobalDomain KeyRepeat -int 1
@@ -157,6 +163,8 @@ setup_macos() {
     Privileges -bool true
   # Allow text selection in Quick Look.
   defaults write com.apple.finder QLEnableTextSelection -bool true
+  # Disable animations when opening a Quick Look window.
+  defaults write -g QLPanelAnimationDuration -float 0
   # Do not warn before emptying the trash.
   defaults write com.apple.finder WarnOnEmptyTrash -bool false
   # Do not warn when moving files out of iCloud.
