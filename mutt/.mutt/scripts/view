@@ -1,10 +1,16 @@
 #!/bin/sh
 #
-# Shell script to view an attachment. Very similar to the popular script
-# view_attachment.sh, but simpler.
+# Shell script to view an attachment.
+#
+# Very similar to the popular script view_attachment.sh, but simpler.
+
+# Decodes a QP-encoded filename.
+decode() {
+   python -c "import sys,email.header;print email.header.decode_header(sys.stdin.read())[0][0]"
+}
 
 dir="/tmp/mutt"
-filename=$(basename $1)
+filename=$(echo $(basename $1) | decode)
 type=$2
 app=$3
 
@@ -17,26 +23,25 @@ if [ -z "$type" ]; then
   type=$(file -bi $1 | sed -e 's/^[^\/]*\///' -e 's/;.*$//')
 fi
 
-# If the type is '-' then we don't want to mess with type.
-# Otherwise we are rebuilding the name.  Either from the
-# type that was passed in or from the type we discerned.
-if [ "$type" = "-" ]; then
+# If the type is '-' then we don't want to mess with type. Otherwise we are
+# rebuilding the name.  Either from the given type or from the type we
+# determined.
+if [ "$type" = "-" ] || [ "$type" = "regular file" ]; then
   file="$filename"
 else
-  stem=$(echo $filename | cut -d . -f 1)
-  file="$stem.$type"
+  file="$(echo $filename | cut -d . -f 1).$type"
 fi
 
 file="$dir/$file"
 
-# Copy the file to our new spot so mutt can't delete it
-# before the app has a chance to view it.
-cp $1 "$file"
+# Copy the file to our new spot so mutt can't delete it before the app has a
+# chance to view it.
+cp "$1" "$file"
 
-# If there's no 'open with' then we can let preview do it's thing.
-# Otherwise we've been told what to use.  So do an open -a.
 if [ -z "$app" ]; then
+  # If there's no 'open with' then we can let preview do it's thing.
   open "$file"
 else
+  # Otherwise we've been told what to use.
   open -a "$app" "$file"
 fi
