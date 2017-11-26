@@ -91,16 +91,6 @@ setup_macos() {
   sudo defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo HostName
   # Restart automatically if the computer freezes.
   sudo systemsetup -setrestartfreeze on
-  # Disable automatic capitalization.
-  defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
-  # Disable smart dashes.
-  defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
-  # Disable automatic period.
-  defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false
-  # Disable smart quotes.
-  defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
-  # Disable auto-correct.
-  defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
   # Accelerated playback when adjusting the window size (Cocoa applications).
   defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
   # Show language menu in the top right corner of the boot screen.
@@ -125,6 +115,16 @@ setup_macos() {
   defaults write NSGlobalDomain InitialKeyRepeat -int 15
   # Disable press-and-hold for keys in favor of key repeat.
   defaults write -g ApplePressAndHoldEnabled -bool false
+  # Disable automatic capitalization.
+  defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
+  # Disable smart dashes.
+  defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
+  # Disable automatic period.
+  defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false
+  # Disable smart quotes.
+  defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
+  # Disable auto-correct.
+  defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
   # -- Finder -----------------------------------------------------------------
   # Show the ~/Library folder.
   chflags nohidden ~/Library
