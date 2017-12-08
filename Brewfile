@@ -88,6 +88,7 @@ cask "skim"
 cask "skype"
 cask "slack"
 cask "suspicious-package"
+cask "whatsapp"
 cask "zoomus"
 
 mas "Keynote", id: 409183694
