@@ -117,7 +117,7 @@ set sidebar_folder_indent=yes
 set sidebar_short_path=yes
 set sidebar_visible=yes
 set sidebar_width=28
-set sidebar_format="%B%* %!%N"
+set sidebar_format="%B%* %N"
 
 ignore *
 unignore From: Sender: Reply-To:
