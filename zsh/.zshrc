@@ -333,6 +333,35 @@ iterm-profile() {
   export ITERM_PROFILE="$1"
 }
 
+# Convenience function to update system applications and user packages.
+update() {
+  # sudoe once
+  if ! sudo -n true 2> /dev/null; then
+    sudo -v
+    while true; do
+      sudo -n true
+      sleep 60
+      kill -0 "$$" || exit
+    done 2>/dev/null &
+  fi
+  # System
+  sudo softwareupdate -i -a
+  # Homebrew
+  brew upgrade
+  brew cleanup
+  # Ruby
+  sudo gem update --system
+  sudo gem update
+  sudo gem cleanup
+  # npm
+  npm install npm -g
+  npm update -g
+  # Shell plugin management
+  zplug update
+  .tmux/plugins/tpm/bin/update_plugins all
+  vim +PlugUpgrade +PlugUpdate +PlugCLean! +qa
+}
+
 # =============================================================================
 #                                   Startup
 # =============================================================================
