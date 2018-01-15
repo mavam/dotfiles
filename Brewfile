@@ -75,7 +75,6 @@ cask "font-sourcecodepro-nerd-font"
 cask "iterm2"
 cask "key-codes"
 cask "mactex"
-cask "omnifocus"
 cask "omnigraffle"
 cask "omniplan"
 cask "qlcolorcode"
@@ -95,3 +94,4 @@ cask "zoomus"
 mas "Keynote", id: 409183694
 mas "Numbers", id: 409203825
 mas "Pages", id: 409201541
+mas "2Do", id: 477670270
