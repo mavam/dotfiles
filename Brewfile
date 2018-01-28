@@ -7,6 +7,7 @@ tap "homebrew/services"
 
 cask "1password"
 cask "adguard"
+cask "cheatsheet"
 cask "dropbox"
 cask "flux"
 cask "gitter"
