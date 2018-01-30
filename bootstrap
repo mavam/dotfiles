@@ -284,6 +284,9 @@ setup_postfix() {
 # Gmail configuration
 # -------------------
 
+# Avoid startup failures.
+compatibility_level = 2
+
 # Google refuses email from IPv6 addresses without reverse name.
 inet_protocols = ipv4
 
