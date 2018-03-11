@@ -340,7 +340,7 @@ setup_tmux() {
     ~/.tmux/plugins/tpm/bin/install_plugins
   else
     log "updating Tmux plugins"
-    ~/.tmux/plugins/tpm/bin/update_plugins
+    ~/.tmux/plugins/tpm/bin/update_plugins all
   fi
 }
 
