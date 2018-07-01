@@ -161,6 +161,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'altercation/vim-colors-solarized'
 Plug 'benmills/vimux'
 Plug 'christoomey/vim-tmux-navigator'
+Plug 'dhruvasagar/vim-zoom'
 Plug 'edkolev/tmuxline.vim'
 Plug 'godlygeek/tabular'
 Plug 'itchyny/lightline.vim'
