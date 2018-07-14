@@ -353,6 +353,8 @@ setup_vim() {
     vim -E -s +PlugUpgrade +qa
   fi
   vim +PlugUpdate +PlugCLean! +qa
+  log "installing vim-anywhere"
+  curl -fsSL https://raw.github.com/cknadler/vim-anywhere/master/install | bash
 }
 
 setup_zsh() {
