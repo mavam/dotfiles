@@ -1,3 +1,7 @@
 *.sw?
+mutt/.mutt/account*
+mutt/.mutt/aliases
+mutt/.mutt/hooks
 mutt/.mutt/mailboxes
+mutt/.mutt/lists
 tmux/.tmux/plugins
