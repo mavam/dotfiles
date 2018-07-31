@@ -318,6 +318,7 @@ let g:tmuxline_preset = {
 
 " -- colors ------------------------------------------------------------------
 
+set termguicolors
 colorscheme gruvbox
 
 " -- Tmux Navigator ----------------------------------------------------------
