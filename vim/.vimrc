@@ -158,7 +158,6 @@ if empty(glob('~/.vim/autoload/plug.vim'))
 endif
 
 call plug#begin('~/.vim/plugged')
-Plug 'altercation/vim-colors-solarized'
 Plug 'benmills/vimux'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'dhruvasagar/vim-zoom'
@@ -168,10 +167,12 @@ Plug 'itchyny/lightline.vim'
 Plug 'junegunn/fzf' | Plug 'junegunn/fzf.vim'
 Plug 'junegunn/vim-peekaboo'
 Plug 'lervag/vimtex'
+Plug 'morhetz/gruvbox'
 Plug 'rhysd/vim-clang-format'
 Plug 'rstacruz/sparkup'
 Plug 'ryanoasis/vim-devicons'
 Plug 'sheerun/vim-polyglot'
+Plug 'shinchu/lightline-gruvbox.vim'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-endwise'
@@ -192,7 +193,7 @@ call plug#end()
 
 " Check :h lightline-problem-9 for font issues.
 let g:lightline = {
-      \ 'colorscheme': 'solarized',
+      \ 'colorscheme': 'gruvbox',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'fugitive', 'readonly', 'filename', 'modified' ] ]
@@ -270,8 +271,8 @@ function! s:lightline_update()
     return
   endif
   try
-    if g:colors_name =~# 'solarized'
-      runtime autoload/lightline/colorscheme/solarized.vim
+    if g:colors_name =~# 'gruvbox'
+      runtime autoload/lightline/colorscheme/gruvbox.vim
       call lightline#init()
       call lightline#colorscheme()
       call lightline#update()
@@ -315,18 +316,10 @@ let g:tmuxline_preset = {
   \'cwin'    : ['#I', '#W'],
   \'options' : {'status-justify' : 'left'}}
 
-" -- Solarized colors --------------------------------------------------------
+" -- colors ------------------------------------------------------------------
 
-let g:solarized_menu = 0
-let g:solarized_termtrans = 1
-let g:solarized_contrast = 'high'
-let g:solarized_hitrail = 1
-
-if !has('gui_running')
-  let g:solarized_termcolors = 256
-end
-
-colorscheme solarized
+set termguicolors
+colorscheme gruvbox
 
 " -- Tmux Navigator ----------------------------------------------------------
 
