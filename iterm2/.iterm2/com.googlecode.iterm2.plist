@@ -1595,13 +1595,13 @@
 				<key>Alpha Component</key>
 				<real>1</real>
 				<key>Blue Component</key>
-				<real>1</real>
+				<real>0.21176470588235294</real>
 				<key>Color Space</key>
-				<string>Calibrated</string>
+				<string>sRGB</string>
 				<key>Green Component</key>
-				<real>1</real>
+				<real>0.2196078431372549</real>
 				<key>Red Component</key>
-				<real>1</real>
+				<real>0.23529411764705882</real>
 			</dict>
 			<key>Bound Hosts</key>
 			<array/>
