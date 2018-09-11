@@ -10,6 +10,9 @@
   recursive = "!sh -c 'for i in . `git submodule foreach -q --recursive pwd`; do cd $i && git $@; done' -"
   recursive-sh = "!sh -c 'for i in . `git submodule foreach -q --recursive pwd`; do cd $i && $@; done' -"
 
+[branch]
+ sort = -committerdate
+
 [color]
 	diff = auto
 	status = auto
