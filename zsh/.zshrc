@@ -153,13 +153,22 @@ if zplug check 'zsh-users/zsh-autosuggestions'; then
 fi
 
 # Our custom version of oh-my-zsh's globalias plugin. Unlike the OMZ version,
-# we do not use the `expand-word' widget and prevent a few whitelisted commands
-# from being expanded.
+# we do not use the `expand-word' widget and only expand a few whitelisted
+# aliases.
 # See https://github.com/robbyrussell/oh-my-zsh/issues/6123 for discussion.
 globalias() {
-  local -a whitelist
-  whitelist=(ls grep egrep tmux which)
-  if [[ ! $LBUFFER =~ "(^|[;|&])\s*(${(j:|:)whitelist})" ]]; then
+  # FIXME: the whitelist pattern should technically only be computed once, but
+  # since it's cheap, we keep it local for now.
+  local -a whitelist candidates
+  whitelist=(ls git tmux)
+  pattern="^(${(j:|:)whitelist})"
+  for k v in ${(kv)aliases}; do
+    if [[ $v =~ $pattern ]]; then
+      candidates+=($k)
+    fi
+  done
+  pattern="(${(j:|:)candidates})"
+  if [[ $LBUFFER =~ "(^|[;|&])\s*$pattern" ]]; then
     zle _expand_alias
   fi
   zle self-insert
