@@ -90,8 +90,9 @@ brew "tmux-mem-cpu-load"
 brew "tree"
 brew "urlview"
 brew "vim", args: ["with-client-server", "with-override-system-vi"]
-brew "watch"
 brew "w3m"
+brew "watch"
+brew "wdiff"
 brew "wget"
 brew "youtube-dl"
 brew "zplug", args: ["HEAD"]
