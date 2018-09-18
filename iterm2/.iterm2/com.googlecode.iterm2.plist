@@ -1118,7 +1118,7 @@
 		</dict>
 	</dict>
 	<key>Default Bookmark Guid</key>
-	<string>18317FC4-D578-4FF1-B126-ADB19EAF87E1</string>
+	<string>FDB42797-F62F-4B89-AD0E-2DA5399C9BC5</string>
 	<key>GlobalKeyMap</key>
 	<dict>
 		<key>0x19-0x60000</key>
@@ -1140,28 +1140,28 @@
 			<key>Action</key>
 			<integer>37</integer>
 			<key>Text</key>
-			<string>FDB42797-F62F-4B89-AD0E-2DA5399C9BC5</string>
+			<string>18317FC4-D578-4FF1-B126-ADB19EAF87E1</string>
 		</dict>
 		<key>0x6c-0x180000</key>
 		<dict>
 			<key>Action</key>
 			<integer>37</integer>
 			<key>Text</key>
-			<string>18317FC4-D578-4FF1-B126-ADB19EAF87E1</string>
+			<string>FDB42797-F62F-4B89-AD0E-2DA5399C9BC5</string>
 		</dict>
 		<key>0x6e-0x180000</key>
 		<dict>
 			<key>Action</key>
 			<integer>26</integer>
 			<key>Text</key>
-			<string>FDB42797-F62F-4B89-AD0E-2DA5399C9BC5</string>
+			<string>18317FC4-D578-4FF1-B126-ADB19EAF87E1</string>
 		</dict>
 		<key>0x74-0x180000</key>
 		<dict>
 			<key>Action</key>
 			<integer>27</integer>
 			<key>Text</key>
-			<string>FDB42797-F62F-4B89-AD0E-2DA5399C9BC5</string>
+			<string>18317FC4-D578-4FF1-B126-ADB19EAF87E1</string>
 		</dict>
 		<key>0x9-0x40000</key>
 		<dict>
@@ -1308,11 +1308,11 @@
 	<key>NSWindow Frame NSFontPanel</key>
 	<string>223 426 683 317 0 0 1440 877 </string>
 	<key>NSWindow Frame SUUpdateAlert</key>
-	<string>410 364 620 392 0 0 1440 878 </string>
+	<string>410 363 620 392 0 0 1440 877 </string>
 	<key>NSWindow Frame SharedPreferences</key>
-	<string>290 364 796 473 0 0 1440 878 </string>
+	<string>267 261 796 486 0 0 1440 877 </string>
 	<key>NSWindow Frame iTerm Window 0</key>
-	<string>162 216 1067 559 0 0 1440 877 </string>
+	<string>15 453 570 377 0 0 1440 878 </string>
 	<key>NSWindow Frame iTerm Window 1</key>
 	<string>853 34 570 377 0 0 1440 877 </string>
 	<key>NSWindow Frame iTerm Window 10</key>
@@ -4172,7 +4172,7 @@
 	<key>SUHasLaunchedBefore</key>
 	<true/>
 	<key>SULastCheckTime</key>
-	<date>2018-07-17T00:01:43Z</date>
+	<date>2018-09-17T08:53:31Z</date>
 	<key>SUSendProfileInfo</key>
 	<false/>
 	<key>Secure Input</key>
@@ -4192,7 +4192,7 @@
 	<key>findRegex_iTerm</key>
 	<false/>
 	<key>iTerm Version</key>
-	<string>3.1.7</string>
+	<string>3.2.0</string>
 	<key>kCPKSelectionViewPreferredModeKey</key>
 	<integer>0</integer>
 	<key>kCPKSelectionViewShowHSBTextFieldsKey</key>
