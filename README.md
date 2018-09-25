@@ -1,9 +1,6 @@
-                           __      __  _____ __
-                      ____/ /___  / /_/ __(_) /__  _____
-                     / __  / __ \/ __/ /_/ / / _ \/ ___/
-                    / /_/ / /_/ / /_/ __/ / /  __(__  )
-                    \__,_/\____/\__/_/ /_/_/\___/____/
-
+<p align="center">
+  <img width="600" alt="zsh" src="https://user-images.githubusercontent.com/53797/46028848-ee273b80-c0f1-11e8-9e32-a750cd84692b.png">
+</p>
 
 Proper dotfiles are the very heart of an efficient working environment.
 
