@@ -235,8 +235,9 @@ push() { pushd $1 > /dev/null 2>&1; dirs -v; }
 pop() { popd > /dev/null 2>&1; dirs -v }
 
 # Generic command adaptations.
-alias grep='grep --colour=auto'
-alias egrep='egrep--colour=auto'
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
 
 # OS-specific aliases
 if [[ $OSTYPE = darwin* ]]; then
