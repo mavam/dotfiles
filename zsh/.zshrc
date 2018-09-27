@@ -161,14 +161,13 @@ globalias() {
   # since it's cheap, we keep it local for now.
   local -a whitelist candidates
   whitelist=(ls git tmux)
-  pattern="^(${(j:|:)whitelist})"
+  local pattern="^(${(j:|:)whitelist})"
   for k v in ${(kv)aliases}; do
     if [[ $v =~ $pattern ]]; then
       candidates+=($k)
     fi
   done
-  pattern="(${(j:|:)candidates})"
-  if [[ $LBUFFER =~ "(^|[;|&])\s*$pattern" ]]; then
+  if [[ $LBUFFER =~ "(^|[;|&])\s*(${(j:|:)candidates})\s*($|[;|&])" ]]; then
     zle _expand_alias
   fi
   zle self-insert
