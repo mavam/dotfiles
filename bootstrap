@@ -107,6 +107,8 @@ setup_macos() {
   defaults write com.apple.dock autohide-delay -float 0
   # Disable animations when you open an application from the Dock.
   defaults write com.apple.dock launchanim -bool false
+  # Do not show recent applications in Dock.
+  defaults write com.apple.dock show-recents -bool false
   # Disable animations when opening and closing windows.
   defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
   # -- Keyboard ---------------------------------------------------------------
