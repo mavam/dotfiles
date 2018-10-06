@@ -305,6 +305,13 @@ fi
 # Do not require a space when attempting to tab-complete.
 bindkey '^i' expand-or-complete-prefix
 
+# FZF
+if zplug check 'junegunn/fzf'; then
+  export FZF_DEFAULT_OPTS='--height 30%
+      --color fg:223,bg:235,hl:208,fg+:229,bg+:237,hl+:167,border:237
+      --color info:246,prompt:214,pointer:214,marker:142,spinner:246,header:214'
+fi
+
 # =============================================================================
 #                                 Completions
 # =============================================================================
