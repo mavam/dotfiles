@@ -210,7 +210,7 @@ set pgp_list_secring_command="gpg --no-verbose --batch --with-colons --list-secr
 
 # Colors
 source ~/.mutt/colors
-source `if [ "$ITERM_PROFILE" = "light" ]; then echo $HOME/.mutt/colors-light; elif [ "$ITERM_PROFILE" = "dark" ]; then echo $HOME/.mutt/colors-dark; else echo /dev/null; fi;`
+source `if echo $ITERM_PROFILE | grep -q light; then echo $HOME/.mutt/colors-light; elif echo $ITERM_PROFILE | grep -q dark; then echo $HOME/.mutt/colors-dark; else echo /dev/null; fi;`
 
 # Conditional sourcing based on user-provided files
 set alias_file = `FILE=$HOME/.mutt/aliases; if [ ! -f $FILE ]; then FILE=/dev/null; fi ;echo "$FILE"`
