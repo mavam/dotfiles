@@ -214,6 +214,10 @@ setopt extended_glob
 #                                   Aliases
 # =============================================================================
 
+# Swift editing and file display.
+alias e="$EDITOR"
+alias v="$VISUAL"
+
 # Directory coloring
 if which gls > /dev/null 2>&1; then
   # Prefer GNU version, since it respects dircolors.
@@ -265,7 +269,6 @@ if [[ $OSTYPE = darwin* ]]; then
     fi
   }
 fi
-
 
 # =============================================================================
 #                                Key Bindings
