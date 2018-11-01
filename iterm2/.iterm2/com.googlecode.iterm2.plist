@@ -1140,14 +1140,14 @@
 			<key>Action</key>
 			<integer>37</integer>
 			<key>Text</key>
-			<string>18317FC4-D578-4FF1-B126-ADB19EAF87E1</string>
+			<string>FDB42797-F62F-4B89-AD0E-2DA5399C9BC5</string>
 		</dict>
 		<key>0x6c-0x180000</key>
 		<dict>
 			<key>Action</key>
 			<integer>37</integer>
 			<key>Text</key>
-			<string>FDB42797-F62F-4B89-AD0E-2DA5399C9BC5</string>
+			<string>18317FC4-D578-4FF1-B126-ADB19EAF87E1</string>
 		</dict>
 		<key>0x6e-0x180000</key>
 		<dict>
@@ -4172,7 +4172,7 @@
 	<key>SUHasLaunchedBefore</key>
 	<true/>
 	<key>SULastCheckTime</key>
-	<date>2018-09-17T08:53:31Z</date>
+	<date>2018-10-30T21:39:15Z</date>
 	<key>SUSendProfileInfo</key>
 	<false/>
 	<key>Secure Input</key>
@@ -4192,7 +4192,7 @@
 	<key>findRegex_iTerm</key>
 	<false/>
 	<key>iTerm Version</key>
-	<string>3.2.0</string>
+	<string>3.2.5</string>
 	<key>kCPKSelectionViewPreferredModeKey</key>
 	<integer>0</integer>
 	<key>kCPKSelectionViewShowHSBTextFieldsKey</key>
