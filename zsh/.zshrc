@@ -92,8 +92,7 @@ ZSH_HIGHLIGHT_STYLES[bracket-level-4]='fg=yellow,bold'
 
 if [[ ! -d "${ZPLUG_HOME}" ]]; then
   if [[ ! -d ~/.zplug ]]; then
-    installer='raw.githubusercontent.com/zplug/installer/master/installer.zsh'
-    curl -sL --proto-redir -all,https "$installer" | zsh
+    git clone https://github.com/zplug/zplug ~/.zplug
   fi
   export ZPLUG_HOME=~/.zplug
 fi
