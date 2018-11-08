@@ -381,70 +381,76 @@ map <Leader>f :ClangFormat<CR>
 "                                Filetype Stuff
 " =============================================================================
 
-" Emails. Add trailing whitespace for f=f encoding.
-augroup mail_trailing_whitespace
-  autocmd!
-  autocmd FileType mail setlocal formatoptions+=w
-augroup END
-
-" R stuff
-autocmd BufNewFile,BufRead *.[rRsS] set ft=r
-autocmd BufRead *.R{out,history} set ft=r
-
-autocmd BufRead,BufNewFile *.dox      set filetype=doxygen
-autocmd BufRead,BufNewFile *.mail     set filetype=mail
-autocmd BufRead,BufNewFile *.bro      set filetype=bro
-autocmd BufRead,BufNewFile *.pac2     set filetype=ruby
-autocmd BufRead,BufNewFile *.ll       set filetype=llvm
-autocmd BufRead,BufNewFile *.kramdown set filetype=markdown
-autocmd BufRead,BufNewFile Portfile   set filetype=tcl
-
 " Respect (Br|D)oxygen comments.
-autocmd FileType c,cpp set comments-=://
-autocmd FileType c,cpp set comments+=:///
-autocmd FileType c,cpp set comments+=://
-autocmd FileType bro set comments-=:#
-autocmd FileType bro set comments+=:##
-autocmd FileType bro set comments+=:#
-autocmd FileType bro set noexpandtab cino='>1s,f1s,{1s'
-autocmd Filetype mail set sw=4 ts=4 tw=72
-autocmd Filetype tex set iskeyword+=:
-
-" Bro-specific coding style.
-augroup BroProject
-  autocmd FileType bro set noexpandtab cino='>1s,f1s,{1s'
-  au BufRead,BufEnter ~/code/bro/**/*{cc,h} set noexpandtab cino='>1s,f1s,{1s'
+augroup filetype_tex
+  autocmd!
+  if has("spell")
+    autocmd Filetype tex  set spell
+  endif
+  autocmd Filetype tex set iskeyword+=:
 augroup END
 
-if has("spell")
-  autocmd BufRead,BufNewFile *.dox  set spell
-  autocmd Filetype mail             set spell
-  autocmd Filetype tex              set spell
-endif
+augroup filetype_cpp
+  autocmd!
+  " Doxygen
+  autocmd FileType c,cpp set comments-=://
+  autocmd FileType c,cpp set comments+=:///
+  autocmd FileType c,cpp set comments+=://
+augroup END
+
+" Bro
+augroup filetype_bro
+  autocmd!
+  autocmd BufRead,BufNewFile *.bro set filetype=bro
+  autocmd BufRead,BufNewFile *.pac2 set filetype=ruby
+  autocmd FileType bro set cino='>1s,f1s,{1s'
+  autocmd FileType bro set comments-=:#
+  autocmd FileType bro set comments+=:##
+  autocmd FileType bro set comments+=:#
+augroup END
+
+" Emails
+augroup filetype_mail
+  autocmd!
+  if has("spell")
+    autocmd Filetype mail set spell
+  endif
+  autocmd BufRead,BufNewFile *.mail set filetype=mail
+  autocmd FileType mail setlocal sw=4 ts=4 tw=72
+  autocmd FileType mail setlocal formatoptions+=w " Use f=f encoding.
+  autocmd FileType mail highlight TrailingWhitespace cterm=underline ctermfg=red
+  autocmd FileType mail match TrailingWhitespace /\s\+$/
+augroup END
+
+" R
+augroup filetype_r
+  autocmd!
+  autocmd BufNewFile,BufRead *.[rRsS] set ft=r
+  autocmd BufRead *.R{out,history} set ft=r
+augroup END
 
 " Transparent editing of gpg encrypted files.
-" By Wouter Hanegraaff <wouter@blub.net>
-augroup encrypted
-    autocmd!
-    " First make sure nothing is written to ~/.viminfo while editing
-    " an encrypted file.
-    autocmd BufReadPre,FileReadPre      *.gpg set viminfo=
-    " We don't want a swap file, as it writes unencrypted data to disk
-    autocmd BufReadPre,FileReadPre      *.gpg set noswapfile
-    " Switch to binary mode to read the encrypted file
-    autocmd BufReadPre,FileReadPre      *.gpg set bin
-    autocmd BufReadPre,FileReadPre      *.gpg let ch_save = &ch|set ch=2
-    autocmd BufReadPost,FileReadPost    *.gpg '[,']!gpg --decrypt 2> /dev/null
-    " Switch to normal mode for editing
-    autocmd BufReadPost,FileReadPost    *.gpg set nobin
-    autocmd BufReadPost,FileReadPost    *.gpg let &ch = ch_save|unlet ch_save
-    autocmd BufReadPost,FileReadPost    *.gpg execute ":doautocmd BufReadPost " . expand("%:r")
+augroup filetype_gpg
+  autocmd!
+  " First make sure nothing is written to ~/.viminfo while editing
+  " an encrypted file.
+  autocmd BufReadPre,FileReadPre      *.gpg set viminfo=
+  " We don't want a swap file, as it writes unencrypted data to disk
+  autocmd BufReadPre,FileReadPre      *.gpg set noswapfile
+  " Switch to binary mode to read the encrypted file
+  autocmd BufReadPre,FileReadPre      *.gpg set bin
+  autocmd BufReadPre,FileReadPre      *.gpg let ch_save = &ch|set ch=2
+  autocmd BufReadPost,FileReadPost    *.gpg '[,']!gpg --decrypt 2> /dev/null
+  " Switch to normal mode for editing
+  autocmd BufReadPost,FileReadPost    *.gpg set nobin
+  autocmd BufReadPost,FileReadPost    *.gpg let &ch = ch_save|unlet ch_save
+  autocmd BufReadPost,FileReadPost    *.gpg execute ":doautocmd BufReadPost " . expand("%:r")
 
-    " Convert all text to encrypted text before writing
-    autocmd BufWritePre,FileWritePre    *.gpg '[,']!gpg --default-recipient-self -ae 2>/dev/null
-    " Undo the encryption so we are back in the normal text, directly
-    " after the file has been written.
-    autocmd BufWritePost,FileWritePost  *.gpg u
+  " Convert all text to encrypted text before writing
+  autocmd BufWritePre,FileWritePre    *.gpg '[,']!gpg --default-recipient-self -ae 2>/dev/null
+  " Undo the encryption so we are back in the normal text, directly
+  " after the file has been written.
+  autocmd BufWritePost,FileWritePost  *.gpg u
 augroup END
 
 " vim: set fenc=utf-8 sw=2 sts=2 foldmethod=marker :
