@@ -162,7 +162,9 @@ globalias() {
   whitelist=(ls git tmux)
   local pattern="^(${(j:|:)whitelist})"
   for k v in ${(kv)aliases}; do
-    if [[ $v =~ $pattern ]]; then
+    # We have a candidate unless the alias is an alias that begins with itself,
+    # e.g., ls='ls --some-option'.
+    if [[ $v =~ $pattern && ! $v =~ ^$k ]]; then
       candidates+=($k)
     fi
   done
