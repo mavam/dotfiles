@@ -36,7 +36,6 @@
 	tool = vimdiff
 
 [push]
-	default = simple
   followTags = true
 
 [rerere]
