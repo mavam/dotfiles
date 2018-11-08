@@ -120,7 +120,7 @@ zplug "junegunn/fzf", use:"shell/key-bindings.zsh"
 zplug 'knu/zsh-manydots-magic', use:manydots-magic, defer:3
 zplug 'seebi/dircolors-solarized', ignore:"*", as:plugin
 zplug 'Tarrasch/zsh-bd'
-zplug 'zsh-users/zsh-autosuggestions', at:develop
+zplug 'zsh-users/zsh-autosuggestions'
 zplug 'zsh-users/zsh-completions', defer:2
 zplug 'zsh-users/zsh-history-substring-search'
 zplug 'zsh-users/zsh-syntax-highlighting', defer:2
