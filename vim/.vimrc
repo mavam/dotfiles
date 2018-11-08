@@ -319,7 +319,10 @@ let g:tmuxline_preset = {
 
 " -- colors ------------------------------------------------------------------
 
-set termguicolors
+if has("termguicolors")
+  set termguicolors
+endif
+
 colorscheme gruvbox
 
 " -- Tmux Navigator ----------------------------------------------------------
