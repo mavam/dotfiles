@@ -218,6 +218,11 @@ setup_macos() {
   defaults write com.googlecode.iterm2.plist LoadPrefsFromCustomFolder -bool true
 }
 
+setup_keyboard_layout() {
+  enter_sudo_mode
+  cp mavam.keylayout /Library/Keyboard\ Layouts/
+}
+
 setup_homebrew() {
   if which brew > /dev/null 2>&1; then
     log "upgrading existing Homebrew packages"
@@ -383,6 +388,8 @@ main() {
         osascript -e 'tell application "System Preferences" to quit'
         log "adjusting macOS defaults"
         setup_macos
+        log "installing custom keyboard layout"
+        setup_keyboard_layout
         log "performing software update"
         sudo softwareupdate -i -a > /dev/null 2>&1
         log "installing XCode comand line developer tools"
