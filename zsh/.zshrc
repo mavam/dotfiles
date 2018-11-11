@@ -374,9 +374,9 @@ update() {
   brew upgrade
   brew cleanup
   # Ruby
-  sudo gem update --system
-  sudo gem update
-  sudo gem cleanup
+  gem update --system
+  gem update
+  gem cleanup
   # npm
   npm install npm -g
   npm update -g
