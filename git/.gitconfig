@@ -33,7 +33,11 @@
 	required = true
 
 [merge]
-	tool = vimdiff
+	tool = meld
+
+[mergetool "meld"]
+  cmd = meld \"$LOCAL\" \"$MERGED\" \"$REMOTE\"
+  trustExitCode = false
 
 [push]
   followTags = true
@@ -42,5 +46,5 @@
 	enabled = true
 
 [user]
-	name = Matthias Vallentin
-	email = vallentin@icir.org
+	name = Daniel Bernal
+	email = dbernal@serviberza.com

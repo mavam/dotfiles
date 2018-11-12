@@ -14,7 +14,7 @@ Usage
 
 Begin with cloning this repository somewhere:
 
-    git clone git@github.com:mavam/dotfiles.git ~/.dotfiles
+    git clone https://github.com/danielbernalo/dotfiles.git ~/.dotfiles
     cd .dotfiles
 
 Dotfile Management

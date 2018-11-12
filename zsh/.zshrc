@@ -27,8 +27,8 @@ POWERLEVEL9K_MULTILINE_FIRST_PROMPT_PREFIX="%F{blue}\u256D\u2500%f"
 POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX="%F{blue}\u2570\uf460%f "
 POWERLEVEL9K_STATUS_OK=false
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(root_indicator dir_joined
-                                   dir_writable_joined)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status command_execution_time vcs
+                                   dir_writable_joined vcs virtualenv)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status command_execution_time
                                     background_jobs_joined time_joined
                                     user_joined os_icon_joined host_joined)
 POWERLEVEL9K_VCS_CLEAN_BACKGROUND="clear"
@@ -174,8 +174,8 @@ globalias() {
   zle self-insert
 }
 zle -N globalias
-bindkey -M emacs ' ' globalias
-bindkey -M viins ' ' globalias
+#bindkey -M emacs ' ' globalias
+#bindkey -M viins ' ' globalias
 bindkey -M isearch ' ' magic-space # normal space during searches
 
 
