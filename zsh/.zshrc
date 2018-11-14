@@ -93,10 +93,20 @@ ZSH_HIGHLIGHT_STYLES[bracket-level-4]='fg=yellow,bold'
 if [[ ! -d "${ZPLUG_HOME}" ]]; then
   if [[ ! -d ~/.zplug ]]; then
     git clone https://github.com/zplug/zplug ~/.zplug
+    # If we can't get zplug, it'll be a very sobering shell experience. To at
+    # least complete the sourcing of this file, we'll define an always-false
+    # returning zplug function.
+    if [[ $? != 0 ]]; then
+      function zplug() {
+        return 1
+      }
+    fi
   fi
   export ZPLUG_HOME=~/.zplug
 fi
-source "${ZPLUG_HOME}/init.zsh"
+if [[ -d "${ZPLUG_HOME}" ]]; then
+  source "${ZPLUG_HOME}/init.zsh"
+fi
 
 zplug 'plugins/bundler', from:oh-my-zsh, if:'which bundle'
 zplug 'plugins/colored-man-pages', from:oh-my-zsh
