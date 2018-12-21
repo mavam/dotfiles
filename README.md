@@ -12,6 +12,38 @@ runninng on a new machine.
 Usage
 =====
 
+Synopsis
+--------
+
+These are the quick start instructions to get up and running:
+
+    git clone git@github.com:mavam/dotfiles.git ~/.dotfiles
+    cd .dotfiles
+    ./bootstrap dotfiles
+
+Make zsh your login shell, install Vim plugins and
+[vim-anywhere](https://github.com/cknadler/vim-anywhere), and setup tmux
+plugins:
+
+    ./bootstrap zsh vim tmux
+
+On a Mac, you may also consider improving the system experience and installing
+[Homebrew][homebrew]:
+
+    ./bootstrap system homebrew
+
+I use [iTerm2](https://iterm2.com) as terminal emulator. Add the light and dark
+[gruvbox](https://github.com/morhetz/gruvbox-contrib) by loading [my
+settings](iterm2/.iterm2/com.googlecode.iterm2.plist) via *Settings* ->
+*General* -> *Browse*. This requires the
+[Meslo](https://github.com/andreberg/Meslo-Font) from [Nerd
+Fonts](https://github.com/ryanoasis/nerd-fonts) to be installed, which is
+readily available [via
+Homebrew](https://github.com/ryanoasis/nerd-fonts#option-4-homebrew-fonts).
+
+Local Setup
+-----------
+
 Begin with cloning this repository somewhere:
 
     git clone git@github.com:mavam/dotfiles.git ~/.dotfiles
