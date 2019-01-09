@@ -361,6 +361,7 @@ map <Leader>v<Space> :call VimuxZoomInspectRunner()<CR>
 
 " Build via make.
 nmap <Leader>b :Make<CR>
+nmap <Leader>B :Make!<CR>
 
 " -- Nvim-R ------------------------------------------------------------------
 
