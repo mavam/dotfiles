@@ -37,6 +37,10 @@ case $OSTYPE in
       path=( /opt/local/bin /opt/local/sbin $path )
       manpath=( /opt/local/share/man $manpath )
     fi
+    # Common Homebrew paths
+    if [[ -d /usr/local/opt/ruby/bin ]]; then
+      path=(/usr/local/opt/ruby/bin $path)
+    fi
     ;;
 esac
 
