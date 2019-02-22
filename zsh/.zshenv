@@ -30,6 +30,9 @@ export GPG_TTY=$(tty);
 
 # OS-specific environment.
 case $OSTYPE in
+  linux*)
+    [[ -d ~/.linuxbrew ]] && eval $(~/.linuxbrew/bin/brew shellenv)
+    ;;
   darwin*)
     # Ignore reading of /etc/profile, which messes with $PATH. We re-enable
     # reading other system-wide zsh files in ~/.zprofile. See
