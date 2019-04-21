@@ -1,6 +1,1 @@
-# Color defintions for a dark terminal theme.
-
-color sidebar_highlight  color234    color136
-color indicator          color234    color136
-
-# vim: ft=muttrc
+/Users/Daniel/.dotfiles/mutt/.mutt/colors-dark

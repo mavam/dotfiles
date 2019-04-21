@@ -1,8 +1,1 @@
-alternative_order text/enriched text/plain text image/*
-
-auto_view text/html
-auto_view text/enriched
-
-mime_lookup application/octet-stream
-
-# vim:ft=muttrc
+/Users/Daniel/.dotfiles/mutt/.mutt/autoview

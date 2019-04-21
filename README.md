@@ -1,6 +1,5 @@
 <p align="center">
-  <img width="600" alt="zsh" src="https://user-images.githubusercontent.com/53797/46028848-ee273b80-c0f1-11e8-9e32-a750cd84692b.png">
-</p>
+<img width="680" alt="dotfiles_danielbernalo" src="https://user-images.githubusercontent.com/6456015/56466248-7dc16e00-63e5-11e9-8246-ab412a02f810.png"></p>
 
 Proper dotfiles are the very heart of an efficient working environment.
 
