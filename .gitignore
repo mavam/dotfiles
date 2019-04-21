@@ -5,3 +5,4 @@ mutt/.mutt/hooks
 mutt/.mutt/mailboxes
 mutt/.mutt/lists
 tmux/.tmux/plugins
+.history

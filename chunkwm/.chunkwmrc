@@ -34,9 +34,9 @@ chunkc core::hotload 1
 # NOTE: the following are config variables for the chunkwm-tiling plugin.
 #
 
-chunkc set global_desktop_mode           bsp
-chunkc set 2_desktop_mode                monocle
-chunkc set 5_desktop_mode                float
+chunkc set global_desktop_mode           float
+chunkc set 2_desktop_mode                bsp
+
 
 # chunkc set 1_desktop_tree                ~/.chunkwm_layouts/test_1
 

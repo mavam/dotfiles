@@ -4,6 +4,7 @@ tap "homebrew/bundle"
 tap "homebrew/core"
 tap "homebrew/dupes"
 tap "homebrew/services"
+tap "crisidev/homebrew-chunkwm"
 
 #cask "1password"
 #cask "adguard"
@@ -105,5 +106,7 @@ brew "wget"
 brew "youtube-dl"
 brew "zplug", args: ["HEAD"]
 brew "zsh"
+brew "chunkwm"
+brew "skhd"
 
 mas "2Do", id: 477670270
