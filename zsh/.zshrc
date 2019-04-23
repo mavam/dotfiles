@@ -174,7 +174,7 @@ globalias() {
   zle self-insert
 }
 zle -N globalias
-#bindkey -M emacs ' ' globalias
+bindkey -M emacs ' ' globalias
 #bindkey -M viins ' ' globalias
 bindkey -M isearch ' ' magic-space # normal space during searches
 
@@ -275,7 +275,7 @@ fi
 #                                Key Bindings
 # =============================================================================
 
-bindkey -v
+bindkey -e
 
 # Common CTRL bindings.
 bindkey '^a' beginning-of-line
