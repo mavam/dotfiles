@@ -4,7 +4,7 @@ tap "homebrew/bundle"
 tap "homebrew/core"
 tap "homebrew/dupes"
 tap "homebrew/services"
-tap "crisidev/homebrew-chunkwm"
+tap "koekeishiya/formulae"
 
 #cask "1password"
 #cask "adguard"
