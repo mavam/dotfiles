@@ -1,0 +1,23 @@
+#!/bin/bash  
+
+startme() {
+  brew services restart skhd
+  brew services restart chunkwm
+
+}
+
+stopme() {
+brew services stop skhd
+brew services stop chunkwm
+}
+
+case "$1" in
+    start)   startme ;;
+    stop)    stopme ;;
+    restart) startme ;;
+    *) echo "usage: $0 stop|restart" >&2
+       echo "default restart" >&2
+       startme
+       ;;
+esac
+

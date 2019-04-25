@@ -1,27 +1,11 @@
 #!/bin/bash
 
 #
-# NOTE: specify the absolutepath of the file to use for logging.
-#       'stdout' and 'stderr' are valid values.
-#
-
-# chunkc core::log_file ~/.chunkwm_log
-chunkc core::log_file stdout
-
-#
-# NOTE: specify the desired level of logging.
-#
-#       - none, debug, warn, error
-#
-
-chunkc core::log_level warn
-
-#
 # NOTE: specify the absolutepath to the directory to use when
 #       loading a plugin. '~' expansion is supported.
 #
 
-chunkc core::plugin_dir ~/.chunkwm_plugins
+chunkc core::plugin_dir /usr/local/opt/chunkwm/share/chunkwm/plugins
 
 #
 # NOTE: if enabled, chunkwm will monitor the specified plugin_dir
@@ -34,17 +18,25 @@ chunkc core::hotload 1
 # NOTE: the following are config variables for the chunkwm-tiling plugin.
 #
 
-chunkc set global_desktop_mode           float
-chunkc set 2_desktop_mode                bsp
+chunkc set global_desktop_mode           bsp
+chunkc set 2_desktop_mode                monocle
 
+chunkc set global_desktop_offset_top     10
+chunkc set global_desktop_offset_bottom  10
+chunkc set global_desktop_offset_left    5
+chunkc set global_desktop_offset_right   5
+chunkc set global_desktop_offset_gap     2 
 
-# chunkc set 1_desktop_tree                ~/.chunkwm_layouts/test_1
+# chunkc set 1_desktop_offset_top          0
+# chunkc set 1_desktop_offset_bottom       0
+# chunkc set 1_desktop_offset_left         0
+# chunkc set 1_desktop_offset_right        0
+# chunkc set 1_desktop_offset_gap          0
 
-chunkc set global_desktop_offset_top     45
-chunkc set global_desktop_offset_bottom  45
-chunkc set global_desktop_offset_left    20
-chunkc set global_desktop_offset_right   20
-chunkc set global_desktop_offset_gap     20
+# chunkc set 3_desktop_offset_top          0
+# chunkc set 3_desktop_offset_bottom       0
+# chunkc set 3_desktop_offset_left         0
+# chunkc set 3_desktop_offset_right        0
 
 chunkc set desktop_padding_step_size     10.0
 chunkc set desktop_gap_step_size         5.0
@@ -59,11 +51,15 @@ chunkc set window_focus_cycle            monitor
 
 chunkc set mouse_follows_focus           intrinsic
 chunkc set window_float_next             0
+chunkc set window_float_center           1
 chunkc set window_region_locked          1
 
-chunkc set mouse_move_window             \"cmd shift 1\"
-chunkc set mouse_resize_window           \"ctrl shift 1\"
-chunkc set mouse_motion_interval         35
+#
+# NOTE: shell commands require escaped quotes
+#       to pass value containing a whitespace.
+#
+# chunkc set mouse_modifier              \"cmd shift\"
+chunkc set mouse_modifier                fn
 
 chunkc set preselect_border_color        0xffd75f5f
 chunkc set preselect_border_width        5
@@ -74,47 +70,37 @@ chunkc set preselect_border_radius       0
 #       (https://github.com/koekeishiya/chwm-sa)
 #
 
-chunkc set window_float_topmost          1
-chunkc set window_fade_inactive          1
-chunkc set window_fade_alpha             0.30
+chunkc set window_float_topmost          0
+chunkc set window_fade_inactive          0
+chunkc set window_fade_alpha             0.95
 chunkc set window_fade_duration          0.25
-chunkc set window_use_cgs_move           1
+chunkc set window_use_cgs_move           0
 
 #
 # NOTE: the following are config variables for the chunkwm-border plugin.
 #
 
-chunkc set focused_border_color          0xff775759
-chunkc set focused_border_width          2
+chunkc set focused_border_color          0xff0f6288
+chunkc set focused_border_width          5
 chunkc set focused_border_radius         0
 chunkc set focused_border_skip_floating  0
-chunkc set focused_border_skip_monocle   1
-
-#
-# NOTE: the following are config variables for the chunkwm-ffm plugin.
-#
-
-# chunkc set ffm_bypass_modifier           \"cmd shift\"
-# chunkc set ffm_standby_on_float          0
 
 #
 # NOTE: specify plugins to load when chunkwm starts.
 #       if chunkc plugin_dir is not set, the absolutepath is necessary.
 #
 
-chunkc core::load border.so
-#chunkc core::load ffm.so
-chunkc core::load purify.so
+#chunkc core::load border.so
 chunkc core::load tiling.so
+#chunkc core::load ffm.so
 
 #
-# NOTE: sample rules for the tiling plugin
+# NOTE: shell commands require escaped quotes
+#       to pass value containing a whitespace.
 #
 
-
-chunkc tiling::rule --owner Finder --name Copy --state float &
-chunkc tiling::rule --owner \"App Store\" --state float &
-
-chunkc core::unload ffm.so
+chunkc tiling::rule --owner Finder --name Copy --state float
+chunkc tiling::rule --owner \"App Store\" --state float
+chunkc tiling::rule --owner Spotify --name Copy --state float
 
 chunkwm --load-sa
