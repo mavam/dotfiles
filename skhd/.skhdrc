@@ -104,13 +104,13 @@ fn + shift + cmd - k : chunkc tiling::window --warp north
 fn + shift + cmd - l : chunkc tiling::window --warp east
 
 # make floating window fill screen
-fn + shift + alt - up     : chunkc tiling::window --grid-layout 1:1:0:0:1:1
+#fn + shift + alt - up     : chunkc tiling::window --grid-layout 1:1:0:0:1:1
 
 # make floating window fill left-half of screen
-fn + shift + alt - left   : chunkc tiling::window --grid-layout 1:2:0:0:1:1
+#fn + shift + alt - left   : chunkc tiling::window --grid-layout 1:2:0:0:1:1
 
 # make floating window fill right-half of screen
-fn + shift + alt - right  : chunkc tiling::window --grid-layout 1:2:1:0:1:1
+#fn + shift + alt - right  : chunkc tiling::window --grid-layout 1:2:1:0:1:1
 
 # fast focus desktop
 fn + cmd + alt - x : chunkc tiling::desktop --focus $(chunkc get _last_active_desktop)
@@ -223,4 +223,4 @@ fn + shift + alt - t : chunkc set window_float_next 1
 fn + ctrl + alt - a : chunkc tiling::desktop --layout bsp
 fn + ctrl + alt - s : chunkc tiling::desktop --layout monocle
 fn + ctrl + alt - d : chunkc tiling::desktop --layout float
-
+UserHandler.kt
