@@ -30,7 +30,7 @@ POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(root_indicator dir_joined
                                    dir_writable_joined vcs virtualenv)
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status command_execution_time
                                     background_jobs_joined time_joined
-                                    user_joined os_icon_joined host_joined)
+                                    user_joined)
 POWERLEVEL9K_VCS_CLEAN_BACKGROUND="clear"
 POWERLEVEL9K_VCS_CLEAN_FOREGROUND="green"
 POWERLEVEL9K_VCS_MODIFIED_BACKGROUND="clear"
@@ -51,7 +51,7 @@ POWERLEVEL9K_STATUS_OK_BACKGROUND="clear"
 POWERLEVEL9K_STATUS_OK_FOREGROUND="green"
 POWERLEVEL9K_STATUS_ERROR_BACKGROUND="clear"
 POWERLEVEL9K_STATUS_ERROR_FOREGROUND="red"
-POWERLEVEL9K_TIME_FORMAT="%D{\uf073 %b %d \uf017 %H:%M}" #  Jun 15  09:32
+#POWERLEVEL9K_TIME_FORMAT="%D{\uf073 %b %d \uf017 %H:%M}" #  Jun 15  09:32
 POWERLEVEL9K_TIME_FOREGROUND="blue"
 POWERLEVEL9K_TIME_BACKGROUND="clear"
 POWERLEVEL9K_TIME_FOREGROUND="blue"
@@ -98,28 +98,14 @@ if [[ ! -d "${ZPLUG_HOME}" ]]; then
 fi
 source "${ZPLUG_HOME}/init.zsh"
 
-zplug 'plugins/bundler', from:oh-my-zsh, if:'which bundle'
 zplug 'plugins/colored-man-pages', from:oh-my-zsh
-zplug 'plugins/extract', from:oh-my-zsh
-zplug 'plugins/fancy-ctrl-z', from:oh-my-zsh
 zplug 'plugins/git', from:oh-my-zsh, if:'which git'
-#zplug 'plugins/gpg-agent', from:oh-my-zsh, if:'which gpg-agent'
-zplug 'plugins/httpie', from:oh-my-zsh, if:'which httpie'
-zplug 'plugins/nanoc', from:oh-my-zsh, if:'which nanoc'
 zplug 'plugins/nmap', from:oh-my-zsh, if:'which nmap'
 zplug 'plugins/tmux', from:oh-my-zsh, if:'which tmux'
-
-#zplug 'b4b4r07/enhancd', use:init.sh
-zplug 'b4b4r07/zsh-vimode-visual', defer:3
-# Using branch 'next' introduces a color regression, so we fall back to master
-# ofr now. See https://github.com/bhilburn/powerlevel9k/pull/703 for details.
-#zplug 'bhilburn/powerlevel9k', use:powerlevel9k.zsh-theme, at:next
 zplug 'bhilburn/powerlevel9k', use:powerlevel9k.zsh-theme
 zplug "junegunn/fzf-bin", as:command, from:gh-r, rename-to:"fzf", frozen:1
 zplug "junegunn/fzf", use:"shell/key-bindings.zsh"
-zplug 'knu/zsh-manydots-magic', use:manydots-magic, defer:3
-zplug 'seebi/dircolors-solarized', ignore:"*", as:plugin
-zplug 'Tarrasch/zsh-bd'
+#zplug 'seebi/dircolors-solarized', ignore:"*", as:plugin
 zplug 'zsh-users/zsh-autosuggestions'
 zplug 'zsh-users/zsh-completions', defer:2
 zplug 'zsh-users/zsh-history-substring-search'
@@ -130,16 +116,6 @@ if ! zplug check; then
 fi
 
 zplug load
-
-if zplug check 'seebi/dircolors-solarized'; then
-  if which gdircolors > /dev/null 2>&1; then
-    alias dircolors='gdircolors'
-  fi
-  if which dircolors > /dev/null 2>&1; then
-    scheme='dircolors.256dark'
-    eval $(dircolors $ZPLUG_HOME/repos/seebi/dircolors-solarized/$scheme)
-  fi
-fi
 
 if zplug check 'zsh-users/zsh-autosuggestions'; then
   # Enable asynchronous fetching of suggestions.
@@ -176,7 +152,7 @@ globalias() {
 zle -N globalias
 bindkey -M emacs ' ' globalias
 #bindkey -M viins ' ' globalias
-bindkey -M isearch ' ' magic-space # normal space during searches
+#bindkey -M isearch ' ' magic-space # normal space during searches
 
 
 # =============================================================================
@@ -275,8 +251,10 @@ fi
 #                                Key Bindings
 # =============================================================================
 
-bindkey -e
+#bindkey -e
 
+# Grep anywhere with ^G
+bindkey -s '^G' ' | grep '
 # Common CTRL bindings.
 bindkey '^a' beginning-of-line
 bindkey '^e' end-of-line
@@ -284,11 +262,6 @@ bindkey '^f' forward-word
 bindkey '^b' backward-word
 bindkey '^k' kill-line
 bindkey '^d' delete-char
-bindkey '^y' accept-and-hold
-bindkey '^?' backward-delete-char
-bindkey '^h' backward-delete-char
-bindkey '^w' backward-kill-word
-bindkey '^u' backward-kill-line
 
 # More convenient acceptance of suggested command line.
 if zplug check 'zsh-users/zsh-autosuggestions'; then
