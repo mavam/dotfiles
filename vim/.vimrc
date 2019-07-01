@@ -30,7 +30,9 @@ endif
 " =============================================================================
 "                                   Styling
 " =============================================================================
-
+set number
+set linespace=3
+set cursorline
 set hlsearch            " Highlight search results.
 set showbreak=…         " Highlight non-wrapped lines.
 set showcmd             " Display incomplete command in bottom right corner.
@@ -168,12 +170,10 @@ Plug 'junegunn/fzf' | Plug 'junegunn/fzf.vim'
 Plug 'junegunn/vim-peekaboo'
 Plug 'lervag/vimtex'
 Plug 'mephux/bro.vim'
-Plug 'morhetz/gruvbox'
 Plug 'rhysd/vim-clang-format'
 Plug 'rstacruz/sparkup'
 Plug 'ryanoasis/vim-devicons'
 Plug 'sheerun/vim-polyglot'
-Plug 'shinchu/lightline-gruvbox.vim'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-endwise'
@@ -191,25 +191,6 @@ Plug 'jalvesaq/Nvim-R'
 call plug#end()
 
 " -- Lightline ---------------------------------------------------------------
-
-" Check :h lightline-problem-9 for font issues.
-let g:lightline = {
-      \ 'colorscheme': 'gruvbox',
-      \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'fugitive', 'readonly', 'filename', 'modified' ] ]
-      \ },
-      \ 'component_function': {
-      \   'fugitive': 'LightlineFugitive',
-      \   'readonly': 'LightlineReadonly',
-      \   'modified': 'LightlineModified',
-      \   'filetype': 'IconizedFiletype',
-      \   'fileformat': 'IconizedFileformat'
-      \ },
-      \ 'separator': { 'left': "\ue0b0", 'right': "\ue0b2" },
-      \ 'subseparator': { 'left': "\ue0b1", 'right': "\ue0b3" }
-      \ }
-
 
 function! IconizedFiletype()
   if winwidth(0) > 70
@@ -271,15 +252,6 @@ function! s:lightline_update()
   if !exists('g:loaded_lightline')
     return
   endif
-  try
-    if g:colors_name =~# 'gruvbox'
-      runtime autoload/lightline/colorscheme/gruvbox.vim
-      call lightline#init()
-      call lightline#colorscheme()
-      call lightline#update()
-    endif
-  catch
-  endtry
 endfunction
 
 " -- fzf ---------------------------------------------------------------------
@@ -319,11 +291,8 @@ let g:tmuxline_preset = {
 
 " -- colors ------------------------------------------------------------------
 
-if has("termguicolors")
-  set termguicolors
-endif
 
-colorscheme gruvbox
+colorscheme overflow-contrast
 
 " -- Tmux Navigator ----------------------------------------------------------
 

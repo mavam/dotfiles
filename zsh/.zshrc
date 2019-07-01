@@ -4,8 +4,8 @@
 
 # Automagically quote URLs. This obviates the need to quote them manually when
 # pasting or typing URLs.
-autoload -Uz url-quote-magic
-zle -N self-insert url-quote-magic
+#autoload -Uz url-quote-magic
+#zle -N self-insert url-quote-magic
 
 # =============================================================================
 #                                   Plugins
@@ -105,11 +105,13 @@ zplug 'plugins/tmux', from:oh-my-zsh, if:'which tmux'
 zplug 'bhilburn/powerlevel9k', use:powerlevel9k.zsh-theme
 zplug "junegunn/fzf-bin", as:command, from:gh-r, rename-to:"fzf", frozen:1
 zplug "junegunn/fzf", use:"shell/key-bindings.zsh"
+zplug "lib/completion", from:oh-my-zsh
+
 #zplug 'seebi/dircolors-solarized', ignore:"*", as:plugin
 zplug 'zsh-users/zsh-autosuggestions'
 zplug 'zsh-users/zsh-completions', defer:2
 zplug 'zsh-users/zsh-history-substring-search'
-zplug 'zsh-users/zsh-syntax-highlighting', defer:2
+zplug 'zsh-users/zsh-syntax-highlighting', defer:3
 
 if ! zplug check; then
   zplug install
@@ -131,26 +133,9 @@ fi
 # we do not use the `expand-word' widget and only expand a few whitelisted
 # aliases.
 # See https://github.com/robbyrussell/oh-my-zsh/issues/6123 for discussion.
-globalias() {
-  # FIXME: the whitelist pattern should technically only be computed once, but
-  # since it's cheap, we keep it local for now.
-  local -a whitelist candidates
-  whitelist=(ls git tmux)
-  local pattern="^(${(j:|:)whitelist})"
-  for k v in ${(kv)aliases}; do
-    # We have a candidate unless the alias is an alias that begins with itself,
-    # e.g., ls='ls --some-option'.
-    if [[ $v =~ $pattern && ! $v =~ ^$k ]]; then
-      candidates+=($k)
-    fi
-  done
-  if [[ $LBUFFER =~ "(^|[;|&])\s*(${(j:|:)candidates})\s*($|[;|&])" ]]; then
-    zle _expand_alias
-  fi
-  zle self-insert
-}
-zle -N globalias
-bindkey -M emacs ' ' globalias
+
+#zle -N globalias
+#bindkey -M emacs ' ' globalias
 #bindkey -M viins ' ' globalias
 #bindkey -M isearch ' ' magic-space # normal space during searches
 
@@ -251,7 +236,7 @@ fi
 #                                Key Bindings
 # =============================================================================
 
-#bindkey -e
+bindkey -e
 
 # Grep anywhere with ^G
 bindkey -s '^G' ' | grep '
@@ -262,6 +247,7 @@ bindkey '^f' forward-word
 bindkey '^b' backward-word
 bindkey '^k' kill-line
 bindkey '^d' delete-char
+
 
 # More convenient acceptance of suggested command line.
 if zplug check 'zsh-users/zsh-autosuggestions'; then
@@ -275,8 +261,8 @@ if zplug check 'zsh-users/zsh-history-substring-search'; then
   bindkey "$terminfo[kcud1]" history-substring-search-down
   bindkey '^p' history-substring-search-up
   bindkey '^n' history-substring-search-down
-  bindkey -M vicmd 'k' history-substring-search-up
-  bindkey -M vicmd 'j' history-substring-search-down
+  #bindkey -M vicmd 'k' history-substring-search-up
+  #bindkey -M vicmd 'j' history-substring-search-down
 fi
 
 # Do not require a space when attempting to tab-complete.
@@ -284,9 +270,7 @@ bindkey '^i' expand-or-complete-prefix
 
 # FZF
 if zplug check 'junegunn/fzf'; then
-  export FZF_DEFAULT_OPTS='--height 30%
-      --color fg:223,bg:235,hl:208,fg+:229,bg+:237,hl+:167,border:237
-      --color info:246,prompt:214,pointer:214,marker:142,spinner:246,header:214'
+  export FZF_DEFAULT_OPTS='--height 30%'
 fi
 
 # =============================================================================
