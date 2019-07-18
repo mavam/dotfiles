@@ -49,7 +49,7 @@ setup_macos() {
   enter_sudo_mode
   # -- Updates ----------------------------------------------------------------
   # Enable Debug Menu in the Mac App Store
-  defaults write com.apple.appstore ShowDebugMenu -bool true
+  #defaults write com.apple.appstore ShowDebugMenu -bool true
   # Enable the automatic update check
   defaults write com.apple.SoftwareUpdate AutomaticCheckEnabled -bool true
   # Check for software updates daily, not just once per week.
@@ -59,20 +59,20 @@ setup_macos() {
   # Install System data files & security updates.
   defaults write com.apple.SoftwareUpdate CriticalUpdateInstall -int 1
   # Automatically download apps purchased on other Macs.
-  defaults write com.apple.SoftwareUpdate ConfigDataInstall -int 1
+  #defaults write com.apple.SoftwareUpdate ConfigDataInstall -int 1
   # Turn on app auto-update.
   defaults write com.apple.commerce AutoUpdate -bool true
   # Allow the App Store to reboot machine on macOS updates.
-  defaults write com.apple.commerce AutoUpdateRestartRequired -bool true
+  #idefaults write com.apple.commerce AutoUpdateRestartRequired -bool true
   # -- System -----------------------------------------------------------------
   # Disable the sound effects on boot.
   sudo nvram SystemAudioVolume=" "
   # Disable volume key feedback.
   defaults write NSGlobalDomain com.apple.sound.beep.feedback -float 0
   # Disable the over-the-top focus ring animation.
-  defaults write NSGlobalDomain NSUseAnimatedFocusRing -bool false
+  #defaults write NSGlobalDomain NSUseAnimatedFocusRing -bool false
   # Increase window resize speed for Cocoa applications.
-  defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
+  #defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
   # Expand save panel by default.
   defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
   defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode2 -bool true
@@ -92,25 +92,25 @@ setup_macos() {
   # Restart automatically if the computer freezes.
   sudo systemsetup -setrestartfreeze on
   # Accelerated playback when adjusting the window size (Cocoa applications).
-  defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
+  #defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
   # Show language menu in the top right corner of the boot screen.
   sudo defaults write /Library/Preferences/com.apple.loginwindow showInputMenu -bool true
   # Disable shadow in screenshots.
-  defaults write com.apple.screencapture disable-shadow -bool true
+  #defaults write com.apple.screencapture disable-shadow -bool true
   # Turn off Dashboard.
   defaults write com.apple.dashboard mcx-disabled -boolean true
   # Don't automatically rearrange Spaces based on most recent use.
   defaults write com.apple.dock mru-spaces -bool false
   # Automatically hide and show the Dock.
-  defaults write com.apple.dock autohide -bool true
+  #defaults write com.apple.dock autohide -bool true
   # Remove the auto-hiding Dock delay
-  defaults write com.apple.dock autohide-delay -float 0
+  #defaults write com.apple.dock autohide-delay -float 0
   # Disable animations when you open an application from the Dock.
-  defaults write com.apple.dock launchanim -bool false
+  #defaults write com.apple.dock launchanim -bool false
   # Do not show recent applications in Dock.
-  defaults write com.apple.dock show-recents -bool false
+  #defaults write com.apple.dock show-recents -bool false
   # Disable animations when opening and closing windows.
-  defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
+  #defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
   # -- Keyboard ---------------------------------------------------------------
   # Set a really fast key repeat.
   defaults write NSGlobalDomain KeyRepeat -int 1
@@ -141,7 +141,7 @@ setup_macos() {
   # Always show the status bar.
   defaults write com.apple.finder ShowStatusBar -bool true
   # Disable animations.
-  defaults write com.apple.finder DisableAllAnimations -bool true
+  #defaults write com.apple.finder DisableAllAnimations -bool true
   # Show all file extensions.
   defaults write NSGlobalDomain AppleShowAllExtensions -bool true
   # Keep folders on top when sorting by name.
@@ -166,13 +166,11 @@ setup_macos() {
   # Allow text selection in Quick Look.
   defaults write com.apple.finder QLEnableTextSelection -bool true
   # Disable animations when opening a Quick Look window.
-  defaults write -g QLPanelAnimationDuration -float 0
+  #defaults write -g QLPanelAnimationDuration -float 0
   # Do not warn before emptying the trash.
   defaults write com.apple.finder WarnOnEmptyTrash -bool false
   # Do not warn when moving files out of iCloud.
   defaults write com.apple.finder FXEnableRemoveFromICloudDriveWarning -bool false
-  # Do not warn before emptying the trash.
-  defaults write com.apple.finder WarnOnEmptyTrash -bool false
   # -- Safari -----------------------------------------------------------------
   # Privacy: don’t send search queries to Apple.
   defaults write com.apple.Safari UniversalSearchEnabled -bool false
@@ -216,11 +214,6 @@ setup_macos() {
   # Load iTerm2 configuration from a predictable location.
   defaults write com.googlecode.iterm2.plist PrefsCustomFolder -string "~/.iterm2"
   defaults write com.googlecode.iterm2.plist LoadPrefsFromCustomFolder -bool true
-}
-
-setup_keyboard_layout() {
-  enter_sudo_mode
-  cp mavam.keylayout /Library/Keyboard\ Layouts/
 }
 
 setup_homebrew() {
@@ -388,8 +381,6 @@ main() {
         osascript -e 'tell application "System Preferences" to quit'
         log "adjusting macOS defaults"
         setup_macos
-        log "installing custom keyboard layout"
-        setup_keyboard_layout
         log "performing software update"
         sudo softwareupdate -i -a > /dev/null 2>&1
         log "installing XCode comand line developer tools"

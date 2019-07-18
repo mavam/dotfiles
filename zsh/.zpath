@@ -13,9 +13,14 @@ path=(
   /usr/local/sbin
   /usr/sbin
   /sbin
+  /usr/local/share/dotnet
+  ~/.dotnet/tools
+  /Library/Frameworks/Mono.framework/Versions/Current/Commands
   /usr/X11R6/bin
   /usr/ucb            # SunOS
   /usr/sww/bin        # SunOS
+  /usr/local/opt/coreutils/libexec/gnu
+  /usr/local/opt/e2fsprogs/bin
 )
 
 # Man pages.

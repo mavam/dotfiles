@@ -112,6 +112,8 @@ zplug 'plugins/bundler', from:oh-my-zsh, if:'which bundle'
 zplug 'plugins/colored-man-pages', from:oh-my-zsh
 zplug 'plugins/extract', from:oh-my-zsh
 zplug 'plugins/fancy-ctrl-z', from:oh-my-zsh
+zplug 'plugins/osx', from:oh-my-zsh
+zplug 'plugins/sudo', from:oh-my-zsh
 zplug 'plugins/git', from:oh-my-zsh, if:'which git'
 #zplug 'plugins/gpg-agent', from:oh-my-zsh, if:'which gpg-agent'
 zplug 'plugins/httpie', from:oh-my-zsh, if:'which httpie'
@@ -124,7 +126,7 @@ zplug 'b4b4r07/zsh-vimode-visual', defer:3
 # Using branch 'next' introduces a color regression, so we fall back to master
 # ofr now. See https://github.com/bhilburn/powerlevel9k/pull/703 for details.
 #zplug 'bhilburn/powerlevel9k', use:powerlevel9k.zsh-theme, at:next
-zplug 'bhilburn/powerlevel9k', use:powerlevel9k.zsh-theme
+zplug 'romkatv/powerlevel10k', use:powerlevel10k.zsh-theme
 zplug "junegunn/fzf-bin", as:command, from:gh-r, rename-to:"fzf", frozen:1
 zplug "junegunn/fzf", use:"shell/key-bindings.zsh"
 zplug 'knu/zsh-manydots-magic', use:manydots-magic, defer:3
@@ -423,3 +425,4 @@ unfunction setup_agents
 if [[ -f ~/.zshrc.local ]]; then
   source ~/.zshrc.local
 fi
+export HOMEBREW_GITHUB_API_TOKEN=1468cd04b96500871c4ea1bfe8d21aeedcd24ca1
