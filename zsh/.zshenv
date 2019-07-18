@@ -24,14 +24,6 @@ export CVS_RSH="ssh"
 export CVSEDITOR="vim"
 export RSYNC_RSH="ssh"
 
-# Setup GPG.
-export GPG_TTY=$(tty);
-if which gpgconf > /dev/null 2>&1; then
-  export GPG_AGENT_INFO=$(gpgconf --list-dirs agent-socket)
-  export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
-  gpg-connect-agent updatestartuptty /bye > /dev/null
-fi
-
 # OS-specific environment.
 case $OSTYPE in
   linux*)
@@ -55,6 +47,14 @@ export LANG=en_US.UTF-8
 # Source local environment.
 if [[ -f ~/.zshenv.local ]]; then
   source ~/.zshenv.local
+fi
+
+# Setup GPG.
+export GPG_TTY=$(tty);
+if which gpgconf > /dev/null 2>&1; then
+  export GPG_AGENT_INFO=$(gpgconf --list-dirs agent-socket)
+  export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+  gpg-connect-agent updatestartuptty /bye > /dev/null
 fi
 
 # vim: ft=zsh
