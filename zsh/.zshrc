@@ -28,9 +28,12 @@ POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX="%F{blue}\u2570\uf460%f "
 POWERLEVEL9K_STATUS_OK=false
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(root_indicator dir_joined
                                    dir_writable_joined)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status command_execution_time virtualenv
-                                    vcs background_jobs_joined time_joined
-                                    user_joined os_icon_joined host_joined)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(
+  status command_execution_time
+  virtualenv_joined anaconda_joined pyenv_joined vcs_joined
+  background_jobs_joined time_joined
+  user_joined os_icon_joined host_joined
+)
 POWERLEVEL9K_VCS_CLEAN_BACKGROUND="clear"
 POWERLEVEL9K_VCS_CLEAN_FOREGROUND="green"
 POWERLEVEL9K_VCS_MODIFIED_BACKGROUND="clear"
@@ -73,8 +76,12 @@ POWERLEVEL9K_HOST_ICON="\uF109 " # 
 POWERLEVEL9K_SSH_ICON="\uF489 "  # 
 POWERLEVEL9K_OS_ICON_BACKGROUND="clear"
 POWERLEVEL9K_OS_ICON_FOREGROUND="grey"
-POWERLEVEL9K_PYTHON_ICON_BACKGROUND="clear"
-POWERLEVEL9K_PYTHON_ICON_FOREGROUND="cyan"
+POWERLEVEL9K_VIRTUALENV_BACKGROUND="clear"
+POWERLEVEL9K_VIRTUALENV_FOREGROUND="cyan"
+POWERLEVEL9K_PYENV_BACKGROUND="clear"
+POWERLEVEL9K_PYENV_FOREGROUND="cyan"
+POWERLEVEL9K_ANACONDA_BACKGROUND="clear"
+POWERLEVEL9K_ANACONDA_FOREGROUND="cyan"
 
 # zsh-syntax-highlighting
 ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
