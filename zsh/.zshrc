@@ -131,13 +131,10 @@ zplug 'plugins/tmux', from:oh-my-zsh, if:'which tmux'
 
 #zplug 'b4b4r07/enhancd', use:init.sh
 zplug 'b4b4r07/zsh-vimode-visual', defer:3
-# Using branch 'next' introduces a color regression, so we fall back to master
-# ofr now. See https://github.com/bhilburn/powerlevel9k/pull/703 for details.
-#zplug 'bhilburn/powerlevel9k', use:powerlevel9k.zsh-theme, at:next
-zplug 'bhilburn/powerlevel9k', use:powerlevel9k.zsh-theme
 zplug "junegunn/fzf-bin", as:command, from:gh-r, rename-to:"fzf", frozen:1
 zplug "junegunn/fzf", use:"shell/key-bindings.zsh"
 zplug 'knu/zsh-manydots-magic', use:manydots-magic, defer:3
+zplug 'romkatv/powerlevel10k', use:powerlevel10k.zsh-theme
 zplug 'seebi/dircolors-solarized', ignore:"*", as:plugin
 zplug 'Tarrasch/zsh-bd'
 zplug 'zsh-users/zsh-autosuggestions'
