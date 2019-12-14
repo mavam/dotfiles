@@ -28,9 +28,12 @@ POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX="%F{blue}\u2570\uf460%f "
 POWERLEVEL9K_STATUS_OK=false
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(root_indicator dir_joined
                                    dir_writable_joined)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status command_execution_time vcs
-                                    background_jobs_joined time_joined
-                                    user_joined os_icon_joined host_joined)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(
+  status command_execution_time
+  virtualenv_joined anaconda_joined pyenv_joined vcs_joined
+  background_jobs_joined time_joined
+  user_joined os_icon_joined host_joined
+)
 POWERLEVEL9K_VCS_CLEAN_BACKGROUND="clear"
 POWERLEVEL9K_VCS_CLEAN_FOREGROUND="green"
 POWERLEVEL9K_VCS_MODIFIED_BACKGROUND="clear"
@@ -73,6 +76,12 @@ POWERLEVEL9K_HOST_ICON="\uF109 " # 
 POWERLEVEL9K_SSH_ICON="\uF489 "  # 
 POWERLEVEL9K_OS_ICON_BACKGROUND="clear"
 POWERLEVEL9K_OS_ICON_FOREGROUND="grey"
+POWERLEVEL9K_VIRTUALENV_BACKGROUND="clear"
+POWERLEVEL9K_VIRTUALENV_FOREGROUND="cyan"
+POWERLEVEL9K_PYENV_BACKGROUND="clear"
+POWERLEVEL9K_PYENV_FOREGROUND="cyan"
+POWERLEVEL9K_ANACONDA_BACKGROUND="clear"
+POWERLEVEL9K_ANACONDA_FOREGROUND="cyan"
 
 # zsh-syntax-highlighting
 ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
@@ -110,6 +119,7 @@ fi
 
 zplug 'plugins/bundler', from:oh-my-zsh, if:'which bundle'
 zplug 'plugins/colored-man-pages', from:oh-my-zsh
+zplug 'plugins/completion', from:oh-my-zsh
 zplug 'plugins/extract', from:oh-my-zsh
 zplug 'plugins/fancy-ctrl-z', from:oh-my-zsh
 zplug 'plugins/osx', from:oh-my-zsh
@@ -123,13 +133,13 @@ zplug 'plugins/tmux', from:oh-my-zsh, if:'which tmux'
 
 #zplug 'b4b4r07/enhancd', use:init.sh
 zplug 'b4b4r07/zsh-vimode-visual', defer:3
+zplug "junegunn/fzf-bin", as:command, from:gh-r, rename-to:"fzf", frozen:1
+zplug "junegunn/fzf", use:"shell/key-bindings.zsh"
+zplug 'knu/zsh-manydots-magic', use:manydots-magic, defer:3
 # Using branch 'next' introduces a color regression, so we fall back to master
 # ofr now. See https://github.com/bhilburn/powerlevel9k/pull/703 for details.
 #zplug 'bhilburn/powerlevel9k', use:powerlevel9k.zsh-theme, at:next
 zplug 'romkatv/powerlevel10k', use:powerlevel10k.zsh-theme
-zplug "junegunn/fzf-bin", as:command, from:gh-r, rename-to:"fzf", frozen:1
-zplug "junegunn/fzf", use:"shell/key-bindings.zsh"
-zplug 'knu/zsh-manydots-magic', use:manydots-magic, defer:3
 zplug 'seebi/dircolors-solarized', ignore:"*", as:plugin
 zplug 'Tarrasch/zsh-bd'
 zplug 'zsh-users/zsh-autosuggestions'
@@ -401,25 +411,6 @@ update() {
 # =============================================================================
 #                                   Startup
 # =============================================================================
-
-# Load SSH and GPG agents via keychain.
-setup_agents() {
-  if [[ $UID -eq 0 ]]; then
-    return
-  fi
-  local -a ssh_keys gpg_keys
-  ssh_keys=(~/.ssh/**/*pub(.N:r))
-  gpg_keys=$(gpg -K --with-colons 2>/dev/null \
-               | awk -F : '$1 == "sec" { print $5 }')
-  if which keychain > /dev/null 2>&1; then
-    if (( $#ssh_keys > 0 )) || (( $#gpg_keys > 0 )); then
-      eval $(keychain -q --nogui --eval --host fix \
-        --agents ssh,gpg $ssh_keys ${(f)gpg_keys})
-    fi
-  fi
-}
-setup_agents
-unfunction setup_agents
 
 # Source local customizations.
 if [[ -f ~/.zshrc.local ]]; then

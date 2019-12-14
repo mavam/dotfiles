@@ -168,6 +168,7 @@ Plug 'junegunn/fzf' | Plug 'junegunn/fzf.vim'
 Plug 'junegunn/vim-peekaboo'
 Plug 'lervag/vimtex'
 Plug 'mephux/bro.vim'
+Plug 'mhinz/vim-signify'
 Plug 'morhetz/gruvbox'
 Plug 'rhysd/vim-clang-format'
 Plug 'rstacruz/sparkup'
@@ -361,6 +362,7 @@ map <Leader>v<Space> :call VimuxZoomInspectRunner()<CR>
 
 " Build via make.
 nmap <Leader>b :Make<CR>
+nmap <Leader>B :Make!<CR>
 
 " -- Nvim-R ------------------------------------------------------------------
 
