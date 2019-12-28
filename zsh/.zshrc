@@ -83,6 +83,13 @@ POWERLEVEL9K_PYENV_FOREGROUND="cyan"
 POWERLEVEL9K_ANACONDA_BACKGROUND="clear"
 POWERLEVEL9K_ANACONDA_FOREGROUND="cyan"
 
+# FreeBSD workaround; see
+# https://github.com/Powerlevel9k/powerlevel9k/issues/1013 for details.
+# TODO: remove after upgarding to the next Powerlevel9k release.
+if [[ "$OSTYPE" == "freebsd"* ]]; then
+  POWERLEVEL9K_IGNORE_TERM_COLORS=true
+fi
+
 # zsh-syntax-highlighting
 ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
 ZSH_HIGHLIGHT_PATTERNS+=('rm -rf *' 'fg=white,bold,bg=red')
