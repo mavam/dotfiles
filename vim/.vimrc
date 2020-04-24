@@ -43,7 +43,7 @@ else
 endif
 
 if has('gui_running')
-    set columns=80
+    set columns=82
     set lines=25
     set guioptions-=T   " Remove the toolbar.
     set guifont=MesloLGM\ Nerd\ Font:h12
