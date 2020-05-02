@@ -143,8 +143,8 @@ prompt_getkubecontext() {
 # aliases.
 # See https://github.com/robbyrussell/oh-my-zsh/issues/6123 for discussion.
 
-zle -N globalias
-bindkey -M emacs ' ' globalias
+#zle -N globalias
+#bindkey -M emacs ' ' globalias
 #bindkey -M viins ' ' globalias
 bindkey -M isearch ' ' magic-space # normal space during searches
 
