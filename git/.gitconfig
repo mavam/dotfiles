@@ -20,10 +20,14 @@
 	branch = auto
 
 [diff]
-  tool = icdiff
+  tool = meld
 
 [difftool]
   prompt = false
+
+[difftool "meld"]
+  trustExitCode = true
+  cmd = open -W -a Meld --args \"$LOCAL\" \"$PWD/$REMOTE\"
 
 [difftool "icdiff"]
   cmd = /usr/local/bin/icdiff --line-numbers $LOCAL $REMOTE
@@ -37,7 +41,7 @@
 	tool = meld
 
 [mergetool "meld"]
-  cmd = open -W -a Meld --args --auto-merge \"$LOCAL\" \"$MERGED\" \"$REMOTE\"
+  cmd = open -W -a Meld --args --auto-merge \"$PWD/$LOCAL\" \"$PWD/$MERGED\" \"$PWD/$REMOTE\"
   trustExitCode = false
 
 [push]
@@ -48,12 +52,14 @@
 
 [user]
 	name = Daniel Bernal
-	email = danielbernal@nuevoeste.com
+	email = daniel.bernal@etermax.com
 [core]
-	excludesfile = /Users/danielbernal/.gitignore_global
+	excludesfile = /Users/Daniel/.gitignore_global
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
 	path = 
 [mergetool "sourcetree"]
 	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
+[commit]
+	template = /Users/Daniel/.stCommitMsg

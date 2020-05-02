@@ -4,8 +4,8 @@
 
 # Automagically quote URLs. This obviates the need to quote them manually when
 # pasting or typing URLs.
-#autoload -Uz url-quote-magic
-#zle -N self-insert url-quote-magic
+autoload -Uz url-quote-magic
+zle -N self-insert url-quote-magic
 
 # =============================================================================
 #                                   Plugins
@@ -134,15 +134,19 @@ if zplug check 'zsh-users/zsh-autosuggestions'; then
   ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=6'
 fi
 
+prompt_getkubecontext() {
+  echo -n "%{$fg[blue]%}($ZSH_KUBECTL_PROMPT)%{$reset_color%}"
+}
+
 # Our custom version of oh-my-zsh's globalias plugin. Unlike the OMZ version,
 # we do not use the `expand-word' widget and only expand a few whitelisted
 # aliases.
 # See https://github.com/robbyrussell/oh-my-zsh/issues/6123 for discussion.
 
-#zle -N globalias
-#bindkey -M emacs ' ' globalias
+zle -N globalias
+bindkey -M emacs ' ' globalias
 #bindkey -M viins ' ' globalias
-#bindkey -M isearch ' ' magic-space # normal space during searches
+bindkey -M isearch ' ' magic-space # normal space during searches
 
 
 # =============================================================================
@@ -245,6 +249,10 @@ bindkey -e
 
 # Grep anywhere with ^G
 bindkey -s '^G' ' | grep '
+# Git Commit ^M
+bindkey -s '^gm' ' git commit -m \"'
+
+
 # Common CTRL bindings.
 bindkey '^a' beginning-of-line
 bindkey '^e' end-of-line
@@ -252,7 +260,6 @@ bindkey '^f' forward-word
 bindkey '^b' backward-word
 bindkey '^k' kill-line
 bindkey '^d' delete-char
-
 
 # More convenient acceptance of suggested command line.
 if zplug check 'zsh-users/zsh-autosuggestions'; then
@@ -266,8 +273,8 @@ if zplug check 'zsh-users/zsh-history-substring-search'; then
   bindkey "$terminfo[kcud1]" history-substring-search-down
   bindkey '^p' history-substring-search-up
   bindkey '^n' history-substring-search-down
-  #bindkey -M vicmd 'k' history-substring-search-up
-  #bindkey -M vicmd 'j' history-substring-search-down
+  bindkey -M vicmd 'k' history-substring-search-up
+  bindkey -M vicmd 'j' history-substring-search-down
 fi
 
 # Do not require a space when attempting to tab-complete.
@@ -275,7 +282,9 @@ bindkey '^i' expand-or-complete-prefix
 
 # FZF
 if zplug check 'junegunn/fzf'; then
-  export FZF_DEFAULT_OPTS='--height 30%'
+  export FZF_DEFAULT_OPTS='--height 30%
+      --color fg:223,bg:235,hl:208,fg+:229,bg+:237,hl+:167,border:237
+      --color info:246,prompt:214,pointer:214,marker:142,spinner:246,header:214'
 fi
 
 # =============================================================================
@@ -375,3 +384,50 @@ unfunction setup_agents
 if [[ -f ~/.zshrc.local ]]; then
   source ~/.zshrc.local
 fi
+
+function ssl-check() {
+    f=~/.localhost_ssl;
+    ssl_crt=$f/server.crt
+    ssl_key=$f/server.key
+    b=$(tput bold)
+    c=$(tput sgr0)
+
+    local_ip=$(ipconfig getifaddr $(route get default | grep interface | awk '{print $2}'))
+    # local_ip=999.999.999 # (uncomment for testing)
+
+    domains=(
+        "localhost"
+        "$local_ip"
+    )
+
+    if [[ ! -f $ssl_crt ]]; then
+        echo -e "\n🛑  ${b}Couldn't find a Slate SSL certificate:${c}"
+        make_key=true
+    elif [[ ! $(openssl x509 -noout -text -in $ssl_crt | grep $local_ip) ]]; then
+        echo -e "\n🛑  ${b}Your IP Address has changed:${c}"
+        make_key=true
+    else
+        echo -e "\n✅  ${b}Your IP address is still the same.${c}"
+    fi
+
+    if [[ $make_key == true ]]; then
+        echo -e "Generating a new Slate SSL certificate...\n"
+        count=$(( ${#domains[@]} - 1))
+        mkcert ${domains[@]}
+
+        # Create Slate's default certificate directory, if it doesn't exist
+        test ! -d $f && mkdir $f
+
+        # It appears mkcert bases its filenames off the number of domains passed after the first one.
+        # This script predicts that filename, so it can copy it to Slate's default location.
+        if [[ $count = 0 ]]; then
+            mv ./localhost.pem $ssl_crt
+            mv ./localhost-key.pem $ssl_key
+        else
+            mv ./localhost+$count.pem $ssl_crt
+            mv ./localhost+$count-key.pem $ssl_key
+        fi
+    fi
+}
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

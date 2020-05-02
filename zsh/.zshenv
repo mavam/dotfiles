@@ -61,5 +61,5 @@ export PATH=$PATH:$ANDROID_HOME/emulator
 export PATH=$PATH:$ANDROID_HOME/tools
 export PATH=$PATH:$ANDROID_HOME/tools/bin
 export PATH=$PATH:$ANDROID_HOME/platform-tools
-
+export PATH="$PATH:/usr/local/lib/python3.7/site-packages"
 # vim: ft=zsh

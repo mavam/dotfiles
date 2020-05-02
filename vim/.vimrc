@@ -170,10 +170,12 @@ Plug 'junegunn/fzf' | Plug 'junegunn/fzf.vim'
 Plug 'junegunn/vim-peekaboo'
 Plug 'lervag/vimtex'
 Plug 'mephux/bro.vim'
+Plug 'rainglow/vim'
 Plug 'rhysd/vim-clang-format'
 Plug 'rstacruz/sparkup'
 Plug 'ryanoasis/vim-devicons'
 Plug 'sheerun/vim-polyglot'
+Plug 'shinchu/lightline-gruvbox.vim'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-endwise'
@@ -188,6 +190,9 @@ Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'jalvesaq/Nvim-R'
+Plug 'rainglow/vim'
+Plug 'dracula/vim', { 'as': 'dracula' }
+
 call plug#end()
 
 " -- Lightline ---------------------------------------------------------------
@@ -291,8 +296,11 @@ let g:tmuxline_preset = {
 
 " -- colors ------------------------------------------------------------------
 
-
-colorscheme overflow-contrast
+"if has("termguicolors")
+"  set termguicolors
+"endif
+"
+"colorscheme bold
 
 " -- Tmux Navigator ----------------------------------------------------------
 
