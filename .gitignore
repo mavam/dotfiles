@@ -8,3 +8,4 @@ tmux/.tmux/plugins
 .history
 ssh/.ssh/id_rsa*
 ssh/.ssh/known_hosts
+zsh/.zsh_history
