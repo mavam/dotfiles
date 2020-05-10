@@ -185,6 +185,9 @@ setopt extended_glob
 #                                   Aliases
 # =============================================================================
 
+#Kubernetes alias
+alias k="kubectl"
+
 # Swift editing and file display.
 alias e="$EDITOR"
 alias v="$VISUAL"
