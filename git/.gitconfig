@@ -1,3 +1,6 @@
+[core]
+  excludesFile = ~/.config/git/ignore
+
 [alias]
   prune = fetch --prune
   cdiff = diff --cached
