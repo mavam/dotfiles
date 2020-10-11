@@ -1,4 +1,4 @@
-# Unless -f is specified, .zshenv is sourced on all shell invocations.
+
 # Consequently, there should be only critical commands environment in this file.
 
 umask 022
@@ -62,4 +62,12 @@ export PATH=$PATH:$ANDROID_HOME/tools
 export PATH=$PATH:$ANDROID_HOME/tools/bin
 export PATH=$PATH:$ANDROID_HOME/platform-tools
 export PATH="$PATH:/usr/local/lib/python3.7/site-packages"
+export JAVA_HOME=$(/usr/libexec/java_home -v12)
+#export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
+#export PATH="/usr/local/opt/ruby@2.4/bin:$PATH"
+#export LDFLAGS="-L/usr/local/opt/ruby@2.4/lib"
+#export CPPFLAGS="-I/usr/local/opt/ruby@2.4/include"
+#export PKG_CONFIG_PATH="/usr/local/opt/ruby@2.4/lib/pkgconfig"
 # vim: ft=zsh
+export LANGUAGE=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
