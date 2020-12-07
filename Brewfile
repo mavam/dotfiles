@@ -14,7 +14,7 @@ cask "visual-studio-code"
 cask "dropbox"
 cask "meld"
 brew "java11"
-
+brew "intellij-idea"
 cask "font-inconsolata-nerd-font"
 cask "font-meslo-nerd-font"
 cask "font-sourcecodepro-nerd-font"
