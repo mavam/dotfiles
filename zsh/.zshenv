@@ -62,7 +62,9 @@ export PATH=$PATH:$ANDROID_HOME/tools
 export PATH=$PATH:$ANDROID_HOME/tools/bin
 export PATH=$PATH:$ANDROID_HOME/platform-tools
 export PATH="$PATH:/usr/local/lib/python3.7/site-packages"
-export JAVA_HOME=$(/usr/libexec/java_home -v12)
+export PATH="/usr/local/opt/openjdk@11/bin:$PATH"
+export JAVA_HOME=$(/usr/libexec/java_home -v11)
+export CPPFLAGS="-I/usr/local/opt/openjdk@11/include"
 #export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
 #export PATH="/usr/local/opt/ruby@2.4/bin:$PATH"
 #export LDFLAGS="-L/usr/local/opt/ruby@2.4/lib"
