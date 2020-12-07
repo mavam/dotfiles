@@ -222,7 +222,10 @@ setup_keyboard_layout() {
   enter_sudo_mode
   #cp mavam.keylayout /Library/Keyboard\ Layouts/
 }
-
+setup_oh_my_zsh() {
+  log "install oh my zsh"
+  sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+}
 setup_homebrew() {
   if which brew > /dev/null 2>&1; then
     log "upgrading existing Homebrew packages"
@@ -422,6 +425,7 @@ main() {
     setup_vim
   fi
   if [ "$command" = "zsh" ] || [ -z "$command" ]; then
+    setup_oh_my_zsh
     setup_zsh
   fi
 }
