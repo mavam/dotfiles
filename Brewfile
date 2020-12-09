@@ -6,7 +6,7 @@ tap "homebrew/core"
 tap "homebrew/services"
 tap "koekeishiya/formulae"
 tap "homebrew/cask-versions"
-
+cask "notion"
 cask "1password"
 cask "docker"
 cask "transmit"
