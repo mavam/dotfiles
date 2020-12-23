@@ -46,4 +46,5 @@
 
 [user]
 	name = Matthias Vallentin
-	email = vallentin@icir.org
+	email = matthias@vallentin.net
+	signingkey = 0x8BED5328EF21A389
