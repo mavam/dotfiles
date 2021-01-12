@@ -52,7 +52,7 @@
 
 [user]
 	name = Daniel Bernal
-	email = daniel.bernal@etermax.com
+	email = danielbernal@nuevoeste.com
 [core]
 	excludesfile = /Users/Daniel/.gitignore_global
 [difftool "sourcetree"]
