@@ -52,7 +52,7 @@
 
 [user]
 	name = Daniel Bernal
-	email = danielbernal@nuevoeste.com
+	email = daniel.bernal@mercadolibre.com
 [core]
 	excludesfile = /Users/Daniel/.gitignore_global
 [difftool "sourcetree"]
@@ -63,3 +63,5 @@
 	trustExitCode = true
 [commit]
 	template = /Users/Daniel/.stCommitMsg
+[url "git@github.com:"]
+	insteadOf = https://github.com

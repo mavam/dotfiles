@@ -28,7 +28,7 @@ POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX="%F{blue}\u2570\uf460%f "
 POWERLEVEL9K_STATUS_OK=false
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(root_indicator dir_joined
                                    dir_writable_joined vcs virtualenv)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(getkubecontext status command_execution_time
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status command_execution_time
                                     background_jobs_joined time_joined
                                     user_joined)
 POWERLEVEL9K_VCS_CLEAN_BACKGROUND="clear"
@@ -114,10 +114,6 @@ zplug 'zsh-users/zsh-history-substring-search'
 zplug 'zsh-users/zsh-syntax-highlighting', defer:3
 zplug 'superbrothers/zsh-kubectl-prompt'
 
-prompt_getkubecontext() {
-  echo -n "%{$fg[blue]%}($ZSH_KUBECTL_PROMPT)%{$reset_color%}"
-}
-
 if ! zplug check; then
   zplug install
 fi
@@ -134,11 +130,6 @@ if zplug check 'zsh-users/zsh-autosuggestions'; then
   ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=6'
 fi
 
-prompt_getkubecontext() {
-  echo -n "%{$fg[blue]%}($ZSH_KUBECTL_PROMPT)%{$reset_color%}"
-}
-
-# Our custom version of oh-my-zsh's globalias plugin. Unlike the OMZ version,
 # we do not use the `expand-word' widget and only expand a few whitelisted
 # aliases.
 # See https://github.com/robbyrussell/oh-my-zsh/issues/6123 for discussion.
