@@ -113,6 +113,7 @@ zplug 'zsh-users/zsh-completions', defer:2
 zplug 'zsh-users/zsh-history-substring-search'
 zplug 'zsh-users/zsh-syntax-highlighting', defer:3
 zplug 'superbrothers/zsh-kubectl-prompt'
+zplug 'paulirish/git-open', as:plugin
 
 if ! zplug check; then
   zplug install
