@@ -50,9 +50,6 @@
 [rerere]
 	enabled = true
 
-[user]
-	name = Daniel Bernal
-	email = daniel.bernal@mercadolibre.com
 [core]
 	excludesfile = /Users/Daniel/.gitignore_global
 [difftool "sourcetree"]
