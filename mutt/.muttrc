@@ -143,66 +143,8 @@ set crypt_replysignencrypted=yes # automatically sign replies to encrypted msgs
 set pgp_timeout=0
 set pgp_use_gpg_agent=yes
 
-# [pgp_entry_format] PGP key selection menu
-# %n    number
-# %k    key id
-# %u    user id
-# %a    algorithm
-# %l    key length
-# %f    flags
-# %c    capabilities
-# %t    trust/validity of the key-uid association
-# %[<s>]    date of the key where <s> is an strftime(3) expression
-set pgp_entry_format="%4n %t%f %4l/0x%k %-4a %2c %u"
-
-set pgp_good_sign="^gpg: Good signature from"
-
-# %p      Expands to PGPPASSFD=0 when a pass phrase is needed, to an empty
-#         string otherwise. Note: This may be used with a %? construct.
-# %f      Expands to the name of a file containing a message.
-# %s      Expands to the name of a file containing the signature part
-#                    of a multipart/signed attachment when verifying it.
-# %a      The value of $pgp_sign_as.
-# %r      One or more key IDs.
-
-#set pgp_getkeys_command
-set pgp_getkeys_command="gpg --recv-keys %r 2> /dev/null"
-
-# decode application/pgp
-set pgp_decode_command="gpg %?p?--passphrase-fd 0? --no-verbose --batch --output - %f"
-
-# verify a pgp/mime signature
-set pgp_verify_command="gpg --no-verbose --batch --output - --verify %s %f"
-
-# decrypt a pgp/mime attachment
-set pgp_decrypt_command="gpg --no-verbose --batch --output - %f"
-
-# create a application/pgp signed (old-style) message
-set pgp_clearsign_command="gpg --no-verbose --batch --output - --armor --textmode --clearsign %?a?-u %a? %f"
-
-# create a pgp/mime signed attachment
-set pgp_sign_command="gpg --no-verbose --batch --output - --armor --detach-sign --textmode %?a?-u %a? %f"
-
-# create a pgp/mime encrypted attachment
-set pgp_encrypt_only_command="pgpewrap gpg -v --batch --output - --encrypt --textmode --armor --always-trust -- -r %r -- %f"
-
-# create a pgp/mime encrypted and signed attachment
-set pgp_encrypt_sign_command="pgpewrap gpg -v --batch --output - --encrypt --sign %?a?-u %a? --armor --always-trust -- -r %r -- %f"
-
-# import a key into the public key ring
-set pgp_import_command="gpg --no-verbose --import -v %f"
-
-# export a key from the public key ring
-set pgp_export_command="gpg --no-verbose --export --armor %r"
-
-# verify a key
-set pgp_verify_key_command="gpg --no-verbose --batch --fingerprint --check-sigs %r"
-
-# read in the public key ring
-set pgp_list_pubring_command="gpg --no-verbose --batch --with-colons --list-keys %r"=20
-
-# read in the secret key ring
-set pgp_list_secring_command="gpg --no-verbose --batch --with-colons --list-secret-keys %r"=20
+# Seems to be necessary to fix decryption when using gpg-agent.
+set crypt_use_gpgme = yes
 
 #------------------------------------------------------------------------------
 #                                  remainder
