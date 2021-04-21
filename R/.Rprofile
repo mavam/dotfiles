@@ -1,23 +1,29 @@
-options(repos=structure(c(CRAN="http://cran.cnr.berkeley.edu/")))
+# -- Startup ----------------------------------------------------
 
-.First <- function() {
-  if (interactive()) {
-    library(utils)
-    import <- function(pkg, gh=NULL) {
-      if (!require(pkg, quietly=TRUE, character.only=TRUE)) {
-        if (is.null(gh)) {
-          install.packages(pkg)
-        } else {
-          library(devtools)
-          install_github(gh)
-        }
-      }
-    }
-    import("devtools")
-    import("colorout", "jalvesaq/colorout")
-    import("vimcom", "jalvesaq/VimCom")
-  }
+#options(repos=structure(c(CRAN="http://cran.cnr.berkeley.edu/")))
+
+if (requireNamespace("rprofile", quietly = TRUE)) {
+  # Call here if needed
+  # rprofile::set_repos()
+  rprofile::set_startup_options()
 }
+
+if (interactive() && requireNamespace("rprofile", quietly = TRUE)) {
+  rprofile::create_make_functions()
+  # Not RStudio OR RStudio console
+  if (rprofile::is_terminal()) {
+    rprofile::set_terminal()
+  } else {
+    rprofile::set_rstudio()
+  }
+  .env = rprofile::set_functions()
+  attach(.env)
+  # Display wifi and no of R sessions
+  # Linux only
+  rprofile::set_startup_info()
+}
+
+# -- Utilities --------------------------------------------------
 
 # Displays a vector of colors.
 swatch <- function(x) {
