@@ -3,16 +3,18 @@
 #options(repos=structure(c(CRAN="http://cran.cnr.berkeley.edu/")))
 
 if (requireNamespace("rprofile", quietly = TRUE)) {
-  # Call here if needed
-  # rprofile::set_repos()
   rprofile::set_startup_options()
 }
 
 if (interactive() && requireNamespace("rprofile", quietly = TRUE)) {
   rprofile::create_make_functions()
-  # Not RStudio OR RStudio console
   if (rprofile::is_terminal()) {
-    rprofile::set_terminal()
+    prompt::set_prompt(prompt::prompt_fancy)
+    prettycode::prettycode()
+    base::library("utils") # Needed for rdoc`?` to take precedence
+    rdoc::use_rdoc()
+    if (requireNamespace("colorout", quietly = TRUE))
+      base::library("colorout")
   } else {
     rprofile::set_rstudio()
   }
