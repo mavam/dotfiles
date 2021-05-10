@@ -18,9 +18,6 @@ if (interactive() && requireNamespace("rprofile", quietly = TRUE)) {
   }
   .env = rprofile::set_functions()
   attach(.env)
-  # Display wifi and no of R sessions
-  # Linux only
-  rprofile::set_startup_info()
 }
 
 # -- Utilities --------------------------------------------------
