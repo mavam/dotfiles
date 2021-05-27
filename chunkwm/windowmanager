@@ -2,13 +2,13 @@
 
 startme() {
   brew services restart skhd
-  brew services restart chunkwm
+  brew services restart yabai 
 
 }
 
 stopme() {
 brew services stop skhd
-brew services stop chunkwm
+brew services stop yabai 
 }
 
 case "$1" in

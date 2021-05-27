@@ -50,6 +50,9 @@
 [rerere]
 	enabled = true
 
+[user]
+	name = danielbernalo
+	email = danielbernal@nuevoeste.com
 [core]
 	excludesfile = /Users/Daniel/.gitignore_global
 [difftool "sourcetree"]
@@ -58,7 +61,5 @@
 [mergetool "sourcetree"]
 	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
-[commit]
-	template = /Users/Daniel/.stCommitMsg
 [url "git@github.com:"]
 	insteadOf = https://github.com
