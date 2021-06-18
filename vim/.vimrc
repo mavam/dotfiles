@@ -43,7 +43,7 @@ else
 endif
 
 if has('gui_running')
-    set columns=80
+    set columns=82
     set lines=25
     set guioptions-=T   " Remove the toolbar.
     set guifont=MesloLGM\ Nerd\ Font:h12
@@ -188,7 +188,7 @@ Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
-Plug 'jalvesaq/Nvim-R'
+Plug 'jalvesaq/Nvim-R', {'branch': 'stable'}
 call plug#end()
 
 " -- Lightline ---------------------------------------------------------------
@@ -369,7 +369,6 @@ nmap <Leader>B :Make!<CR>
 " Make sure we can communicate with the plugin.
 let R_in_buffer = 0
 let R_applescript = 0
-let R_tmux_split = 1
 let R_min_editor_width = 42 "trigger vertical split
 
 " Do not replace '_' with '<-'.

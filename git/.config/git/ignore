@@ -1,0 +1,66 @@
+# -- macOS ---------------------------------------------------------------------
+
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+.nosync
+
+# Icon (must end wit \r\r)
+Icon
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcons.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDeskop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# -- Vim -----------------------------------------------------------------------
+
+# Swap
+[._]*.s[a-v][a-z]
+!*.svg
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+
+# Session
+Session.vim
+Sessionx.vim
+
+# Temporary
+.netrwhist
+*~
+
+# Auto-generated tags files
+tags
+
+# Persistent undo
+[._]*.un~
+
+# -- Zsh -----------------------------------------------------------------------
+
+# Cache
+*.zwc
+
+# -- LSP -----------------------------------------------------------------------
+
+# clangd
+.clangd/
+
+# ccls
+.ccls-cache/
