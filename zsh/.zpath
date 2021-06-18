@@ -33,21 +33,20 @@ manpath=(
 case $OSTYPE in
   darwin*)
     # MacTeX binaries.
-    [[ -d /usr/texbin ]] && path=( $path /usr/texbin )
-    [[ -d /Library/TeX/texbin ]] && path=( $path /Library/Tex/texbin )
+    path=( $path /usr/texbin )
+    path=( $path /Library/Tex/texbin )
     # Apple's X11 binaries.
-    [[ -d /usr/X11R6/bin ]] && path=( $path /usr/X11R6/bin )
+    path=( $path /usr/X11R6/bin )
     # Default MacPorts installations.
-    if [[ -d /opt/local ]]; then
-      path=( /opt/local/bin /opt/local/sbin $path )
-      manpath=( /opt/local/share/man $manpath )
-    fi
+    path=( /opt/local/bin /opt/local/sbin $path )
+    manpath=( /opt/local/share/man $manpath )
     # Common Homebrew paths
-    if [[ -d /usr/local/opt/ruby/bin ]]; then
-      path=(/usr/local/opt/ruby/bin $path)
-    fi
+    path=( /usr/local/opt/ruby/bin $path )
     ;;
 esac
+
+# Rust
+path=( ~/.cargo/bin $path )
 
 # Source local paths.
 if [[ -f ~/.zpath.local ]]; then
@@ -58,7 +57,7 @@ fi
 path=( ~/bin $path )
 manpath=( ~/man $manpath )
 if [[ -d ~/.gem && -d ~/.gem/ruby ]]; then
-  foreach dir (~/.gem/ruby/*) { [[ -d $dir/bin ]] && path=( $dir/bin $path ) }
+  foreach dir (~/.gem/ruby/*) { path=( $dir/bin $path ) }
 fi
 
 # Removes non-existent directories from an array.

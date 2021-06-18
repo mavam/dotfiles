@@ -55,7 +55,7 @@ POWERLEVEL9K_STATUS_OK_FOREGROUND="green"
 POWERLEVEL9K_STATUS_ERROR_BACKGROUND="clear"
 POWERLEVEL9K_STATUS_ERROR_FOREGROUND="red"
 POWERLEVEL9K_TIME_FORMAT="%D{\uf073 %b %d \uf017 %H:%M}" #  Jun 15  09:32
-POWERLEVEL9K_TIME_FOREGROUND="blue"
+POWERLEVEL9K_TIME_ICON=
 POWERLEVEL9K_TIME_BACKGROUND="clear"
 POWERLEVEL9K_TIME_FOREGROUND="blue"
 POWERLEVEL9K_COMMAND_EXECUTION_TIME_BACKGROUND='clear'
@@ -133,6 +133,7 @@ zplug 'plugins/tmux', from:oh-my-zsh, if:'which tmux'
 
 #zplug 'b4b4r07/enhancd', use:init.sh
 zplug 'b4b4r07/zsh-vimode-visual', defer:3
+zplug 'jeffreytse/zsh-vi-mode'
 zplug "junegunn/fzf-bin", as:command, from:gh-r, rename-to:"fzf", frozen:1
 zplug "junegunn/fzf", use:"shell/key-bindings.zsh"
 zplug 'knu/zsh-manydots-magic', use:manydots-magic, defer:3
@@ -416,4 +417,16 @@ update() {
 if [[ -f ~/.zshrc.local ]]; then
   source ~/.zshrc.local
 fi
-export HOMEBREW_GITHUB_API_TOKEN=1468cd04b96500871c4ea1bfe8d21aeedcd24ca1
+
+export HOMEBREW_GITHUB_API_TOKEN=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
+
+
+# Setup GPG for user accounts.
+if [[ $UID != 0 ]]; then
+  export GPG_TTY=$(tty);
+  if which gpgconf > /dev/null 2>&1; then
+    export GPG_AGENT_INFO=$(gpgconf --list-dirs agent-socket)
+    export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+    gpg-connect-agent updatestartuptty /bye > /dev/null
+  fi
+fi

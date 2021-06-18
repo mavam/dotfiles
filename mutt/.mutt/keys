@@ -3,6 +3,7 @@
 #
 
 bind generic      g    noop
+bind pager        g    noop
 bind generic      gg   first-entry
 bind generic      G    last-entry
 bind index,pager  gf   change-folder

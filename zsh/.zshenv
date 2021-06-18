@@ -49,12 +49,4 @@ if [[ -f ~/.zshenv.local ]]; then
   source ~/.zshenv.local
 fi
 
-# Setup GPG.
-export GPG_TTY=$(tty);
-if which gpgconf > /dev/null 2>&1; then
-  export GPG_AGENT_INFO=$(gpgconf --list-dirs agent-socket)
-  export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
-  gpg-connect-agent updatestartuptty /bye > /dev/null
-fi
-
 # vim: ft=zsh
