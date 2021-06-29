@@ -40,6 +40,10 @@ case $OSTYPE in
     ;;
 esac
 
+# Go
+export GOPATH="$HOME/.go"
+path=( "$GOPATH/bin" $path )
+
 # Rust
 path=( ~/.cargo/bin $path )
 
