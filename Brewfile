@@ -27,6 +27,7 @@ cask "whatsapp"
 cask "xquartz"
 cask "zoom"
 
+brew "ccache"
 brew "clang-format"
 brew "cmake"
 brew "colordiff"
