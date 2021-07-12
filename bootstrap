@@ -9,7 +9,8 @@ usage() {
   echo
   echo "aspects"
   echo
-  echo "    system       adjust system defaults for productivity"
+  echo "    defaults     adjust system defaults for productivity"
+  echo "    keyboard     symlink custom keyboard to system"
   echo "    homebrew     setup Homebrew and install bundled packages"
   echo "    dotfiles     setup dotfiles and install plugins"
   echo "    postfix      setup postfix as GMail relay"
@@ -81,6 +82,10 @@ setup_macos() {
   defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
   # Automatically quit printer app once the print jobs complete
   defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
+  # Adjust toolbar title rollover delay
+  defaults write NSGlobalDomain NSToolbarTitleViewRolloverDelay -float 0
+  # Remove duplicates in the “Open With” menu (also see `lscleanup` alias)
+  /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user
   # Save to disk (not to iCloud) by default.
   defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
   # Display ASCII control characters using caret notation in standard text
@@ -216,8 +221,6 @@ setup_macos() {
   # Load iTerm2 configuration from a predictable location.
   defaults write com.googlecode.iterm2.plist PrefsCustomFolder -string "~/.iterm2"
   defaults write com.googlecode.iterm2.plist LoadPrefsFromCustomFolder -bool true
-  # Enable Dark mode
-	osascript -e 'tell application "System Events" to tell appearance preferences to set dark mode to true'
 }
 
 setup_keyboard_layout() {
@@ -385,7 +388,7 @@ main() {
     usage
     exit 0
   fi
-  if [ "$command" = "system" ] || [ -z "$command" ]; then
+  if [ "$command" = "defaults" ] || [ -z "$command" ]; then
     case "$(uname -s)" in
       Darwin)
         # Close any open System Preferences panes, to prevent them from
@@ -393,12 +396,22 @@ main() {
         osascript -e 'tell application "System Preferences" to quit'
         log "adjusting macOS defaults"
         setup_macos
+        #log "performing software update"
+        #sudo softwareupdate -i -a > /dev/null 2>&1
+        #log "installing XCode comand line developer tools"
+        #xcode-select --install > /dev/null 2>&1 || true
+        ;;
+      *)
+        log "$OS not yet supported"
+        exit 1
+        ;;
+    esac
+  fi
+  if [ "$command" = "keyboard" ] || [ -z "$command" ]; then
+    case "$(uname -s)" in
+      Darwin)
         log "installing custom keyboard layout"
         setup_keyboard_layout
-        log "performing software update"
-        sudo softwareupdate -i -a > /dev/null 2>&1
-        log "installing XCode comand line developer tools"
-        xcode-select --install > /dev/null 2>&1 || true
         ;;
       *)
         log "$OS not yet supported"
