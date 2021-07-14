@@ -15,6 +15,9 @@
 	status = auto
 	branch = auto
 
+[commit]
+	gpgsign = true
+
 [diff]
   tool = icdiff
 
@@ -32,6 +35,9 @@
 [merge]
 	tool = vimdiff
 
+[pull]
+	ff = only
+
 [push]
   followTags = true
 
@@ -42,5 +48,3 @@
 	name = Matthias Vallentin
 	email = matthias@vallentin.net
 	signingkey = 0x8BED5328EF21A389
-[commit]
-	gpgsign = true
