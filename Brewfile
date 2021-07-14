@@ -83,3 +83,6 @@ brew "wget"
 brew "youtube-dl"
 brew "zeek"
 brew "zsh"
+
+mas "keynote", id: 409183694
+mas "wireguard", id: 1451685025
