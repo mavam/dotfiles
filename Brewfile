@@ -7,6 +7,7 @@ tap "buo/cask-upgrade"
 
 cask "1password"
 cask "adguard"
+cask "docker"
 cask "dropbox"
 cask "flux"
 cask "google-chrome"
