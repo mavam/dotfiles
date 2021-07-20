@@ -36,7 +36,7 @@
 	tool = vimdiff
 
 [pull]
-	ff = only
+	rebase = true
 
 [push]
   followTags = true
