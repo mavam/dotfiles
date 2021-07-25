@@ -260,7 +260,7 @@ setup_homebrew() {
     exit 1
   fi
   log "installing bundled Homebrew packages"
-  brew bundle "--file=$(dirname "$0")/Brewfile" || true
+  brew bundle "--file=$(dirname "$0")/homebrew/.Brewfile" || true
   brew cleanup
 }
 
