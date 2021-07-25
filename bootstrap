@@ -132,6 +132,10 @@ setup_macos() {
   defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
   # Disable auto-correct.
   defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
+  # -- Spaces -----------------------------------------------------------------
+  # Disable space navigation when switching applications
+  defaults write -g AppleSpacesSwitchOnActivate -bool false
+  defaults write com.apple.dock workspaces-auto-swoosh -bool NO
   # -- Finder -----------------------------------------------------------------
   # Show the ~/Library folder.
   chflags nohidden ~/Library
