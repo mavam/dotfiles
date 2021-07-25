@@ -36,7 +36,12 @@ case $OSTYPE in
     path=( /opt/local/bin /opt/local/sbin $path )
     manpath=( /opt/local/share/man $manpath )
     # Common Homebrew paths
-    path=( /usr/local/opt/ruby/bin $path )
+    path=(
+      /usr/local/opt/llvm/bin     # brew --prefix llvm
+      /usr/local/opt/ruby/bin     # brew --prefix ruby
+      /usr/local/opt/python/bin   # brew --prefix python
+      $path
+    )
     ;;
 esac
 
