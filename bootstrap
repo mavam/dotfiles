@@ -116,6 +116,8 @@ setup_macos() {
   defaults write com.apple.dock show-recents -bool false
   # Disable animations when opening and closing windows.
   defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
+  # Drag windows anywhere when holding CTRL + CMD.
+  defaults write -g NSWindowShouldDragOnGesture -bool true
   # -- Keyboard ---------------------------------------------------------------
   # Set a really fast key repeat.
   defaults write NSGlobalDomain KeyRepeat -int 1
