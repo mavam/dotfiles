@@ -1,6 +1,6 @@
 <?xml version="1.1" encoding="UTF-8"?>
 <!DOCTYPE keyboard SYSTEM "file://localhost/System/Library/DTDs/KeyboardLayout.dtd">
-<!--Last edited by Ukelele version 343 on 2021-08-16 at 06:38 (CEST)-->
+<!--Last edited by Ukelele version 343 on 2021-08-16 at 09:30 (CEST)-->
 <keyboard group="126" id="-3946" name="mavam" maxout="5">
     <layouts>
         <layout first="0" last="17" mapSet="234" modifiers="12c"/>
@@ -1621,7 +1621,7 @@
             <when state="none" next="tilde"/>
         </action>
         <action id="⇩">
-            <when state="none" output="⇩"/>
+            <when state="none" output="I"/>
             <when state="technical" output="⇧"/>
         </action>
     </actions>
