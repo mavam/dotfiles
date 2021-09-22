@@ -6,20 +6,21 @@ if (requireNamespace("rprofile", quietly = TRUE)) {
   rprofile::set_startup_options()
 }
 
-if (interactive() && requireNamespace("rprofile", quietly = TRUE)) {
-  rprofile::create_make_functions()
-  if (rprofile::is_terminal()) {
+if (interactive()) {
+  base::library("utils") # Needed for rdoc`?` to take precedence
+  rdoc::use_rdoc()
+  if (requireNamespace("rprofile", quietly = TRUE)) {
+    rprofile::create_make_functions()
+    .env = rprofile::set_functions()
+    attach(.env)
+  }
+  if (requireNamespace("colorout", quietly = TRUE)) {
+    base::library("colorout")
+  }
+  if (requireNamespace("prompt", quietly = TRUE)) {
     prompt::set_prompt(prompt::prompt_fancy)
     prettycode::prettycode()
-    base::library("utils") # Needed for rdoc`?` to take precedence
-    rdoc::use_rdoc()
-    if (requireNamespace("colorout", quietly = TRUE))
-      base::library("colorout")
-  } else {
-    rprofile::set_rstudio()
   }
-  .env = rprofile::set_functions()
-  attach(.env)
 }
 
 # -- Utilities --------------------------------------------------
