@@ -1,4 +1,5 @@
 *.sw?
+ccache/.ccache/ccache/
 mutt/.mutt/account*
 mutt/.mutt/aliases
 mutt/.mutt/hooks
