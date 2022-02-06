@@ -219,17 +219,22 @@ setup_macos() {
 }
 
 setup_keyboard_layout() {
-  enter_sudo_mode
+  # enter_sudo_mode
+  log "Install keyboardl layout"
   #cp mavam.keylayout /Library/Keyboard\ Layouts/
 }
 setup_oh_my_zsh() {
   log "install oh my zsh"
   sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 }
+setup_pk10_config() {
+  log "Setup p10k"
+  p10k configure
+}
 setup_homebrew() {
   if which brew > /dev/null 2>&1; then
     log "upgrading existing Homebrew packages"
-    brew upgrade
+    arch -arm64 brew upgrade
   elif which ruby > /dev/null 2>&1; then
     log "installing Homebrew"
     case "$(uname -s)" in
@@ -251,8 +256,8 @@ setup_homebrew() {
     exit 1
   fi
   log "installing bundled Homebrew packages"
-  brew bundle "--file=$(dirname "$0")/Brewfile" || true
-  brew cleanup
+  arch -arm64 brew bundle "--file=$(dirname "$0")/Brewfile" || true
+  arch -arm64 brew cleanup
 }
 
 # Configures the postfix MTA as a GMail relay.
@@ -269,79 +274,6 @@ setup_homebrew() {
 #
 # If you have a message in the `mailq` that doesn't find its way out, try to
 # force a flush via `sendmail -q` while watching the log stream output.
-setup_postfix() {
-  enter_sudo_mode
-  # Setup SASL authentication.
-  log "enter your Gmail address:"
-  IFS= read -r email
-  log "enter your Gmail password:"
-  IFS= read -rs password
-  if ! sudo test -d /etc/postfix/sasl; then
-    sudo mkdir -m 600 /etc/postfix/sasl
-  else
-    sudo chmod -R 600 /etc/postfix/sasl
-  fi
-  sasl_passwd="[smtp.gmail.com]:587 $email:$password"
-  echo "$sasl_passwd" | sudo tee /etc/postfix/sasl/sasl_passwd > /dev/null
-  sudo chown root:wheel /etc/postfix/sasl/sasl_passwd
-  sudo chmod 600 /etc/postfix/sasl/sasl_passwd
-  sudo postmap /etc/postfix/sasl/sasl_passwd
-  sudo postmap /etc/postfix/generic
-  # Setup SMTP relay.
-  set +e
-  read -d '' main_cf_gmail << EOT
-# -------------------
-# Gmail configuration
-# -------------------
-
-# Avoid startup failures.
-compatibility_level = 2
-
-# Google refuses email from IPv6 addresses without reverse name.
-inet_protocols = ipv4
-
-# Set Gmail SMTP relay.
-relayhost = [smtp.gmail.com]:587
-
-# Enable SASL authentication in the Postfix SMTP client.
-smtpd_sasl_auth_enable = yes
-smtp_sasl_auth_enable = yes
-smtp_sasl_password_maps = hash:/etc/postfix/sasl/sasl_passwd
-smtp_sasl_security_options = noanonymous
-smtp_sasl_mechanism_filter = AUTH LOGIN
-
-# Use Homebrew's openssl certificates.
-smtp_tls_CApath = /usr/local/etc/openssl/certs
-smtp_tls_CAfile = /usr/local/etc/openssl/cert.pem
-
-# Enable TLS.
-smtp_use_tls = yes
-smtp_tls_security_level = encrypt
-EOT
-  read -d '' main_cf_header << EOT
-# -------------------
-# Basic configuration
-# -------------------
-EOT
-  set -e
-  skip="inet_protocols|use_sacl_cache|mydomain_fallback"
-  skip="${skip}|imap_submit_cred_file"
-  main_cf_base=$(awk '$1 !~ /^#|^$/' /etc/postfix/main.cf | egrep -v "$skip")
-  main_cf="$main_cf_header\n\n$main_cf_base\n\n$main_cf_gmail"
-  sudo cp /etc/postfix/main.cf /etc/postfix/main.cf.orig
-  echo "$main_cf" | sudo tee /etc/postfix/main.cf > /dev/null
-  # Restart postfix.
-  if sudo postfix status 2> /dev/null; then
-    sudo postfix stop 2> /dev/null
-  fi
-  sudo postfix start
-  # Prompt for sending a test email.
-  log "send test mail to $email? [Y/n]"
-  IFS= read -rs -n 1 input
-  if [ "$input" = $'\n' ] || [ "$input" = "y" ]; then
-    echo Test | mail -s "Postfix Test @ $(hostname -s) - $(date)" $email
-  fi
-}
 
 setup_tmux() {
   if [ ! -d ~/.tmux/plugins/tpm ]; then
@@ -391,12 +323,12 @@ main() {
         osascript -e 'tell application "System Preferences" to quit'
         log "adjusting macOS defaults"
         setup_macos
-        log "installing custom keyboard layout"
-        setup_keyboard_layout
         log "performing software update"
         sudo softwareupdate -i -a > /dev/null 2>&1
         log "installing XCode comand line developer tools"
         xcode-select --install > /dev/null 2>&1 || true
+        log "configure p10k"
+        setup_pk10_config
         ;;
       *)
         log "$OS not yet supported"
@@ -409,14 +341,6 @@ main() {
   fi
   if [ "$command" = "dotfiles" ] || [ -z "$command" ]; then
     sh "$(dirname "$0")/dots" install -a
-  fi
-  if [ "$command" = "postfix" ] || [ -z "$command" ]; then
-    if ! fgrep -q stmp.gmail.com /etc/postfix/main.cf; then
-      log "configuring postfix as Gmail relay"
-      setup_postfix
-    else
-      log "postfix already as Gmail relay configured"
-    fi
   fi
   if [ "$command" = "tmux" ] || [ -z "$command" ]; then
     setup_tmux

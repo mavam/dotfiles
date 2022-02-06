@@ -1,3 +1,10 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
  # =============================================================================
 #                          Pre-Plugin Configuration
 # =============================================================================
@@ -10,69 +17,6 @@ zle -N self-insert url-quote-magic
 # =============================================================================
 #                                   Plugins
 # =============================================================================
-
-# powerlevel9k prompt theme
-DEFAULT_USER=$USER
-POWERLEVEL9K_MODE='nerdfont-complete'
-#POWERLEVEL9K_SHORTEN_DIR_LENGTH=3
-#POWERLEVEL9K_SHORTEN_STRATEGY="truncate_from_right"
-POWERLEVEL9K_DIR_PATH_SEPARATOR="%F{cyan}/%F{blue}"
-POWERLEVEL9K_LEFT_SEGMENT_SEPARATOR=''
-POWERLEVEL9K_RIGHT_SEGMENT_SEPARATOR=''
-POWERLEVEL9K_LEFT_SUBSEGMENT_SEPARATOR=''
-POWERLEVEL9K_RIGHT_SUBSEGMENT_SEPARATOR=''
-POWERLEVEL9K_PROMPT_ON_NEWLINE=true
-POWERLEVEL9K_RPROMPT_ON_NEWLINE=true
-POWERLEVEL9K_MULTILINE_FIRST_PROMPT_PREFIX="%F{blue}\u256D\u2500%f"
-POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX="%F{blue}\u2570\uf460%f "
-POWERLEVEL9K_STATUS_OK=false
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(root_indicator dir_joined
-                                   dir_writable_joined vcs virtualenv)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status command_execution_time
-                                    background_jobs_joined time_joined
-                                    user_joined)
-POWERLEVEL9K_VCS_CLEAN_BACKGROUND="clear"
-POWERLEVEL9K_VCS_CLEAN_FOREGROUND="green"
-POWERLEVEL9K_VCS_MODIFIED_BACKGROUND="clear"
-POWERLEVEL9K_VCS_MODIFIED_FOREGROUND="yellow"
-POWERLEVEL9K_VCS_UNTRACKED_BACKGROUND="clear"
-POWERLEVEL9K_VCS_UNTRACKED_FOREGROUND="yellow"
-POWERLEVEL9K_DIR_HOME_BACKGROUND="clear"
-POWERLEVEL9K_DIR_HOME_FOREGROUND="blue"
-POWERLEVEL9K_DIR_HOME_SUBFOLDER_BACKGROUND="clear"
-POWERLEVEL9K_DIR_HOME_SUBFOLDER_FOREGROUND="blue"
-POWERLEVEL9K_DIR_WRITABLE_FORBIDDEN_BACKGROUND="clear"
-POWERLEVEL9K_DIR_WRITABLE_FORBIDDEN_FOREGROUND="red"
-POWERLEVEL9K_DIR_DEFAULT_BACKGROUND="clear"
-POWERLEVEL9K_DIR_DEFAULT_FOREGROUND="cyan"
-POWERLEVEL9K_ROOT_INDICATOR_BACKGROUND="clear"
-POWERLEVEL9K_ROOT_INDICATOR_FOREGROUND="red"
-POWERLEVEL9K_STATUS_OK_BACKGROUND="clear"
-POWERLEVEL9K_STATUS_OK_FOREGROUND="green"
-POWERLEVEL9K_STATUS_ERROR_BACKGROUND="clear"
-POWERLEVEL9K_STATUS_ERROR_FOREGROUND="red"
-#POWERLEVEL9K_TIME_FORMAT="%D{\uf073 %b %d \uf017 %H:%M}" #  Jun 15  09:32
-POWERLEVEL9K_TIME_FOREGROUND="blue"
-POWERLEVEL9K_TIME_BACKGROUND="clear"
-POWERLEVEL9K_TIME_FOREGROUND="blue"
-POWERLEVEL9K_COMMAND_EXECUTION_TIME_BACKGROUND='clear'
-POWERLEVEL9K_COMMAND_EXECUTION_TIME_FOREGROUND='magenta'
-POWERLEVEL9K_BACKGROUND_JOBS_BACKGROUND='clear'
-POWERLEVEL9K_BACKGROUND_JOBS_FOREGROUND='magenta'
-POWERLEVEL9K_USER_DEFAULT_BACKGROUND='clear'
-POWERLEVEL9K_USER_DEFAULT_FOREGROUND='cyan'
-POWERLEVEL9K_USER_ROOT_BACKGROUND='clear'
-POWERLEVEL9K_USER_ROOT_FOREGROUND='red'
-POWERLEVEL9K_USER_ICON="\uf415" # 
-POWERLEVEL9K_ROOT_ICON="\u26a1" # ⚡
-POWERLEVEL9K_HOST_LOCAL_BACKGROUND='clear'
-POWERLEVEL9K_HOST_LOCAL_FOREGROUND='cyan'
-POWERLEVEL9K_HOST_REMOTE_BACKGROUND='clear'
-POWERLEVEL9K_HOST_REMOTE_FOREGROUND='magenta'
-POWERLEVEL9K_HOST_ICON="\uF109 " # 
-POWERLEVEL9K_SSH_ICON="\uF489 "  # 
-POWERLEVEL9K_OS_ICON_BACKGROUND="clear"
-POWERLEVEL9K_OS_ICON_FOREGROUND="grey"
 
 # zsh-syntax-highlighting
 ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
@@ -102,7 +46,6 @@ zplug 'plugins/colored-man-pages', from:oh-my-zsh
 zplug 'plugins/git', from:oh-my-zsh, if:'which git'
 zplug 'plugins/nmap', from:oh-my-zsh, if:'which nmap'
 zplug 'plugins/tmux', from:oh-my-zsh, if:'which tmux'
-zplug 'bhilburn/powerlevel9k', use:powerlevel9k.zsh-theme
 zplug "junegunn/fzf-bin", as:command, from:gh-r, rename-to:"fzf", frozen:1
 zplug "junegunn/fzf", use:"shell/key-bindings.zsh"
 zplug "lib/completion", from:oh-my-zsh
@@ -114,6 +57,7 @@ zplug 'zsh-users/zsh-history-substring-search'
 zplug 'zsh-users/zsh-syntax-highlighting', defer:3
 zplug 'superbrothers/zsh-kubectl-prompt'
 zplug 'paulirish/git-open', as:plugin
+zplug romkatv/powerlevel10k, as:theme, depth:1
 
 if ! zplug check; then
   zplug install
@@ -428,5 +372,6 @@ function ssl-check() {
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
 
-source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc"
-source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc"
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

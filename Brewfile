@@ -87,5 +87,5 @@ brew "wget"
 brew "youtube-dl"
 brew "zplug", args: ["HEAD"]
 brew "zsh"
-brew "chunkwm"
+brew "yabai"
 brew "skhd"

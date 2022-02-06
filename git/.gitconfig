@@ -53,8 +53,7 @@
 [user]
 	name = danielbernalo
 	email = danielbernal@nuevoeste.com
-[core]
-	excludesfile = /Users/Daniel/.gitignore_global
+  
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
 	path = 
