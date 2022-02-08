@@ -25,25 +25,21 @@ CurrentlyVisibleSpaceNames=$(yabai -m query --spaces | jq -re ".[] | select(.vis
 #  yabai -m space 2 --label two
 #  yabai -m space 3 --label three
 #  yabai -m space 4 --label four
-#  yabai -m space 5 --label five
-#  yabai -m space 6 --label six
+
 case $inputKeyNumber in
 '1')
     firstSpaceName='one'
     firstspacenumber='1'
     secondSpaceName='two'
     secondSpacenumber='2'
-    firstSpaceName='three'
-    firstspacenumber='3'
     ;;
 '2')
-    firstSpaceName='four'
-    firstspacenumber='4'
-    secondSpaceName='five'
-    secondSpacenumber='5'
-    firstSpaceName='six'
-    firstspacenumber='6'
+    firstSpaceName='three'
+    firstspacenumber='3'
+    secondSpaceName='four'
+    secondSpacenumber='4'
     ;;
+
 esac
 
 focusWindow() {                   # function

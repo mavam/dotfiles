@@ -1,5 +1,4 @@
 #!/bin/dash
-
 # curWindowId="$(jq -re ".id" <<<$(yabai -m query --windows --window))"
 xx=$(yabai -m query --windows --window)
 curWindowId="$(echo $xx | jq -re ".id")"
