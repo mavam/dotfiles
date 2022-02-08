@@ -9,3 +9,4 @@ tmux/.tmux/plugins
 ssh/.ssh/id_rsa*
 ssh/.ssh/known_hosts
 zsh/.zsh_history
+**/.DS_Store

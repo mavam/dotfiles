@@ -25,8 +25,8 @@ hyper - y : yabai -m window --swap west
 hyper - 0x21 : yabai -m window --swap east # 0x21 is the "[" key
 
 ## send window to monitor and follow focus
-hyper - u : /Users/danielbernal/.dotfiles/scripts/moveWindowLeftAndFollowFocus.sh
-hyper - p : /Users/danielbernal/.dotfiles/scripts/moveWindowRightAndFollowFocus.sh
+hyper - u : $HOME/.config/yabai/moveWindowLeftAndFollowFocus.sh
+hyper - p : $HOME/.config/yabai/moveWindowRightAndFollowFocus.sh
 
 ## focus display
 ctrl + cmd - 1 : yabai -m window --display 1 yabai -m display --focus 1
@@ -61,12 +61,12 @@ shift + lalt + lcmd + ctrl + ralt - 2 : yabai -m query --spaces --space | jq -re
 shift + lalt + lcmd + ctrl + ralt - 3 : yabai -m query --spaces --space | jq -re ".index" | xargs -I {} bash -c "if [[ '{}' = '5' ]]; then yabai -m window --space 6; elif [[ '{}' = '6' ]]; then yabai -m window --space 5; fi"
 
 # show next space per display
-#hyper - 1 : /Users/danielbernal/.dotfiles/scripts/switchAndFocus.sh 1
-#hyper - 2 : /Users/danielbernal/.dotfiles/scripts/switchAndFocus.sh 2
-#hyper - 3 : /Users/danielbernal/.dotfiles/scripts/switchAndFocus.sh 3
-ctrl + alt + cmd + lshift - 1 : /Users/danielbernal/.dotfiles/scripts/switchAndFocusSIP.sh 1
-ctrl + alt + cmd + lshift - 2 : /Users/danielbernal/.dotfiles/scripts/switchAndFocusSIP.sh 2
-ctrl + alt + cmd + lshift - 3 : /Users/danielbernal/.dotfiles/scripts/switchAndFocusSIP.sh 3
+#hyper - 1 : $HOME/.config/yabai/switchAndFocus.sh 1
+#hyper - 2 : $HOME/.config/yabai/switchAndFocus.sh 2
+#hyper - 3 : $HOME/.config/yabai/switchAndFocus.sh 3
+ctrl + alt + cmd + lshift - 1 : $HOME/.config/yabai/switchAndFocusSIP.sh 1
+ctrl + alt + cmd + lshift - 2 : $HOME/.config/yabai/switchAndFocusSIP.sh 2
+ctrl + alt + cmd + lshift - 3 : $HOME/.config/yabai/switchAndFocusSIP.sh 3
 
 ## toggle window fullscreen zoom
 hyper - f : yabai -m window --toggle zoom-fullscreen

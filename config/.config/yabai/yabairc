@@ -114,12 +114,12 @@ limelight &>/dev/null &
 # yabai -m signal --add event=application_terminated action="terminal-notifier -message 'application_terminated'"
 
 ## If I close the active window, focus on any other visible window.
-yabai -m signal --add event=window_destroyed action="/Users/danielbernal/.dotfiles/scripts/window-focus-on-destroy.sh"
+yabai -m signal --add event=window_destroyed action="$HOME/.config/yabai/window-focus-on-destroy.sh"
 # yabai -m signal --add event=space_changed action="export CUR_ACTIVE_APP=\"iTerm2\""
 
-yabai -m signal --add event=window_created action="bash /Users/danielbernal/.dotfiles/scripts/event_create_window.sh"
-yabai -m signal --add event=application_launched action="bash /Users/danielbernal/.dotfiles/scripts/event_create_window.sh"
-yabai -m signal --add event=window_moved action="/Users/danielbernal/.dotfiles/scripts/event_move_windows_to_stack.sh"
+yabai -m signal --add event=window_created action="bash $HOME/.config/yabai/event_create_window.sh"
+yabai -m signal --add event=application_launched action="bash $HOME/.config/yabai/event_create_window.sh"
+yabai -m signal --add event=window_moved action="$HOME/.config/yabai/event_move_windows_to_stack.sh"
 
 echo "yabai configuration loaded.."
 
