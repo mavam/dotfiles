@@ -42,9 +42,6 @@ case $OSTYPE in
     ;;
 esac
 
-# Set UTF-8 locale.
-export LANG=en_US.UTF-8
-
 # Source local environment.
 if [[ -f ~/.zshenv.local ]]; then
   source ~/.zshenv.local
@@ -66,11 +63,12 @@ export PATH="/usr/local/opt/openjdk@11/bin:$PATH"
 export PATH="$HOME/.rbenv/bin:$PATH"
 export JAVA_HOME=$(/usr/libexec/java_home -v11)
 export CPPFLAGS="-I/usr/local/opt/openjdk@11/include"
+export LANGUAGE="en_US.UTF-8"
+export LC_ALL="en_US.UTF-8"
+
 #export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
 #export PATH="/usr/local/opt/ruby@2.4/bin:$PATH"
 #export LDFLAGS="-L/usr/local/opt/ruby@2.4/lib"
 #export CPPFLAGS="-I/usr/local/opt/ruby@2.4/include"
 #export PKG_CONFIG_PATH="/usr/local/opt/ruby@2.4/lib/pkgconfig"
 # vim: ft=zsh
-export LANGUAGE=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
