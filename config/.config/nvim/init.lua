@@ -1,19 +1,3 @@
--- Install Packer
-local install_path = vim.fn.stdpath'data' .. '/site/pack/packer/start/packer.nvim'
-
-if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
-  vim.fn.execute('!git clone https://github.com/wbthomason/packer.nvim ' .. install_path)
-end
-
-vim.api.nvim_exec(
-  [[
-    augroup Packer
-      autocmd!
-      autocmd BufWritePost init.lua PackerCompile
-    augroup end
-  ]],
-  false)
-
 -- Remap space as leader key.
 vim.api.nvim_set_keymap('', ',', '<Nop>', { noremap = true, silent = true })
 vim.g.mapleader = ','
@@ -21,15 +5,95 @@ vim.g.maplocalleader = ','
 
 local use = require'packer'.use
 require'packer'.startup(function()
+end)
+
+-- General settings.
+
+-- Use system pastebuffer.
+vim.o.clipboard = 'unnamedplus'
+
+-- Global statusline.
+vim.o.laststatus = 3
+
+-- No need for swapfiles nowadays.
+vim.o.backup = false
+vim.o.writebackup = false
+vim.o.swapfile = false
+
+-- Do not save when switching buffers.
+vim.o.hidden = true
+
+-- Enable mouse mode.
+vim.o.mouse = 'a'
+
+-- Incremental live completion.
+vim.o.inccommand = 'nosplit'
+
+-- Set highlight on search.
+vim.o.hlsearch = false
+
+-- Case insensitive searching unless explicitly using /C or using at least one
+-- capital letter in search.
+vim.o.ignorecase = true
+vim.o.smartcase = true
+
+-- Decrease update time.
+vim.o.updatetime = 250
+vim.wo.signcolumn = 'yes'
+
+-- Deal with word wrapping automatically for j/k.
+vim.api.nvim_set_keymap('n', 'k', "v:count == 0 ? 'gk' : 'k'", {
+  expr = true,
+  noremap = true,
+  silent = true,
+})
+vim.api.nvim_set_keymap('n', 'j', "v:count == 0 ? 'gj' : 'j'", {
+  expr = true,
+  noremap = true,
+  silent = true,
+})
+
+-- Highlight on yank.
+vim.api.nvim_exec([[
+    augroup YankHighlight
+      autocmd!
+      autocmd TextYankPost * silent! lua vim.highlight.on_yank()
+    augroup end
+  ]],
+  false)
+
+-- Highlight on yank.
+vim.api.nvim_exec([[
+    set makeprg=cmake\ --build\ build
+  ]],
+  false)
+
+-- Bootstrap Packer
+local install_path = vim.fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
+if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
+  packer_bootstrap = vim.fn.system({
+    'git',
+    'clone',
+    '--depth',
+    '1',
+    'https://github.com/wbthomason/packer.nvim',
+    install_path
+  })
+end
+
+return require('packer').startup(function(use)
   -- Package manager.
   use 'wbthomason/packer.nvim'
+
   -- Enable repeating supporting plugin maps with `.`.
   use 'tpope/vim-repeat'
+
   -- Heuristically set buffer options.
   use 'tpope/vim-sleuth'
-  -- Git commands and integration with `hub`.
+
+  -- Git integration
   use 'tpope/vim-fugitive'
-  use 'tpope/vim-rhubarb'
+
   -- Automatic dark mode switching on macOS.
   use {
     'f-person/auto-dark-mode.nvim',
@@ -49,8 +113,7 @@ require'packer'.startup(function()
       auto_dark_mode.init()
     end,
   }
-  -- Automated session manager per working directory.
-  -- use 'rmagatti/auto-session'
+
   -- UI to select things (files, grep results, open buffers...)
   use {
     'nvim-telescope/telescope.nvim',
@@ -81,9 +144,47 @@ require'packer'.startup(function()
       vim.api.nvim_set_keymap('n', '<leader>?', [[<cmd>lua require('telescope.builtin').oldfiles()<CR>]], { noremap = true, silent = true })
     end
   }
+
   -- TreeSitter integration, and additional textobjects for it.
-  use 'nvim-treesitter/nvim-treesitter'
-  use 'nvim-treesitter/nvim-treesitter-textobjects'
+  use {
+    'nvim-treesitter/nvim-treesitter',
+    config = function()
+      require'nvim-treesitter.configs'.setup {
+        ensure_installed = {
+          'bash';
+          'c';
+          'comment';
+          'cpp';
+          'json';
+          'lua';
+          'markdown';
+          'python';
+          'yaml';
+        },
+        highlight = {
+          enable = true,
+          additional_vim_regex_highlighting = true,
+        },
+        incremental_selection = {
+          enable = true,
+          keymaps = {
+            init_selection = '<CR>',
+            scope_incremental = '<CR>',
+            node_incremental = '<TAB>',
+            node_decremental = '<S-TAB>',
+          },
+        },
+      }
+    end
+  }
+
+  use {
+    'nvim-treesitter/nvim-treesitter-textobjects',
+    requires = {
+      'nvim-treesitter/nvim-treesitter'
+    }
+  }
+
   -- Add git related info in the signs columns and popups
   use {
     'lewis6991/gitsigns.nvim',
@@ -103,6 +204,7 @@ require'packer'.startup(function()
       }
     end
   }
+
   -- Display a character as the virtual column.
   use {
     'lukas-reineke/virt-column.nvim',
@@ -110,6 +212,7 @@ require'packer'.startup(function()
       require('virt-column').setup()
     end,
   }
+
   -- Horiontal highlights for headlines.
   use {
     'lukas-reineke/headlines.nvim',
@@ -117,6 +220,7 @@ require'packer'.startup(function()
       require('headlines').setup()
     end,
   }
+
   use {
     'rebelot/kanagawa.nvim',
     config = function()
@@ -141,10 +245,12 @@ require'packer'.startup(function()
       vim.cmd 'colorscheme kanagawa'
     end
   }
+
   -- Enhanced terminal integration for Vim
   use {
     'wincent/terminus'
   }
+
   -- Dark colorscheme inspired by the colors of the famous painting by Katsushika Hokusai.
   -- High Contrast & Vivid Color Scheme based on Monokai Pro.
   -- use {
@@ -255,93 +361,11 @@ require'packer'.startup(function()
       vim.api.nvim_set_keymap('i', '<c-space>', 'compe#complete()', { expr = true })
     end
   }
+
+  -- Automatically set up your configuration after cloning packer.nvim
+  -- Put this at the end after all plugins
+  if packer_bootstrap then
+    require('packer').sync()
+  end
 end)
 
--- General settings.
-
--- TreeSitter
-require'nvim-treesitter.configs'.setup {
-  ensure_installed = {
-    'bash';
-    'c';
-    'comment';
-    'cpp';
-    'json';
-    'lua';
-    'markdown';
-    'python';
-    'yaml';
-  },
-  highlight = {
-    enable = true,
-    additional_vim_regex_highlighting = true,
-  },
-  incremental_selection = {
-    enable = true,
-    keymaps = {
-      init_selection = '<CR>',
-      scope_incremental = '<CR>',
-      node_incremental = '<TAB>',
-      node_decremental = '<S-TAB>',
-    },
-  },
-}
-
--- Use system pastebuffer.
-vim.o.clipboard = 'unnamedplus'
-
--- Global statusline.
-vim.o.laststatus = 3
-
--- No need for swapfiles nowadays.
-vim.o.backup = false
-vim.o.writebackup = false
-vim.o.swapfile = false
-
--- Do not save when switching buffers.
-vim.o.hidden = true
-
--- Enable mouse mode.
-vim.o.mouse = 'a'
-
--- Incremental live completion.
-vim.o.inccommand = 'nosplit'
-
--- Set highlight on search.
-vim.o.hlsearch = false
-
--- Case insensitive searching unless explicitly using /C or using at least one
--- capital letter in search.
-vim.o.ignorecase = true
-vim.o.smartcase = true
-
--- Decrease update time.
-vim.o.updatetime = 250
-vim.wo.signcolumn = 'yes'
-
--- Deal with word wrapping automatically for j/k.
-vim.api.nvim_set_keymap('n', 'k', "v:count == 0 ? 'gk' : 'k'", {
-  expr = true,
-  noremap = true,
-  silent = true,
-})
-vim.api.nvim_set_keymap('n', 'j', "v:count == 0 ? 'gj' : 'j'", {
-  expr = true,
-  noremap = true,
-  silent = true,
-})
-
--- Highlight on yank.
-vim.api.nvim_exec([[
-    augroup YankHighlight
-      autocmd!
-      autocmd TextYankPost * silent! lua vim.highlight.on_yank()
-    augroup end
-  ]],
-  false)
-
--- Highlight on yank.
-vim.api.nvim_exec([[
-    set makeprg=cmake\ --build\ build
-  ]],
-  false)
