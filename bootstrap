@@ -16,7 +16,7 @@ usage() {
   echo "    postfix      setup postfix as GMail relay"
   echo "    tmux         install Tmux plugins"
   echo "    vim          install Vim plugins"
-  echo "    zsh          setup Zsh as login shell"
+  echo "    fish          setup fish as login shell"
   echo
   echo "without any arguments, all aspects will be setup (in the above order)"
   echo
@@ -378,14 +378,14 @@ setup_vim() {
   curl -fsSL https://raw.github.com/cknadler/vim-anywhere/master/install | bash
 }
 
-setup_zsh() {
-  log "setting Zsh as login shell"
-  zsh=$(which zsh)
-  if ! fgrep -q "$zsh" /etc/shells; then
-    log "adding $zsh to /etc/shells"
-    echo "$zsh" | sudo tee -a /etc/shells > /dev/null
+setup_fish() {
+  log "setting fish as login shell"
+  fish=$(which fish 2> /dev/null)
+  if ! fgrep -q "$fish" /etc/shells; then
+    log "adding $fish to /etc/shells"
+    echo "$fish" | sudo tee -a /etc/shells > /dev/null
   fi
-  sudo chsh -s "$zsh" $USER
+  sudo chsh -s "$fish" $USER
 }
 
 main() {
@@ -445,8 +445,8 @@ main() {
   if [ "$command" = "vim" ] || [ -z "$command" ]; then
     setup_vim
   fi
-  if [ "$command" = "zsh" ] || [ -z "$command" ]; then
-    setup_zsh
+  if [ "$command" = "fish" ] || [ -z "$command" ]; then
+    setup_fish
   fi
 }
 
