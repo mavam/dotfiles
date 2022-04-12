@@ -1,5 +1,6 @@
 *.sw?
 ccache/.ccache/ccache/
+config/.config/nvim/plugin/
 mutt/.mutt/account*
 mutt/.mutt/aliases
 mutt/.mutt/hooks
