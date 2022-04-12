@@ -3,12 +3,6 @@ vim.api.nvim_set_keymap('', ',', '<Nop>', { noremap = true, silent = true })
 vim.g.mapleader = ','
 vim.g.maplocalleader = ','
 
-local use = require'packer'.use
-require'packer'.startup(function()
-end)
-
--- General settings.
-
 -- Use system pastebuffer.
 vim.o.clipboard = 'unnamedplus'
 
