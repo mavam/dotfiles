@@ -2,7 +2,7 @@
   <img width="600" alt="zsh" src="https://user-images.githubusercontent.com/53797/46028848-ee273b80-c0f1-11e8-9e32-a750cd84692b.png">
 </p>
 
-Proper dotfiles are the very heart of an efficient working environment.
+**Proper dotfiles are the very heart of an efficient working environment.**
 
 - Terminals:
   - [Kitty](https://sw.kovidgoyal.net/kitty/)
@@ -10,6 +10,7 @@ Proper dotfiles are the very heart of an efficient working environment.
 - Shell: [Fish](https://fishshell.com/)
 - Editor: [NeoVim](https://neovim.io/)
 - Font: [Meslo](https://github.com/andreberg/Meslo-Font) from [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts)
+- Colors: [Kanagawa](https://github.com/rebelot/kanagawa.nvim)
 
 On macOS, [Homebrew](https://brew.sh) is the package manager.
 
@@ -40,7 +41,8 @@ follows:
 
     ./dots install -a
 
-Alternatively, install only dotfiles for git and gnupg:
+Alternatively, install only dotfiles selectively, with positional arguments
+matching names in this repository:
 
     ./dots install git gnupg
 
@@ -53,6 +55,25 @@ line includes the `-f` switch. When in doubt what the installation of a subset
 of the dotfiles would look like, it is possible to look at the diff first:
 
     ./dots diff -a
+
+To add a configuration for an exemplary tool "foo", create a new directory
+`foo` and add the dotfiles in there, as if `foo` is your install prefix
+(typically `$HOME`). You can "scope" a tool as *local* by adding a tag-file
+`foo/LOCAL`. This has the effect of creating a nested configuration directory
+in your prefix, instead of symlinking the directory. For example, you may not
+want to symlink `~/.gnupg` but only the contained file `~/.gnupg/gpg.conf`.
+Without the scope tag `gnupg/LOCAL`, you would end up with:
+
+```
+`~/.gnupg -> dotfiles/gpg/.gnupg
+```
+
+as opposed to:
+
+```
+`~/.gnupg (local directory)
+`~/.gnupg/gpg.conf -> dotfiles/gpg/.gnupg/gpg.conf
+```
 
 ### System Bootstrapping
 

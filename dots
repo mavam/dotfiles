@@ -51,7 +51,7 @@ log() {
   printf "$color%s$reset\n" "$*"
 }
 
-list() {
+filter_files() {
   git ls-files "$1" | awk -F / "$2" | uniq
 }
 
@@ -68,18 +68,32 @@ execute() {
     else
       ln="ln -s"
     fi
-    log info "installing $tag into $prefix"
-    for entry in $(list "$tag" '{print $2}'); do
-      # If the target exists and is a directory, we keep it and install the
-      # files inside. Otherwise we simply create the symlink
+    local_scope=$(filter_files "$tag" '$2 == "LOCAL"')
+    scope=$([ -n "$local_scope" ] && echo "local" || echo "linked")
+    log info "installing $tag into $prefix (scope: $scope)"
+    for entry in $(filter_files "$tag" '$2 != "LOCAL" {print $2}'); do
+      if [ -n "$local_scope" ] && ! [ -d "$prefix/$entry" ]; then
+        # Sometimes we do not want to version-control an entire directory but
+        # only some contained content, e.g., for XDG_CONFIG_DIR, .gnupg, .git.
+        # We allow this behavior by adding a file named LOCAL to a tag.
+        log info "creating locally scoped target directory: $prefix/$entry"
+        mkdir -m 700 -p "$prefix/$entry"
+      fi
       if [ -d "$prefix/$entry" ]; then
         if ! [ -d "$dir/$tag/$entry" ]; then
-          log error "source is a file but target a directory"
+          log error "expected directory for $dir/$tag/$entry"
           exit 1
         fi
-        for file in $(list "$tag/$entry" '{print $2 "/" $3}'); do
-          eval "$ln \"$dir/$tag/$file\" \"$prefix/$entry\""
-          log info "  + $file"
+        for file in $(filter_files "$tag/$entry" '{print $2 "/" $3}'); do
+          case "$file" in
+            .*)
+              log info "  + $file"
+              eval "$ln \"$dir/$tag/$file\" \"$prefix/$entry\""
+              ;;
+            *)
+              log warn "  ! $file (ignored non-dotfile)"
+              ;;
+          esac
         done
       else
         eval "$ln \"$dir/$tag/$entry\" \"$prefix\""
@@ -93,7 +107,7 @@ execute() {
       rm="rm"
     fi
     log info "uninstalling $tag from $prefix"
-    for entry in $(list "$tag" '{print $2}'); do
+    for entry in $(filter_files "$tag" '{print $2}'); do
       # Analoguous to install command: if we have a non-symlink directory, we
       # look for installed symlinks inside to remove.
       if [ -d "$prefix/$entry" ]; then
@@ -101,7 +115,7 @@ execute() {
           log error "source is a file but target a directory"
           exit 1
         fi
-        for file in $(list "$tag/$entry" '{print $2 "/" $3}'); do
+        for file in $(filter_files "$tag/$entry" '{print $2 "/" $3}'); do
           log info "  - $file"
           eval "$rm \"$prefix/$file\""
         done
@@ -115,7 +129,7 @@ execute() {
     if which colordiff > /dev/null 2>&1; then
       diff=colordiff
     fi
-    for entry in $(list "$tag" '{print $2}'); do
+    for entry in $(filter_files "$tag" '{print $2}'); do
       $diff -ru "$dir/$tag/$entry" "$prefix/$entry" | grep -v '^Only in'
     done
   elif [ -z "$command" ]; then
