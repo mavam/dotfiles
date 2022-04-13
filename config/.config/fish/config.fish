@@ -2,11 +2,21 @@
 # ---------------------------------------------------------------------
 set -g fish_greeting
 
-set -x VISUAL nvim
+# Editor
+if command -sq nvim
+  set -x VISUAL nvim
+  abbr vim nvim
+  abbr vi nvim
+else if command -sq vim
+  set -x VISUAL vim
+  abbr vi vim
+else
+  set -x VISUAL vi
+end
 set -x EDITOR $VISUAL
 
 # Homebrew
-if command -q brew
+if command -sq brew
   set -x HOMEBREW_NO_ANALYTICS 1
   set -x HOMEBREW_AUTO_UPDATE_SECS 604800 # 1 week
   # Latest LLVM compiler
@@ -88,8 +98,8 @@ if status is-interactive
   set -g fish_pager_color_completion $foreground
   set -g fish_pager_color_description $comment
 
-  # Abbreviations: misc
-  abbr n 'nvim'
+  # Key bindings.
+  bind -M insert \ca accept-autosuggestion execute
 
   # Abbreviations: git
   abbr g 'git'
@@ -111,31 +121,32 @@ if status is-interactive
   abbr gco 'git checkout'
   abbr gcob 'git checkout -b'
   abbr gcom 'git checkout master'
-  abbr gcod 'git checkout develop'
-  abbr gcof 'git checkout feat/'
+  abbr gcot 'git checkout topic/'
   abbr gcp 'git cherry-pick'
   abbr gcpa 'git cherry-pick --abort'
   abbr gcpc 'git cherry-pick --continue'
   abbr gd 'git diff'
-  abbr gdca 'git diff --cached'
+  abbr gdc 'git diff --cached'
   abbr gf 'git fetch'
   abbr gfa 'git fetch --all --prune'
   abbr gfo 'git fetch origin'
   abbr gl 'git log'
+  abbr gla 'git log --all --graph --pretty="%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset"'
   abbr glg 'git log --graph'
+  abbr glp 'git log --patch'
   abbr gm 'git merge'
   abbr gp 'git push'
+  abbr gpu 'git push --set-upstream origin (git symbolic-ref HEAD | sed "s/refs\/heads\///")'
   abbr gpf 'git push --force'
   abbr gpt 'git push --tags'
   abbr gptf 'git push --tags --force'
   abbr gpoat 'git push origin --all && git push origin --tags'
   abbr gpoatf 'git push origin --all -f && git push origin --tags -f'
-  abbr gpristine 'git reset --hard && git clean -dfx'
   abbr gpl 'git pull'
-  abbr gpo 'git pull origin'
-  abbr gpom 'git pull origin master'
-  abbr gpu 'git pull upstream'
-  abbr gpum 'git pull upstream master'
+  abbr gplo 'git pull origin'
+  abbr gplom 'git pull origin master'
+  abbr gplu 'git pull upstream'
+  abbr gplum 'git pull upstream master'
   abbr gr 'git remote -v'
   abbr gra 'git remote add'
   abbr grau 'git remote add upstream'
@@ -148,6 +159,7 @@ if status is-interactive
   abbr grt 'git reset HEAD'
   abbr grhh 'git reset HEAD --hard'
   abbr grth 'git reset --hard'
+  abbr grc 'git reset --hard && git clean -dfx'
   abbr gst 'git status'
   abbr gss 'git status -s'
   abbr gss 'git stash save'
@@ -157,12 +169,12 @@ if status is-interactive
   abbr gsu 'git submodule update'
   abbr gts 'git tag -s'
 
+  # macOS convenience tools.
   switch (uname)
     case Darwin
-      alias afk '/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend'
-      alias hidedesktop 'defaults write com.apple.finder CreateDesktop -bool false \
+      alias hide-desktop 'defaults write com.apple.finder CreateDesktop -bool false \
         && killall Finder'
-      alias showdesktop 'defaults write com.apple.finder CreateDesktop -bool true \
+      alias show-desktop 'defaults write com.apple.finder CreateDesktop -bool true \
         && killall Finder'
   end
 end
