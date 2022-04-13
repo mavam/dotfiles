@@ -231,7 +231,7 @@ setup_macos() {
 
 setup_keyboard_layout() {
   enter_sudo_mode
-  cp mavam.keylayout /Library/Keyboard\ Layouts/
+  sudo cp mavam.keylayout /Library/Keyboard\ Layouts/
   # Map Caps Lock to Left Alt key.
 	# https://developer.apple.com/library/content/technotes/tn2450/_index.html
 	hidutil property --set '{"UserKeyMapping":[{"HIDKeyboardModifierMappingSrc":0x700000039,"HIDKeyboardModifierMappingDst":0x7000000E2}]}'
