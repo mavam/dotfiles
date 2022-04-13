@@ -1,16 +1,11 @@
-<p align="center">
-  <img width="600" alt="zsh" src="https://user-images.githubusercontent.com/53797/46028848-ee273b80-c0f1-11e8-9e32-a750cd84692b.png">
-</p>
-
 **Proper dotfiles are the very heart of an efficient working environment.**
 
-- Terminals:
-  - [Kitty](https://sw.kovidgoyal.net/kitty/)
-  - [tmux](https://github.com/tmux/tmux)
-- Shell: [Fish](https://fishshell.com/)
-- Editor: [NeoVim](https://neovim.io/)
-- Font: [Meslo](https://github.com/andreberg/Meslo-Font) from [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts)
-- Colors: [Kanagawa](https://github.com/rebelot/kanagawa.nvim)
+- **Terminals**: [Kitty](https://sw.kovidgoyal.net/kitty/) and
+             [tmux](https://github.com/tmux/tmux)
+- **Shell**: [Fish](https://fishshell.com/)
+- **Editor**: [NeoVim](https://neovim.io/)
+- **Font**: [Meslo](https://github.com/andreberg/Meslo-Font) from [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts)
+- **Colorscheme**: [Kanagawa](https://github.com/rebelot/kanagawa.nvim)
 
 On macOS, [Homebrew](https://brew.sh) is the package manager.
 
@@ -64,16 +59,13 @@ in your prefix, instead of symlinking the directory. For example, you may not
 want to symlink `~/.gnupg` but only the contained file `~/.gnupg/gpg.conf`.
 Without the scope tag `gnupg/LOCAL`, you would end up with:
 
-```
-`~/.gnupg -> dotfiles/gpg/.gnupg
-```
+
+    ~/.gnupg -> dotfiles/gpg/.gnupg
 
 as opposed to:
 
-```
-`~/.gnupg (local directory)
-`~/.gnupg/gpg.conf -> dotfiles/gpg/.gnupg/gpg.conf
-```
+    ~/.gnupg (local directory)
+    ~/.gnupg/gpg.conf -> dotfiles/gpg/.gnupg/gpg.conf
 
 ### System Bootstrapping
 
