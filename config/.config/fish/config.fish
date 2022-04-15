@@ -52,11 +52,25 @@ switch (uname)
     fish_add_path /Library/TeX/texbin/ # MacTeX
 end
 
+# FZF tuning
+set -x FZF_DEFAULT_OPTS --preview-window=bottom --bind=ctrl-b:preview-page-up,ctrl-f:preview-page-down,ctrl-p:preview-half-page-up,ctrl-n:preview-half-page-down
+
+
 # Interactive shells
 # ---------------------------------------------------------------------
 if status is-interactive
   # Vi bindings.
   fish_vi_key_bindings
+  # CTRL+e for "e"xecute auto-suggestion.
+  bind -M insert \ce accept-autosuggestion execute
+  # CTRL+o for "o"pen .
+  bind \co _fzf_search_directory
+  bind -M insert \co _fzf_search_directory
+  # CTRL+g for "g"it log.
+  bind \cg _fzf_search_git_log
+  bind -M insert \cg _fzf_search_git_log
+  # CTRL+b for "b"rocess, brother.
+  bind -M insert \cb _fzf_search_processes
 
   # Setup prompt
   starship init fish | source
@@ -97,9 +111,6 @@ if status is-interactive
   set -g fish_pager_color_prefix $cyan
   set -g fish_pager_color_completion $foreground
   set -g fish_pager_color_description $comment
-
-  # Key bindings.
-  bind -M insert \ca accept-autosuggestion execute
 
   # Abbreviations: git
   abbr g 'git'
