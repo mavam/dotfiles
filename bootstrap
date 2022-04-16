@@ -15,8 +15,8 @@ usage() {
   echo "    dotfiles     setup dotfiles and install plugins"
   echo "    postfix      setup postfix as GMail relay"
   echo "    tmux         install Tmux plugins"
-  echo "    vim          install Vim plugins"
-  echo "    fish          setup fish as login shell"
+  echo "    neovim       install NeoVim plugins"
+  echo "    fish         setup fish as login shell"
   echo
   echo "without any arguments, all aspects will be setup (in the above order)"
   echo
@@ -185,17 +185,9 @@ setup_tmux() {
   fi
 }
 
-setup_vim() {
-  log "installing Vim plugins"
-  if [ ! -e "$HOME/.vim/autoload/plug.vim" ]; then
-    curl -fLo "$HOME/.vim/autoload/plug.vim" --create-dirs \
-      https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  else
-    vim -E -s +PlugUpgrade +qa
-  fi
-  vim +PlugUpdate +PlugCLean! +qa
-  log "installing vim-anywhere"
-  curl -fsSL https://raw.github.com/cknadler/vim-anywhere/master/install | bash
+setup_neovim() {
+  log "updating NeoVim plugins via Packer"
+  nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
 }
 
 setup_fish() {
@@ -263,7 +255,7 @@ main() {
     setup_tmux
   fi
   if [ "$command" = "vim" ] || [ -z "$command" ]; then
-    setup_vim
+    setup_neovim
   fi
   if [ "$command" = "fish" ] || [ -z "$command" ]; then
     setup_fish
