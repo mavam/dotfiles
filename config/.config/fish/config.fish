@@ -53,8 +53,13 @@ switch (uname)
 end
 
 # FZF tuning
-set -x FZF_DEFAULT_OPTS --preview-window=bottom --bind=ctrl-b:preview-page-up,ctrl-f:preview-page-down,ctrl-p:preview-half-page-up,ctrl-n:preview-half-page-down
-
+set -x FZF_DEFAULT_OPTS \
+  --bind=ctrl-k:up,ctrl-j:down,ctrl-h:page-up,ctrl-l:page-down \
+  --bind=ctrl-p:half-page-up,ctrl-n:half-page-down \
+  --bind=ctrl-e:preview-down,ctrl-y:preview-up \
+  --bind=ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down \
+  --bind=ctrl-b:preview-page-up,ctrl-f:preview-page-down \
+  --preview-window=top
 
 # Interactive shells
 # ---------------------------------------------------------------------
@@ -71,6 +76,11 @@ if status is-interactive
   bind -M insert \cg _fzf_search_git_log
   # CTRL+b for "b"rocess, brother.
   bind -M insert \cb _fzf_search_processes
+  # CTRL+n/p for quick history traversal
+  bind \cn history-prefix-search-forward
+  bind -M insert \cn history-prefix-search-forward
+  bind \cp history-prefix-search-backward
+  bind -M insert \cp history-prefix-search-backward
 
   # Setup prompt
   starship init fish | source
