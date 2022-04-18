@@ -1,11 +1,11 @@
-**Proper dotfiles are the very heart of an efficient working environment.**
+> Proper dotfiles are the very heart of an efficient working environment.
 
 - **Terminals**: [Kitty](https://sw.kovidgoyal.net/kitty/) and
              [tmux](https://github.com/tmux/tmux)
 - **Shell**: [Fish](https://fishshell.com/)
 - **Editor**: [NeoVim](https://neovim.io/)
-- **Font**: [Meslo](https://github.com/andreberg/Meslo-Font) from [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts)
 - **Colorscheme**: [Kanagawa](https://github.com/rebelot/kanagawa.nvim)
+- **Font**: [Meslo](https://github.com/andreberg/Meslo-Font) from [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts)
 
 On macOS, [Homebrew](https://brew.sh) is the package manager.
 
@@ -13,20 +13,13 @@ On macOS, [Homebrew](https://brew.sh) is the package manager.
 
 ### Synopsis
 
-These are the quick start instructions to get up and running:
+Clone this repository and bootstrap your system:
 
     git clone git@github.com:mavam/dotfiles.git ~/.dotfiles
     cd .dotfiles
-    ./bootstrap dotfiles
+    ./bootstrap
 
-Next, on a macOS, bootstrap Homebrew:
-
-    ./bootstrap system homebrew
-
-Thereafter, make fish your login shell and install plugins from various tools
-with plugin managers.
-
-    ./bootstrap fish neovim tmux
+The bootstrap script will ask you whether you'd like to setup specific components.
 
 ### Dotfile Management
 
@@ -59,39 +52,9 @@ in your prefix, instead of symlinking the directory. For example, you may not
 want to symlink `~/.gnupg` but only the contained file `~/.gnupg/gpg.conf`.
 Without the scope tag `gnupg/LOCAL`, you would end up with:
 
-
     ~/.gnupg -> dotfiles/gpg/.gnupg
 
 as opposed to:
 
     ~/.gnupg (local directory)
     ~/.gnupg/gpg.conf -> dotfiles/gpg/.gnupg/gpg.conf
-
-### System Bootstrapping
-
-In addition to managing dotfiles, the script [bootstrap](bootstrap) facilitates
-getting up and running on a new machine. Passing `-h` shows the available
-aspects available for configuration:
-
-1. `system`: adjust system defaults for productivity
-1. `homebrew`:setup Homebrew and install bundled packages
-1. `dotfiles`: setup dotfiles via `./dots install -a`
-1. `postfix`: setup [postfix](http://www.postfix.org) as GMail relay
-1. `tmux`: install tmux plugins
-1. `neovim`: install NeoVim plugins
-1. `fish`: setup fish as login shell
-
-Invoking
-
-    ./bootstrap
-
-without any arguments sets up all aspects in the above order. On macOS, (1)
-includes:
-
-1. Adjust various default settings, e.g.:
-   - Improve security and privacy settings
-   - Disable boot sound
-   - Reduce UI effects for improved speed
-   - Make the keyboard faster
-2. Perform a software update
-3. Install XCode
