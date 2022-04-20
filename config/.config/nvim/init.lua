@@ -1,39 +1,34 @@
+-- Appearance.
+vim.o.laststatus = 3 -- Global statusline.
+vim.wo.signcolumn = 'number' -- Gutter on the left
+
+-- Generic UX.
+vim.o.mouse = 'a' -- Enable mouse mode.
+vim.o.clipboard = 'unnamedplus' -- Use system pastebuffer.
+vim.o.inccommand = 'nosplit' -- Incremental live completion.
+
+-- Search UX.
+vim.o.hlsearch = true -- Set highlight on search.
+vim.o.ignorecase = true -- Case-insensitive search.
+vim.o.smartcase = true  -- Override ignorecase when we have capital letters.
+
+-- Tab/space defaults, overriden by vim-sleuth.
+vim.o.expandtab = true
+vim.o.tabstop = 2
+vim.o.softtabstop = 2
+vim.o.shiftwidth = 2
+vim.o.textwidth = 80
+
+-- No swapfiles.
+vim.o.backup = false
+vim.o.writebackup = false
+vim.o.swapfile = false
+vim.o.hidden = true -- Do not save when switching buffers.
+
 -- Remap space as leader key.
 vim.api.nvim_set_keymap('', ',', '<Nop>', { noremap = true, silent = true })
 vim.g.mapleader = ','
 vim.g.maplocalleader = ','
-
--- Use system pastebuffer.
-vim.o.clipboard = 'unnamedplus'
-
--- Global statusline.
-vim.o.laststatus = 3
-
--- No need for swapfiles nowadays.
-vim.o.backup = false
-vim.o.writebackup = false
-vim.o.swapfile = false
-
--- Do not save when switching buffers.
-vim.o.hidden = true
-
--- Enable mouse mode.
-vim.o.mouse = 'a'
-
--- Incremental live completion.
-vim.o.inccommand = 'nosplit'
-
--- Set highlight on search.
-vim.o.hlsearch = false
-
--- Case insensitive searching unless explicitly using /C or using at least one
--- capital letter in search.
-vim.o.ignorecase = true
-vim.o.smartcase = true
-
--- Decrease update time.
-vim.o.updatetime = 250
-vim.wo.signcolumn = 'yes'
 
 -- Deal with word wrapping automatically for j/k.
 vim.api.nvim_set_keymap('n', 'k', "v:count == 0 ? 'gk' : 'k'", {
