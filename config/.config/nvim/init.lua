@@ -363,6 +363,12 @@ return require('packer').startup(function(use)
   --- Fish integration.
   use 'khaveesh/vim-fish-syntax'
 
+  --- R integration.
+  use {
+    'jalvesaq/Nvim-R',
+    branch = 'master'
+  }
+
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins
   if packer_bootstrap then
