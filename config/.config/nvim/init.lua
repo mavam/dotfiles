@@ -83,6 +83,9 @@ return require('packer').startup(function(use)
   -- Git integration
   use 'tpope/vim-fugitive'
 
+  -- Facilitate whitespace management
+  use 'ntpeters/vim-better-whitespace'
+
   -- Automatic dark mode switching on macOS.
   use {
     'f-person/auto-dark-mode.nvim',
@@ -222,7 +225,7 @@ return require('packer').startup(function(use)
         typeStyle = "NONE",
         variablebuiltinStyle = "italic",
         specialReturn = true,       -- special highlight for the return keyword
-        specialException = true,    -- special highlight for exception handling keywords 
+        specialException = true,    -- special highlight for exception handling keywords
         transparent = true,         -- do not set background color
         dimInactive = false,        -- dim inactive window `:h hl-NormalNC`
         globalStatus = true,
