@@ -1,6 +1,11 @@
 # -- Startup ----------------------------------------------------
 
-#options(repos=structure(c(CRAN="http://cran.cnr.berkeley.edu/")))
+# Fixate a mirror.
+local({
+  r = getOption("repos")
+  r["CRAN"] = "https://cran.rstudio.com/"
+  options(repos = r)
+})
 
 if (requireNamespace("rprofile", quietly = TRUE)) {
   rprofile::set_startup_options()
