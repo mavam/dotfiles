@@ -297,7 +297,6 @@ return require('packer').startup(function(use)
           require("null-ls").builtins.formatting.stylua,
           require("null-ls").builtins.diagnostics.markdownlint,
           require("null-ls").builtins.diagnostics.shellcheck,
-          require("null-ls").builtins.completion.spell,
         },
       })
     end
