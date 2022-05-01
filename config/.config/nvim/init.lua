@@ -175,6 +175,18 @@ return require('packer').startup(function(use)
     'nvim-treesitter/nvim-treesitter-textobjects',
     requires = 'nvim-treesitter/nvim-treesitter'
   }
+
+  -- Make working with a filesystem tree a breeze.
+  use {
+    'kyazdani42/nvim-tree.lua',
+    requires = 'kyazdani42/nvim-web-devicons',
+    config = function()
+      require'nvim-tree'.setup {
+      }
+      -- mnemonic: 'f' for filesystem
+      vim.api.nvim_set_keymap('n', '<leader>f', ':NvimTreeToggle<Cr>', { noremap = true, silent = true })
+    end
+  }
   }
 
   -- Add git related info in the signs columns and popups
