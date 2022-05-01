@@ -110,8 +110,8 @@ return require('packer').startup(function(use)
   use {
     'nvim-telescope/telescope.nvim',
     requires = {
-      { 'nvim-lua/popup.nvim' },
-      { 'nvim-lua/plenary.nvim' }
+      'nvim-lua/popup.nvim',
+      'nvim-lua/plenary.nvim'
     },
     config = function()
       require('telescope').setup {
@@ -124,16 +124,17 @@ return require('packer').startup(function(use)
           },
         },
       }
-      vim.api.nvim_set_keymap('n', '<Tab>', [[<cmd>lua require('telescope.builtin').buffers({sort_lastused = true, require('telescope.themes').get_ivy({})})<CR>]], { noremap = true, silent = true })
-      vim.api.nvim_set_keymap('n', '<S-Tab>', [[<cmd>lua require('telescope.builtin').git_files(require('telescope.themes').get_ivy({}))<CR>]], { noremap = true, silent = true })
-      vim.api.nvim_set_keymap('n', '<leader>sf', [[<cmd>lua require('telescope.builtin').find_files({previewer = false})<CR>]], { noremap = true, silent = true })
-      vim.api.nvim_set_keymap('n', '<leader>sb', [[<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<CR>]], { noremap = true, silent = true })
-      vim.api.nvim_set_keymap('n', '<leader>sh', [[<cmd>lua require('telescope.builtin').help_tags()<CR>]], { noremap = true, silent = true })
-      vim.api.nvim_set_keymap('n', '<leader>st', [[<cmd>lua require('telescope.builtin').tags()<CR>]], { noremap = true, silent = true })
-      vim.api.nvim_set_keymap('n', '<leader>sd', [[<cmd>lua require('telescope.builtin').grep_string()<CR>]], { noremap = true, silent = true })
-      vim.api.nvim_set_keymap('n', '<leader>sp', [[<cmd>lua require('telescope.builtin').live_grep()<CR>]], { noremap = true, silent = true })
-      vim.api.nvim_set_keymap('n', '<leader>so', [[<cmd>lua require('telescope.builtin').tags{ only_current_buffer = true }<CR>]], { noremap = true, silent = true })
-      vim.api.nvim_set_keymap('n', '<leader>?', [[<cmd>lua require('telescope.builtin').oldfiles()<CR>]], { noremap = true, silent = true })
+      local opts = { noremap = true, silent = true }
+      vim.api.nvim_set_keymap('n', '<Tab>', [[<cmd>lua require('telescope.builtin').buffers({sort_lastused = true, require('telescope.themes').get_ivy({})})<CR>]], opts)
+      vim.api.nvim_set_keymap('n', '<S-Tab>', [[<cmd>lua require('telescope.builtin').git_files(require('telescope.themes').get_ivy({}))<CR>]], opts)
+      vim.api.nvim_set_keymap('n', '<leader>sf', [[<cmd>lua require('telescope.builtin').find_files({previewer = false})<CR>]], opts)
+      vim.api.nvim_set_keymap('n', '<leader>sb', [[<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<CR>]], opts)
+      vim.api.nvim_set_keymap('n', '<leader>sh', [[<cmd>lua require('telescope.builtin').help_tags()<CR>]], opts)
+      vim.api.nvim_set_keymap('n', '<leader>st', [[<cmd>lua require('telescope.builtin').tags()<CR>]], opts)
+      vim.api.nvim_set_keymap('n', '<leader>sd', [[<cmd>lua require('telescope.builtin').grep_string()<CR>]], opts)
+      vim.api.nvim_set_keymap('n', '<leader>sp', [[<cmd>lua require('telescope.builtin').live_grep()<CR>]], opts)
+      vim.api.nvim_set_keymap('n', '<leader>so', [[<cmd>lua require('telescope.builtin').tags{ only_current_buffer = true }<CR>]], opts)
+      vim.api.nvim_set_keymap('n', '<leader>?', [[<cmd>lua require('telescope.builtin').oldfiles()<CR>]], opts)
     end
   }
 
@@ -172,9 +173,8 @@ return require('packer').startup(function(use)
 
   use {
     'nvim-treesitter/nvim-treesitter-textobjects',
-    requires = {
-      'nvim-treesitter/nvim-treesitter'
-    }
+    requires = 'nvim-treesitter/nvim-treesitter'
+  }
   }
 
   -- Add git related info in the signs columns and popups
@@ -213,6 +213,7 @@ return require('packer').startup(function(use)
     end,
   }
 
+  -- Colorscheme.
   use {
     'rebelot/kanagawa.nvim',
     config = function()
@@ -243,24 +244,15 @@ return require('packer').startup(function(use)
     'wincent/terminus'
   }
 
-  -- Dark colorscheme inspired by the colors of the famous painting by Katsushika Hokusai.
-  -- High Contrast & Vivid Color Scheme based on Monokai Pro.
-  -- use {
-  --   'ellisonleao/gruvbox.nvim',
-  --   requires = {'rktjmp/lush.nvim'},
-  --   config = function()
-  --     vim.o.termguicolors = true
-  --     vim.cmd 'colorscheme gruvbox'
-  --   end
-  -- }
   -- Collection of configurations for built-in LSP client.
   use {
     'neovim/nvim-lspconfig',
     config = function()
+      -- TODO: factor and share with null-ls
       local on_attach = function(_, bufnr)
-	-- TODO: Can we express this using vim.o?
-	vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
-	local opts = { noremap = true, silent = true }
+        -- TODO: Can we express this using vim.o?
+        vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
+        local opts = { noremap = true, silent = true }
         vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
         vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
         vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
@@ -281,24 +273,35 @@ return require('packer').startup(function(use)
         vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>so', [[<cmd>lua require'telescope.builtin'.lsp_document_symbols(require'telescope.themes'.get_ivy({ winblend = 10 }))<CR>]], opts)
         vim.cmd [[ command! Format execute 'lua vim.lsp.buf.formatting()' ]]
       end
-      require'lspconfig'.clangd.setup {
+      require('lspconfig').clangd.setup {
         init_options = {
-	  clandFileStatus = true
-	},
-	on_attach = on_attach
+          clandFileStatus = true
+        },
+        on_attach = on_attach
       }
     end
   }
 
-  -- Standalone UI for nvim-lsp progress. Eye candy for the impatient.
-  -- use {
-  --   'j-hui/fidget.nvim',
-  --   config = function()
-  --     require"fidget".setup{}
-  --   end
-  -- }
+  -- Expand LSP diagnostics to non-LSP-grade linters.
+  -- TODO: for a consistent LSP expereience, consider having a single 'attach'
+  -- configuration that can be shared with lspconfig
+  use {
+    "jose-elias-alvarez/null-ls.nvim",
+    config = function()
+      require("null-ls").setup({
+      sources = {
+          require("null-ls").builtins.formatting.stylua,
+          require("null-ls").builtins.diagnostics.fish,
+          require("null-ls").builtins.diagnostics.markdownlint,
+          require("null-ls").builtins.diagnostics.shellcheck,
+          require("null-ls").builtins.completion.spell,
+        },
+      })
+    end
+  }
 
   -- Autocompletion plugin.
+  -- TODO: migrate to nvim-cmp, nvim-compe is deprecated.
   use {
     'hrsh7th/nvim-compe',
     config = function()
@@ -378,4 +381,3 @@ return require('packer').startup(function(use)
     require('packer').sync()
   end
 end)
-
