@@ -92,14 +92,12 @@ return require('packer').startup(function(use)
     config = function()
       local auto_dark_mode = require('auto-dark-mode')
       auto_dark_mode.setup{
-        update_interval = 1000,
+        update_interval = 3000,
         set_dark_mode = function()
           vim.api.nvim_set_option('background', 'dark')
-          -- vim.cmd('colorscheme gruvbox')
         end,
         set_light_mode = function()
           vim.api.nvim_set_option('background', 'light')
-          -- vim.cmd('colorscheme gruvbox')
         end,
       }
       auto_dark_mode.init()
@@ -302,7 +300,7 @@ return require('packer').startup(function(use)
     "jose-elias-alvarez/null-ls.nvim",
     config = function()
       require("null-ls").setup({
-      sources = {
+        sources = {
           require("null-ls").builtins.formatting.stylua,
           require("null-ls").builtins.diagnostics.markdownlint,
           require("null-ls").builtins.diagnostics.shellcheck,
