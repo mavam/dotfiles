@@ -148,6 +148,7 @@ return require('packer').startup(function(use)
           'c';
           'comment';
           'cpp';
+          'fish';
           'json';
           'lua';
           'markdown';
@@ -303,7 +304,6 @@ return require('packer').startup(function(use)
       require("null-ls").setup({
       sources = {
           require("null-ls").builtins.formatting.stylua,
-          require("null-ls").builtins.diagnostics.fish,
           require("null-ls").builtins.diagnostics.markdownlint,
           require("null-ls").builtins.diagnostics.shellcheck,
           require("null-ls").builtins.completion.spell,
