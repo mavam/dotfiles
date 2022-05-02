@@ -175,6 +175,7 @@ if status is-interactive
   abbr grmv 'git remote rename'
   abbr grset 'git remote set-url'
   abbr grb 'git rebase'
+  abbr grbpr 'git rebase --interactive --rebase-merges $(git merge-base origin/master HEAD)'
   abbr grba 'git rebase --abort'
   abbr grbc 'git rebase --continue'
   abbr gr 'git reset'
