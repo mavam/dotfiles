@@ -192,6 +192,15 @@ if status is-interactive
   abbr gsu 'git submodule update'
   abbr gts 'git tag -s'
 
+  # Let vim fugitive creep into shell workflow.
+  function G
+    if git rev-parse --is-inside-work-tree > /dev/null 2>&1
+      nvim +G +only
+    else
+      echo not inside a git work tree
+    end
+  end
+
   # macOS convenience tools.
   switch (uname)
     case Darwin
