@@ -370,9 +370,6 @@ return require('packer').startup(function(use)
     end
   }
 
-  --- Fish integration.
-  use 'khaveesh/vim-fish-syntax'
-
   --- R integration.
   use {
     'jalvesaq/Nvim-R',
