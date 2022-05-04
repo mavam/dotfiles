@@ -26,19 +26,17 @@ vim.o.swapfile = false
 vim.o.hidden = true -- Do not save when switching buffers.
 
 -- Remap space as leader key.
-vim.api.nvim_set_keymap('', ',', '<Nop>', { noremap = true, silent = true })
+vim.keymap.set('', ',', '<Nop>')
 vim.g.mapleader = ','
 vim.g.maplocalleader = ','
 
 -- Deal with word wrapping automatically for j/k.
-vim.api.nvim_set_keymap('n', 'k', "v:count == 0 ? 'gk' : 'k'", {
+vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", {
   expr = true,
-  noremap = true,
   silent = true,
 })
-vim.api.nvim_set_keymap('n', 'j', "v:count == 0 ? 'gj' : 'j'", {
+vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", {
   expr = true,
-  noremap = true,
   silent = true,
 })
 
@@ -122,23 +120,24 @@ return require('packer').startup(function(use)
           },
         },
       }
-      local opts = { noremap = true, silent = true }
-      vim.api.nvim_set_keymap('n', '<Tab>', [[<cmd>lua require('telescope.builtin').buffers({sort_lastused = true, require('telescope.themes').get_ivy({})})<CR>]], opts)
-      vim.api.nvim_set_keymap('n', '<S-Tab>', [[<cmd>lua require('telescope.builtin').git_files(require('telescope.themes').get_ivy({}))<CR>]], opts)
-      vim.api.nvim_set_keymap('n', '<leader>sf', [[<cmd>lua require('telescope.builtin').find_files({previewer = false})<CR>]], opts)
-      vim.api.nvim_set_keymap('n', '<leader>sb', [[<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<CR>]], opts)
-      vim.api.nvim_set_keymap('n', '<leader>sh', [[<cmd>lua require('telescope.builtin').help_tags()<CR>]], opts)
-      vim.api.nvim_set_keymap('n', '<leader>st', [[<cmd>lua require('telescope.builtin').tags()<CR>]], opts)
-      vim.api.nvim_set_keymap('n', '<leader>sd', [[<cmd>lua require('telescope.builtin').grep_string()<CR>]], opts)
-      vim.api.nvim_set_keymap('n', '<leader>sp', [[<cmd>lua require('telescope.builtin').live_grep()<CR>]], opts)
-      vim.api.nvim_set_keymap('n', '<leader>so', [[<cmd>lua require('telescope.builtin').tags{ only_current_buffer = true }<CR>]], opts)
-      vim.api.nvim_set_keymap('n', '<leader>?', [[<cmd>lua require('telescope.builtin').oldfiles()<CR>]], opts)
+      local opts = { silent = true }
+      vim.keymap.set('n', '<Tab>', require('telescope.builtin').buffers({sort_lastused = true, require('telescope.themes').get_ivy({})}), opts)
+      vim.keymap.set('n', '<S-Tab>', require('telescope.builtin').git_files(require('telescope.themes').get_ivy({})), opts)
+      vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files({previewer = false}), opts)
+      vim.keymap.set('n', '<leader>sb', require('telescope.builtin').current_buffer_fuzzy_find(), opts)
+      vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags(), opts)
+      vim.keymap.set('n', '<leader>st', require('telescope.builtin').tags(), opts)
+      vim.keymap.set('n', '<leader>sd', require('telescope.builtin').grep_string(), opts)
+      vim.keymap.set('n', '<leader>sp', require('telescope.builtin').live_grep(), opts)
+      vim.keymap.set('n', '<leader>so', require('telescope.builtin').tags{ only_current_buffer = true }, opts)
+      vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles(), opts)
     end
   }
 
   -- TreeSitter integration, and additional textobjects for it.
   use {
     'nvim-treesitter/nvim-treesitter',
+    run = ':TSUpdate', -- recommended by nvim-bqf
     config = function()
       require'nvim-treesitter.configs'.setup {
         ensure_installed = {
@@ -183,7 +182,7 @@ return require('packer').startup(function(use)
       require'nvim-tree'.setup {
       }
       -- mnemonic: 'f' for filesystem
-      vim.api.nvim_set_keymap('n', '<leader>f', ':NvimTreeToggle<Cr>', { noremap = true, silent = true })
+      vim.keymap.set('n', '<leader>f', ':NvimTreeToggle<Cr>', { silent = true })
     end
   }
   }
@@ -253,28 +252,28 @@ return require('packer').startup(function(use)
     'neovim/nvim-lspconfig',
     config = function()
       -- TODO: factor and share with null-ls
-      local on_attach = function(_, bufnr)
+      local on_attach = function(_, buf)
         -- TODO: Can we express this using vim.o?
-        vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
-        local opts = { noremap = true, silent = true }
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'v', '<leader>ca', '<cmd>lua vim.lsp.buf.range_code_action()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>so', [[<cmd>lua require'telescope.builtin'.lsp_document_symbols(require'telescope.themes'.get_ivy({ winblend = 10 }))<CR>]], opts)
+        vim.api.nvim_buf_set_option(buf, "omnifunc", "v:lua.vim.lsp.omnifunc")
+        local opts = { buffer = buf, silent = true }
+        vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
+        vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+        vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+        vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+        vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
+        vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, opts)
+        vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, opts)
+        vim.keymap.set('n', '<leader>wl', print(vim.inspect(vim.lsp.buf.list_workspace_folders)), opts)
+        vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, opts)
+        vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
+        vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+        vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
+        vim.keymap.set('v', '<leader>ca', vim.lsp.buf.range_code_action, opts)
+        vim.keymap.set('n', '<leader>e', vim.lsp.diagnostic.show_line_diagnostics, opts)
+        vim.keymap.set('n', '[d', vim.lsp.diagnostic.goto_prev, opts)
+        vim.keymap.set('n', ']d', vim.lsp.diagnostic.goto_next, opts)
+        vim.keymap.set('n', '<leader>q', vim.lsp.diagnostic.set_loclist, opts)
+        vim.keymap.set('n', '<leader>so', require('telescope.builtin').lsp_document_symbols(require'telescope.themes'.get_ivy({ winblend = 10 })), opts)
         vim.cmd [[ command! Format execute 'lua vim.lsp.buf.formatting()' ]]
       end
       require('lspconfig').clangd.setup {
@@ -349,13 +348,13 @@ return require('packer').startup(function(use)
         end
       end
       -- Map tab to the above tab complete functiones
-      vim.api.nvim_set_keymap('i', '<Tab>', 'v:lua.tab_complete()', { expr = true })
-      vim.api.nvim_set_keymap('s', '<Tab>', 'v:lua.tab_complete()', { expr = true })
-      vim.api.nvim_set_keymap('i', '<S-Tab>', 'v:lua.s_tab_complete()', { expr = true })
-      vim.api.nvim_set_keymap('s', '<S-Tab>', 'v:lua.s_tab_complete()', { expr = true })
+      vim.keymap.set('i', '<Tab>', 'v:lua.tab_complete()', { expr = true })
+      vim.keymap.set('s', '<Tab>', 'v:lua.tab_complete()', { expr = true })
+      vim.keymap.set('i', '<S-Tab>', 'v:lua.s_tab_complete()', { expr = true })
+      vim.keymap.set('s', '<S-Tab>', 'v:lua.s_tab_complete()', { expr = true })
       -- Map compe confirm and complete functions
-      vim.api.nvim_set_keymap('i', '<cr>', 'compe#confirm("<cr>")', { expr = true })
-      vim.api.nvim_set_keymap('i', '<c-space>', 'compe#complete()', { expr = true })
+      vim.keymap.set('i', '<cr>', 'compe#confirm("<cr>")', { expr = true })
+      vim.keymap.set('i', '<c-space>', 'compe#complete()', { expr = true })
     end
   }
 
