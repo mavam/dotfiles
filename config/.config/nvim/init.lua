@@ -121,16 +121,16 @@ return require('packer').startup(function(use)
         },
       }
       local opts = { silent = true }
-      vim.keymap.set('n', '<Tab>', require('telescope.builtin').buffers({sort_lastused = true, require('telescope.themes').get_ivy({})}), opts)
-      vim.keymap.set('n', '<S-Tab>', require('telescope.builtin').git_files(require('telescope.themes').get_ivy({})), opts)
-      vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files({previewer = false}), opts)
-      vim.keymap.set('n', '<leader>sb', require('telescope.builtin').current_buffer_fuzzy_find(), opts)
-      vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags(), opts)
-      vim.keymap.set('n', '<leader>st', require('telescope.builtin').tags(), opts)
-      vim.keymap.set('n', '<leader>sd', require('telescope.builtin').grep_string(), opts)
-      vim.keymap.set('n', '<leader>sp', require('telescope.builtin').live_grep(), opts)
-      vim.keymap.set('n', '<leader>so', require('telescope.builtin').tags{ only_current_buffer = true }, opts)
-      vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles(), opts)
+      vim.keymap.set('n', '<Tab>', function() require('telescope.builtin').buffers({sort_lastused = true, require('telescope.themes').get_ivy({})}) end, opts)
+      vim.keymap.set('n', '<S-Tab>', function() require('telescope.builtin').git_files(require('telescope.themes').get_ivy({})) end, opts)
+      vim.keymap.set('n', '<leader>sf', function() require('telescope.builtin').find_files({previewer = false}) end, opts)
+      vim.keymap.set('n', '<leader>sb', function() require('telescope.builtin').current_buffer_fuzzy_find() end, opts)
+      vim.keymap.set('n', '<leader>sh', function() require('telescope.builtin').help_tags() end, opts)
+      vim.keymap.set('n', '<leader>st', function() require('telescope.builtin').tags() end, opts)
+      vim.keymap.set('n', '<leader>sd', function() require('telescope.builtin').grep_string() end, opts)
+      vim.keymap.set('n', '<leader>sp', function() require('telescope.builtin').live_grep() end, opts)
+      vim.keymap.set('n', '<leader>so', function() require('telescope.builtin').tags{ only_current_buffer = true } end, opts)
+      vim.keymap.set('n', '<leader>?', function() require('telescope.builtin').oldfiles() end, opts)
     end
   }
 
@@ -276,7 +276,7 @@ return require('packer').startup(function(use)
         vim.keymap.set('n', '[d', vim.lsp.diagnostic.goto_prev, opts)
         vim.keymap.set('n', ']d', vim.lsp.diagnostic.goto_next, opts)
         vim.keymap.set('n', '<leader>q', vim.lsp.diagnostic.set_loclist, opts)
-        vim.keymap.set('n', '<leader>so', require('telescope.builtin').lsp_document_symbols(require'telescope.themes'.get_ivy({ winblend = 10 })), opts)
+        vim.keymap.set('n', '<leader>so', function() require('telescope.builtin').lsp_document_symbols(require'telescope.themes'.get_ivy({ winblend = 10 })) end, opts)
         vim.cmd [[ command! Format execute 'lua vim.lsp.buf.formatting()' ]]
       end
       require('lspconfig').clangd.setup {
@@ -350,7 +350,7 @@ return require('packer').startup(function(use)
 	  return vim.api.nvim_replace_termcodes('<S-Tab>', true, true, true)
         end
       end
-      -- Map tab to the above tab complete functiones
+      -- Map tab to the above tab complete functions
       vim.keymap.set('i', '<Tab>', 'v:lua.tab_complete()', { expr = true })
       vim.keymap.set('s', '<Tab>', 'v:lua.tab_complete()', { expr = true })
       vim.keymap.set('i', '<S-Tab>', 'v:lua.s_tab_complete()', { expr = true })
