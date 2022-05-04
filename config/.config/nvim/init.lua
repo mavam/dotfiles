@@ -174,6 +174,9 @@ return require('packer').startup(function(use)
     requires = 'nvim-treesitter/nvim-treesitter'
   }
 
+  -- Better QuickFix
+  use 'kevinhwang91/nvim-bqf'
+
   -- Make working with a filesystem tree a breeze.
   use {
     'kyazdani42/nvim-tree.lua',
