@@ -43,7 +43,7 @@ set -x CMAKE_C_COMPILER_LAUNCHER ccache
 set -x CMAKE_CXX_COMPILER_LAUNCHER ccache
 
 # Docker
-set DOCKER_BUILDKIT 1
+set -x DOCKER_BUILDKIT 1
 
 # OS-specific paths
 switch (uname)
