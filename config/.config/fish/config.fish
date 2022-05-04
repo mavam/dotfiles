@@ -17,6 +17,7 @@ set -x EDITOR $VISUAL
 
 # Homebrew
 if command -sq brew
+  fish_add_path (brew --prefix)/bin
   set -x HOMEBREW_NO_ANALYTICS 1
   set -x HOMEBREW_AUTO_UPDATE_SECS 604800 # 1 week
   # Latest LLVM compiler
@@ -26,7 +27,6 @@ if command -sq brew
   set -px CPPFLAGS -isystem $llvm_prefix/include
   set -px CXXFLAGS -isystem $llvm_prefix/include/c++/v1
   set -px LDFLAGS -Wl,-rpath,$llvm_prefix
-  fish_add_path (brew --prefix)/bin
   fish_add_path $llvm_prefix
 end
 
