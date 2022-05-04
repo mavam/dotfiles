@@ -245,11 +245,6 @@ return require('packer').startup(function(use)
     end
   }
 
-  -- Enhanced terminal integration for Vim
-  use {
-    'wincent/terminus'
-  }
-
   -- Collection of configurations for built-in LSP client.
   use {
     'neovim/nvim-lspconfig',
