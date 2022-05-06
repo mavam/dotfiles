@@ -188,7 +188,6 @@ return require('packer').startup(function(use)
       vim.keymap.set('n', '<leader>f', ':NvimTreeToggle<Cr>', { silent = true })
     end
   }
-  }
 
   -- Add git related info in the signs columns and popups
   use {
