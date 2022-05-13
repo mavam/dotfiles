@@ -260,7 +260,7 @@ return require('packer').startup(function(use)
         vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
         vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, opts)
         vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, opts)
-        vim.keymap.set('n', '<leader>wl', print(vim.inspect(vim.lsp.buf.list_workspace_folders)), opts)
+        vim.keymap.set('n', '<leader>wl', vim.lsp.buf.list_workspace_folders, opts)
         vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, opts)
         vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
         vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
@@ -269,8 +269,8 @@ return require('packer').startup(function(use)
         vim.keymap.set('n', '<leader>e', vim.lsp.diagnostic.show_line_diagnostics, opts)
         vim.keymap.set('n', '[d', vim.lsp.diagnostic.goto_prev, opts)
         vim.keymap.set('n', ']d', vim.lsp.diagnostic.goto_next, opts)
+        --vim.keymap.set('n', 'gl', vim.lsp.diagnostic.open_float, opts)
         vim.keymap.set('n', '<leader>q', vim.lsp.diagnostic.set_loclist, opts)
-        vim.keymap.set('n', '<leader>so', function() require('telescope.builtin').lsp_document_symbols(require'telescope.themes'.get_ivy({ winblend = 10 })) end, opts)
         vim.cmd [[ command! Format execute 'lua vim.lsp.buf.formatting()' ]]
       end
       require('lspconfig').clangd.setup {
