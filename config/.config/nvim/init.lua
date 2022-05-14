@@ -367,7 +367,10 @@ return require('packer').startup(function(use)
   --- R integration.
   use {
     'jalvesaq/Nvim-R',
-    branch = 'master'
+    branch = 'master',
+    config = function()
+      vim.g.R_assign = 0
+    end
   }
 
   -- Automatically set up your configuration after cloning packer.nvim
