@@ -68,6 +68,36 @@ if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
   })
 end
 
+-- Shared on_attach handler for language server tooling.
+custom_on_attach = function(client, bufnr)
+  vim.api.nvim_buf_set_option(bufnr, 'tagfunc', 'v:lua.vim.lsp.tagfunc')
+  vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+  vim.api.nvim_buf_set_option(bufnr, 'formatexpr', 'v:lua.vim.lsp.formatexpr()')
+  -- Setup bindings.
+  local opts = function(hint)
+    return { buffer = bufnr, silent = true, desc = hint }
+  end
+  vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts("Go to declaration"))
+  vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts("Go to definition"))
+  vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts("LSP hover"))
+  vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts("Go to implementation"))
+  vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts("Show signature help"))
+  --vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, opts)
+  --vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, opts)
+  --vim.keymap.set('n', '<leader>wl', vim.lsp.buf.list_workspace_folders, opts)
+  --vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, opts)
+  --vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
+  vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts("Go to references"))
+  --vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
+  --vim.keymap.set('v', '<leader>ca', vim.lsp.buf.range_code_action, opts)
+  --vim.keymap.set('n', '<leader>e', vim.lsp.diagnostic.show_line_diagnostics, opts)
+  vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts("Go to previous diagnostic"))
+  vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts("Go to next diagnostic"))
+  --vim.keymap.set('n', 'gl', vim.lsp.diagnostic.open_float, opts)
+  --vim.keymap.set('n', '<leader>q', vim.lsp.diagnostic.set_loclist, opts)
+  vim.keymap.set('n', '<leader>f', vim.lsp.buf.formatting, opts("Format current buffer"))
+end
+
 return require('packer').startup(function(use)
   -- Package manager.
   use 'wbthomason/packer.nvim'
@@ -169,6 +199,7 @@ return require('packer').startup(function(use)
     end
   }
 
+  -- Syntax aware text-objects, select, move, swap, and peek support.
   use {
     'nvim-treesitter/nvim-treesitter-textobjects',
     requires = 'nvim-treesitter/nvim-treesitter'
@@ -244,57 +275,39 @@ return require('packer').startup(function(use)
     end
   }
 
-  -- Collection of configurations for built-in LSP client.
+  -- Language server configurations.
   use {
     'neovim/nvim-lspconfig',
     config = function()
-      -- TODO: factor and share with null-ls
-      local on_attach = function(_, buf)
-        -- TODO: Can we express this using vim.o?
-        vim.api.nvim_buf_set_option(buf, "omnifunc", "v:lua.vim.lsp.omnifunc")
-        local opts = { buffer = buf, silent = true }
-        vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
-        vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-        vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-        vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
-        vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
-        vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, opts)
-        vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, opts)
-        vim.keymap.set('n', '<leader>wl', vim.lsp.buf.list_workspace_folders, opts)
-        vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, opts)
-        vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
-        vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
-        vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
-        vim.keymap.set('v', '<leader>ca', vim.lsp.buf.range_code_action, opts)
-        vim.keymap.set('n', '<leader>e', vim.lsp.diagnostic.show_line_diagnostics, opts)
-        vim.keymap.set('n', '[d', vim.lsp.diagnostic.goto_prev, opts)
-        vim.keymap.set('n', ']d', vim.lsp.diagnostic.goto_next, opts)
-        --vim.keymap.set('n', 'gl', vim.lsp.diagnostic.open_float, opts)
-        vim.keymap.set('n', '<leader>q', vim.lsp.diagnostic.set_loclist, opts)
-        vim.cmd [[ command! Format execute 'lua vim.lsp.buf.formatting()' ]]
-      end
+      -- C & C++
       require('lspconfig').clangd.setup {
         init_options = {
-          clandFileStatus = true
+          clangdFileStatus = true
         },
-        on_attach = on_attach
+        on_attach = custom_on_attach
+      }
+      -- Python
+      require('lspconfig').pyright.setup {
+        on_attach = custom_on_attach
+      }
+      -- R
+      require('lspconfig').r_language_server.setup {
+        on_attach = custom_on_attach
       }
     end
   }
 
-  -- Expand LSP diagnostics to non-LSP-grade linters.
-  -- TODO: for a consistent LSP expereience, consider having a single 'attach'
-  -- configuration that can be shared with lspconfig
+  -- Expand LSP experience to non-LSP-grade linters.
   use {
     "jose-elias-alvarez/null-ls.nvim",
     config = function()
       require("null-ls").setup({
         sources = {
-          require("null-ls").builtins.formatting.styler,
           require("null-ls").builtins.formatting.stylua,
           require("null-ls").builtins.diagnostics.markdownlint,
           require("null-ls").builtins.diagnostics.shellcheck,
         },
+        on_attach = custom_on_attach
       })
     end
   }
