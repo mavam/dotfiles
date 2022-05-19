@@ -95,7 +95,14 @@ custom_on_attach = function(client, bufnr)
   vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts("Go to next diagnostic"))
   --vim.keymap.set('n', 'gl', vim.lsp.diagnostic.open_float, opts)
   --vim.keymap.set('n', '<leader>q', vim.lsp.diagnostic.set_loclist, opts)
-  vim.keymap.set('n', '<leader>f', vim.lsp.buf.formatting, opts("Format current buffer"))
+
+  if client.server_capabilities.documentFormattingProvider then
+    vim.keymap.set('n', '<leader>f', vim.lsp.buf.format, opts("Format buffer"))
+  end
+
+  if client.server_capabilities.documentRangeFormattingProvider then
+    vim.keymap.set('v', '<leader>f', vim.lsp.buf.range_formatting, opts("Format range"))
+  end
 end
 
 return require('packer').startup(function(use)
@@ -215,8 +222,8 @@ return require('packer').startup(function(use)
     config = function()
       require'nvim-tree'.setup {
       }
-      -- mnemonic: 'f' for filesystem
-      vim.keymap.set('n', '<leader>f', ':NvimTreeToggle<Cr>', { silent = true })
+      -- mnemonic: 't' for filesystem 'T'ree
+      vim.keymap.set('n', '<leader>t', ':NvimTreeToggle<Cr>', { silent = true })
     end
   }
 
