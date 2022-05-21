@@ -255,14 +255,6 @@ return require('packer').startup(function(use)
     end,
   }
 
-  -- Horiontal highlights for headlines.
-  use {
-    'lukas-reineke/headlines.nvim',
-    config = function()
-      require('headlines').setup()
-    end,
-  }
-
   -- Colorscheme.
   use {
     'rebelot/kanagawa.nvim',
