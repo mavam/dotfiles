@@ -105,7 +105,7 @@ custom_on_attach = function(client, bufnr)
     vim.keymap.set('v', '<leader>f', vim.lsp.buf.range_formatting, opts("Format range"))
   end
   -- Universal keymaps.
-  vim.keymap.set('n', '<leader>e', vim.lsp.diagnostic.open_float, opts("Show diagnostics"))
+  vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts("Show diagnostics"))
   vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts("Go to previous diagnostic"))
   vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts("Go to next diagnostic"))
   vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts("Perform code action"))
