@@ -1,14 +1,20 @@
 [core]
-  excludesFile = ~/.config/git/ignore
+	excludesFile = ~/.config/git/ignore
+	pager = delta
+
+[interactive]
+	diffFilter = delta --color-only
+
+[delta]
+	navigate = true  # use n and N to move between diff sections
+	light = false
 
 [alias]
-  merge-branch = merge --log --no-commit --no-ff
-  fix-submodules = submodule update --recursive --init
-  recursive = "!sh -c 'for i in . `git submodule foreach -q --recursive pwd`; do cd $i && git $@; done' -"
-  recursive-sh = "!sh -c 'for i in . `git submodule foreach -q --recursive pwd`; do cd $i && $@; done' -"
+	merge-branch = merge --log --no-commit --no-ff
+	fix-submodules = submodule update --recursive --init
 
 [branch]
- sort = -committerdate
+	sort = -committerdate
 
 [color]
 	diff = auto
@@ -18,28 +24,22 @@
 [commit]
 	gpgsign = true
 
-[diff]
-  tool = icdiff
-
-[difftool]
-  prompt = false
-
-[difftool "icdiff"]
-  cmd = /usr/local/bin/icdiff --line-numbers $LOCAL $REMOTE
-
 [filter "lfs"]
 	clean = git-lfs clean %f
 	smudge = git-lfs smudge %f
 	required = true
 
 [merge]
-	tool = vimdiff
+	conflictstyle = diff3
+
+[diff]
+	colorMoved = default
 
 [pull]
 	rebase = true
 
 [push]
-  followTags = true
+	followTags = true
 
 [rerere]
 	enabled = true
