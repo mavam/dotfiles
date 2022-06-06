@@ -376,6 +376,15 @@ return require('packer').startup(function(use)
     end
   }
 
+  -- Incremental renaming while cursor is on LSP identifier.
+  use {
+    "smjonas/inc-rename.nvim",
+    config = function()
+      require("inc_rename").setup()
+      vim.keymap.set("n", "<leader>r", ":IncRename ")
+    end,
+  }
+
   -- A neat status line.
   use {
     'nvim-lualine/lualine.nvim',
