@@ -68,7 +68,7 @@
       "float" : 5
     },
     "gestures" : {
-      "string" : "[32,{\"flags\":786432,\"trail\":0},5,{\"flags\":0,\"trail\":4},2,{\"flags\":0,\"trail\":1},4,{\"flags\":0,\"trail\":3},33,{\"flags\":1835008,\"trail\":0},19,{\"flags\":0,\"trail\":2}]"
+      "string" : "[32,{\"flags\":1835008,\"trail\":0},35,{\"flags\":786432,\"trail\":0},2,{\"flags\":0,\"trail\":1},5,{\"flags\":0,\"trail\":4},4,{\"flags\":0,\"trail\":3},33,{\"flags\":10223616,\"trail\":0},19,{\"flags\":0,\"trail\":2}]"
     },
     "helperRelaunch" : {
       "int" : 3
@@ -131,7 +131,7 @@
       "float" : 10
     },
     "quickActions" : {
-      "int" : 1
+      "int" : 2
     },
     "quickActionTimeout" : {
       "double" : 1
@@ -382,6 +382,6 @@
       "modifierFlags" : 786432
     }
   },
-  "timestamp" : 675579038.51192605,
+  "timestamp" : 676237247.55699801,
   "version" : "111"
 }
