@@ -93,6 +93,7 @@ setup_homebrew() {
     log "installing Homebrew"
     homebrew="Homebrew/install/master/install"
     ruby -e "$(curl -fsSL https://raw.githubusercontent.com/$homebrew)"
+    export PATH="/opt/homebrew/bin:$PATH"
   else
     log "cannot install Homebrew (ruby not found)"
     exit 1
