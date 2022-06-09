@@ -2,11 +2,27 @@
 # ---------------------------------------------------------------------
 set -g fish_greeting
 
+# OS-specific paths
+switch (uname)
+  case Darwin
+    fish_add_path -g /opt/homebrew/bin    # Homebrew
+    fish_add_path -g /usr/X11R6/bin       # Apple's X11
+    fish_add_path -g /Library/TeX/texbin  # MacTeX
+end
+
+# Rust
+fish_add_path -g $HOME/.cargo/bin
+
+# Go
+set -x GOPATH $HOME/.go
+fish_add_path -g $GOPATH/bin
+
 # Editor
 if command -sq nvim
   set -x VISUAL nvim
   abbr -g vim nvim
   abbr -g vi nvim
+  abbr -g n nvim
 else if command -sq vim
   set -x VISUAL vim
   abbr -g vi vim
@@ -17,7 +33,6 @@ set -x EDITOR $VISUAL
 
 # Homebrew
 if command -sq brew
-  fish_add_path (brew --prefix)/bin
   set -x HOMEBREW_NO_ANALYTICS 1
   set -x HOMEBREW_AUTO_UPDATE_SECS 604800 # 1 week
   # Latest LLVM compiler
@@ -27,15 +42,8 @@ if command -sq brew
   set -px CPPFLAGS -isystem $llvm_prefix/include
   set -px CXXFLAGS -isystem $llvm_prefix/include/c++/v1
   set -px LDFLAGS -Wl,-rpath,$llvm_prefix
-  fish_add_path $llvm_prefix
+  fish_add_path -g $llvm_prefix
 end
-
-# Rust
-fish_add_path $HOME/.cargo/bin
-
-# Go
-set -x GOPATH $HOME/.go
-fish_add_path $GOPATH/bin
 
 # CMake
 set -x CMAKE_GENERATOR Ninja
@@ -44,13 +52,6 @@ set -x CMAKE_CXX_COMPILER_LAUNCHER ccache
 
 # Docker
 set -x DOCKER_BUILDKIT 1
-
-# OS-specific paths
-switch (uname)
-  case Darwin
-    fish_add_path /usr/X11R6/bin       # Apple's X11
-    fish_add_path /Library/TeX/texbin/ # MacTeX
-end
 
 # FZF tuning
 set -x FZF_DEFAULT_OPTS \
