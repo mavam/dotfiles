@@ -86,17 +86,15 @@ setup_keyboard_layout() {
 }
 
 setup_homebrew() {
+  # Make sure we look at least in the default install location.
+  export PATH="/opt/homebrew/bin:$PATH"
   if which brew > /dev/null 2>&1; then
     log "upgrading existing Homebrew packages"
     brew upgrade
-  elif which ruby > /dev/null 2>&1; then
-    log "installing Homebrew"
-    homebrew="Homebrew/install/master/install"
-    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/$homebrew)"
-    export PATH="/opt/homebrew/bin:$PATH"
   else
-    log "cannot install Homebrew (ruby not found)"
-    exit 1
+    log "installing Homebrew"
+    homebrew="Homebrew/install/HEAD/install.sh"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/$homebrew)"
   fi
 }
 
