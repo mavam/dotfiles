@@ -66,7 +66,7 @@ setup_darwin() {
   osascript -e 'tell application "System Preferences" to quit'
   enter_sudo_mode
   log "tuning macOS settings"
-  source bootstrap.macos
+  . bootstrap.macos
   log "installing all available software updates"
   sudo softwareupdate -i -a
   log "installing XCode comand line developer tools"
@@ -87,7 +87,6 @@ setup_keyboard_layout() {
 
 setup_homebrew() {
   # Make sure we look at least in the default install location.
-  export PATH="/opt/homebrew/bin:$PATH"
   if which brew > /dev/null 2>&1; then
     log "upgrading existing Homebrew packages"
     brew upgrade
@@ -111,20 +110,36 @@ setup_tmux() {
 
 setup_neovim() {
   log "updating NeoVim plugins via Packer"
-  nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
+  nvim --headless -c "autocmd User PackerComplete quitall" -c "PackerSync"
 }
 
 setup_fish() {
-  log "setting fish as login shell"
   fish=$(which fish 2> /dev/null)
-  if ! fgrep -q "$fish" /etc/shells; then
-    log "adding $fish to /etc/shells"
-    echo "$fish" | sudo tee -a /etc/shells > /dev/null
+  if [ -z "$fish" ]; then
+    log "fish not found :-("
+  else
+    if grep -Fq "$fish" /etc/shells; then
+      log "skipping /etc/shells, $fish already there"
+    else
+      log "adding $fish to /etc/shells"
+      echo "$fish" | sudo tee -a /etc/shells > /dev/null
+    fi
+    log "setting fish as login shell"
+    login_shell="$(dscl . -read ~ UserShell | cut -f 2 -d " ")"
+    if [ "$login_shell" = "$fish" ]; then
+      log "$fish is already your login shell"
+    else
+      sudo chsh -s "$fish" "$USER"
+    fi
+    if which fisher 2> /dev/null; then
+      log "updating fish plugins via fisher"
+      fisher update
+    fi
   fi
-  sudo chsh -s "$fish" $USER
 }
 
 main() {
+  export PATH="/opt/homebrew/bin:$PATH"
   printf "$blue"
   echo '                __                        '
   echo ' _      _____  / /________  ____ ___  ___ '
