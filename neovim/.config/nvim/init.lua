@@ -6,6 +6,7 @@ vim.wo.signcolumn = 'number' -- Gutter on the left
 vim.o.mouse = 'a' -- Enable mouse mode.
 vim.o.clipboard = 'unnamedplus' -- Use system pastebuffer.
 vim.o.inccommand = 'nosplit' -- Incremental live completion.
+vim.o.completeopt = 'menuone,noinsert' -- Consistent completion prompting.
 
 -- Search UX.
 vim.o.hlsearch = true -- Set highlight on search.
@@ -319,63 +320,6 @@ return require('packer').startup(function(use)
     end
   }
 
-  -- Autocompletion plugin.
-  -- TODO: migrate to nvim-cmp, nvim-compe is deprecated.
-  use {
-    'hrsh7th/nvim-compe',
-    config = function()
-      vim.o.completeopt = 'menuone,noinsert'
-      require('compe').setup {
-        source = {
-          path = true,
-          nvim_lsp = true,
-          luasnip = false,
-          buffer = false,
-          calc = false,
-          nvim_lua = false,
-          vsnip = false,
-          ultisnips = false,
-        },
-      }
-      local check_back_space = function()
-        local col = vim.fn.col '.' - 1
-        if col == 0 or vim.fn.getline('.'):sub(col, col):match '%s' then
-          return true
-        else
-          return false
-        end
-      end
-      _G.tab_complete = function()
-        if vim.fn.pumvisible() == 1 then
-          return vim.api.nvim_replace_termcodes('<C-n>', true, true, true)
-        -- elseif luasnip.expand_or_jumpable() then
-        --  return t '<Plug>luasnip-expand-or-jump'
-        elseif check_back_space() then
-          return vim.api.nvim_replace_termcodes('<Tab>', true, true, true)
-        else
-          return vim.fn['compe#complete']()
-        end
-      end
-      _G.s_tab_complete = function()
-        if vim.fn.pumvisible() == 1 then
-	  return vim.api.nvim_replace_termcodes('<C-p>', true, true, true)
-        -- elseif luasnip.jumpable(-1) then
-        --   return t '<Plug>luasnip-jump-prev'
-        else
-	  return vim.api.nvim_replace_termcodes('<S-Tab>', true, true, true)
-        end
-      end
-      -- Map tab to the above tab complete functions
-      vim.keymap.set('i', '<Tab>', 'v:lua.tab_complete()', { expr = true })
-      vim.keymap.set('s', '<Tab>', 'v:lua.tab_complete()', { expr = true })
-      vim.keymap.set('i', '<S-Tab>', 'v:lua.s_tab_complete()', { expr = true })
-      vim.keymap.set('s', '<S-Tab>', 'v:lua.s_tab_complete()', { expr = true })
-      -- Map compe confirm and complete functions
-      vim.keymap.set('i', '<cr>', 'compe#confirm("<cr>")', { expr = true })
-      vim.keymap.set('i', '<c-space>', 'compe#complete()', { expr = true })
-    end
-  }
-
   -- Incremental renaming while cursor is on LSP identifier.
   use {
     "smjonas/inc-rename.nvim",
@@ -409,7 +353,7 @@ return require('packer').startup(function(use)
     end
   }
 
-  --- R integration.
+  -- R integration.
   use {
     'jalvesaq/Nvim-R',
     branch = 'master',
