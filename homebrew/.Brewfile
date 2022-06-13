@@ -46,7 +46,6 @@ brew "ffmpeg"
 brew "figlet"
 brew "fish"
 brew "fisher"
-brew "flatbuffers"
 brew "fzf"
 brew "gcc"
 brew "gcovr"
@@ -102,6 +101,15 @@ brew "wget"
 brew "yarn"
 brew "youtube-dl"
 brew "zeek"
+
+# VAST
+brew "apache-arrow"
+brew "flatbuffers"
+brew "fmt"
+brew "pandoc"
+brew "simdjson"
+brew "spdlog"
+brew "yaml-cpp"
 
 #mas "keynote", id: 409183694
 #mas "pages", id: 409201541
