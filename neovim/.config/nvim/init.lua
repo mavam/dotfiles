@@ -254,22 +254,9 @@ return require('packer').startup(function(use)
   use {
     'rebelot/kanagawa.nvim',
     config = function()
-      require('kanagawa').setup{
-        undercurl = true,           -- enable undercurls
-        commentStyle = "italic",
-        functionStyle = "NONE",
-        keywordStyle = "italic",
-        statementStyle = "bold",
-        typeStyle = "NONE",
-        variablebuiltinStyle = "italic",
-        specialReturn = true,       -- special highlight for the return keyword
-        specialException = true,    -- special highlight for exception handling keywords
-        transparent = true,         -- do not set background color
-        dimInactive = false,        -- dim inactive window `:h hl-NormalNC`
-        globalStatus = true,
-        colors = {},
-        overrides = {},
-      }
+      require('kanagawa').setup({
+        transparent = true, -- do not set background color
+      })
       vim.o.termguicolors = true
       -- vim.cmd 'highlight WinSeparator NONE'
       vim.cmd 'colorscheme kanagawa'
