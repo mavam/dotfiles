@@ -116,3 +116,4 @@ brew "yaml-cpp"
 #mas "pages", id: 409201541
 #mas "numbers", id: 409203825
 mas "wireguard", id: 1451685025
+mas "SideNotes", id: 1441958036
