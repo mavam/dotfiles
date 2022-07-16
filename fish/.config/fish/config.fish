@@ -31,6 +31,11 @@ else
 end
 set -x EDITOR $VISUAL
 
+# Pager
+if command -sq bat
+  set -x MANPAGER "sh -c 'col -bx | bat -l man -p'"
+end
+
 # Homebrew
 if command -sq brew
   set -x HOMEBREW_NO_ANALYTICS 1
