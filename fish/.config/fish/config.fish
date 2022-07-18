@@ -128,6 +128,9 @@ if status is-interactive
   set -g fish_pager_color_completion $foreground
   set -g fish_pager_color_description $comment
 
+  # Simplify SSH: https://sw.kovidgoyal.net/kitty/kittens/ssh/
+  abbr -g s 'kitty +kitten ssh'
+
   # Abbreviations: git
   abbr -g g 'git'
   abbr -g ga 'git add'
