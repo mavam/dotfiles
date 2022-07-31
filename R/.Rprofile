@@ -1,5 +1,3 @@
-# -- Startup ----------------------------------------------------
-
 options(repos = c(CRAN = "https://cloud.r-project.org"))
 
 # Use pacman to make sure a few packages exist.
