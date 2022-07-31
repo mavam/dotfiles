@@ -87,36 +87,19 @@ custom_on_attach = function(client, bufnr)
   local opts = function(hint)
     return { buffer = bufnr, silent = true, desc = hint }
   end
+  -- Buffer keymaps.
+  vim.api.nvim_buf_set_option(bufnr, 'tagfunc', 'v:lua.vim.lsp.tagfunc')
+  vim.api.nvim_buf_set_option(bufnr, 'formatexpr', 'v:lua.vim.lsp.formatexpr()')
   -- Capability-based keymaps.
-  if client.server_capabilities.declarationProvider then
-    vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts("Go to declaration"))
-  end
-  if client.server_capabilities.definitionProvider then
-    vim.api.nvim_buf_set_option(bufnr, 'tagfunc', 'v:lua.vim.lsp.tagfunc')
-    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts("Go to definition"))
-  end
-  if client.server_capabilities.typeDefinitionProvider then
-    vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, opts("Go to type definition"))
-  end
-  if client.server_capabilities.hoverProvider then
-    vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts("LSP hover"))
-  end
-  if client.server_capabilities.implementationProvider then
-    vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts("Go to implementation"))
-  end
-  if client.server_capabilities.signatureHelpProvider then
-    vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts("Show signature help"))
-  end
-  if client.server_capabilities.referencesProvider then
-    vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts("Go to references"))
-  end
-  if client.server_capabilities.documentFormattingProvider then
-    vim.keymap.set('n', '<leader>f', vim.lsp.buf.format, opts("Format buffer"))
-  end
-  if client.server_capabilities.documentRangeFormattingProvider then
-    vim.api.nvim_buf_set_option(bufnr, 'formatexpr', 'v:lua.vim.lsp.formatexpr()')
-    vim.keymap.set('v', '<leader>f', vim.lsp.buf.range_formatting, opts("Format range"))
-  end
+  vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts("Go to declaration"))
+  vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts("Go to definition"))
+  vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, opts("Go to type definition"))
+  vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts("LSP hover"))
+  vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts("Go to implementation"))
+  vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts("Show signature help"))
+  vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts("Go to references"))
+  vim.keymap.set('n', '<leader>f', vim.lsp.buf.format, opts("Format buffer"))
+  vim.keymap.set('v', '<leader>f', vim.lsp.buf.range_formatting, opts("Format range"))
   -- Universal keymaps.
   vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts("Show diagnostics"))
   vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts("Go to previous diagnostic"))
