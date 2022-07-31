@@ -1,31 +1,20 @@
 # -- Startup ----------------------------------------------------
 
-# Fixate a mirror.
-local({
-  r = getOption("repos")
-  r["CRAN"] = "https://cran.rstudio.com/"
-  options(repos = r)
-})
+options(repos = c(CRAN = "https://cloud.r-project.org"))
 
-if (requireNamespace("rprofile", quietly = TRUE)) {
-  rprofile::set_startup_options()
-}
+# Use pacman to make sure a few packages exist.
+if (!require("pacman"))
+  install.packages("pacman")
+pacman::p_load(prettycode, prompt, rdoc, languageserver)
+pacman::p_load_gh("jalvesaq/colorout")
 
+# Make for a more convenient REPL experience.
 if (interactive()) {
-  base::library("utils") # Needed for rdoc`?` to take precedence
+  base::library("colorout")
+  base::library("utils")
   rdoc::use_rdoc()
-  if (requireNamespace("rprofile", quietly = TRUE)) {
-    rprofile::create_make_functions()
-    .env = rprofile::set_functions()
-    attach(.env)
-  }
-  if (requireNamespace("colorout", quietly = TRUE)) {
-    base::library("colorout")
-  }
-  if (requireNamespace("prompt", quietly = TRUE)) {
-    prompt::set_prompt(prompt::prompt_fancy)
-    prettycode::prettycode()
-  }
+  prompt::set_prompt(prompt::prompt_fancy)
+  prettycode::prettycode()
 }
 
 # -- Utilities --------------------------------------------------
