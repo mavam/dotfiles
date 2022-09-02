@@ -1,4 +1,5 @@
 -- Appearance.
+vim.o.background = 'dark'
 vim.o.laststatus = 3 -- Global statusline.
 vim.wo.signcolumn = 'number' -- Gutter on the left
 
@@ -123,24 +124,6 @@ return require('packer').startup(function(use)
 
   -- Facilitate whitespace management
   use 'ntpeters/vim-better-whitespace'
-
-  -- Automatic dark mode switching on macOS.
-  use {
-    'f-person/auto-dark-mode.nvim',
-    config = function()
-      local auto_dark_mode = require('auto-dark-mode')
-      auto_dark_mode.setup{
-        update_interval = 3000,
-        set_dark_mode = function()
-          vim.api.nvim_set_option('background', 'dark')
-        end,
-        set_light_mode = function()
-          vim.api.nvim_set_option('background', 'light')
-        end,
-      }
-      auto_dark_mode.init()
-    end,
-  }
 
   -- UI to select things (files, grep results, open buffers...)
   use {
