@@ -100,13 +100,13 @@ custom_on_attach = function(client, bufnr)
   vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts("Show signature help"))
   vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts("Go to references"))
   vim.keymap.set('n', '<leader>f', vim.lsp.buf.format, opts("Format buffer"))
-  vim.keymap.set('v', '<leader>f', vim.lsp.buf.range_formatting, opts("Format range"))
+  vim.keymap.set('v', '<leader>f', vim.lsp.buf.format, opts("Format selection"))
   -- Universal keymaps.
   vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts("Show diagnostics"))
   vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts("Go to previous diagnostic"))
   vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts("Go to next diagnostic"))
   vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts("Perform code action"))
-  vim.keymap.set('v', '<leader>ca', vim.lsp.buf.range_code_action, opts("Perform code action"))
+  vim.keymap.set('v', '<leader>ca', vim.lsp.buf.code_action, opts("Perform code action"))
 end
 
 return require('packer').startup(function(use)
