@@ -6,7 +6,7 @@
              [tmux](https://github.com/tmux/tmux)
 - **Shell**: [Fish](https://fishshell.com/)
 - **Editor**: [NeoVim](https://neovim.io/)
-- **Colorscheme**: [Kanagawa](https://github.com/rebelot/kanagawa.nvim)
+- **Colorscheme**: [Catppuccin](https://github.com/catppuccin/catppuccin)
 - **Font**: [Fira Code](https://github.com/tonsky/FiraCode) from [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts)
 
 On macOS, [Homebrew](https://brew.sh) is the package manager.

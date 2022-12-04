@@ -286,7 +286,7 @@ return require('packer').startup(function(use)
           require("null-ls").builtins.formatting.stylua,
           require("null-ls").builtins.diagnostics.markdownlint,
           require("null-ls").builtins.diagnostics.shellcheck,
-          require("null-ls").builtins.diagnostics.vale,
+          --require("null-ls").builtins.diagnostics.vale,
         },
         on_attach = custom_on_attach
       })
@@ -334,6 +334,9 @@ return require('packer').startup(function(use)
       vim.g.R_assign = 0
     end
   }
+
+  -- Pair programming neatness.
+  use 'jbyuki/instant.nvim'
 
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins
