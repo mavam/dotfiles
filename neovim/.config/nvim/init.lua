@@ -1,5 +1,4 @@
 -- Appearance.
-vim.o.background = 'dark'
 vim.o.laststatus = 3 -- Global statusline.
 vim.wo.signcolumn = 'number' -- Gutter on the left
 
@@ -245,6 +244,7 @@ return require('packer').startup(function(use)
           dark = "mocha",
         },
       })
+      vim.o.background = 'dark'
       vim.o.termguicolors = true
       -- vim.cmd 'highlight WinSeparator NONE'
       vim.cmd.colorscheme 'catppuccin'
