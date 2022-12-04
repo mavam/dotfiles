@@ -236,14 +236,18 @@ return require('packer').startup(function(use)
 
   -- Colorscheme.
   use {
-    'rebelot/kanagawa.nvim',
+    'catppuccin/nvim',
+    as = 'catppuccin',
     config = function()
-      require('kanagawa').setup({
-        transparent = true, -- do not set background color
+      require('catppuccin').setup({
+        background = {
+          light = "latte",
+          dark = "mocha",
+        },
       })
       vim.o.termguicolors = true
       -- vim.cmd 'highlight WinSeparator NONE'
-      vim.cmd 'colorscheme kanagawa'
+      vim.cmd.colorscheme 'catppuccin'
     end
   }
 
