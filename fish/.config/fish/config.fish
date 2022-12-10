@@ -100,6 +100,7 @@ if status is-interactive
 
   # Setup prompt
   starship init fish | source
+  enable_transience
 
   # Launch gpg-agent for use by SSH.
   set -x GPG_TTY (tty)
