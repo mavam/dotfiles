@@ -14,6 +14,7 @@ return {
         'lua';
         'markdown';
         'python';
+        'r';
         'yaml';
       },
       highlight = {
