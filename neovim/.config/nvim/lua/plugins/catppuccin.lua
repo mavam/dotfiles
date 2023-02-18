@@ -9,8 +9,6 @@ return {
         dark = "mocha",
       },
     })
-    vim.o.background = 'dark'
-    vim.o.termguicolors = true
     -- vim.cmd 'highlight WinSeparator NONE'
     vim.cmd.colorscheme 'catppuccin'
   end

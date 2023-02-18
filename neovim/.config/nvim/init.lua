@@ -1,12 +1,14 @@
 -- Appearance.
-vim.o.laststatus = 3 -- Global statusline.
+vim.o.laststatus = 3 -- Global statusline
 vim.wo.signcolumn = 'number' -- Gutter on the left
 
 -- Generic UX.
-vim.o.mouse = 'a' -- Enable mouse mode.
-vim.o.clipboard = 'unnamedplus' -- Use system pastebuffer.
-vim.o.inccommand = 'nosplit' -- Incremental live completion.
-vim.o.completeopt = 'menuone,noinsert' -- Consistent completion prompting.
+vim.o.background = 'dark' -- Colorscheme
+vim.o.clipboard = 'unnamedplus' -- Use system pastebuffer
+vim.o.completeopt = 'menuone,noinsert' -- Consistent completion prompting
+vim.o.inccommand = 'nosplit' -- Incremental live completion
+vim.o.mouse = 'a' -- Enable mouse mode
+vim.o.termguicolors = true -- Enables 24-bit RGB colors in TUI
 
 -- Search UX.
 vim.o.hlsearch = true -- Set highlight on search.
