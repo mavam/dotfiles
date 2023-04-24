@@ -47,7 +47,7 @@ if command -sq brew
     set -x CXX $llvm_prefix/bin/clang++
     set -px CPPFLAGS -isystem $llvm_prefix/include
     set -px CXXFLAGS -isystem $llvm_prefix/include/c++/v1
-    set -px LDFLAGS -Wl,-rpath,$llvm_prefix
+    set -px LDFLAGS -L$llvm_prefix/lib/c++ -Wl,-rpath,$llvm_prefix/lib/c++
     fish_add_path -g $llvm_prefix
   end
 end
@@ -161,7 +161,7 @@ if status is-interactive
   abbr -g gclean 'git clean -fd'
   abbr -g gco 'git checkout'
   abbr -g gcob 'git checkout -b'
-  abbr -g gcom 'git checkout master'
+  abbr -g gcom 'git checkout main'
   abbr -g gcot 'git checkout topic/'
   abbr -g gcp 'git cherry-pick'
   abbr -g gcpa 'git cherry-pick --abort'
@@ -185,9 +185,9 @@ if status is-interactive
   abbr -g gpoatf 'git push origin --all -f && git push origin --tags -f'
   abbr -g gpl 'git pull'
   abbr -g gplo 'git pull origin'
-  abbr -g gplom 'git pull origin master'
+  abbr -g gplom 'git pull origin main'
   abbr -g gplu 'git pull upstream'
-  abbr -g gplum 'git pull upstream master'
+  abbr -g gplum 'git pull upstream main'
   abbr -g gr 'git remote -v'
   abbr -g gra 'git remote add'
   abbr -g grau 'git remote add upstream'
@@ -195,7 +195,7 @@ if status is-interactive
   abbr -g grmv 'git remote rename'
   abbr -g grset 'git remote set-url'
   abbr -g grb 'git rebase'
-  abbr -g grbpr 'git rebase --interactive --rebase-merges $(git merge-base origin/master HEAD)'
+  abbr -g grbpr 'git rebase --interactive --rebase-merges $(git merge-base origin/main HEAD)'
   abbr -g grba 'git rebase --abort'
   abbr -g grbc 'git rebase --continue'
   abbr -g gr 'git reset'
