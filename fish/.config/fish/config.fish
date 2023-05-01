@@ -48,7 +48,7 @@ if command -sq brew
     set -px CPPFLAGS -isystem $llvm_prefix/include
     set -px CXXFLAGS -isystem $llvm_prefix/include/c++/v1
     set -px LDFLAGS -L$llvm_prefix/lib/c++ -Wl,-rpath,$llvm_prefix/lib/c++
-    fish_add_path -g $llvm_prefix
+    fish_add_path -g $llvm_prefix/bin
   end
 end
 
