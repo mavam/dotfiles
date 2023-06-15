@@ -4,3 +4,12 @@ add_newline = false
 [directory]
 repo_root_style = "bold blue"
 truncation_symbol = "…/"
+
+[docker_context]
+disabled = true
+
+[gcloud]
+disabled = true
+
+[aws]
+disabled = true
