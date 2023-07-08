@@ -20,5 +20,9 @@ return {
     require('lspconfig').r_language_server.setup {
       on_attach = custom_on_attach
     }
+    -- Svelte
+    require('lspconfig').svelte.setup {
+      on_attach = custom_on_attach
+    }
   end
 }
