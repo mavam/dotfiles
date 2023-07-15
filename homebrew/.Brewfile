@@ -8,7 +8,6 @@ tap "buo/cask-upgrade"
 # Needed up here so that installation of google font casks does not fail.
 brew "svn"
 
-cask "1password"
 cask "adguard"
 cask "docker"
 cask "dropbox"
@@ -104,7 +103,7 @@ brew "yarn"
 brew "youtube-dl"
 brew "zeek"
 
-# VAST
+# Tenzir
 brew "apache-arrow"
 brew "flatbuffers"
 brew "fmt"
@@ -116,5 +115,6 @@ brew "yaml-cpp"
 #mas "keynote", id: 409183694
 #mas "pages", id: 409201541
 #mas "numbers", id: 409203825
-mas "wireguard", id: 1451685025
-mas "SideNotes", id: 1441958036
+mas "Wireguard", id: 1451685025
+mas "Slack", id: 803453959
+mas "XCode", id: 497799835
