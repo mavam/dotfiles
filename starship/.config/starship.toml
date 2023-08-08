@@ -1,6 +1,9 @@
 # Do not waste vertical space.
 add_newline = false
 
+[aws]
+disabled = true
+
 [directory]
 repo_root_style = "bold blue"
 truncation_symbol = "…/"
@@ -11,5 +14,5 @@ disabled = true
 [gcloud]
 disabled = true
 
-[aws]
+[nodejs]
 disabled = true
