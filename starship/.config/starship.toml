@@ -16,3 +16,6 @@ disabled = true
 
 [nodejs]
 disabled = true
+
+[rlang]
+disabled = true
