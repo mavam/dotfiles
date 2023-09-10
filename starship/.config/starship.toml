@@ -4,6 +4,9 @@ add_newline = false
 [aws]
 disabled = true
 
+[battery]
+disabled = true
+
 [directory]
 repo_root_style = "bold blue"
 truncation_symbol = "…/"
