@@ -6,6 +6,7 @@ set -g fish_greeting
 switch (uname)
   case Darwin
     fish_add_path -g /opt/homebrew/bin    # Homebrew
+    fish_add_path -g /opt/homebrew/sbin   # Homebrew
     fish_add_path -g /usr/X11R6/bin       # Apple's X11
     fish_add_path -g /Library/TeX/texbin  # MacTeX
 end
