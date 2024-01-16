@@ -9,10 +9,6 @@
 	navigate = true  # use n and N to move between diff sections
 	light = false
 
-[alias]
-	merge-branch = merge --log --no-commit --no-ff
-	fix-submodules = submodule update --recursive --init
-
 [branch]
 	sort = -committerdate
 

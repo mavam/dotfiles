@@ -145,6 +145,10 @@ if status is-interactive
   abbr -g glg 'git log --graph'
   abbr -g glp 'git log --patch'
   abbr -g gm 'git merge'
+  abbr -g gma 'git merge --abort'
+  abbr -g gmc 'git merge --continue'
+  # Merge a branch
+  abbr -g gmb 'git merge --log --no-commit --no-ff'
   abbr -g gp 'git push'
   abbr -g gpu 'git push --set-upstream origin (git symbolic-ref HEAD | sed "s/refs\/heads\///")'
   abbr -g gpf 'git push --force'
@@ -179,6 +183,8 @@ if status is-interactive
   abbr -g gshd 'git stash drop'
   abbr -g gshp 'git stash pop'
   abbr -g gsu 'git submodule update'
+  abbr -g gsui 'git submodule update --init'
+  abbr -g gsuir 'git submodule update --init --recursive'
   abbr -g gts 'git tag -s'
 
   # Let vim fugitive creep into shell workflow.
