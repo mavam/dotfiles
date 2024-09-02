@@ -199,6 +199,18 @@ if status is-interactive
     end
   end
 
+  # List all pull requests when in a directory that is a GitHub repo.
+  function prs
+    gh pr list --limit 100 --json number,title,updatedAt,author --template \
+      '{{range .}}{{tablerow .number .title .author.login (timeago .updatedAt)}}{{end}}' |
+    fzf --reverse --ignore-case |
+    cut -f1 -d ' ' |
+    read -l pr_number
+    if test -n "$pr_number"
+      gh pr checkout $pr_number; and git submodule update --init --recursive --checkout
+    end
+  end
+
   # macOS convenience tools.
   switch (uname)
     case Darwin
