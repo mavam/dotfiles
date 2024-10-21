@@ -187,8 +187,8 @@ if status is-interactive
   abbr -g gsuir 'git submodule update --init --recursive'
   abbr -g gts 'git tag -s'
   abbr -g gw 'git worktree'
-  abbr -g gwa 'git worktree add'
-  abbr -g gwr 'git worktree remove'
+  abbr -g gwa 'git worktree add -b'
+  abbr -g gwr 'git worktree remove -f'
 
   # Let vim fugitive creep into shell workflow.
   function G
