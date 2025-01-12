@@ -43,4 +43,11 @@
 [user]
 	name = Matthias Vallentin
 	email = matthias@vallentin.net
-	signingkey = 0xFBAC7C9C2BF7F1AA
+	#signingkey = 0xFBAC7C9C2BF7F1AA
+
+[gpg]
+	format = ssh
+
+[gpg "ssh"]
+	defaultKeyCommand = sh -c 'echo "key::$(ssh-add -L | head -n 1)"'
+	allowedSignersFile = ~/.config/git/allowed_signers
