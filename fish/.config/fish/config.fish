@@ -99,16 +99,18 @@ if status is-interactive
   bind \cp history-prefix-search-backward
   bind -M insert \cp history-prefix-search-backward
 
-  # Setup prompt
+  # Setup a fancier prompt.
   if command -sq starship
     starship init fish | source
     enable_transience
   end
 
   # Launch gpg-agent for use by SSH.
-  set -x GPG_TTY (tty)
-  set -x SSH_AUTH_SOCK (gpgconf --list-dirs agent-ssh-socket)
-  gpgconf --launch gpg-agent
+  #set -x GPG_TTY (tty)
+  #gpgconf --launch gpg-agent
+
+  # Use SSH key from Secure Enclave.
+  set -x SSH_AUTH_SOCK ~/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh
 
   # Simplify SSH: https://sw.kovidgoyal.net/kitty/kittens/ssh/
   abbr -g s 'kitty +kitten ssh'
