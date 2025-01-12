@@ -100,8 +100,10 @@ if status is-interactive
   bind -M insert \cp history-prefix-search-backward
 
   # Setup prompt
-  starship init fish | source
-  enable_transience
+  if command -sq starship
+    starship init fish | source
+    enable_transience
+  end
 
   # Launch gpg-agent for use by SSH.
   set -x GPG_TTY (tty)
