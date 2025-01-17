@@ -1,6 +1,9 @@
 # Do not waste vertical space.
 add_newline = false
 
+# Be more lenient with timeouts.
+command_timeout = 1000
+
 [aws]
 disabled = true
 
