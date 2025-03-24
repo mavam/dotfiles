@@ -1,1 +1,21 @@
+# Colors.
 theme = dark:kanagawa-dragon,light:kanagawa-lotus
+#background = #111111
+
+# Window styling.
+background-opacity = 0.95
+background-blur-radius = 20
+macos-titlebar-style = hidden
+#window-colorspace = display-p3
+window-padding-x = 8
+window-padding-y = 8
+window-padding-balance = true
+
+# Fonts.
+# font-family = Monaspace Neon
+font-size = 13
+adjust-cell-height = 15%
+
+# Quick terminal.
+#keybind = global:shift+ctrl+option+cmd+t=toggle_quick_terminal
+#quick-terminal-animation-duration = 0.05
