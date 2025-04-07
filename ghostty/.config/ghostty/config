@@ -1,3 +1,6 @@
+# Shell
+shell-integration = fish
+
 # Colors.
 theme = dark:GitHub Dark,light:GitHub
 #background = #111111
