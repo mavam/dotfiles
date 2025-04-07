@@ -2,7 +2,7 @@
 shell-integration = fish
 
 # Colors.
-theme = dark:GitHub Dark,light:GitHub
+theme = dark:GitHub-Dark-Default,light:GitHub-Light-Default
 #background = #111111
 
 # Window styling.
