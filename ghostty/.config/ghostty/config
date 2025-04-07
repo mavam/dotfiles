@@ -1,5 +1,5 @@
 # Colors.
-theme = dark:kanagawa-dragon,light:kanagawa-lotus
+theme = dark:GitHub Dark,light:GitHub
 #background = #111111
 
 # Window styling.
