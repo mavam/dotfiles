@@ -103,9 +103,6 @@ if status is-interactive
   # Use SSH key from Secure Enclave.
   set -x SSH_AUTH_SOCK ~/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh
 
-  # Simplify SSH: https://sw.kovidgoyal.net/kitty/kittens/ssh/
-  abbr -g s 'kitty +kitten ssh'
-
   # Abbreviations: git
   abbr -g g 'git'
   abbr -g ga 'git add'
