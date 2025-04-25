@@ -1,1 +1,3 @@
---theme="Catppuccin-mocha"
+--theme auto:system
+--theme-dark base16
+--theme-light GitHub
