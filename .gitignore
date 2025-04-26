@@ -10,6 +10,7 @@ mutt/.mutt/aliases
 mutt/.mutt/hooks
 mutt/.mutt/mailboxes
 mutt/.mutt/lists
+neovim/.config/nvim/lazy-lock.json
 neovim/.config/nvim/plugin/
 tmux/.tmux/plugins/
 vale/.config/vale/styles/
