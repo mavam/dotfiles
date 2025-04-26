@@ -61,12 +61,6 @@ set -x CMAKE_CXX_COMPILER_LAUNCHER ccache
 # Docker
 set -x DOCKER_BUILDKIT 1
 
-# FZF tuning
-#
-# Light mode still to be integrated:
-#--color=bg+:#ccd0da,bg:#eff1f5,spinner:#dc8a78,hl:#d20f39 \
-#--color=fg:#4c4f69,header:#d20f39,info:#8839ef,pointer:#dc8a78 \
-#--color=marker:#dc8a78,fg+:#4c4f69,prompt:#8839ef,hl+:#d20f39"
 set -x FZF_DEFAULT_OPTS \
   --bind=ctrl-k:up,ctrl-j:down,ctrl-h:page-up,ctrl-l:page-down \
   --bind=ctrl-p:half-page-up,ctrl-n:half-page-down \
