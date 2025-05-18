@@ -7,6 +7,13 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "assistant": {
+    "default_model": {
+      "provider": "google",
+      "model": "gemini-2.0-flash-exp"
+    },
+    "version": "2"
+  },
   "confirm_quit": true,
   "vim_mode": true,
   "ui_font_size": 16,
