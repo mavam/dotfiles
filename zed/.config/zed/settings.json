@@ -21,5 +21,9 @@
   "terminal": {
     "font_family": "FiraCode Nerd Font Mono",
     "font_size": 14
+  },
+  "telemetry": {
+    "metrics": false,
+    "diagnostics": false
   }
 }
