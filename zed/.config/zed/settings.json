@@ -19,8 +19,8 @@
   "ui_font_size": 16,
   "theme": {
     "mode": "system",
-    "light": "One Light",
-    "dark": "One Dark"
+    "light": "Github Light",
+    "dark": "Github Dark"
   },
   "buffer_font_family": "FiraCode Nerd Font Mono",
   "buffer_font_fallbacks": ["Zed Plex Mono"],
