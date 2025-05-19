@@ -24,10 +24,10 @@
   },
   "buffer_font_family": "FiraCode Nerd Font Mono",
   "buffer_font_fallbacks": ["Zed Plex Mono"],
-  "buffer_font_size": 14,
+  "buffer_font_size": 12,
   "terminal": {
     "font_family": "FiraCode Nerd Font Mono",
-    "font_size": 14
+    "font_size": 12
   },
   "telemetry": {
     "metrics": false,
