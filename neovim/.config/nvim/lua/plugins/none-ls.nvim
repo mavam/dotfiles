@@ -1,0 +1,17 @@
+-- Expand LSP experience to non-LSP-grade linters.
+return {
+  "nvimtools/none-ls.nvim",
+  config = function()
+    local null_ls = require("null-ls")
+    null_ls.setup({
+      sources = {
+        null_ls.builtins.formatting.black,
+        null_ls.builtins.formatting.stylua,
+        null_ls.builtins.diagnostics.markdownlint,
+        null_ls.builtins.diagnostics.shellcheck,
+        --null_ls.builtins.diagnostics.vale,
+      },
+      on_attach = custom_on_attach
+    })
+  end
+}
