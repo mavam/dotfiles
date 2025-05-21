@@ -9,8 +9,8 @@
 {
   "agent": {
     "default_model": {
-      "provider": "google",
-      "model": "gemini-2.0-flash-exp"
+      "provider": "zed.dev",
+      "model": "claude-3-7-sonnet-latest"
     },
     "version": "2"
   },
