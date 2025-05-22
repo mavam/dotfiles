@@ -8,8 +8,12 @@
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
   "agent": {
-    "default_model": {
+    "inline_assistant_model": {
       "provider": "zed.dev",
+      "model": "claude-3-7-sonnet-latest"
+    },
+    "default_model": {
+      "provider": "google",
       "model": "claude-3-7-sonnet-latest"
     },
     "version": "2"
