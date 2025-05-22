@@ -35,5 +35,11 @@
   },
   "preferred_line_length": 80,
   "soft_wrap": "preferred_line_length",
-  "format_on_save": "off"
+  "format_on_save": "off",
+  "minimap": {
+    "current_line_highlight": "all",
+    "show": "always",
+    "thumb": "always",
+    "thumb_border": "none"
+  }
 }
