@@ -13,8 +13,8 @@
       "model": "claude-3-7-sonnet-latest"
     },
     "default_model": {
-      "provider": "google",
-      "model": "claude-3-7-sonnet-latest"
+      "provider": "zed.dev",
+      "model": "claude-sonnet-4-latest"
     },
     "version": "2"
   },
