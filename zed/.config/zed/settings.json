@@ -38,7 +38,7 @@
     "diagnostics": false
   },
   "preferred_line_length": 80,
-  "soft_wrap": "preferred_line_length",
+  "soft_wrap": "editor_width",
   "format_on_save": "off",
   "minimap": {
     "current_line_highlight": "all",
