@@ -8,6 +8,7 @@
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
   "agent": {
+    "always_allow_tool_actions": true,
     "inline_assistant_model": {
       "provider": "zed.dev",
       "model": "claude-sonnet-4-latest"
