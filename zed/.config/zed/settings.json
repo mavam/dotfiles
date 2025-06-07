@@ -17,7 +17,10 @@
       "provider": "zed.dev",
       "model": "claude-sonnet-4"
     },
-    "version": "2"
+    "version": "2",
+    "stream_edits": true,
+    "enable_feedback": false,
+    "single_file_review": false
   },
   "confirm_quit": true,
   "vim_mode": true,
