@@ -64,3 +64,5 @@ tags
 
 # ccls
 .ccls-cache/
+
+**/.claude/settings.local.json
