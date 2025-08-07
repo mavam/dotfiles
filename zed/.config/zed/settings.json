@@ -30,10 +30,10 @@
     "light": "Github Light",
     "dark": "Github Dark"
   },
-  "buffer_font_family": "FiraCode Nerd Font Mono",
+  "buffer_font_family": "FiraCode Nerd Font",
   "buffer_font_fallbacks": ["Zed Plex Mono"],
   "terminal": {
-    "font_family": "FiraCode Nerd Font Mono",
+    "font_family": "FiraCode Nerd Font",
     "font_size": 12
   },
   "telemetry": {
