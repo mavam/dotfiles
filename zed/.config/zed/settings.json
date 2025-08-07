@@ -17,7 +17,6 @@
       "provider": "zed.dev",
       "model": "claude-opus-4"
     },
-    "version": "2",
     "stream_edits": true,
     "enable_feedback": false,
     "single_file_review": false
