@@ -1,0 +1,45 @@
+{
+  "lines": [
+    [
+      {
+        "id": "1754901307377",
+        "type": "custom-command",
+        "preserveColors": true,
+        "timeout": 5000,
+        "commandPath": "bunx ccusage statusline"
+      }
+    ],
+    [
+      {
+        "id": "3",
+        "type": "context-length",
+        "color": "dim"
+      },
+      {
+        "id": "4",
+        "type": "separator"
+      },
+      {
+        "id": "5",
+        "type": "git-branch",
+        "color": "magenta"
+      },
+      {
+        "id": "6",
+        "type": "separator"
+      },
+      {
+        "id": "7",
+        "type": "git-changes",
+        "color": "yellow"
+      }
+    ]
+  ],
+  "colors": {
+    "model": "cyan",
+    "gitBranch": "magenta",
+    "separator": "dim"
+  },
+  "flexMode": "full-minus-40",
+  "compactThreshold": 60
+}

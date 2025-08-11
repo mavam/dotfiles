@@ -2,7 +2,7 @@
   "model": "opus",
   "statusLine": {
     "type": "command",
-    "command": "bunx ccusage statusline",
+    "command": "bunx ccstatusline@latest",
     "padding": 0
   }
 }
