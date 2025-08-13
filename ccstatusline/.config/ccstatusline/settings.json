@@ -11,15 +11,6 @@
     ],
     [
       {
-        "id": "3",
-        "type": "context-length",
-        "color": "dim"
-      },
-      {
-        "id": "4",
-        "type": "separator"
-      },
-      {
         "id": "5",
         "type": "git-branch",
         "color": "magenta"
@@ -33,13 +24,14 @@
         "type": "git-changes",
         "color": "yellow"
       }
-    ]
+    ],
+    []
   ],
+  "flexMode": "full-minus-40",
+  "compactThreshold": 60,
   "colors": {
     "model": "cyan",
     "gitBranch": "magenta",
     "separator": "dim"
-  },
-  "flexMode": "full-minus-40",
-  "compactThreshold": 60
+  }
 }
