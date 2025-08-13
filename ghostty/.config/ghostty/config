@@ -22,3 +22,6 @@ adjust-cell-height = 15%
 # Quick terminal.
 keybind = global:shift+ctrl+option+cmd+t=toggle_quick_terminal
 quick-terminal-animation-duration = 0.25
+
+# Claude Code terminal integration.
+keybind = shift+enter=text:\n
