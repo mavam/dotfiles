@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run ~/.claude/hooks/tts.py 'New session'"
+            "command": "uv run ~/.claude/hooks/tts.py"
           }
         ]
       }
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run ~/.claude/hooks/tts.py 'Subagent complete'"
+            "command": "uv run ~/.claude/hooks/tts.py"
           }
         ]
       }
