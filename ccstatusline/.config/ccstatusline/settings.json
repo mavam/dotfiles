@@ -1,26 +1,27 @@
 {
+  "version": 3,
   "lines": [
     [
       {
-        "id": "1754901307377",
+        "id": "788f3afc-15fd-476d-9e5a-6a4b0be6cb15",
         "type": "custom-command",
+        "commandPath": "bunx ccusage statusline",
         "preserveColors": true,
-        "timeout": 5000,
-        "commandPath": "bunx ccusage statusline"
+        "timeout": 5000
       }
     ],
     [
       {
-        "id": "5",
+        "id": "e829bf0c-4eb1-4b4c-b955-3ce572e0c3d9",
         "type": "git-branch",
         "color": "magenta"
       },
       {
-        "id": "6",
+        "id": "cc38474a-0b39-4c7e-b013-1b5ca7496c18",
         "type": "separator"
       },
       {
-        "id": "7",
+        "id": "cb79bd6f-e8e2-4d85-b6bd-ec5e5a108405",
         "type": "git-changes",
         "color": "yellow"
       }
@@ -29,9 +30,18 @@
   ],
   "flexMode": "full-minus-40",
   "compactThreshold": 60,
-  "colors": {
-    "model": "cyan",
-    "gitBranch": "magenta",
-    "separator": "dim"
+  "colorLevel": 2,
+  "inheritSeparatorColors": false,
+  "globalBold": false,
+  "powerline": {
+    "enabled": false,
+    "separators": [
+      ""
+    ],
+    "separatorInvertBackground": [
+      false
+    ],
+    "startCaps": [],
+    "endCaps": []
   }
 }
