@@ -1,6 +1,8 @@
 ---
 description: Work on a Github PR review
-allowed-tools: Bash(gh api graphql:*), Bash(gh pr view:*)
+allowed-tools: |
+  Bash(gh api graphql:*),
+  Bash(gh pr view:*)
 ---
 
 Your task is to fetch and address all unresolved review comments for the current PR.
