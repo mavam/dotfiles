@@ -36,7 +36,7 @@ Use `generate-plan` for:
 
 ## Output
 
-Save the plan as: `plans/{task-name}/plan.md`
+Save the plan as: `.ai/{task-name}-plan.md`
 
 Where task-name is derived from the task description (kebab-case).
 
@@ -57,7 +57,7 @@ Adapt the plan's commands and paths based on the detected project type.
 ````markdown
 # [Task Name] Plan
 
-**THIS PLAN FILE**: `plans/{task-name}/plan.md`
+**THIS PLAN FILE**: `.ai/{task-name}-plan.md`
 **Created**: [DATE TIME]
 **Type**: [feature|bugfix|refactor|debug|other]
 **Estimated Complexity**: [simple|moderate|complex]
@@ -203,7 +203,7 @@ If resuming this plan:
 
 <!-- If this plan was generated from a PRP -->
 
-PRP Location: `prps/{feature-name}.md` (if applicable)
+PRP Location: `.ai/{feature-name}-prp.md` (if applicable)
 
 ## Completion Checklist
 

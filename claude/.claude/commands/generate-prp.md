@@ -17,12 +17,14 @@ documentation and examples.
 ## Two-Phase Workflow
 
 ### Phase 1: Discovery & Requirements (PRP)
+
 - Research and context gathering
 - Pattern identification
 - Documentation references
 - Implementation blueprint
 
 ### Phase 2: Execution & Memory Management (PLAN)
+
 - Step-by-step implementation
 - Anti-drift protocols
 - Progress tracking
@@ -69,7 +71,7 @@ Use the template below the `---` marker to generate a PRP.
 
 Include validation gates to understand when you have converged.
 
-Typically, this includes *integration* and/or *unit* tests. If both types of
+Typically, this includes _integration_ and/or _unit_ tests. If both types of
 testing frameworks are available, focus on integration tests first. Use unit
 tests only for micro testing component APIs at the lower level.
 
@@ -79,8 +81,8 @@ ULTRATHINK ABOUT THE PRP AND PLAN YOUR APPROACH THEN START WRITING THE PRP
 
 ## Output
 
-1. Save the PRP as: `prps/{feature-name}.md`
-2. Generate and save the execution plan as: `plans/{feature-name}/plan.md`
+1. Save the PRP as: `.ai/{feature-name}-prp.md`
+2. Generate and save the execution plan as: `.ai/{feature-name}-plan.md`
 3. The PLAN should reference the PRP for context
 4. Each validation gate in the PRP becomes a step in the PLAN
 
@@ -98,6 +100,7 @@ Score the PRP on a scale of 1-10 (confidence level to succeed in one-pass implem
 
 After creating the PRP, automatically generate a PLAN using the template below.
 The PLAN should:
+
 - Reference the PRP for requirements context
 - Convert each validation gate into an executable step
 - Include anti-drift protocols from the PLAN template
@@ -173,12 +176,14 @@ refinement.
 ## Memory Management Protocol
 
 ### During Implementation
+
 - The execution PLAN is your ONLY memory between sessions
 - Update the PLAN after EVERY action
 - Record all decisions and their rationale
 - If interrupted, the PLAN enables perfect resumption
 
 ### Anti-Drift Guidelines
+
 - Reload the PLAN before every action
 - Trust only what's written in the PLAN
 - The PRP defines the "north star" - reference it regularly
@@ -204,9 +209,10 @@ refinement.
 
 ## Execution Plan Reference
 
-The execution plan for this PRP is located at: `plans/{feature-name}/plan.md`
+The execution plan for this PRP is located at: `.ai/{feature-name}-plan.md`
 
 The PLAN contains:
+
 - Step-by-step implementation tasks
 - Current progress status
 - Detailed results of completed steps
@@ -220,13 +226,15 @@ When generating the execution PLAN, use this template:
 
 ```markdown
 # [Feature Name] Execution Plan
-**PRP Reference**: `prps/{feature-name}.md`
+
+**PRP Reference**: `.ai/{feature-name}-prp.md`
 **Created**: [DATE TIME]
 **Status**: 🔄 Active
 
 ## CRITICAL: Execution Protocol
 
 ### The Three Commandments
+
 1. **RELOAD BEFORE EVERY ACTION**: This plan is your only memory
 2. **UPDATE AFTER EVERY ACTION**: If not written, it didn't happen
 3. **TRUST ONLY THE PLAN**: Not memory, only what's written here
@@ -234,12 +242,15 @@ When generating the execution PLAN, use this template:
 ## Context from PRP
 
 ### Objective
+
 [Pull from PRP]
 
 ### Success Criteria
+
 [Pull from PRP validation gates]
 
 ### Key References
+
 [Pull critical URLs and file paths from PRP]
 
 ## Implementation Steps
@@ -247,14 +258,17 @@ When generating the execution PLAN, use this template:
 [Convert each PRP validation gate and implementation task into a step]
 
 ### Step 1: [Title from PRP task]
+
 **Status:** 📝 TODO
 **Description:** [What this accomplishes]
 **Actions:**
+
 - [Specific commands or code changes]
-**Success Criteria:** [From PRP validation gate]
-**Result:** [To be filled when complete]
+  **Success Criteria:** [From PRP validation gate]
+  **Result:** [To be filled when complete]
 
 ### Step 2: [Next task]
+
 [Continue for all tasks...]
 
 ## Progress Tracking
@@ -271,6 +285,7 @@ When generating the execution PLAN, use this template:
 ## Recovery Instructions
 
 If this plan is resumed by another session:
+
 1. Read this entire file
 2. Check the last completed step
 3. Resume from the next 📝 TODO step

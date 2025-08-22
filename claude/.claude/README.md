@@ -23,8 +23,7 @@ A two-phase development workflow that combines discovery/requirements (PRP) with
 └─────────────┘     └──────────────┘     └──────────────┘
                            │                     │
                            ▼                     ▼
-                    prps/{name}.md        plans/{name}/
-                                            └── plan.md
+                      .ai/{name}-prp.md    .ai/{name}-plan.md
 ```
 
 ## Phase 1: Discovery & Requirements (PRP)
@@ -35,8 +34,8 @@ A two-phase development workflow that combines discovery/requirements (PRP) with
 
 **Output**:
 
-- `prps/{feature-name}.md` - Complete requirements and context
-- `plans/{feature-name}/plan.md` - Auto-generated execution plan
+- `.ai/{feature-name}-prp.md` - Complete requirements and context
+- `.ai/{feature-name}-plan.md` - Auto-generated execution plan
 
 **Key Components**:
 
@@ -52,7 +51,7 @@ A two-phase development workflow that combines discovery/requirements (PRP) with
 
 **Command**: `generate-plan <task-description>` (for standalone tasks)
 
-**Output**: `plans/{task-name}/plan.md`
+**Output**: `.ai/{task-name}-plan.md`
 
 **Key Features**:
 
@@ -93,8 +92,8 @@ claude code --command generate-prp "Add user authentication with OAuth"
 # Claude will:
 # - Research OAuth patterns in your codebase
 # - Find relevant documentation
-# - Generate prps/user-authentication-oauth.md
-# - Auto-generate plans/user-authentication-oauth/plan.md
+# - Generate .ai/user-authentication-oauth-prp.md
+# - Auto-generate .ai/user-authentication-oauth-plan.md
 
 # AI then executes the plan step by step
 ```
@@ -108,7 +107,7 @@ claude code --command generate-plan "Refactor database connection pooling"
 # $ARGUMENTS = "Refactor database connection pooling"
 # Claude will:
 # - Analyze the task
-# - Generate plans/refactor-database-pooling/plan.md
+# - Generate .ai/refactor-database-pooling-plan.md
 # - Start execution immediately
 
 # Immediate execution without PRP phase
@@ -118,7 +117,7 @@ claude code --command generate-plan "Refactor database connection pooling"
 
 ```bash
 # Any AI can resume by reading the plan
-cat plans/user-authentication-oauth/plan.md
+cat .ai/user-authentication-oauth-plan.md
 
 # Find the last completed step and continue
 ```
@@ -126,10 +125,10 @@ cat plans/user-authentication-oauth/plan.md
 ### 4. Parallel Workstreams
 
 ```bash
-plans/
-├── feature-x/plan.md      # Active
-├── bugfix-y/plan.md       # Active
-└── refactor-z/plan.md     # Paused
+.ai/
+├── feature-x-plan.md      # Active
+├── bugfix-y-plan.md       # Active
+└── refactor-z-plan.md     # Paused
 ```
 
 ## Directory Structure
@@ -141,16 +140,11 @@ claude/.claude/
 │   ├── generate-prp.md        # PRP generator with PLAN integration
 │   ├── generate-plan.md       # Standalone PLAN generator
 │   └── github-pr-comments.md  # GitHub PR review helper
-│
-├── prps/                      # Product Requirements Prompts
-│   ├── feature-auth.md
-│   └── feature-search.md
-│
-└── plans/                     # Execution Plans
-    ├── feature-auth/
-    │   └── plan.md
-    └── bugfix-login/
-        └── plan.md
+└── .ai/                       # AI-generated plans and PRPs
+    ├── feature-auth-prp.md    # Product Requirements Prompt
+    ├── feature-auth-plan.md   # Execution Plan
+    ├── bugfix-login-plan.md   # Standalone plan
+    └── refactor-db-plan.md    # Refactoring plan
 ```
 
 ## Key Principles
@@ -415,8 +409,9 @@ This would generate a comprehensive PRP with research and execution plan.
 **Solution**: Check your working directory
 
 - Commands assume you're in project root
-- Plans go in `plans/` relative to where command is run
-- PRPs go in `prps/` relative to where command is run
+- All outputs go in `.ai/` directory relative to where command is run
+- PRPs are named `{feature}-prp.md`
+- Plans are named `{feature}-plan.md`
 
 ### Issue: "PRP has too much/too little detail"
 
