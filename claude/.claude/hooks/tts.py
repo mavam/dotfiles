@@ -1,6 +1,6 @@
 #!/usr/bin/env -S uv run --script
 # /// script
-# requires-python = ">=3.8"
+# requires-python = ">=3.10"
 # dependencies = [
 #     "elevenlabs",
 #     "python-dotenv",
@@ -54,22 +54,44 @@ class TTSClient:
 def get_text_from_hook_input(hook_data):
     """Extract text based on hook event type."""
     event = hook_data.get("hook_event_name", "")
-
-    event_map = {
-        "SessionStart": "New session",
-        "SessionEnd": "Session ended",
-        "SubagentStart": lambda: f"Starting {hook_data.get('subagent_type', 'agent')}",
-        "SubagentStop": lambda: f"{hook_data.get('subagent_type', 'Agent')} complete",
-        "PreToolUse": lambda: f"Using {hook_data.get('tool_name', 'tool')}",
-        "PostToolUse": lambda: f"{hook_data.get('tool_name', 'Tool')} complete",
-    }
-
-    if event == "Notification":
-        notif_type = hook_data.get("notification_type", "")
-        return {"error": "Error", "warning": "Warning"}.get(notif_type, "Notification")
-
-    result = event_map.get(event, f"Event: {event}")
-    return result() if callable(result) else result
+    
+    match event:
+        case "SessionStart":
+            match hook_data.get("source", ""):
+                case "startup":
+                    return "Starting Claude"
+                case "resume":
+                    return "Resuming session"
+                case "clear":
+                    return "Session cleared"
+                case _:
+                    return "New session"
+        case "SessionEnd":
+            return "Session ended"
+        case "SubagentStart":
+            return f"Starting {hook_data.get('subagent_type', 'agent')}"
+        case "SubagentStop":
+            return f"{hook_data.get('subagent_type', 'Agent')} complete"
+        case "PreToolUse":
+            return f"Using {hook_data.get('tool_name', 'tool')}"
+        case "PostToolUse":
+            return f"{hook_data.get('tool_name', 'Tool')} complete"
+        case "Stop":
+            return "Agent complete"
+        case "UserPromptSubmit":
+            return "Processing prompt"
+        case "PreCompact":
+            return "Compacting context"
+        case "Notification":
+            match hook_data.get("notification_type", ""):
+                case "error":
+                    return "Error"
+                case "warning":
+                    return "Warning"
+                case _:
+                    return "Notification"
+        case _:
+            return f"Event: {event}"
 
 
 def main():
