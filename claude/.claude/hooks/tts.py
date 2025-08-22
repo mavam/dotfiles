@@ -83,9 +83,26 @@ def get_text_from_hook_input(hook_data):
         case "PreCompact":
             return "Compacting context"
         case "Notification":
-            match hook_data.get("notification_type", ""):
+            notif_type = hook_data.get("notification_type", "")
+            message = hook_data.get("message", "")
+            
+            # Extract meaningful part of the message
+            if message:
+                # For permission requests, extract what's being requested
+                if "permission" in message.lower():
+                    if "Would you like me to" in message:
+                        action = message.split("Would you like me to")[1].split("?")[0].strip()
+                        return f"Permission: {action[:50]}"
+                    else:
+                        return "Permission required"
+                # Return first line or first 50 chars of message
+                first_line = message.split('\n')[0][:80]
+                return first_line if first_line else "Notification"
+            
+            # Fall back to type-based messages
+            match notif_type:
                 case "error":
-                    return "Error"
+                    return "Error occurred"
                 case "warning":
                     return "Warning"
                 case _:
