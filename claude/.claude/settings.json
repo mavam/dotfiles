@@ -69,7 +69,7 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "bunx ccstatusline@latest",
+    "command": "bunx -y ccstatusline@latest",
     "padding": 0
   }
 }
