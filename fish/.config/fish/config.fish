@@ -2,6 +2,9 @@
 # ---------------------------------------------------------------------
 set -g fish_greeting
 
+# Home-dir installers (e.g., Claude Code)
+fish_add_path -g ~/.local/bin
+
 # OS-specific paths
 switch (uname)
   case Darwin
@@ -214,3 +217,4 @@ if status is-interactive
         && killall Finder'
   end
 end
+
