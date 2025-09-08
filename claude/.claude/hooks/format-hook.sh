@@ -5,8 +5,6 @@
 stdin_data=$(cat)
 FILE_PATH=$(echo "$stdin_data" | jq -r '.tool_input.file_path // .tool_output.file_path // empty' 2>/dev/null)
 
-echo "🔧 Format hook triggered for: $FILE_PATH" >&2
-
 # Skip if no file path
 [[ -z "$FILE_PATH" ]] && exit 0
 
