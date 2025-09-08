@@ -12,18 +12,20 @@ Custom commands for Claude Code that enhance AI-assisted software development wi
 
 ## Core Workflow: PRP + PLAN System
 
-A two-phase development workflow that combines discovery/requirements (PRP) with disciplined execution tracking (PLAN).
+A clean two-step development workflow that separates discovery/requirements (PRP) from execution planning (PLAN).
 
 ## Overview
 
 ```
-┌─────────────┐     ┌──────────────┐     ┌──────────────┐
-│   Feature   │────▶│     PRP      │────▶│    PLAN      │
-│   Request   │     │  (Research)  │     │ (Execution)  │
-└─────────────┘     └──────────────┘     └──────────────┘
-                           │                     │
-                           ▼                     ▼
-                      .ai/{name}-prp.md    .ai/{name}-plan.md
+┌─────────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+│   Feature   │────▶│     PRP      │────▶│   Review &   │────▶│    PLAN      │
+│   Request   │     │  (Research)  │     │    Edit      │     │ (Execution)  │
+└─────────────┘     └──────────────┘     └──────────────┘     └──────────────┘
+                           │                     │                     │
+                           ▼                     │                     ▼
+                      .ai/{name}-prp.md          │            .ai/{name}-plan.md
+                                                 │
+                                         User can edit PRP
 ```
 
 ## Phase 1: Discovery & Requirements (PRP)
@@ -32,10 +34,7 @@ A two-phase development workflow that combines discovery/requirements (PRP) with
 
 **Command**: `generate-prp <feature-description>`
 
-**Output**:
-
-- `.ai/{feature-name}-prp.md` - Complete requirements and context
-- `.ai/{feature-name}-plan.md` - Auto-generated execution plan
+**Output**: `.ai/{feature-name}-prp.md` - Complete requirements and context
 
 **Key Components**:
 
@@ -43,13 +42,17 @@ A two-phase development workflow that combines discovery/requirements (PRP) with
 - Codebase analysis (patterns, conventions)
 - Implementation blueprint
 - Validation gates
-- Memory management protocols
+- Task ordering for execution
 
-## Phase 2: Execution & Memory Management (PLAN)
+**Important**: The PRP is generated independently and can be reviewed/edited before creating the PLAN.
 
-**Purpose**: Systematic implementation with anti-drift protocols and perfect resumability.
+## Phase 2: Execution Planning (PLAN)
 
-**Command**: `generate-plan <task-description>` (for standalone tasks)
+**Purpose**: Convert PRP or task description into systematic execution plan with anti-drift protocols.
+
+**Commands**:
+- `generate-plan .ai/{feature-name}-prp.md` (from existing PRP)
+- `generate-plan <task-description>` (standalone task)
 
 **Output**: `.ai/{task-name}-plan.md`
 
@@ -82,10 +85,10 @@ The text `"Add OAuth login with GitHub"` becomes `$ARGUMENTS` in the command fil
 
 ## Usage Patterns
 
-### 1. Full Feature Development
+### 1. Full Feature Development (Two-Step Process)
 
 ```bash
-# Generate PRP with auto-generated PLAN
+# Step 1: Generate PRP only
 claude code --command generate-prp "Add user authentication with OAuth"
 
 # $ARGUMENTS = "Add user authentication with OAuth"
@@ -93,9 +96,15 @@ claude code --command generate-prp "Add user authentication with OAuth"
 # - Research OAuth patterns in your codebase
 # - Find relevant documentation
 # - Generate .ai/user-authentication-oauth-prp.md
-# - Auto-generate .ai/user-authentication-oauth-plan.md
 
-# AI then executes the plan step by step
+# Step 2: Review/edit the PRP, then generate PLAN
+claude code --command generate-plan .ai/user-authentication-oauth-prp.md
+
+# Claude will:
+# - Read the PRP for complete context
+# - Convert PRP tasks to executable steps
+# - Generate .ai/user-authentication-oauth-plan.md
+# - AI then executes the plan step by step
 ```
 
 ### 2. Quick Tasks (Skip PRP)
@@ -129,22 +138,6 @@ cat .ai/user-authentication-oauth-plan.md
 ├── feature-x-plan.md      # Active
 ├── bugfix-y-plan.md       # Active
 └── refactor-z-plan.md     # Paused
-```
-
-## Directory Structure
-
-```
-claude/.claude/
-├── README.md                  # This documentation
-├── commands/
-│   ├── generate-prp.md        # PRP generator with PLAN integration
-│   ├── generate-plan.md       # Standalone PLAN generator
-│   └── github-pr-comments.md  # GitHub PR review helper
-└── .ai/                       # AI-generated plans and PRPs
-    ├── feature-auth-prp.md    # Product Requirements Prompt
-    ├── feature-auth-plan.md   # Execution Plan
-    ├── bugfix-login-plan.md   # Standalone plan
-    └── refactor-db-plan.md    # Refactoring plan
 ```
 
 ## Key Principles
@@ -235,9 +228,10 @@ claude/.claude/
 ### New Feature
 
 1. `generate-prp "feature description"`
-2. Review generated PRP and PLAN
-3. Execute PLAN step by step
-4. Validate against PRP success criteria
+2. Review and edit the generated PRP as needed
+3. `generate-plan .ai/feature-name-prp.md`
+4. Execute PLAN step by step
+5. Validate against PRP success criteria
 
 ### Bug Fix
 

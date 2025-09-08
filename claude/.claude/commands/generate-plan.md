@@ -2,67 +2,72 @@
 description: Create an Execution Plan for systematic task implementation
 ---
 
-## Task description: $ARGUMENTS
+## Usage Options
 
-Generate a structured execution plan for the specified task. This plan will serve
-as persistent memory and enable safe task resumption across sessions.
+### Option 1: Generate plan from PRP
+```
+generate-plan .ai/feature-name-prp.md
+```
+
+### Option 2: Generate standalone plan  
+```
+generate-plan "task description"
+```
+
+## Input: $ARGUMENTS
+
+The input can be either:
+- **PRP File Path**: Path to an existing `.ai/{feature-name}-prp.md` file
+- **Task Description**: Direct description of task to implement
 
 ## When to Use This Command
 
 Use `generate-plan` for:
 
-- Multi-step refactoring tasks
-- Complex debugging sessions
-- Feature implementations without needing a full PRP
-- Any task that might be interrupted and resumed later
-- Tasks requiring strict progress tracking
+- **From PRP**: Converting a completed PRP into an execution plan (Phase 2 of PRP+PLAN workflow)
+- **Standalone**: Multi-step refactoring, debugging, or implementation tasks that don't need a full PRP
+- **Resumable Work**: Any task that might be interrupted and resumed later
+- **Progress Tracking**: Tasks requiring strict progress tracking
 
 ## Plan Generation Process
 
-1. **Analyze the Task**
-   - Break down into atomic, verifiable steps
-   - Identify dependencies between steps
-   - Define clear success criteria
+1. **Detect Input Type**
+   - If input starts with `.ai/` and ends with `-prp.md`, treat as PRP file path
+   - Otherwise, treat as task description
 
-2. **Create Plan Structure**
-   - Generate `plans/{task-name}/plan.md`
+2. **For PRP Input:**
+   - Read the PRP file for complete context
+   - Convert PRP tasks to executable steps
+   - Reference PRP for requirements and validation gates
+   - Maintain context link to PRP
+
+3. **For Task Description:**
+   - Analyze the task directly
+   - Break down into atomic, verifiable steps
+   - Define clear success criteria based on task
+
+4. **Create Plan Structure**
+   - Generate `.ai/{task-name}-plan.md`
    - Include anti-drift protocols
    - Set up progress tracking
 
-3. **Define Recovery Points**
-   - Each step should be resumable
-   - Results must be recorded immediately
-   - Context preserved for any future session
-
 ## Output
 
-Save the plan as: `.ai/{task-name}-plan.md`
-
-Where task-name is derived from the task description (kebab-case).
-
-## Project Detection Guidelines
-
-When generating a plan, first detect the project type by examining:
-
-1. **Package managers**: package.json (Node.js), Cargo.toml (Rust), go.mod (Go),
-   requirements.txt/pyproject.toml (Python), pom.xml (Java), etc.
-2. **Build files**: Makefile, CMakeLists.txt (C++/CMake), etc.
-3. **Configuration files**: .eslintrc, .prettierrc, tox.ini, etc.
-4. **Directory structure**: src/, lib/, tests/, etc.
-
-Adapt the plan's commands and paths based on the detected project type.
+**From PRP**: Save as `.ai/{feature-name}-plan.md` (matching the PRP name)
+**From Task**: Save as `.ai/{task-name}-plan.md` (derived from task description)
 
 ## Plan Template
 
 ````markdown
-# [Task Name] Plan
+# [Task Name] Execution Plan
 
 **THIS PLAN FILE**: `.ai/{task-name}-plan.md`
+[**PRP REFERENCE**: `.ai/{feature-name}-prp.md` (if generated from PRP)]
 **Created**: [DATE TIME]
 **Type**: [feature|bugfix|refactor|debug|other]
 **Estimated Complexity**: [simple|moderate|complex]
 
-## CRITICAL: Memory Management Protocol
+## CRITICAL: Execution Protocol
 
 ### The Three Commandments
 
@@ -70,48 +75,30 @@ Adapt the plan's commands and paths based on the detected project type.
 2. **UPDATE AFTER EVERY ACTION**: If not written, it didn't happen
 3. **TRUST ONLY THE PLAN**: Not memory, only what's written here
 
-## Task Overview
+## Context
+
+[If from PRP: Pull objective, success criteria, and key references from PRP]
+[If standalone: Define objective, current state, success criteria, constraints]
 
 ### Objective
 
-[Clear description of what needs to be accomplished]
-
-### Current State
-
-[Starting conditions, existing code, dependencies]
+[What needs to be accomplished]
 
 ### Success Criteria
 
 [How we know the task is complete]
 
-### Constraints
+[If from PRP: Reference PRP validation gates]
 
-[Time limits, compatibility requirements, etc.]
+### Key References
 
-## Quick Reference
-
-### Key Commands
-
-```bash
-# [Detect and add project-specific commands based on project type]
-# Examples:
-# - Testing: [test command]
-# - Linting: [lint command]
-# - Type checking: [typecheck command]
-# - Building: [build command]
-# - Running: [run command]
-```
-
-### Important Paths
-
-<!-- Identify based on project structure -->
-
-- Source directory: [src/, lib/, app/, etc.]
-- Test directory: [tests/, test/, spec/, etc.]
-- Configuration files: [relevant config files]
-- Documentation: [docs/, README, etc.]
+[If from PRP: Pull critical URLs and file paths from PRP]
+[If standalone: Identify based on codebase analysis]
 
 ## Implementation Steps
+
+[If from PRP: Convert each PRP task to a numbered step]
+[If standalone: Break down task into atomic steps]
 
 ### Step 1: [Descriptive Title]
 
@@ -119,11 +106,7 @@ Adapt the plan's commands and paths based on the detected project type.
 **Description:** [What this step accomplishes]
 **Actions:**
 
-<!-- Language/tool-specific actions -->
-
-```bash
-# Commands specific to the detected project type
-```
+- [Specific commands or code changes]
 
 **Success Criteria:** [How to verify completion]
 **Dependencies:** [Any prerequisites]
@@ -155,55 +138,30 @@ Adapt the plan's commands and paths based on the detected project type.
 
 ### Execution Log
 
-<!-- Update after each action -->
-
-- [TIMESTAMP]: Step N started
-- [TIMESTAMP]: Step N completed with result: [summary]
+[Record all actions with timestamps]
 
 ## Recovery Instructions
 
 If resuming this plan:
 
 1. Read this entire file first
-2. Check the Execution Log for last action
-3. Find the 🔄 IN_PROGRESS or next ⏳ TODO step
-4. Continue from that point
-5. Update immediately after each action
+2. [If from PRP: Also review the PRP for context]
+3. Check the Execution Log for last action
+4. Find the 🔄 IN_PROGRESS or next ⏳ TODO step
+5. Continue from that point
+6. Update immediately after each action
 
 ## Context Preservation
 
 ### Key Decisions Made
 
-<!-- Record important choices and rationale -->
-
-### Lessons Learned
-
-<!-- What worked, what didn't, why -->
-
-### Commands That Worked
-
-```bash
-# Save successful command combinations
-```
-
-## Related Resources
-
-### Documentation
-
-- [Relevant docs URLs]
+[Record important choices and rationale]
 
 ### Files Modified
 
-<!-- Track all files touched -->
+[Track all files touched]
 
 - [ ] [file path] - [what was changed]
-- [ ] [file path] - [what was changed]
-
-### PRP Reference
-
-<!-- If this plan was generated from a PRP -->
-
-PRP Location: `.ai/{feature-name}-prp.md` (if applicable)
 
 ## Completion Checklist
 
@@ -214,29 +172,18 @@ Before marking complete:
 - [ ] Tests passing (if applicable)
 - [ ] Code reviewed
 - [ ] Documentation updated (if needed)
+[If from PRP: Reference PRP success criteria]
 
 ---
-
-_Plan created: [date]_
-_Last updated: [date]_
-_Estimated time: [hours]_
-_Actual time: [to be filled]_
-
-## Best Practices
-
-1. **Atomic Steps**: Each step should be independently verifiable
-2. **Immediate Updates**: Record results before moving to next step
-3. **Clear Commands**: Include exact commands to run
-4. **Failure Recovery**: Document what to do if a step fails
-5. **Time Tracking**: Note actual vs estimated time for future planning
 
 ## Anti-Patterns to Avoid
 
 - ❌ Don't batch multiple updates - update after each action
 - ❌ Don't rely on memory - the plan is your only truth
-- ❌ Don't skip recording "obvious" results - everything matters
+- ❌ Don't skip recording results
 - ❌ Don't have multiple IN_PROGRESS steps
 - ❌ Don't proceed if a dependency failed
+[If from PRP: Include anti-patterns from PRP]
 
 Remember: This plan enables ANY AI to continue your work seamlessly.
 ````
