@@ -105,8 +105,12 @@ class MacOSSayProvider(SpeechProvider):
 class BadgeNotifier:
     """Badge notification provider using pync (pure Python)."""
 
-    def __init__(self, title: str = "Claude"):
+    def __init__(self, title: str = "🤖 Claude Code"):
         self.title = title
+        # Try to use Terminal or Developer icon as a default
+        self.icon_path = "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/DeveloperFolderIcon.icns"
+        # Use a more interesting sound
+        self.sound = "Ping"  # Options: Basso, Blow, Bottle, Frog, Funk, Glass, Hero, Morse, Ping, Pop, Purr, Sosumi, Submarine, Tink
 
     def send_notification(self, text: str, subtitle: str = None):
         """Send a badge notification using pync."""
@@ -115,8 +119,8 @@ class BadgeNotifier:
                 message=text,
                 title=self.title,
                 subtitle=subtitle or "",
-                sound=False,
-                appIcon=None
+                sound=self.sound,  # Use Ping sound (or any from the list above)
+                appIcon=self.icon_path if os.path.exists(self.icon_path) else None
             )
         except Exception as e:
             print(f"❌ pync notification failed: {e}", file=sys.stderr)
@@ -191,6 +195,10 @@ def main():
                         help="Add speech provider(s) - can be used multiple times")
     parser.add_argument("--badge", action="store_true", help="Add badge notification")
     parser.add_argument("-v", "--voice", help="Voice name or ID (for speech providers)")
+    parser.add_argument("--sound", default="Ping", 
+                        choices=["Basso", "Blow", "Bottle", "Frog", "Funk", "Glass", "Hero", 
+                                "Morse", "Ping", "Pop", "Purr", "Sosumi", "Submarine", "Tink", "None"],
+                        help="Notification sound (default: Ping, use 'None' for silent)")
 
     args = parser.parse_args()
 
@@ -246,7 +254,12 @@ def main():
     # Process badge notification
     if args.badge:
         notifier = BadgeNotifier()
-        print("🔔 Sending badge notification", file=sys.stderr)
+        # Override sound if specified
+        if args.sound and args.sound != "None":
+            notifier.sound = args.sound
+        elif args.sound == "None":
+            notifier.sound = False
+        print(f"🔔 Sending badge notification{' with ' + args.sound + ' sound' if args.sound != 'None' else ' (silent)'}", file=sys.stderr)
         notifier.send_notification(text)
 
 
