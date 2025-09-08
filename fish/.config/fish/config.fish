@@ -217,4 +217,3 @@ if status is-interactive
         && killall Finder'
   end
 end
-
