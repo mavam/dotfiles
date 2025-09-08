@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run ~/.claude/hooks/tts.py"
+            "command": "uv run ~/.claude/hooks/notify.py --badge"
           }
         ]
       }
@@ -28,7 +28,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run ~/.claude/hooks/tts.py"
+            "command": "uv run ~/.claude/hooks/notify.py --speech elevenlabs"
           }
         ]
       }
@@ -39,7 +39,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run ~/.claude/hooks/tts.py"
+            "command": "uv run ~/.claude/hooks/notify.py --speech elevenlabs"
           }
         ]
       }
@@ -50,7 +50,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run ~/.claude/hooks/tts.py"
+            "command": "uv run ~/.claude/hooks/notify.py --speech elevenlabs"
           }
         ]
       }
@@ -61,7 +61,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run ~/.claude/hooks/tts.py"
+            "command": "uv run ~/.claude/hooks/notify.py --badge"
           }
         ]
       }

@@ -4,22 +4,52 @@
 # dependencies = [
 #     "elevenlabs",
 #     "python-dotenv",
+#     "pync",
 # ]
 # ///
+"""
+Multi-modal notification system for Claude Code hooks.
+
+Supports additive notification modes:
+- Speech providers: ElevenLabs, macOS say
+- Badge notifications: macOS native via pync
+
+Usage:
+    notify.py --badge                          # Badge only
+    notify.py --speech elevenlabs              # Speech only
+    notify.py --speech say --badge             # Both modes
+    notify.py --speech elevenlabs --voice Anna # Custom voice
+"""
 
 import os
 import sys
 import json
 import argparse
+import subprocess
+from abc import ABC, abstractmethod
 from dotenv import load_dotenv
 from elevenlabs import ElevenLabs, play
+import pync
 
 
-class TTSClient:
-    """Text-to-speech client wrapper for ElevenLabs."""
+class SpeechProvider(ABC):
+    """Abstract base class for speech providers."""
+
+    @abstractmethod
+    def generate_speech(self, text: str, voice: str = None):
+        """Generate and play speech."""
+        pass
+
+    @abstractmethod
+    def set_voice(self, voice: str):
+        """Set the voice for this provider."""
+        pass
+
+
+class ElevenLabsProvider(SpeechProvider):
+    """ElevenLabs text-to-speech provider."""
 
     def __init__(self, api_key: str):
-        """Initialize the TTS client with an API key."""
         self.client = ElevenLabs(api_key=api_key)
         self.voice = "dCnu06FiOZma2KVNUoPZ"
         self.voice_id = self._resolve_voice(self.voice)
@@ -36,7 +66,7 @@ class TTSClient:
         try:
             return next((v.voice_id for v in self.client.voices.get_all().voices
                         if v.name.lower() == voice_input.lower()), voice_input)
-        except:
+        except Exception:
             return voice_input
 
     def generate_speech(self, text: str, voice_id: str = None):
@@ -51,10 +81,51 @@ class TTSClient:
         ))
 
 
+class MacOSSayProvider(SpeechProvider):
+    """macOS built-in say command provider."""
+
+    def __init__(self):
+        self.voice = "Albert"  # Default macOS voice
+
+    def set_voice(self, voice: str):
+        """Set the voice for the say command."""
+        self.voice = voice
+
+    def generate_speech(self, text: str, voice: str = None):
+        """Generate speech using macOS say command."""
+        voice_to_use = voice or self.voice
+        try:
+            subprocess.run(["say", "-v", voice_to_use, text], check=True)
+        except subprocess.CalledProcessError as e:
+            print(f"❌ Say command failed: {e}", file=sys.stderr)
+        except FileNotFoundError:
+            print("❌ Say command not found (not on macOS?)", file=sys.stderr)
+
+
+class BadgeNotifier:
+    """Badge notification provider using pync (pure Python)."""
+
+    def __init__(self, title: str = "Claude"):
+        self.title = title
+
+    def send_notification(self, text: str, subtitle: str = None):
+        """Send a badge notification using pync."""
+        try:
+            pync.notify(
+                message=text,
+                title=self.title,
+                subtitle=subtitle or "",
+                sound=False,
+                appIcon=None
+            )
+        except Exception as e:
+            print(f"❌ pync notification failed: {e}", file=sys.stderr)
+
+
 def get_text_from_hook_input(hook_data):
     """Extract text based on hook event type."""
     event = hook_data.get("hook_event_name", "")
-    
+
     match event:
         case "SessionStart":
             match hook_data.get("source", ""):
@@ -85,7 +156,7 @@ def get_text_from_hook_input(hook_data):
         case "Notification":
             notif_type = hook_data.get("notification_type", "")
             message = hook_data.get("message", "")
-            
+
             # Extract meaningful part of the message
             if message:
                 # For permission requests, extract what's being requested
@@ -98,7 +169,7 @@ def get_text_from_hook_input(hook_data):
                 # Return first line or first 50 chars of message
                 first_line = message.split('\n')[0][:80]
                 return first_line if first_line else "Notification"
-            
+
             # Fall back to type-based messages
             match notif_type:
                 case "error":
@@ -114,16 +185,20 @@ def get_text_from_hook_input(hook_data):
 def main():
     load_dotenv()
 
-    api_key = os.getenv('ELEVENLABS_API_KEY')
-    if not api_key:
-        print("❌ ELEVENLABS_API_KEY not found in environment", file=sys.stderr)
-        sys.exit(1)
+    parser = argparse.ArgumentParser(description="Multi-modal notification system")
+    parser.add_argument("text", nargs="*", help="Text to send notifications for")
+    parser.add_argument("--speech", action="append", choices=["elevenlabs", "say"],
+                        help="Add speech provider(s) - can be used multiple times")
+    parser.add_argument("--badge", action="store_true", help="Add badge notification")
+    parser.add_argument("-v", "--voice", help="Voice name or ID (for speech providers)")
 
-    parser = argparse.ArgumentParser(description="Text-to-speech using ElevenLabs")
-    parser.add_argument("text", nargs="*", help="Text to convert to speech")
-    parser.add_argument("-v", "--voice", help="Voice name or ID")
     args = parser.parse_args()
 
+    # Default to elevenlabs speech if no modes specified
+    if not args.speech and not args.badge:
+        args.speech = ["elevenlabs"]
+
+    # Get text from arguments or stdin
     if args.text:
         text = " ".join(args.text)
     elif not sys.stdin.isatty():
@@ -138,18 +213,41 @@ def main():
     else:
         sys.exit(1)
 
-    tts_client = TTSClient(api_key=api_key)
-    if args.voice:
-        tts_client.set_voice(args.voice)
-
     print(f"💬 {text}", file=sys.stderr)
-    print(f"🎙️ Voice: {tts_client.voice}{' → ' + tts_client.voice_id if tts_client.voice != tts_client.voice_id else ''}", file=sys.stderr)
 
-    try:
-        tts_client.generate_speech(text)
-    except Exception as e:
-        print(f"❌ Error: {e}", file=sys.stderr)
-        sys.exit(1)
+    # Process speech providers
+    if args.speech:
+        for provider_name in args.speech:
+            if provider_name == "elevenlabs":
+                api_key = os.getenv('ELEVENLABS_API_KEY')
+                if not api_key:
+                    print("❌ ELEVENLABS_API_KEY not found in environment", file=sys.stderr)
+                    continue
+
+                provider = ElevenLabsProvider(api_key)
+                if args.voice:
+                    provider.set_voice(args.voice)
+
+                print(f"🎙️ ElevenLabs Voice: {provider.voice}{' → ' + provider.voice_id if provider.voice != provider.voice_id else ''}", file=sys.stderr)
+
+                try:
+                    provider.generate_speech(text)
+                except Exception as e:
+                    print(f"❌ ElevenLabs error: {e}", file=sys.stderr)
+
+            elif provider_name == "say":
+                provider = MacOSSayProvider()
+                if args.voice:
+                    provider.set_voice(args.voice)
+
+                print(f"🎙️ macOS Say Voice: {provider.voice}", file=sys.stderr)
+                provider.generate_speech(text)
+
+    # Process badge notification
+    if args.badge:
+        notifier = BadgeNotifier()
+        print("🔔 Sending badge notification", file=sys.stderr)
+        notifier.send_notification(text)
 
 
 if __name__ == "__main__":
