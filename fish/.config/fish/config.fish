@@ -45,7 +45,7 @@ if command -sq brew
   set -x HOMEBREW_NO_ANALYTICS 1
   set -x HOMEBREW_AUTO_UPDATE_SECS 604800 # 1 week
   # Latest LLVM compiler
-  set -l llvm_prefix (brew --prefix llvm)
+  set -l llvm_prefix (brew --prefix llvm@20)
   if test -d $llvm_prefix
     set -x CC $llvm_prefix/bin/clang
     set -x CXX $llvm_prefix/bin/clang++
