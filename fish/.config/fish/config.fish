@@ -110,6 +110,7 @@ if status is-interactive
   abbr -g g 'git'
   abbr -g ga 'git add'
   abbr -g gaa 'git add --all'
+  abbr -g gau 'git add -u'
   abbr -g gb 'git branch'
   abbr -g gbd 'git branch -D'
   abbr -g gbl 'git blame'
