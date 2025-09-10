@@ -185,7 +185,7 @@ if status is-interactive
   abbr -g gswt 'git switch topic/'
   abbr -g gts 'git tag -s'
   abbr -g gw 'git worktree'
-  abbr -g gwa 'git worktree add -b'
+  abbr -g gwa 'git_worktree_add_topic'
   abbr -g gwr 'git worktree remove -f'
   abbr -g gws 'git_worktree_setup'
 
@@ -210,6 +210,16 @@ if status is-interactive
     end
   end
 
+  # Add a topic worktree
+  function git_worktree_add_topic
+    if test (count $argv) -ne 1
+      echo "Usage: git_worktree_add_topic <directory>"
+      return 1
+    end
+    set dir $argv[1]
+    git worktree add --track -b topic/$dir origin/main $dir
+  end
+
   # Setup git worktree in a clean way
   function git_worktree_setup
     if test (count $argv) -ne 1
@@ -225,15 +235,24 @@ if status is-interactive
     mkdir -p $project_name
     cd $project_name
     # Clone the bare repository
-    git clone --bare $repo_url .bare
+    if not git clone --bare $repo_url .bare
+      echo "❌ Failed to clone repository: $repo_url"
+      cd ..
+      rmdir $project_name 2>/dev/null
+      return 1
+    end
     # Create .git file pointing to the bare repo
     echo "🔗 Linking to bare repository..."
     echo "gitdir: ./.bare" > .git
     # Add main worktree
     echo "🌳 Adding main worktree..."
-    git worktree add main
+    if not git worktree add main main
+      echo "❌ Failed to add main worktree"
+      cd ..
+      rm -rf $project_name
+      return 1
+    end
     echo "✔︎ Git worktree setup complete for $project_name"
-    echo "ℹ Use 'git worktree add <branch-name>' to create additional worktrees"
   end
 
   # macOS convenience tools.
