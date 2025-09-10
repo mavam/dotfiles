@@ -186,6 +186,7 @@ if status is-interactive
   abbr -g gw 'git worktree'
   abbr -g gwa 'git worktree add -b'
   abbr -g gwr 'git worktree remove -f'
+  abbr -g gws 'git_worktree_setup'
 
   # Let vim fugitive creep into shell workflow.
   function G
@@ -206,6 +207,32 @@ if status is-interactive
     if test -n "$pr_number"
       gh pr checkout $pr_number; and git submodule update --init --recursive --checkout
     end
+  end
+
+  # Setup git worktree in a clean way
+  function git_worktree_setup
+    if test (count $argv) -ne 1
+      echo "ℹ Usage: git_worktree_setup <repo-url>"
+      return 1
+    end
+    set repo_url $argv[1]
+    # Extract project name from URL
+    # Remove .git suffix if present, then get the last part of the path
+    set project_name (basename $repo_url .git)
+    # Create the project directory
+    echo "📁 Creating project directory: $project_name"
+    mkdir -p $project_name
+    cd $project_name
+    # Clone the bare repository
+    git clone --bare $repo_url .bare
+    # Create .git file pointing to the bare repo
+    echo "🔗 Linking to bare repository..."
+    echo "gitdir: ./.bare" > .git
+    # Add main worktree
+    echo "🌳 Adding main worktree..."
+    git worktree add main
+    echo "✔︎ Git worktree setup complete for $project_name"
+    echo "ℹ Use 'git worktree add <branch-name>' to create additional worktrees"
   end
 
   # macOS convenience tools.
