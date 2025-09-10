@@ -217,7 +217,12 @@ if status is-interactive
       return 1
     end
     set dir $argv[1]
-    git worktree add --track -b topic/$dir origin/main $dir
+    # Check if branch exists locally
+    if git show-ref --verify --quiet refs/heads/topic/$dir
+      git worktree add $dir topic/$dir
+    else
+      git worktree add -b topic/$dir $dir
+    end
   end
 
   # Setup git worktree in a clean way
