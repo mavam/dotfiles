@@ -1,21 +1,25 @@
 -- TreeSitter integration, and additional textobjects for it.
 return {
   'nvim-treesitter/nvim-treesitter',
-  build = ':TSUpdate', -- recommended by nvim-bqf
+  build = ':TSUpdate',
+  dependencies = {
+    'tenzir/tree-sitter-tql',
+  },
   config = function()
-    require'nvim-treesitter.configs'.setup {
+    require('nvim-treesitter.configs').setup {
       ensure_installed = {
-        'bash';
-        'c';
-        'comment';
-        'cpp';
-        'fish';
-        'json';
-        'lua';
-        'markdown';
-        'python';
-        'r';
-        'yaml';
+        'bash',
+        'c',
+        'comment',
+        'cpp',
+        'fish',
+        'json',
+        'lua',
+        'markdown',
+        'python',
+        'r',
+        'tql',
+        'yaml',
       },
       highlight = {
         enable = true,
@@ -31,5 +35,16 @@ return {
         },
       },
     }
-  end
+
+    local parsers = require('nvim-treesitter.parsers').get_parser_configs()
+    parsers.tql = parsers.tql or {}
+    parsers.tql.install_info = parsers.tql.install_info or {
+      url = 'https://github.com/tenzir/tree-sitter-tql',
+      files = { 'src/parser.c' },
+      branch = 'main',
+    }
+    parsers.tql.filetype = 'tql'
+
+    vim.filetype.add({ extension = { tql = 'tql' } })
+  end,
 }
