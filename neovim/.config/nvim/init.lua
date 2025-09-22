@@ -68,7 +68,7 @@ end
 -- Utility function to find the Python path.
 -- Detail: https://github.com/neovim/nvim-lspconfig/issues/500#issuecomment-876700701
 get_python_path = function(workspace)
-  local util = require('lspconfig/util')
+  local util = require('lspconfig.util')
   -- Use activated virtualenv.
   if vim.env.VIRTUAL_ENV then
     return util.path.join(vim.env.VIRTUAL_ENV, 'bin', 'python')

@@ -2,27 +2,39 @@
 return {
   'neovim/nvim-lspconfig',
   config = function()
+    local function configure(name, opts)
+      if opts then
+        vim.lsp.config(name, opts)
+      end
+      vim.lsp.enable(name)
+    end
+
     -- C & C++
-    require('lspconfig').clangd.setup {
+    configure('clangd', {
       init_options = {
         clangdFileStatus = true
       },
       on_attach = custom_on_attach
-    }
+    })
+
     -- Python
-    require('lspconfig').pyright.setup {
+    configure('pyright', {
       on_attach = custom_on_attach,
       on_init = function(client)
-          client.config.settings.python.pythonPath = get_python_path(client.config.root_dir)
+        client.config.settings = client.config.settings or {}
+        client.config.settings.python = client.config.settings.python or {}
+        client.config.settings.python.pythonPath = get_python_path(client.config.root_dir)
       end
-    }
+    })
+
     -- R
-    require('lspconfig').r_language_server.setup {
+    configure('r_language_server', {
       on_attach = custom_on_attach
-    }
+    })
+
     -- Svelte
-    require('lspconfig').svelte.setup {
+    configure('svelte', {
       on_attach = custom_on_attach
-    }
+    })
   end
 }
