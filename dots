@@ -58,18 +58,18 @@ Options:
 HELP
 }
 
-log_info() { printf 'ℹ️  %s
+log_info() { printf '· %s
 ' "$*"; }
-log_warn() { printf '⚠️  %s
+log_warn() { printf '⚠ %s
 ' "$*"; }
-log_error() { printf '❌ %s
+log_error() { printf '✗ %s
 ' "$*"; }
-log_success() { printf '✅ %s
+log_success() { printf '✓ %s
 ' "$*"; }
-log_action() { printf '🔗 %s
+log_action() { printf '→ %s
 ' "$*"; }
 log_section() { printf '
-✨ %s
+▸ %s
 ' "$*"; }
 
 fail() {
@@ -562,13 +562,13 @@ status_for_tool() {
   done < <(plan_tool "$tool")
 
   if (( conflicts > 0 )); then
-    printf '⚠️'
+    printf '⚠'
   elif (( ok > 0 && ok == total )); then
-    printf '✅'
+    printf '✓'
   elif (( total == 0 )); then
-    printf '⚪'
+    printf '∅'
   else
-    printf '⭕️'
+    printf '○'
   fi
 }
 
@@ -594,16 +594,20 @@ command_list() {
         ;;
     esac
   done
-  [[ $no_header -eq 1 ]] || log_section "Available tools"
+  if [[ $no_header -eq 0 ]]; then
+    log_section "Available tools"
+    printf '  ✓ installed  ⚠ conflicts  ○ partial  ∅ empty
+'
+  fi
   local tool icon marker
   for tool in "${TOOL_NAMES[@]}"; do
     icon="$(status_for_tool "$tool")"
     if [[ $plain -eq 1 ]]; then
       case "$icon" in
-        ✅) marker='[OK]' ;;
-        ⚠️) marker='[WARN]' ;;
-        ⭕️) marker='[TODO]' ;;
-        ⚪) marker='[NONE]' ;;
+        ✓) marker='[OK]' ;;
+        ⚠) marker='[WARN]' ;;
+        ○) marker='[TODO]' ;;
+        ∅) marker='[NONE]' ;;
         *) marker='[UNK]' ;;
       esac
     else
@@ -695,14 +699,14 @@ command_diff() {
 
 command_doctor() {
   log_section "Environment"
-  printf '🧠 Bash version: %s
+  printf '  Bash version: %s
 ' "$BASH_VERSION"
   if [[ ${BASH_VERSINFO[0]} -lt 4 ]]; then
     log_warn "Bash < 4 detected. Script remains compatible but consider upgrading."
   fi
-  printf '📁 Repository: %s
+  printf '  Repository: %s
 ' "$DOTS_DIR"
-  printf '🏠 Prefix: %s
+  printf '  Prefix: %s
 ' "$PREFIX"
   if [[ -w $PREFIX ]]; then
     log_success "prefix is writable"
@@ -748,13 +752,13 @@ command_doctor() {
   fi
 
   log_section "Legend"
-  printf '✅ fully linked
+  printf '  ✓  fully installed
 '
-  printf '⚠️  needs attention (conflict or unknown tool)
+  printf '  ⚠  conflicts detected
 '
-  printf '⭕️ pending install
+  printf '  ○  partially installed
 '
-  printf '⚪ no managed links
+  printf '  ∅  empty (no files)
 '
 
   command_list
