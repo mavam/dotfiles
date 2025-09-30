@@ -1,5 +1,5 @@
 *.sw?
-ccache/.ccache/ccache/
+ccache/cache/ccache/
 fish/.config/fish/completions/
 fish/.config/fish/conf.d/
 fish/.config/fish/fish_variables
