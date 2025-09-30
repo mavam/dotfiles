@@ -270,7 +270,7 @@ if status is-interactive
   end
 end
 
-# Added by LM Studio CLI (lms)
-set -gx PATH $PATH /Users/mavam/.lmstudio/bin
-# End of LM Studio CLI section
-
+# Source tool-specific configurations
+for file in ~/.config/fish/config.tools/*
+  source $file
+end
