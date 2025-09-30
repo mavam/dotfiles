@@ -701,9 +701,6 @@ command_doctor() {
   log_section "Environment"
   printf '  Bash version: %s
 ' "$BASH_VERSION"
-  if [[ ${BASH_VERSINFO[0]} -lt 4 ]]; then
-    log_warn "Bash < 4 detected. Script remains compatible but consider upgrading."
-  fi
   printf '  Repository: %s
 ' "$DOTS_DIR"
   printf '  Prefix: %s
