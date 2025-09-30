@@ -1,17 +1,1 @@
 *.sw?
-ccache/cache/ccache/
-fish/.config/fish/completions/
-fish/.config/fish/conf.d/
-fish/.config/fish/fish_variables
-fish/.config/fish/functions/
-karabiner/.config/karabiner/automatic_backups/
-mutt/.mutt/account*
-mutt/.mutt/aliases
-mutt/.mutt/hooks
-mutt/.mutt/mailboxes
-mutt/.mutt/lists
-neovim/.config/nvim/lazy-lock.json
-neovim/.config/nvim/plugin/
-tmux/.tmux/plugins/
-vale/.config/vale/styles/
-zed/.config/zed/prompts/

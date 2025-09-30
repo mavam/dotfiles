@@ -1,1 +1,6 @@
 .env
+history.jsonl
+projects/
+shell-snapshots/
+statsig/
+todos/
