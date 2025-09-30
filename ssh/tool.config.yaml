@@ -1,0 +1,6 @@
+directories:
+  - path: "~/.ssh"
+    permissions: "700"
+entries:
+  - source: "config"
+    target: "~/.ssh/config"

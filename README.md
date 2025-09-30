@@ -27,50 +27,55 @@ The bootstrap script will ask you whether you'd like to setup specific component
 
 ### Dotfile Management
 
-The POSIX shell script [dots](dots) installs (= symlinks) and removes subsets
-of dotfiles according to your needs. For example, install all dotfiles as
-follows:
+The Bash utility [dots](dots) links configuration content from this repository
+into your prefix (default: `$HOME`), treating each top-level directory as a
+"tool" whose contents mirror the layout you want under `$HOME`. Add files to a
+tool directory and, with a `root` mapping, they will be picked up automatically.
+
+Install everything:
 
 ```sh
-./dots install -a
+./dots install
 ```
 
-Alternatively, install only dotfiles selectively, with positional arguments
-matching directory names in this repository:
+Install a subset (your shell expands globs before the script runs):
 
 ```sh
-./dots install git gnupg
+./dots install git gpg "neovim*"
 ```
 
-Similarly, remove all installed dotfiles:
+Preview the plan without touching the filesystem:
 
 ```sh
-./dots uninstall -a
+./dots diff git
 ```
 
-The installer script does not override existing dotfiles unless the command
-line includes the `-f` switch. When in doubt what the installation of a subset
-of the dotfiles would look like, it is possible to look at the diff first:
+Remove previously linked files:
 
 ```sh
-./dots diff -a
+./dots remove git
 ```
 
-To add a configuration for an exemplary tool "foo", create a new directory
-`foo` and add the dotfiles in there, as if `foo` is your install prefix
-(typically `$HOME`). You can "scope" a tool as *local* by adding a tag-file
-`foo/LOCAL`. This has the effect of creating a nested configuration directory
-in your prefix, instead of symlinking the directory. For example, you may not
-want to symlink `~/.gnupg` but only the contained file `~/.gnupg/gpg.conf`.
-Without the scope tag `gnupg/LOCAL`, you would end up with:
+Inspect overall status or the current environment:
 
 ```sh
-~/.gnupg -> dotfiles/gpg/.gnupg
+./dots list
+./dots doctor
 ```
 
-as opposed to:
+The script is careful about existing files unless you pass `--force`. Use the
+`--prefix DIR` flag to dry-run installs into an alternate location.
 
-```txt
-~/.gnupg (local directory)
-~/.gnupg/gpg.conf -> dotfiles/gpg/.gnupg/gpg.conf
+To add a new tool, create a directory (e.g., `foo/`) and drop your config files
+inside. When you need custom targets or directory preparation, add a
+`foo/tool.config.yaml` manifest:
+
+```yaml
+root:
+  target: "~/.config/fish"
+directories:
+  - path: "~/.gnupg"
+    permissions: "700"
 ```
+
+`root` mirrors the tool directory under the given target so new files are picked up automatically, and the optional `directories` entries let you pre-create sensitive paths with the right permissions.

@@ -1,0 +1,3 @@
+root:
+  target: "~/.config/zed"
+  mode: link

@@ -1,0 +1,9 @@
+entries:
+  - source: "zshrc"
+    target: "~/.zshrc"
+  - source: "zprofile"
+    target: "~/.zprofile"
+  - source: "zshenv"
+    target: "~/.zshenv"
+  - source: "zpath"
+    target: "~/.zpath"

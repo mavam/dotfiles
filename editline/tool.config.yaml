@@ -1,0 +1,3 @@
+entries:
+  - source: "editrc"
+    target: "~/.editrc"

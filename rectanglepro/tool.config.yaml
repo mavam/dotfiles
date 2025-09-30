@@ -1,0 +1,5 @@
+directories:
+  - path: "~/Library/Application Support/Rectangle Pro"
+entries:
+  - source: "RectangleProConfig.json"
+    target: "~/Library/Application Support/Rectangle Pro/RectangleProConfig.json"

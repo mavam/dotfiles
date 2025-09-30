@@ -1,0 +1,5 @@
+entries:
+  - source: "tmux.conf"
+    target: "~/.tmux.conf"
+  - source: "tmux"
+    target: "~/.tmux"

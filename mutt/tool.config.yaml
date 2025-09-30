@@ -1,0 +1,5 @@
+entries:
+  - source: "muttrc"
+    target: "~/.muttrc"
+  - source: "mutt"
+    target: "~/.mutt"

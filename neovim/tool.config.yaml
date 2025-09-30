@@ -1,0 +1,3 @@
+root:
+  target: "~/.config/nvim"
+  mode: link

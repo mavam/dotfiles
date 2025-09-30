@@ -1,0 +1,5 @@
+entries:
+  - source: "gitconfig"
+    target: "~/.gitconfig"
+  - source: "config"
+    target: "~/.config/git"

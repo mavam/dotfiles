@@ -1,0 +1,3 @@
+entries:
+  - source: "lbdbrc"
+    target: "~/.lbdbrc"

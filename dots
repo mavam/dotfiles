@@ -1,200 +1,847 @@
-#!/bin/sh
+#!/usr/bin/env bash
+# Modernized dotfile manager
 
-dir="$(cd "$(dirname "$0")" && pwd)"
-prefix="$HOME"
+set -euo pipefail
+
+DOTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PREFIX="$HOME"
+FORCE=0
+COMMAND=""
+
+declare -a TOOL_NAMES=()
+declare -a TOOL_PATHS=()
+declare -a REMAINING_ARGS=()
+
+declare -a MANIFEST_ENTRY_SOURCE=()
+declare -a MANIFEST_ENTRY_TARGET=()
+declare -a MANIFEST_ENTRY_MODE=()
+declare -a MANIFEST_ENTRY_PERM=()
+declare -a MANIFEST_DIR_PATH=()
+declare -a MANIFEST_DIR_PERM=()
+MANIFEST_ROOT_TARGET=""
+MANIFEST_ROOT_MODE=""
+MANIFEST_ROOT_PERM=""
+
+trim() {
+  local var="$1"
+  # shellcheck disable=SC2001
+  echo "$var" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'
+}
+
+strip_quotes() {
+  local value="$1"
+  if [[ ${#value} -ge 2 ]]; then
+    local first="${value:0:1}"
+    local last="${value: -1}"
+    if [[ ( $first == '"' && $last == '"' ) || ( $first == "'" && $last == "'" ) ]]; then
+      value="${value:1:${#value}-2}"
+    fi
+  fi
+  printf '%s' "$value"
+}
 
 usage() {
-  printf "usage: %s [options] <command> [arguments] <tag...>\n" $(basename $0)
-  echo
-  echo "options"
-  echo
-  echo "    -p <prefix>  prefix directory [$prefix]"
-  echo
-  echo "commands"
-  echo
-  echo "    diff         compare tag(s) with existing ones"
-  echo "    help         display this help"
-  echo "    install      symlink the given tag(s)"
-  echo "    uninstall    remove symlinks for the given tag(s)"
-  echo
-  echo "arguments"
-  echo
-  echo "    -a           apply command to all available tag(s)"
-  echo "    -f           force operation"
-  echo
+  cat <<'HELP'
+Usage: dots [--prefix DIR] [--force] <command> [tool...]
+
+Commands:
+  install    Link tool files into the prefix (default: $HOME)
+  remove     Remove previously linked files
+  diff       Show pending changes without applying
+  list       Display available tools and status
+  doctor     Check environment and report issues
+
+Options:
+  --prefix DIR   Override installation prefix
+  --force        Replace existing files when installing
+  --help         Show this help message
+HELP
 }
 
-log() {
-  red="\e[0;31m"
-  green="\e[0;32m"
-  yellow="\e[0;33m"
-  blue="\e[0;34m"
-  magenta="\e[0;35m"
-  cyan="\e[0;36m"
-  reset="\e[0;0m"
-  if [ "$1" = "red" ] || [ "$1" = "error" ]; then
-    color=$red
-  elif [ "$1" = "green" ]; then
-    color=$green
-  elif [ "$1" = "yellow" ]; then
-    color=$yellow
-  elif [ "$1" = "blue" ]; then
-    color=$blue
-  elif [ "$1" = "cyan" ] || [ "$1" = "info" ]; then
-    color=$cyan
-  elif [ "$1" = "magenta" ]; then
-    color=$magenta
+log_info() { printf 'ℹ️  %s
+' "$*"; }
+log_warn() { printf '⚠️  %s
+' "$*"; }
+log_error() { printf '❌ %s
+' "$*"; }
+log_success() { printf '✅ %s
+' "$*"; }
+log_action() { printf '🔗 %s
+' "$*"; }
+log_section() { printf '
+✨ %s
+' "$*"; }
+
+fail() {
+  log_error "$1"
+  exit 1
+}
+
+join_path() {
+  local base="$1"
+  local rel="$2"
+  if [[ $rel == /* ]]; then
+    printf '%s' "$rel"
+  elif [[ $base == */ ]]; then
+    printf '%s%s' "$base" "$rel"
   else
-    color=$reset
+    printf '%s/%s' "$base" "$rel"
   fi
-  shift
-  printf "$color%s$reset\n" "$*"
 }
 
-filter_files() {
-  git ls-files "$1" | awk -F / "$2" | uniq
+expand_target() {
+  local path="$1"
+  if [[ $path == ~* ]]; then
+    path="$PREFIX${path:1}"
+  fi
+  # shellcheck disable=SC2086
+  eval "printf '%s' "$path""
 }
 
-execute() {
-  command=$1
-  tag=$2
-  if ! [ -d "$dir/$tag" ]; then
-    log error "no such tag: $tag"
-    exit 1
+absolute_path() {
+  local path="$1"
+  if [[ -d $path ]]; then
+    (cd "$path" && pwd)
+  else
+    local dir="$(dirname "$path")"
+    local file="$(basename "$path")"
+    (cd "$dir" && printf '%s/%s' "$(pwd)" "$file")
   fi
-  if [ "$command" = "install" ]; then
-    if [ -n "$force" ]; then
-      ln="ln -sf"
-    else
-      ln="ln -s"
+}
+
+ensure_parent_dir() {
+  local target="$1"
+  local parent="$(dirname "$target")"
+  [[ -d $parent ]] || mkdir -p "$parent"
+}
+
+normalize_tool_name() {
+  local tool="$1"
+  while [[ $tool == */ && -n $tool ]]; do
+    tool="${tool%/}"
+  done
+  if [[ $tool == ./* ]]; then
+    tool="${tool#./}"
+  fi
+  printf '%s' "$tool"
+}
+
+reset_manifest_state() {
+  MANIFEST_ENTRY_SOURCE=()
+  MANIFEST_ENTRY_TARGET=()
+  MANIFEST_ENTRY_MODE=()
+  MANIFEST_ENTRY_PERM=()
+  MANIFEST_DIR_PATH=()
+  MANIFEST_DIR_PERM=()
+  MANIFEST_ROOT_TARGET=""
+  MANIFEST_ROOT_MODE=""
+  MANIFEST_ROOT_PERM=""
+}
+
+discover_tools() {
+  TOOL_NAMES=()
+  TOOL_PATHS=()
+  local entry name
+  while IFS= read -r -d '' entry; do
+    name="$(basename "$entry")"
+    case "$name" in
+      .|..|.git|.github|node_modules)
+        continue
+        ;;
+    esac
+    TOOL_NAMES+=("$name")
+    TOOL_PATHS+=("$entry")
+  done < <(find "$DOTS_DIR" -mindepth 1 -maxdepth 1 -type d -print0)
+
+  if [[ ${#TOOL_NAMES[@]} -gt 0 ]]; then
+    local sorted_names sorted_paths tool
+    IFS=$'
+' sorted_names=($(printf '%s
+' "${TOOL_NAMES[@]}" | sort))
+    sorted_paths=()
+    for tool in "${sorted_names[@]}"; do
+      sorted_paths+=("$(tool_path_for "$tool" 2>/dev/null)")
+    done
+    TOOL_NAMES=("${sorted_names[@]}")
+    TOOL_PATHS=("${sorted_paths[@]}")
+  fi
+}
+
+tool_path_for() {
+  local tool="$1"
+  local idx
+  for idx in "${!TOOL_NAMES[@]}"; do
+    if [[ "${TOOL_NAMES[$idx]}" == "$tool" ]]; then
+      printf '%s' "${TOOL_PATHS[$idx]}"
+      return 0
     fi
-    local_scope=$(filter_files "$tag" '$2 == "LOCAL"')
-    scope=$([ -n "$local_scope" ] && echo "local" || echo "linked")
-    log info "installing $tag into $prefix (scope: $scope)"
-    for entry in $(filter_files "$tag" '$2 != "LOCAL" {print $2}'); do
-      if [ -n "$local_scope" ] && ! [ -d "$prefix/$entry" ]; then
-        # Sometimes we do not want to version-control an entire directory but
-        # only some contained content, e.g., for XDG_CONFIG_DIR, .gnupg, .git.
-        # We allow this behavior by adding a file named LOCAL to a tag.
-        log info "creating locally scoped target directory: $prefix/$entry"
-        mkdir -m 700 -p "$prefix/$entry"
-      fi
-      if [ -d "$prefix/$entry" ]; then
-        if ! [ -d "$dir/$tag/$entry" ]; then
-          log error "expected directory for $dir/$tag/$entry"
-          exit 1
+  done
+  return 1
+}
+
+available_tool() {
+  tool_path_for "$1" >/dev/null
+}
+
+parse_manifest() {
+  local tool="$1"
+  local manifest="$2"
+  local defaults_mode="link"
+  local defaults_permissions=""
+  local section=""
+  local entry_index=-1
+  local dir_index=-1
+  local line trimmed key value current_entry=-1
+
+  reset_manifest_state
+
+  while IFS=$'
+' read -r line || [[ -n $line ]]; do
+    line="${line%%#*}"
+    trimmed="$(trim "$line")"
+    [[ -z $trimmed ]] && continue
+
+    if [[ $trimmed =~ ^([A-Za-z_]+):[[:space:]]*$ ]]; then
+      section="${BASH_REMATCH[1]}"
+      continue
+    fi
+
+    case "$section" in
+      defaults)
+        if [[ $trimmed =~ ^([A-Za-z_]+):[[:space:]]*(.+)$ ]]; then
+          key="${BASH_REMATCH[1]}"
+          value="${BASH_REMATCH[2]}"
+          value="$(strip_quotes "$(trim "$value")")"
+          case "$key" in
+            mode) defaults_mode="$value" ;;
+            permissions) defaults_permissions="$value" ;;
+            *) fail "Unknown defaults key '$key' in $tool/tool.config.yaml" ;;
+          esac
+        else
+          fail "Unable to parse defaults in $tool/tool.config.yaml"
         fi
-        for file in $(filter_files "$tag/$entry" '{print $2 "/" $3}'); do
-          case "$file" in
-            .*)
-              log info "  + $file"
-              eval "$ln \"$dir/$tag/$file\" \"$prefix/$entry\""
-              ;;
-            *)
-              log warn "  ! $file (ignored non-dotfile)"
+        ;;
+      root)
+        if [[ $trimmed =~ ^([A-Za-z_]+):[[:space:]]*(.+)$ ]]; then
+          key="${BASH_REMATCH[1]}"
+          value="${BASH_REMATCH[2]}"
+          value="$(strip_quotes "$(trim "$value")")"
+          case "$key" in
+            target) MANIFEST_ROOT_TARGET="$value" ;;
+            mode) MANIFEST_ROOT_MODE="$value" ;;
+            permissions) MANIFEST_ROOT_PERM="$value" ;;
+            *) fail "Unknown root key '$key' in $tool/tool.config.yaml" ;;
+          esac
+        else
+          fail "Unable to parse root in $tool/tool.config.yaml"
+        fi
+        ;;
+      entries)
+        if [[ $trimmed =~ ^-[[:space:]]*([A-Za-z_]+):[[:space:]]*(.+)$ ]]; then
+          ((entry_index++))
+          current_entry=$entry_index
+          MANIFEST_ENTRY_SOURCE[$entry_index]=''
+          MANIFEST_ENTRY_TARGET[$entry_index]=''
+          MANIFEST_ENTRY_MODE[$entry_index]="$defaults_mode"
+          MANIFEST_ENTRY_PERM[$entry_index]="$defaults_permissions"
+          key="${BASH_REMATCH[1]}"
+          value="${BASH_REMATCH[2]}"
+          value="$(strip_quotes "$(trim "$value")")"
+          case "$key" in
+            source) MANIFEST_ENTRY_SOURCE[$entry_index]="$value" ;;
+            target) MANIFEST_ENTRY_TARGET[$entry_index]="$value" ;;
+            mode) MANIFEST_ENTRY_MODE[$entry_index]="$value" ;;
+            permissions) MANIFEST_ENTRY_PERM[$entry_index]="$value" ;;
+            *) fail "Unknown key '$key' in entries for $tool" ;;
+          esac
+        elif [[ $trimmed =~ ^([A-Za-z_]+):[[:space:]]*(.+)$ ]]; then
+          if [[ $current_entry -lt 0 ]]; then
+            fail "Entry value before any entry is defined in $tool/tool.config.yaml"
+          fi
+          key="${BASH_REMATCH[1]}"
+          value="${BASH_REMATCH[2]}"
+          value="$(strip_quotes "$(trim "$value")")"
+          case "$key" in
+            source) MANIFEST_ENTRY_SOURCE[$current_entry]="$value" ;;
+            target) MANIFEST_ENTRY_TARGET[$current_entry]="$value" ;;
+            mode) MANIFEST_ENTRY_MODE[$current_entry]="$value" ;;
+            permissions) MANIFEST_ENTRY_PERM[$current_entry]="$value" ;;
+            *) fail "Unknown key '$key' in entries for $tool" ;;
+          esac
+        else
+          fail "Unable to parse entry line '$trimmed' in $tool/tool.config.yaml"
+        fi
+        ;;
+      directories)
+        if [[ $trimmed =~ ^-[[:space:]]*path:[[:space:]]*(.+)$ ]]; then
+          ((dir_index++))
+          MANIFEST_DIR_PERM[$dir_index]=''
+          MANIFEST_DIR_PATH[$dir_index]="$(strip_quotes "$(trim "${BASH_REMATCH[1]}")")"
+        elif [[ $trimmed =~ ^([A-Za-z_]+):[[:space:]]*(.+)$ ]]; then
+          if [[ $dir_index -lt 0 ]]; then
+            fail "Directory value before any directory entry in $tool/tool.config.yaml"
+          fi
+          key="${BASH_REMATCH[1]}"
+          value="${BASH_REMATCH[2]}"
+          value="$(strip_quotes "$(trim "$value")")"
+          case "$key" in
+            permissions) MANIFEST_DIR_PERM[$dir_index]="$value" ;;
+            path) MANIFEST_DIR_PATH[$dir_index]="$value" ;;
+            *) fail "Unknown key '$key' in directories for $tool" ;;
+          esac
+        else
+          fail "Unable to parse directories line '$trimmed' in $tool/tool.config.yaml"
+        fi
+        ;;
+      *)
+        fail "Unknown section or misplaced content in $tool/tool.config.yaml"
+        ;;
+    esac
+  done < "$manifest"
+
+  local i
+  for i in "${!MANIFEST_ENTRY_SOURCE[@]}"; do
+    if [[ -z ${MANIFEST_ENTRY_SOURCE[$i]} ]]; then
+      fail "Entry $((i+1)) missing source in $tool/tool.config.yaml"
+    fi
+  done
+}
+
+should_emit_directories() {
+  local root_mode="$1"
+  if [[ $root_mode == "link" || $root_mode == "dirlink" ]]; then
+    return 1
+  fi
+  return 0
+}
+
+plan_default_tool() {
+  local tool="$1"
+  local tool_path
+  tool_path="$(tool_path_for "$tool")" || fail "Unknown tool: $tool"
+  local entry rel
+  while IFS= read -r -d '' entry; do
+    rel="${entry#$tool_path/}"
+    case "$rel" in
+      tool.config.yaml|README|README.md|LICENSE)
+        continue
+        ;;
+    esac
+    printf 'link|%s|%s|
+' "$entry" "$(join_path "$PREFIX" "$rel")"
+  done < <(find "$tool_path" -mindepth 1 -maxdepth 1 -print0)
+}
+
+plan_manifest_tool() {
+  local tool="$1"
+  local tool_path="$2"
+  local manifest="$tool_path/tool.config.yaml"
+  parse_manifest "$tool" "$manifest"
+
+  local root_mode="$MANIFEST_ROOT_MODE"
+  [[ -z $root_mode ]] && root_mode="merge"
+
+  if should_emit_directories "$root_mode"; then
+    local i path perm
+    for i in "${!MANIFEST_DIR_PATH[@]}"; do
+      path="$(expand_target "${MANIFEST_DIR_PATH[$i]}")"
+      perm="${MANIFEST_DIR_PERM[$i]}"
+      printf 'ensure_dir|%s|%s|
+' "$path" "$perm"
+    done
+  fi
+
+  local root_handled=0
+  if [[ -n $MANIFEST_ROOT_TARGET ]]; then
+    local root_target="$(expand_target "$MANIFEST_ROOT_TARGET")"
+    local root_perm="$MANIFEST_ROOT_PERM"
+    case "$root_mode" in
+      merge)
+        printf 'ensure_dir|%s|%s|
+' "$root_target" "$root_perm"
+        while IFS= read -r -d '' entry; do
+          local rel="${entry#$tool_path/}"
+          case "$rel" in
+            tool.config.yaml|README|README.md|LICENSE|.DS_Store)
+              continue
               ;;
           esac
-        done
-      else
-        eval "$ln \"$dir/$tag/$entry\" \"$prefix\""
-        log info "  + $entry"
-      fi
-    done
-  elif [ "$command" = "uninstall" ]; then
-    if [ -n "$force" ]; then
-      rm="rm -rf"
+          printf 'link|%s|%s|
+' "$entry" "$(join_path "$root_target" "$rel")"
+        done < <(find "$tool_path" -mindepth 1 -maxdepth 1 -print0)
+        ;;
+      link|dirlink)
+        printf 'link|%s|%s|%s
+' "$tool_path" "$root_target" "$root_perm"
+        root_handled=1
+        ;;
+      *)
+        fail "Unknown root mode '$root_mode' in $tool/tool.config.yaml"
+        ;;
+    esac
+  fi
+
+  if [[ $root_handled -eq 1 ]]; then
+    return
+  fi
+
+  local i source_rel path target mode perm
+  for i in "${!MANIFEST_ENTRY_SOURCE[@]}"; do
+    source_rel="${MANIFEST_ENTRY_SOURCE[$i]}"
+    path="$(join_path "$tool_path" "$source_rel")"
+    if [[ ! -e $path && ! -L $path ]]; then
+      fail "Missing source '$source_rel' in $tool"
+    fi
+    mode="${MANIFEST_ENTRY_MODE[$i]}"
+    [[ -z $mode ]] && mode="link"
+    target="${MANIFEST_ENTRY_TARGET[$i]}"
+    if [[ -z $target ]]; then
+      local rel="$source_rel"
+      [[ $rel == ./* ]] && rel="${rel:1}"
+      target="$(join_path "$PREFIX" "$rel")"
     else
-      rm="rm"
+      target="$(expand_target "$target")"
     fi
-    log info "uninstalling $tag from $prefix"
-    for entry in $(filter_files "$tag" '{print $2}'); do
-      # Analoguous to install command: if we have a non-symlink directory, we
-      # look for installed symlinks inside to remove.
-      if [ -d "$prefix/$entry" ]; then
-        if ! [ -d "$dir/$tag/$entry" ]; then
-          log error "source is a file but target a directory"
-          exit 1
-        fi
-        for file in $(filter_files "$tag/$entry" '{print $2 "/" $3}'); do
-          log info "  - $file"
-          eval "$rm \"$prefix/$file\""
-        done
-      elif [ -L "$prefix/$entry" ]; then
-        log info "  - $entry"
-        eval "$rm \"$prefix/$entry\""
-      fi
-    done
-  elif [ "$command" = "diff" ]; then
-    diff=diff
-    if which colordiff > /dev/null 2>&1; then
-      diff=colordiff
-    fi
-    for entry in $(filter_files "$tag" '{print $2}'); do
-      $diff -ru "$dir/$tag/$entry" "$prefix/$entry" | grep -v '^Only in'
-    done
-  elif [ -z "$command" ]; then
-    log error "no command given"
-    exit 1
+    perm="${MANIFEST_ENTRY_PERM[$i]}"
+    printf '%s|%s|%s|%s
+' "$mode" "$path" "$target" "$perm"
+  done
+}
+
+plan_tool() {
+  local tool="$1"
+  local tool_path
+  tool_path="$(tool_path_for "$tool")" || fail "Unknown tool: $tool"
+  if [[ -f "$tool_path/tool.config.yaml" ]]; then
+    plan_manifest_tool "$tool" "$tool_path"
   else
-    log error "unknown command: $command"
-    exit 1
+    plan_default_tool "$tool"
   fi
 }
 
-main() {
-  cd "$dir"
-  # Parse options.
-  while getopts "hp:" opt; do
-    case "$opt" in
-      h)
+apply_install_action() {
+  local mode="$1" source="$2" target="$3" perm="$4"
+  case "$mode" in
+    ensure_dir)
+      local dir="$source"
+      local dir_perm="$target"
+      if [[ -d $dir ]]; then
+        if [[ -n $dir_perm ]]; then
+          chmod "$dir_perm" "$dir" 2>/dev/null || log_warn "chmod failed for ${dir/$PREFIX/~}"
+        fi
+        log_success "exists ${dir/$PREFIX/~}"
+        return
+      fi
+      if [[ -e $dir || -L $dir ]]; then
+        if [[ $FORCE -eq 1 ]]; then
+          rm -rf "$dir"
+          log_warn "removed existing path ${dir/$PREFIX/~} to create directory"
+        else
+          log_warn "cannot create directory, path exists: ${dir/$PREFIX/~}"
+          return
+        fi
+      fi
+      mkdir -p "$dir"
+      if [[ -n $dir_perm ]]; then
+        chmod "$dir_perm" "$dir" 2>/dev/null || log_warn "chmod failed for ${dir/$PREFIX/~}"
+      fi
+      log_action "created ${dir/$PREFIX/~}"
+      ;;
+    link)
+      local abs_source="$(absolute_path "$source")"
+      if [[ -L $target ]]; then
+        local current="$(readlink "$target")"
+        if [[ $current == "$abs_source" ]]; then
+          log_success "already linked ${target/$PREFIX/~}"
+          return
+        fi
+        if [[ $FORCE -eq 1 ]]; then
+          rm "$target"
+        else
+          log_warn "exists with different target: ${target/$PREFIX/~}"
+          return
+        fi
+      elif [[ -e $target ]]; then
+        if [[ $FORCE -eq 1 ]]; then
+          rm -rf "$target"
+        else
+          log_warn "skipping existing path: ${target/$PREFIX/~}"
+          return
+        fi
+      fi
+      ensure_parent_dir "$target"
+      ln -s "$abs_source" "$target"
+      if [[ -n $perm ]]; then
+        chmod "$perm" "$target" 2>/dev/null || log_warn "chmod failed for ${target/$PREFIX/~}"
+      fi
+      log_success "linked ${target/$PREFIX/~}"
+      ;;
+    *)
+      log_warn "unknown mode '$mode' for $source"
+      ;;
+  esac
+}
+
+apply_remove_action() {
+  local mode="$1" source="$2" target="$3"
+  case "$mode" in
+    ensure_dir)
+      return
+      ;;
+    link)
+      if [[ -L $target ]]; then
+        local abs_source="$(absolute_path "$source")"
+        local current="$(readlink "$target")"
+        if [[ $current == "$abs_source" ]]; then
+          rm "$target"
+          log_success "removed ${target/$PREFIX/~}"
+        else
+          log_warn "different symlink at ${target/$PREFIX/~}"
+        fi
+      elif [[ -e $target ]]; then
+        log_warn "not removing non-symlink ${target/$PREFIX/~}"
+      else
+        log_info "already absent ${target/$PREFIX/~}"
+      fi
+      ;;
+    *)
+      ;;
+  esac
+}
+
+show_diff_action() {
+  local mode="$1" source="$2" target="$3"
+  case "$mode" in
+    ensure_dir)
+      local friendly="${source/$PREFIX/~}"
+      if [[ -d $source ]]; then
+        log_success "exists $friendly"
+      else
+        log_action "would create $friendly"
+      fi
+      ;;
+    link)
+      local abs_source="$(absolute_path "$source")"
+      local friendly="${target/$PREFIX/~}"
+      if [[ -L $target ]]; then
+        local current="$(readlink "$target")"
+        if [[ $current == "$abs_source" ]]; then
+          log_success "in sync $friendly"
+        else
+          log_warn "different link $friendly -> $current"
+        fi
+      elif [[ -e $target ]]; then
+        log_warn "conflict $friendly exists"
+        diff -ru "$abs_source" "$target" || true
+      else
+        log_action "would link $friendly"
+      fi
+      ;;
+    *)
+      ;;
+  esac
+}
+
+status_for_tool() {
+  local tool="$1"
+  local line mode source target perm
+  local ok=0 conflicts=0 total=0
+  while IFS= read -r line; do
+    IFS='|' read -r mode source target perm <<<"$line"
+    case "$mode" in
+      link)
+        ((total++))
+        local abs_source="$(absolute_path "$source")"
+        if [[ -L $target && $(readlink "$target") == "$abs_source" ]]; then
+          ((ok++))
+        elif [[ -e $target ]]; then
+          ((conflicts++))
+        fi
+        ;;
+    esac
+  done < <(plan_tool "$tool")
+
+  if (( conflicts > 0 )); then
+    printf '⚠️'
+  elif (( ok > 0 && ok == total )); then
+    printf '✅'
+  elif (( total == 0 )); then
+    printf '⚪'
+  else
+    printf '⭕️'
+  fi
+}
+
+command_list() {
+  local plain=0
+  local no_header=0
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --plain)
+        plain=1
+        shift
+        ;;
+      --no-header)
+        no_header=1
+        shift
+        ;;
+      --*)
+        log_warn "unknown option '$1' for list"
+        shift
+        ;;
+      *)
+        break
+        ;;
+    esac
+  done
+  [[ $no_header -eq 1 ]] || log_section "Available tools"
+  local tool icon marker
+  for tool in "${TOOL_NAMES[@]}"; do
+    icon="$(status_for_tool "$tool")"
+    if [[ $plain -eq 1 ]]; then
+      case "$icon" in
+        ✅) marker='[OK]' ;;
+        ⚠️) marker='[WARN]' ;;
+        ⭕️) marker='[TODO]' ;;
+        ⚪) marker='[NONE]' ;;
+        *) marker='[UNK]' ;;
+      esac
+    else
+      marker=$icon
+    fi
+    printf '%s %s
+' "$marker" "$tool"
+  done
+}
+
+
+command_install() {
+  local -a tools
+  if [[ $# -eq 0 ]]; then
+    tools=("${TOOL_NAMES[@]}")
+  else
+    tools=()
+    while [[ $# -gt 0 ]]; do
+      tools+=("$(normalize_tool_name "$1")")
+      shift
+    done
+  fi
+  local tool line mode source target perm
+  for tool in "${tools[@]}"; do
+    [[ -z $tool ]] && continue
+    if ! available_tool "$tool"; then
+      log_warn "unknown tool '$tool'"
+      continue
+    fi
+    log_section "Installing $tool"
+    while IFS= read -r line; do
+      IFS='|' read -r mode source target perm <<<"$line"
+      apply_install_action "$mode" "$source" "$target" "$perm"
+    done < <(plan_tool "$tool")
+  done
+}
+
+command_remove() {
+  local -a tools
+  if [[ $# -eq 0 ]]; then
+    tools=("${TOOL_NAMES[@]}")
+  else
+    tools=()
+    while [[ $# -gt 0 ]]; do
+      tools+=("$(normalize_tool_name "$1")")
+      shift
+    done
+  fi
+  local tool line mode source target perm
+  for tool in "${tools[@]}"; do
+    [[ -z $tool ]] && continue
+    if ! available_tool "$tool"; then
+      log_warn "unknown tool '$tool'"
+      continue
+    fi
+    log_section "Removing $tool"
+    while IFS= read -r line; do
+      IFS='|' read -r mode source target perm <<<"$line"
+      apply_remove_action "$mode" "$source" "$target"
+    done < <(plan_tool "$tool")
+  done
+}
+
+command_diff() {
+  local -a tools
+  if [[ $# -eq 0 ]]; then
+    tools=("${TOOL_NAMES[@]}")
+  else
+    tools=()
+    while [[ $# -gt 0 ]]; do
+      tools+=("$(normalize_tool_name "$1")")
+      shift
+    done
+  fi
+  local tool line mode source target perm
+  for tool in "${tools[@]}"; do
+    [[ -z $tool ]] && continue
+    if ! available_tool "$tool"; then
+      log_warn "unknown tool '$tool'"
+      continue
+    fi
+    log_section "Diff for $tool"
+    while IFS= read -r line; do
+      IFS='|' read -r mode source target perm <<<"$line"
+      show_diff_action "$mode" "$source" "$target"
+    done < <(plan_tool "$tool")
+  done
+}
+
+command_doctor() {
+  log_section "Environment"
+  printf '🧠 Bash version: %s
+' "$BASH_VERSION"
+  if [[ ${BASH_VERSINFO[0]} -lt 4 ]]; then
+    log_warn "Bash < 4 detected. Script remains compatible but consider upgrading."
+  fi
+  printf '📁 Repository: %s
+' "$DOTS_DIR"
+  printf '🏠 Prefix: %s
+' "$PREFIX"
+  if [[ -w $PREFIX ]]; then
+    log_success "prefix is writable"
+  else
+    log_warn "prefix is not writable"
+  fi
+
+  log_section "Prerequisites"
+  local missing=0 cmd
+  for cmd in ln find mkdir sed grep diff readlink chmod; do
+    if command -v "$cmd" >/dev/null 2>&1; then
+      log_success "found $cmd"
+    else
+      log_warn "missing $cmd"
+      missing=1
+    fi
+  done
+  if [[ $missing -eq 1 ]]; then
+    log_warn "install the missing commands above before running installs"
+  fi
+
+  log_section "Conflicts"
+  local reported=0 tool line mode source target perm
+  for tool in "${TOOL_NAMES[@]}"; do
+    while IFS= read -r line; do
+      IFS='|' read -r mode source target perm <<<"$line"
+      [[ $mode != link ]] && continue
+      local abs_source="$(absolute_path "$source")"
+      if [[ -L $target ]]; then
+        local current="$(readlink "$target")"
+        if [[ $current != "$abs_source" ]]; then
+          log_warn "$tool: ${target/$PREFIX/~} -> $current (expected $abs_source)"
+          reported=1
+        fi
+      elif [[ -e $target ]]; then
+        log_warn "$tool: conflicts with existing ${target/$PREFIX/~}"
+        reported=1
+      fi
+    done < <(plan_tool "$tool")
+  done
+  if [[ $reported -eq 0 ]]; then
+    log_success "no conflicts detected"
+  fi
+
+  log_section "Legend"
+  printf '✅ fully linked
+'
+  printf '⚠️  needs attention (conflict or unknown tool)
+'
+  printf '⭕️ pending install
+'
+  printf '⚪ no managed links
+'
+
+  command_list
+}
+
+parse_global_opts() {
+  local -a args=("$@")
+  local idx=0 total=${#args[@]}
+  while [[ $idx -lt $total ]]; do
+    case "${args[$idx]}" in
+      --prefix)
+        (( idx + 1 < total )) || fail "--prefix requires a directory"
+        PREFIX="${args[$((idx+1))]}"
+        idx=$((idx+2))
+        ;;
+      --force)
+        FORCE=1
+        idx=$((idx+1))
+        ;;
+      --help)
         usage
         exit 0
         ;;
-      p)
-        prefix="$OPTARG"
+      install|remove|diff|list|doctor)
+        COMMAND="${args[$idx]}"
+        idx=$((idx+1))
+        break
+        ;;
+      -*)
+        fail "Unknown option '${args[$idx]}'"
+        ;;
+      *)
+        COMMAND="${args[$idx]}"
+        idx=$((idx+1))
+        break
         ;;
     esac
   done
-  shift $(expr $OPTIND - 1)
-  if ! [ -d "$prefix" ]; then
-    log error "no such prefix: $prefix"
-    exit 1
-  fi
-  # Parse command.
-  command=$1
-  shift
-  if [ "$command" = "help" ]; then
+  [[ -n $COMMAND ]] || fail "Missing command"
+  REMAINING_ARGS=("${args[@]:$idx}")
+}
+
+main() {
+  if [[ $# -eq 0 ]]; then
     usage
     exit 0
   fi
-  # Parse arguments.
-  OPTIND=1
-  while getopts "af" opt; do
-    case "$opt" in
-      a)
-        all=1
-        ;;
-      f)
-        force=1
-        ;;
-    esac
-  done
-  shift $(expr $OPTIND - 1)
-  if [ -n "$all" ]; then
-    cd $dir
-    set -- *
-    cd -
+
+  parse_global_opts "$@"
+  discover_tools
+
+  if [[ ! -d $PREFIX ]]; then
+    fail "Prefix '$PREFIX' does not exist"
   fi
-  if [ "${#@}" -eq 0 ]; then
-    log error "no tag(s) provided"
-    exit 1
-  fi
-  # Execute command on every tag.
-  for tag in "$@"; do
-    if ! [ -f "$dir/$tag" ]; then
-      execute "$command" "$tag"
-    fi
-  done
+
+  case "$COMMAND" in
+    install)
+      if [[ ${#REMAINING_ARGS[@]} -gt 0 ]]; then
+        command_install "${REMAINING_ARGS[@]}"
+      else
+        command_install
+      fi
+      ;;
+    remove)
+      if [[ ${#REMAINING_ARGS[@]} -gt 0 ]]; then
+        command_remove "${REMAINING_ARGS[@]}"
+      else
+        command_remove
+      fi
+      ;;
+    diff)
+      if [[ ${#REMAINING_ARGS[@]} -gt 0 ]]; then
+        command_diff "${REMAINING_ARGS[@]}"
+      else
+        command_diff
+      fi
+      ;;
+    list)
+      if [[ ${#REMAINING_ARGS[@]} -gt 0 ]]; then
+        command_list "${REMAINING_ARGS[@]}"
+      else
+        command_list
+      fi
+      ;;
+    doctor) command_doctor ;;
+    *) fail "Unknown command '$COMMAND'" ;;
+  esac
 }
 
 main "$@"

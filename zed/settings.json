@@ -1,0 +1,91 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "agent": {
+    "always_allow_tool_actions": true,
+    "inline_assistant_model": {
+      "provider": "zed.dev",
+      "model": "claude-sonnet-4"
+    },
+    "default_model": {
+      "provider": "zed.dev",
+      "model": "claude-opus-4"
+    },
+    "stream_edits": true,
+    "enable_feedback": false,
+    "single_file_review": false
+  },
+  "confirm_quit": true,
+  "vim_mode": true,
+  "buffer_font_size": 12,
+  "ui_font_size": 16,
+  "theme": {
+    "mode": "system",
+    "light": "Github Light",
+    "dark": "Github Dark"
+  },
+  "buffer_font_family": "FiraCode Nerd Font",
+  "buffer_font_fallbacks": ["Zed Plex Mono"],
+  "terminal": {
+    "font_family": "FiraCode Nerd Font",
+    "font_size": 12
+  },
+  "telemetry": {
+    "metrics": false,
+    "diagnostics": false
+  },
+  "preferred_line_length": 80,
+  "soft_wrap": "editor_width",
+  "format_on_save": "off",
+  "ensure_final_newline_on_save": false,
+  "minimap": {
+    "current_line_highlight": "all",
+    "show": "always",
+    "thumb": "always",
+    "thumb_border": "none"
+  },
+  "languages": {
+    "JavaScript": {
+      "formatter": {
+        "external": {
+          "command": "pnpm",
+          "arguments": ["exec", "prettier", "--stdin-filepath", "{buffer_path}"]
+        }
+      },
+      "code_actions_on_format": {
+        "source.fixAll.eslint": true
+      },
+      "format_on_save": "on"
+    },
+    "TypeScript": {
+      "formatter": {
+        "external": {
+          "command": "pnpm",
+          "arguments": ["exec", "prettier", "--stdin-filepath", "{buffer_path}"]
+        }
+      },
+      "code_actions_on_format": {
+        "source.fixAll.eslint": true
+      },
+      "format_on_save": "on"
+    },
+    "TSX": {
+      "formatter": {
+        "external": {
+          "command": "pnpm",
+          "arguments": ["exec", "prettier", "--stdin-filepath", "{buffer_path}"]
+        }
+      },
+      "code_actions_on_format": {
+        "source.fixAll.eslint": true
+      },
+      "format_on_save": "on"
+    }
+  }
+}
