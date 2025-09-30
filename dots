@@ -752,16 +752,13 @@ command_doctor() {
   fi
 
   log_section "Legend"
-  printf '  ✓  fully installed
-'
-  printf '  ⚠  conflicts detected
-'
-  printf '  ○  partially installed
-'
-  printf '  ∅  empty (no files)
-'
+  printf '  ✓  fully installed\n'
+  printf '  ⚠  conflicts detected\n'
+  printf '  ○  partially installed\n'
+  printf '  ∅  empty (no files)\n'
 
-  command_list
+  log_section "Available tools"
+  command_list --no-header
 }
 
 parse_global_opts() {
