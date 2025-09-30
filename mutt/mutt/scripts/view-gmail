@@ -1,4 +1,0 @@
-#!/bin/sh
-
-mid=$(grep -i '^Message-Id:' | sed 's#^.*<\([^>]*\)>.*$#\1#g' | head -1)
-open "https://mail.google.com/mail/u/0/?#search/rfc822msgid%3A${mid}"

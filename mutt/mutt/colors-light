@@ -1,6 +1,0 @@
-# Color defintions for a light terminal theme.
-
-color sidebar_highlight  color240    color187
-color indicator          color240    color187
-
-# vim: ft=muttrc
