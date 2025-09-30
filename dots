@@ -749,10 +749,10 @@ command_doctor() {
   fi
 
   log_section "Legend"
-  printf '✓  fully installed\n'
-  printf '⚠  conflicts detected\n'
-  printf '○  partially installed\n'
-  printf '∅  empty (no files)\n'
+  printf '✓ fully installed\n'
+  printf '⚠ conflicts detected\n'
+  printf '○ partially installed\n'
+  printf '∅ empty (no files)\n'
 
   log_section "Available tools"
   command_list --no-header
