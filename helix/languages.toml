@@ -1,0 +1,10 @@
+[[language]]
+name = "tql"
+scope = "source.tql"
+file-types = ["tql"]
+injection-regex = "tql"
+comment-token = "//"
+
+[[grammar]]
+name = "tql"
+source = { git = "https://github.com/tenzir/tree-sitter-tql", rev = "main" }
