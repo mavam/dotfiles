@@ -4,6 +4,7 @@ return {
   build = ':TSUpdate',
   dependencies = {
     'tenzir/tree-sitter-tql',
+    'nvim-treesitter/nvim-treesitter-refactor',
   },
   config = function()
     require('nvim-treesitter.configs').setup {
@@ -24,6 +25,10 @@ return {
       highlight = {
         enable = true,
         additional_vim_regex_highlighting = true,
+      },
+      refactor = {
+        highlight_definitions = { enable = true },
+        highlight_current_scope = { enable = true },
       },
       incremental_selection = {
         enable = true,
@@ -46,5 +51,11 @@ return {
     parsers.tql.filetype = 'tql'
 
     vim.filetype.add({ extension = { tql = 'tql' } })
+
+    local set_hl = vim.api.nvim_set_hl
+    set_hl(0, 'TSDefinition', { underline = true })
+    set_hl(0, 'TSDefinitionUsage', { underline = true })
+    set_hl(0, 'TSCurrentScope', { link = 'Normal' })
+    set_hl(0, 'TSDefinitionUsage', { link = 'TSDefinition' })
   end,
 }
