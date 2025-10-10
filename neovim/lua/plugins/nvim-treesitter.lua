@@ -7,6 +7,15 @@ return {
     'nvim-treesitter/nvim-treesitter-refactor',
   },
   config = function()
+    local parser_config = require('nvim-treesitter.parsers').get_parser_configs()
+    parser_config.tql = parser_config.tql or {}
+    parser_config.tql.install_info = parser_config.tql.install_info or {
+      url = 'https://github.com/tenzir/tree-sitter-tql',
+      files = { 'src/parser.c' },
+      branch = 'main',
+    }
+    parser_config.tql.filetype = 'tql'
+
     require('nvim-treesitter.configs').setup {
       ensure_installed = {
         'bash',
@@ -40,15 +49,6 @@ return {
         },
       },
     }
-
-    local parsers = require('nvim-treesitter.parsers').get_parser_configs()
-    parsers.tql = parsers.tql or {}
-    parsers.tql.install_info = parsers.tql.install_info or {
-      url = 'https://github.com/tenzir/tree-sitter-tql',
-      files = { 'src/parser.c' },
-      branch = 'main',
-    }
-    parsers.tql.filetype = 'tql'
 
     vim.filetype.add({ extension = { tql = 'tql' } })
 
