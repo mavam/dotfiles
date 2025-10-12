@@ -175,6 +175,7 @@ if status is-interactive
   abbr -g gswt 'git switch topic/'
   abbr -g gts 'git tag -s'
   abbr -g gw 'git worktree'
+  abbr -g gwc 'git_worktree_clone'
   abbr -g gwa 'git_worktree_add_topic'
   abbr -g gwr 'git worktree remove -f'
   abbr -g gws 'git_worktree_setup'
@@ -200,6 +201,55 @@ if status is-interactive
     end
   end
 
+  # Clone a repository into a bare worktree-ready layout
+  function git_worktree_clone
+    if test (count $argv) -lt 1 -o (count $argv) -gt 2
+      echo "ℹ Usage: git_worktree_clone <repo-url> [directory]" >&2
+      return 1
+    end
+    set -l repo_url $argv[1]
+    if test (count $argv) -eq 2
+      set -l project_name $argv[2]
+    else
+      set -l project_name (basename $repo_url)
+      set project_name (string replace -r '\.git$' '' $project_name)
+    end
+    if test -z "$project_name"
+      echo "❌ Unable to determine target directory for $repo_url" >&2
+      return 1
+    end
+    if test -e $project_name
+      echo "❌ Target directory '$project_name' already exists" >&2
+      return 1
+    end
+    set -l original_dir (pwd)
+    if not mkdir -p $project_name
+      echo "❌ Failed to create directory '$project_name'" >&2
+      return 1
+    end
+    cd $project_name
+    if not git clone --bare $repo_url .bare
+      echo "❌ Failed to clone repository: $repo_url" >&2
+      cd $original_dir
+      rm -rf $project_name
+      return 1
+    end
+    echo "gitdir: ./.bare" > .git
+    if not git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+      echo "❌ Failed to configure remote fetch refspec" >&2
+      cd $original_dir
+      rm -rf $project_name
+      return 1
+    end
+    if not git fetch origin --prune --tags
+      echo "❌ Failed to fetch origin" >&2
+      cd $original_dir
+      rm -rf $project_name
+      return 1
+    end
+    echo "✔︎ Bare repository ready in $project_name"
+  end
+
   # Add a topic worktree
   function git_worktree_add_topic
     if test (count $argv) -ne 1
@@ -217,37 +267,35 @@ if status is-interactive
 
   # Setup git worktree in a clean way
   function git_worktree_setup
-    if test (count $argv) -ne 1
-      echo "ℹ Usage: git_worktree_setup <repo-url>"
+    if test (count $argv) -lt 1 -o (count $argv) -gt 2
+      echo "ℹ Usage: git_worktree_setup <repo-url> [directory]" >&2
       return 1
     end
-    set repo_url $argv[1]
-    # Extract project name from URL
-    # Remove .git suffix if present, then get the last part of the path
-    set project_name (basename $repo_url .git)
-    # Create the project directory
-    echo "📁 Creating project directory: $project_name"
-    mkdir -p $project_name
-    cd $project_name
-    # Clone the bare repository
-    if not git clone --bare $repo_url .bare
-      echo "❌ Failed to clone repository: $repo_url"
-      cd ..
-      rmdir $project_name 2>/dev/null
-      return 1
+    git_worktree_clone $argv; or return $status
+    set -l head_ref (git symbolic-ref --quiet HEAD ^/dev/null)
+    if test -n "$head_ref"
+      set -l default_branch (string replace -r '^refs/heads/' '' $head_ref)
+    else
+      set -l default_branch main
     end
-    # Create .git file pointing to the bare repo
-    echo "🔗 Linking to bare repository..."
-    echo "gitdir: ./.bare" > .git
-    # Add main worktree
-    echo "🌳 Adding main worktree..."
-    if not git worktree add main main
-      echo "❌ Failed to add main worktree"
-      cd ..
-      rm -rf $project_name
-      return 1
+    echo "🌳 Adding $default_branch worktree..."
+    if git show-ref --verify --quiet refs/heads/$default_branch
+      if not git worktree add $default_branch $default_branch
+        echo "❌ Failed to add worktree for $default_branch" >&2
+        return 1
+      end
+    else if git show-ref --verify --quiet refs/remotes/origin/$default_branch
+      if not git worktree add -b $default_branch $default_branch origin/$default_branch
+        echo "❌ Failed to add worktree for $default_branch" >&2
+        return 1
+      end
+    else
+      if not git worktree add -b $default_branch $default_branch
+        echo "❌ Failed to add worktree for $default_branch" >&2
+        return 1
+      end
     end
-    echo "✔︎ Git worktree setup complete for $project_name"
+    echo "✔︎ Git worktree setup complete for $default_branch"
   end
 
   # macOS convenience tools.
