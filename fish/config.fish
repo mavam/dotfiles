@@ -208,10 +208,11 @@ if status is-interactive
       return 1
     end
     set -l repo_url $argv[1]
+    set -l project_name
     if test (count $argv) -eq 2
-      set -l project_name $argv[2]
+      set project_name $argv[2]
     else
-      set -l project_name (basename $repo_url)
+      set project_name (basename $repo_url)
       set project_name (string replace -r '\.git$' '' $project_name)
     end
     if test -z "$project_name"
@@ -272,11 +273,12 @@ if status is-interactive
       return 1
     end
     git_worktree_clone $argv; or return $status
-    set -l head_ref (git symbolic-ref --quiet HEAD ^/dev/null)
+    set -l head_ref (git symbolic-ref --quiet HEAD 2>/dev/null)
+    set -l default_branch
     if test -n "$head_ref"
-      set -l default_branch (string replace -r '^refs/heads/' '' $head_ref)
+      set default_branch (string replace -r '^refs/heads/' '' $head_ref)
     else
-      set -l default_branch main
+      set default_branch main
     end
     echo "🌳 Adding $default_branch worktree..."
     if git show-ref --verify --quiet refs/heads/$default_branch
