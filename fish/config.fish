@@ -309,6 +309,6 @@ if status is-interactive
 end
 
 # Source tool-specific configurations
-for file in ~/.config/fish/config.tools/*
+for file in ~/.config/fish/conf.tools/*
   source $file
 end
