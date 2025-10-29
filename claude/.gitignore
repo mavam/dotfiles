@@ -1,4 +1,6 @@
 .env
+debug
+file-history
 history.jsonl
 projects/
 shell-snapshots/
