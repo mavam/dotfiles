@@ -43,7 +43,7 @@
   "preferred_line_length": 80,
   "soft_wrap": "editor_width",
   "format_on_save": "off",
-  "ensure_final_newline_on_save": false,
+  "ensure_final_newline_on_save": true,
   "minimap": {
     "current_line_highlight": "all",
     "show": "always",
