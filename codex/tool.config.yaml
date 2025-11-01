@@ -1,0 +1,5 @@
+directories:
+  - path: "~/.codex"
+entries:
+  - source: "config.toml"
+    target: "~/.codex/config.toml"

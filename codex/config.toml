@@ -1,0 +1,11 @@
+model = "gpt-5-codex"
+model_reasoning_effort = "medium"
+
+[features]
+web_search_request = true
+
+[tui]
+notifications = true
+
+[projects."/Users/mavam/code/tenzir/tenzir"]
+trust_level = "trusted"
