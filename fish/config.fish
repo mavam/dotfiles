@@ -251,6 +251,21 @@ if status is-interactive
     echo "✔︎ Bare repository ready in $project_name"
   end
 
+  function __git_worktree_ensure_upstream
+    if test (count $argv) -ne 1
+      return 0
+    end
+    set -l branch $argv[1]
+    set -l current_remote (git config --get branch.$branch.remote 2>/dev/null; or true)
+    if test -z "$current_remote"
+      git config branch.$branch.remote origin >/dev/null 2>&1
+    end
+    set -l current_merge (git config --get branch.$branch.merge 2>/dev/null; or true)
+    if test -z "$current_merge"
+      git config branch.$branch.merge refs/heads/$branch >/dev/null 2>&1
+    end
+  end
+
   # Add a topic worktree
   function git_worktree_add_topic
     if test (count $argv) -ne 1
@@ -258,11 +273,20 @@ if status is-interactive
       return 1
     end
     set dir $argv[1]
+    set -l branch topic/$dir
     # Check if branch exists locally
     if git show-ref --verify --quiet refs/heads/topic/$dir
-      git worktree add $dir topic/$dir
+      if git worktree add $dir $branch
+        __git_worktree_ensure_upstream $branch
+      else
+        return $status
+      end
     else
-      git worktree add -b topic/$dir $dir
+      if git worktree add -b $branch $dir
+        __git_worktree_ensure_upstream $branch
+      else
+        return $status
+      end
     end
   end
 
