@@ -79,7 +79,7 @@
         "id": "90957ed1-5f6a-4cad-83c3-90e12a415436",
         "type": "custom-text",
         "color": "brightBlack",
-        "customText": " ",
+        "customText": " ",
         "merge": "no-padding"
       },
       {
@@ -104,6 +104,17 @@
         "type": "session-clock",
         "color": "magenta",
         "rawValue": true
+      }
+    ],
+    [
+      {
+        "id": "d188e422-333f-4813-808f-f84fee448b14",
+        "type": "current-working-dir",
+        "color": "brightBlack",
+        "rawValue": true,
+        "metadata": {
+          "fishStyle": "true"
+        }
       }
     ]
   ],
