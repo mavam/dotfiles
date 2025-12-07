@@ -10,7 +10,8 @@
       "WebSearch",
       "Task",
       "NotebookEdit",
-      "TodoWrite"
+      "TodoWrite",
+      "Skill"
     ]
   },
   "hooks": {

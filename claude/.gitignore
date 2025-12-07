@@ -2,6 +2,8 @@
 debug
 file-history
 history.jsonl
+plans/
+plugins/
 projects/
 shell-snapshots/
 statsig/
