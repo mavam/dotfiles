@@ -1,16 +1,19 @@
 {
+  "permissions": {
+    "allow": [
+      "Read",
+      "Write",
+      "Edit",
+      "Glob",
+      "Grep",
+      "WebFetch",
+      "WebSearch",
+      "Task",
+      "NotebookEdit",
+      "TodoWrite"
+    ]
+  },
   "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/format-hook.sh"
-          }
-        ]
-      }
-    ],
     "SessionStart": [
       {
         "matcher": "",
@@ -72,5 +75,17 @@
     "command": "bunx -y ccstatusline@latest",
     "padding": 0
   },
-  "alwaysThinkingEnabled": true
+  "alwaysThinkingEnabled": true,
+  "extraKnownMarketplaces": {
+    "tenzir": {
+      "source": {
+        "source": "github",
+        "repo": "tenzir/claude-plugins"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "formatter@tenzir": true,
+    "git@tenzir": true
+  }
 }
