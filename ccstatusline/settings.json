@@ -3,34 +3,114 @@
   "lines": [
     [
       {
-        "id": "788f3afc-15fd-476d-9e5a-6a4b0be6cb15",
-        "type": "custom-command",
-        "commandPath": "bunx ccusage statusline",
-        "preserveColors": true,
-        "timeout": 5000
+        "id": "0abcaa2e-4805-40a4-b1fd-3a6e9f0d1bae",
+        "type": "model",
+        "color": "blue",
+        "rawValue": true,
+        "customText": "🤖 "
+      },
+      {
+        "id": "817c6539-310b-4800-9b3c-73b874e37013",
+        "type": "context-length",
+        "color": "yellow",
+        "rawValue": true
+      },
+      {
+        "id": "d28d3463-9705-412b-b850-4f5a1e0672bb",
+        "type": "context-percentage",
+        "color": "yellow",
+        "rawValue": true
+      },
+      {
+        "id": "5cff874c-3ce2-4b2b-8710-baf38fca4483",
+        "type": "custom-text",
+        "merge": "no-padding",
+        "customText": "↓",
+        "color": "brightBlack"
+      },
+      {
+        "id": "ac44200b-eb20-4bd5-aad6-2ea1d1f6ce70",
+        "type": "tokens-input",
+        "color": "green",
+        "rawValue": true
+      },
+      {
+        "id": "09eacd85-6a11-4ad8-a99b-7c5be6ca92c7",
+        "type": "custom-text",
+        "customText": "↑",
+        "merge": "no-padding",
+        "color": "brightBlack"
+      },
+      {
+        "id": "08f43a38-a374-409c-a429-a31cc7884e55",
+        "type": "tokens-output",
+        "color": "green",
+        "rawValue": true
+      },
+      {
+        "id": "b01abcfe-fd0e-49d0-ad23-569aade7447f",
+        "type": "custom-text",
+        "customText": "↺",
+        "merge": "no-padding",
+        "color": "brightBlack"
+      },
+      {
+        "id": "c72b09a6-eb43-46d7-a7f0-6330cd91aa5a",
+        "type": "tokens-cached",
+        "color": "green",
+        "rawValue": true
+      },
+      {
+        "id": "31756e87-1708-4384-88ea-fc190133fe1f",
+        "type": "custom-text",
+        "customText": "Σ",
+        "merge": "no-padding",
+        "color": "brightBlack"
+      },
+      {
+        "id": "19afd45e-b179-4e48-bd96-e5021bf9ad0b",
+        "type": "tokens-total",
+        "color": "green",
+        "rawValue": true
       }
     ],
     [
       {
-        "id": "e829bf0c-4eb1-4b4c-b955-3ce572e0c3d9",
+        "id": "90957ed1-5f6a-4cad-83c3-90e12a415436",
+        "type": "custom-text",
+        "customText": "ᚶ ",
+        "merge": "no-padding",
+        "color": "brightBlack"
+      },
+      {
+        "id": "3153994e-df09-4d45-b600-6c5228b63de6",
         "type": "git-branch",
-        "color": "magenta"
+        "color": "",
+        "rawValue": true
       },
       {
-        "id": "cc38474a-0b39-4c7e-b013-1b5ca7496c18",
-        "type": "separator"
-      },
-      {
-        "id": "cb79bd6f-e8e2-4d85-b6bd-ec5e5a108405",
+        "id": "f0ee805b-5df2-44f8-a8a4-51d21be061e6",
         "type": "git-changes",
-        "color": "yellow"
+        "color": "brightBlack"
+      },
+      {
+        "id": "6ad51468-443f-4e2b-8043-7e5aa7f08a69",
+        "type": "session-cost",
+        "color": "magenta",
+        "rawValue": true
+      },
+      {
+        "id": "06185c57-7449-4079-a6a3-8b9186312a36",
+        "type": "session-clock",
+        "color": "magenta",
+        "rawValue": true
       }
-    ],
-    []
+    ]
   ],
   "flexMode": "full-minus-40",
   "compactThreshold": 60,
-  "colorLevel": 2,
+  "colorLevel": 3,
+  "defaultPadding": " ",
   "inheritSeparatorColors": false,
   "globalBold": false,
   "powerline": {
@@ -41,7 +121,13 @@
     "separatorInvertBackground": [
       false
     ],
-    "startCaps": [],
-    "endCaps": []
+    "startCaps": [
+      ""
+    ],
+    "endCaps": [
+      ""
+    ],
+    "theme": "custom",
+    "autoAlign": false
   }
 }
