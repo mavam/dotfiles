@@ -15,7 +15,7 @@ window-padding-y = 8
 window-padding-balance = true
 
 # Fonts.
-# font-family = Monaspace Neon
+font-family = FiraCode Nerd Font Mono
 font-size = 13
 adjust-cell-height = 15%
 
