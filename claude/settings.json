@@ -12,7 +12,8 @@
       "NotebookEdit",
       "TodoWrite",
       "Skill"
-    ]
+    ],
+    "defaultMode": "default"
   },
   "hooks": {
     "SessionStart": [
@@ -76,7 +77,10 @@
     "command": "bunx -y ccstatusline@latest",
     "padding": 0
   },
-  "alwaysThinkingEnabled": true,
+  "enabledPlugins": {
+    "formatter@tenzir": true,
+    "git@tenzir": true
+  },
   "extraKnownMarketplaces": {
     "tenzir": {
       "source": {
@@ -85,8 +89,6 @@
       }
     }
   },
-  "enabledPlugins": {
-    "formatter@tenzir": true,
-    "git@tenzir": true
-  }
+  "alwaysThinkingEnabled": true,
+  "disableTips": true
 }
