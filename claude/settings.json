@@ -90,5 +90,5 @@
     }
   },
   "alwaysThinkingEnabled": true,
-  "disableTips": true
+  "spinnerTipsEnabled": false
 }
