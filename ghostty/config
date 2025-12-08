@@ -8,7 +8,7 @@ theme = dark:GitHub Dark Default,light:GitHub Light Default
 # Window styling.
 background-opacity = 0.95
 background-blur-radius = 20
-macos-titlebar-style = hidden
+macos-titlebar-style = tabs
 #window-colorspace = display-p3
 window-padding-x = 8
 window-padding-y = 8
