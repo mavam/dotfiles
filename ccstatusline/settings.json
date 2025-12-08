@@ -22,6 +22,20 @@
         "rawValue": true
       },
       {
+        "id": "6ad51468-443f-4e2b-8043-7e5aa7f08a69",
+        "type": "session-cost",
+        "color": "magenta",
+        "rawValue": true
+      },
+      {
+        "id": "06185c57-7449-4079-a6a3-8b9186312a36",
+        "type": "session-clock",
+        "color": "magenta",
+        "rawValue": true
+      }
+    ],
+    [
+      {
         "id": "5cff874c-3ce2-4b2b-8710-baf38fca4483",
         "type": "custom-text",
         "color": "brightBlack",
@@ -76,10 +90,19 @@
     ],
     [
       {
+        "id": "d188e422-333f-4813-808f-f84fee448b14",
+        "type": "current-working-dir",
+        "color": "brightBlack",
+        "rawValue": true,
+        "metadata": {
+          "fishStyle": "true"
+        }
+      },
+      {
         "id": "90957ed1-5f6a-4cad-83c3-90e12a415436",
         "type": "custom-text",
         "color": "brightBlack",
-        "customText": " ",
+        "customText": " ",
         "merge": "no-padding"
       },
       {
@@ -92,29 +115,6 @@
         "id": "f0ee805b-5df2-44f8-a8a4-51d21be061e6",
         "type": "git-changes",
         "color": "brightBlack"
-      },
-      {
-        "id": "6ad51468-443f-4e2b-8043-7e5aa7f08a69",
-        "type": "session-cost",
-        "color": "magenta",
-        "rawValue": true
-      },
-      {
-        "id": "06185c57-7449-4079-a6a3-8b9186312a36",
-        "type": "session-clock",
-        "color": "magenta",
-        "rawValue": true
-      }
-    ],
-    [
-      {
-        "id": "d188e422-333f-4813-808f-f84fee448b14",
-        "type": "current-working-dir",
-        "color": "brightBlack",
-        "rawValue": true,
-        "metadata": {
-          "fishStyle": "true"
-        }
       }
     ]
   ],
@@ -127,16 +127,16 @@
   "powerline": {
     "enabled": false,
     "separators": [
-      ""
+      ""
     ],
     "separatorInvertBackground": [
       false
     ],
     "startCaps": [
-      ""
+      ""
     ],
     "endCaps": [
-      ""
+      ""
     ],
     "theme": "custom",
     "autoAlign": false
