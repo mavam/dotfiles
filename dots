@@ -8,6 +8,16 @@ PREFIX="$HOME"
 FORCE=0
 COMMAND=""
 
+# Symbols with colors
+C_RESET='\033[0m'
+SYM_INFO='\033[34mi'
+SYM_WARN='\033[33m!'
+SYM_ERROR='\033[31m✘'
+SYM_SUCCESS='\033[32m✔'
+SYM_ACTION='\033[36m→'
+SYM_PARTIAL='\033[33m◐'
+SYM_EMPTY='\033[90m∅'
+
 declare -a TOOL_NAMES=()
 declare -a TOOL_PATHS=()
 declare -a REMAINING_ARGS=()
@@ -58,19 +68,12 @@ Options:
 HELP
 }
 
-log_info() { printf '· %s
-' "$*"; }
-log_warn() { printf '⚠ %s
-' "$*"; }
-log_error() { printf '✗ %s
-' "$*"; }
-log_success() { printf '✓ %s
-' "$*"; }
-log_action() { printf '→ %s
-' "$*"; }
-log_section() { printf '
-▸ %s
-' "$*"; }
+log_info() { printf "${SYM_INFO}${C_RESET} %s\n" "$*"; }
+log_warn() { printf "${SYM_WARN}${C_RESET} %s\n" "$*"; }
+log_error() { printf "${SYM_ERROR}${C_RESET} %s\n" "$*"; }
+log_success() { printf "${SYM_SUCCESS}${C_RESET} %s\n" "$*"; }
+log_action() { printf "${SYM_ACTION}${C_RESET} %s\n" "$*"; }
+log_section() { printf '\n%s\n' "$*"; }
 
 fail() {
   log_error "$1"
@@ -562,13 +565,13 @@ status_for_tool() {
   done < <(plan_tool "$tool")
 
   if (( conflicts > 0 )); then
-    printf '⚠'
+    printf "${SYM_WARN}${C_RESET}"
   elif (( ok > 0 && ok == total )); then
-    printf '✓'
+    printf "${SYM_SUCCESS}${C_RESET}"
   elif (( total == 0 )); then
-    printf '∅'
+    printf "${SYM_EMPTY}${C_RESET}"
   else
-    printf '○'
+    printf "${SYM_PARTIAL}${C_RESET}"
   fi
 }
 
@@ -596,17 +599,16 @@ command_list() {
   done
   if [[ $no_header -eq 0 ]]; then
     log_section "Available tools"
-    printf '  ✓ installed  ⚠ conflicts  ○ partial  ∅ empty
-'
+    printf "  ${SYM_SUCCESS}${C_RESET} installed  ${SYM_WARN}${C_RESET} conflicts  ${SYM_PARTIAL}${C_RESET} partial  ${SYM_EMPTY}${C_RESET} empty\n"
   fi
   local tool icon marker
   for tool in "${TOOL_NAMES[@]}"; do
     icon="$(status_for_tool "$tool")"
     if [[ $plain -eq 1 ]]; then
       case "$icon" in
-        ✓) marker='[OK]' ;;
-        ⚠) marker='[WARN]' ;;
-        ○) marker='[TODO]' ;;
+        ✔) marker='[OK]' ;;
+        !) marker='[WARN]' ;;
+        ◐) marker='[TODO]' ;;
         ∅) marker='[NONE]' ;;
         *) marker='[UNK]' ;;
       esac
@@ -749,10 +751,10 @@ command_doctor() {
   fi
 
   log_section "Legend"
-  printf '✓ fully installed\n'
-  printf '⚠ conflicts detected\n'
-  printf '○ partially installed\n'
-  printf '∅ empty (no files)\n'
+  printf "${SYM_SUCCESS}${C_RESET} fully installed\n"
+  printf "${SYM_WARN}${C_RESET} conflicts detected\n"
+  printf "${SYM_PARTIAL}${C_RESET} partially installed\n"
+  printf "${SYM_EMPTY}${C_RESET} empty (no files)\n"
 
   log_section "Available tools"
   command_list --no-header
