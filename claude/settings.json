@@ -11,7 +11,14 @@
       "Task",
       "NotebookEdit",
       "TodoWrite",
-      "Skill"
+      "Skill",
+      "BashOutput",
+      "KillShell",
+      "AgentOutputTool",
+      "AskUserQuestion",
+      "EnterPlanMode",
+      "ExitPlanMode",
+      "SlashCommand"
     ],
     "defaultMode": "default"
   },
@@ -89,6 +96,6 @@
       }
     }
   },
-  "alwaysThinkingEnabled": true,
-  "spinnerTipsEnabled": false
+  "spinnerTipsEnabled": false,
+  "alwaysThinkingEnabled": true
 }
