@@ -73,7 +73,7 @@ log_warn() { printf "${SYM_WARN}${C_RESET} %s\n" "$*"; }
 log_error() { printf "${SYM_ERROR}${C_RESET} %s\n" "$*"; }
 log_success() { printf "${SYM_SUCCESS}${C_RESET} %s\n" "$*"; }
 log_action() { printf "${SYM_ACTION}${C_RESET} %s\n" "$*"; }
-log_section() { printf '\n%s\n' "$*"; }
+log_section() { printf '%s\n' "$*"; }
 
 fail() {
   log_error "$1"
@@ -599,7 +599,7 @@ command_list() {
   done
   if [[ $no_header -eq 0 ]]; then
     log_section "Available tools"
-    printf "  ${SYM_SUCCESS}${C_RESET} installed  ${SYM_WARN}${C_RESET} conflicts  ${SYM_PARTIAL}${C_RESET} partial  ${SYM_EMPTY}${C_RESET} empty\n"
+    printf "  ${SYM_SUCCESS}${C_RESET} installed  ${SYM_WARN}${C_RESET} conflicts  ${SYM_PARTIAL}${C_RESET} partial  ${SYM_EMPTY}${C_RESET} empty\n\n"
   fi
   local tool icon marker
   for tool in "${TOOL_NAMES[@]}"; do
@@ -701,18 +701,16 @@ command_diff() {
 
 command_doctor() {
   log_section "Environment"
-  printf '  Bash version: %s
-' "$BASH_VERSION"
-  printf '  Repository: %s
-' "$DOTS_DIR"
-  printf '  Prefix: %s
-' "$PREFIX"
+  printf '  Bash version: %s\n' "$BASH_VERSION"
+  printf '  Repository: %s\n' "$DOTS_DIR"
+  printf '  Prefix: %s\n' "$PREFIX"
   if [[ -w $PREFIX ]]; then
     log_success "prefix is writable"
   else
     log_warn "prefix is not writable"
   fi
 
+  printf '\n'
   log_section "Prerequisites"
   local missing=0 cmd
   for cmd in ln find mkdir sed grep diff readlink chmod; do
@@ -727,6 +725,7 @@ command_doctor() {
     log_warn "install the missing commands above before running installs"
   fi
 
+  printf '\n'
   log_section "Conflicts"
   local reported=0 tool line mode source target perm
   for tool in "${TOOL_NAMES[@]}"; do
@@ -750,12 +749,14 @@ command_doctor() {
     log_success "no conflicts detected"
   fi
 
+  printf '\n'
   log_section "Legend"
-  printf "${SYM_SUCCESS}${C_RESET} fully installed\n"
-  printf "${SYM_WARN}${C_RESET} conflicts detected\n"
-  printf "${SYM_PARTIAL}${C_RESET} partially installed\n"
-  printf "${SYM_EMPTY}${C_RESET} empty (no files)\n"
+  printf "  ${SYM_SUCCESS}${C_RESET} fully installed\n"
+  printf "  ${SYM_WARN}${C_RESET} conflicts detected\n"
+  printf "  ${SYM_PARTIAL}${C_RESET} partially installed\n"
+  printf "  ${SYM_EMPTY}${C_RESET} empty (no files)\n"
 
+  printf '\n'
   log_section "Available tools"
   command_list --no-header
 }
