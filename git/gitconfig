@@ -49,5 +49,5 @@
 	format = ssh
 
 [gpg "ssh"]
-	defaultKeyCommand = sh -c 'echo "key::$(ssh-add -L | tail -n 1)"'
+	defaultKeyCommand = sh -c 'echo "key::$(ssh-add -L | grep Signing)"'
 	allowedSignersFile = ~/.config/git/allowed_signers
