@@ -64,7 +64,7 @@ Commands:
 Options:
   --prefix DIR   Override installation prefix
   --force        Replace existing files when installing
-  --help         Show this help message
+  -h, --help     Show this help message
 HELP
 }
 
@@ -774,7 +774,7 @@ parse_global_opts() {
         FORCE=1
         idx=$((idx+1))
         ;;
-      --help)
+      -h|--help)
         usage
         exit 0
         ;;
