@@ -97,5 +97,7 @@
     }
   },
   "spinnerTipsEnabled": false,
-  "alwaysThinkingEnabled": true
+  "env": {
+    "MAX_THINKING_TOKENS": "10000"
+  }
 }
