@@ -1,4 +1,7 @@
 {
+  "attribution": {
+    "commit": "Co-Authored-By: {{model}} <noreply@anthropic.com>"
+  },
   "permissions": {
     "allow": [
       "Read",
