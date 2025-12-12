@@ -135,6 +135,7 @@ if status is-interactive
   abbr -g gla 'git log --all --graph --pretty="%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset"'
   abbr -g glg 'git log --graph'
   abbr -g glp 'git log --patch'
+  abbr -g glp1 'git log --patch -1'
   abbr -g gm 'git merge'
   abbr -g gma 'git merge --abort'
   abbr -g gmc 'git merge --continue'
