@@ -1,4 +1,7 @@
 {
+  "env": {
+    "MAX_THINKING_TOKENS": "10000"
+  },
   "attribution": {
     "commit": "Co-Authored-By: {{model}} <noreply@anthropic.com>"
   },
@@ -100,7 +103,5 @@
     }
   },
   "spinnerTipsEnabled": false,
-  "env": {
-    "MAX_THINKING_TOKENS": "10000"
-  }
+  "alwaysThinkingEnabled": true
 }
