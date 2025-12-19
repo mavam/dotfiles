@@ -1,10 +1,4 @@
 {
-  "env": {
-    "MAX_THINKING_TOKENS": "10000"
-  },
-  "attribution": {
-    "commit": "Co-Authored-By: {{model}} <noreply@anthropic.com>"
-  },
   "permissions": {
     "allow": [
       "Read",
