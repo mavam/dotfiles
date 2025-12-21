@@ -85,8 +85,7 @@
     "padding": 0
   },
   "enabledPlugins": {
-    "formatter@tenzir": true,
-    "git@tenzir": true
+    "formatter@tenzir": true
   },
   "extraKnownMarketplaces": {
     "tenzir": {
