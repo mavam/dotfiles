@@ -143,7 +143,7 @@ if status is-interactive
   abbr -g gmb 'git merge --log --no-commit --no-ff'
   abbr -g gp 'git push'
   abbr -g gpu 'git push --set-upstream origin (git symbolic-ref HEAD | sed "s/refs\/heads\///")'
-  abbr -g gpf 'git push --force'
+  abbr -g gpf 'git push --force-with-lease'
   abbr -g gpt 'git push --tags'
   abbr -g gptf 'git push --tags --force'
   abbr -g gpoat 'git push origin --all && git push origin --tags'
