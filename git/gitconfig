@@ -8,6 +8,9 @@
 [delta]
 	navigate = true  # use n and N to move between diff sections
 
+[delta "light-mode"]
+	light = true
+
 [branch]
 	sort = -committerdate
 

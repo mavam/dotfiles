@@ -40,6 +40,16 @@ if command -sq bat
   set -x MANPAGER "sh -c 'col -bx | bat -l man -p'"
 end
 
+# Delta (git pager) light/dark mode detection for macOS.
+# OSC color queries are disabled in Ghostty to prevent escape sequence leaks,
+# so we detect system appearance manually and configure delta accordingly.
+if test (uname) = Darwin
+  # AppleInterfaceStyle key only exists in dark mode; absent means light mode
+  if not defaults read -g AppleInterfaceStyle &>/dev/null
+    set -gx DELTA_FEATURES light-mode
+  end
+end
+
 # Homebrew
 if command -sq brew
   set -x HOMEBREW_NO_ANALYTICS 1
