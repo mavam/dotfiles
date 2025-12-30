@@ -93,7 +93,10 @@ if status is-interactive
   # Setup a fancier prompt.
   if command -sq starship
     starship init fish | source
-    enable_transience
+    # Note: enable_transience disabled due to terminal query race conditions.
+    # Starship's transient prompt uses cursor position queries (DSR/CPR) that
+    # can leak as visible garbage (e.g., ^[[3;1R) when responses arrive async.
+    # enable_transience
   end
 
   # Launch gpg-agent for use by SSH.

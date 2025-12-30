@@ -1,6 +1,11 @@
 # Shell
 shell-integration = fish
 
+# Disable OSC 10/11/12 color query responses. When enabled (default), programs
+# like Starship query terminal colors for theme detection, but the responses can
+# leak as visible garbage (e.g., ^[]11;rgb:ffff/ffff/ffff^\) due to timing races.
+osc-color-report-format = none
+
 # Colors.
 theme = dark:GitHub Dark Default,light:GitHub Light Default
 #background = #111111
