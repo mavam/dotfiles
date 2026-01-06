@@ -7,4 +7,5 @@ plugins/
 projects/
 shell-snapshots/
 statsig/
+stats-cache.json
 todos/
