@@ -1,5 +1,6 @@
 # Shell
 shell-integration = fish
+clipboard-paste-protection = false
 
 # Disable OSC 10/11/12 color query responses. When enabled (default), programs
 # like Starship query terminal colors for theme detection, but the responses can
