@@ -200,7 +200,7 @@ if status is-interactive
   abbr -g gw 'git worktree'
   abbr -g gwc 'git_worktree_clone'
   abbr -g gwa 'git_worktree_add_topic'
-  abbr -g gwr 'git worktree remove -f'
+  abbr -g gwr 'git_worktree_remove_topic'
   abbr -g gws 'git_worktree_setup'
 
   # Let vim fugitive creep into shell workflow.
@@ -292,13 +292,14 @@ if status is-interactive
   # Add a topic worktree
   function git_worktree_add_topic
     if test (count $argv) -ne 1
-      echo "Usage: git_worktree_add_topic <directory>"
+      echo "Usage: git_worktree_add_topic <branch-name>"
       return 1
     end
-    set dir $argv[1]
+    # Strip topic/ prefix if present to get the directory name
+    set -l dir (string replace -r '^topic/' '' $argv[1])
     set -l branch topic/$dir
     # Check if branch exists locally
-    if git show-ref --verify --quiet refs/heads/topic/$dir
+    if git show-ref --verify --quiet refs/heads/$branch
       if git worktree add $dir $branch
         __git_worktree_ensure_upstream $branch
       else
@@ -311,6 +312,17 @@ if status is-interactive
         return $status
       end
     end
+  end
+
+  # Remove a topic worktree
+  function git_worktree_remove_topic
+    if test (count $argv) -ne 1
+      echo "Usage: git_worktree_remove_topic <branch-name>"
+      return 1
+    end
+    # Strip topic/ prefix if present to get the directory name
+    set -l dir (string replace -r '^topic/' '' $argv[1])
+    git worktree remove -f $dir
   end
 
   # Setup git worktree in a clean way
