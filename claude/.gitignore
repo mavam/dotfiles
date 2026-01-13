@@ -9,3 +9,6 @@ shell-snapshots/
 statsig/
 stats-cache.json
 todos/
+cache/
+*-cache/
+*.backup-*

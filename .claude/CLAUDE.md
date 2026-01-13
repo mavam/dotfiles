@@ -31,4 +31,5 @@ Personal configuration files managed via symlinks. Each top-level directory = on
 ## Structure
 
 - Use `tool.config.yaml` for symlink manifests and directory creation
+- Use per-tool `.gitignore` files (not root `.gitignore`)
 - NEVER commit secrets, tokens, or SSH keys—use `.example` templates
