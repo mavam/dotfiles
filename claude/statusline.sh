@@ -2,7 +2,7 @@
 
 E="\033[" R="\033[0m"
 GRN="0;32" YLW="0;33" RED="0;31"
-DG="2;32" DY="2;33" DR="2;31" DW="2;37" DC="2;36"
+DG="2;32" DY="2;33" DR="2;31" DW="2;37" DC="2;36" DM="2;35"
 CYN="0;36" BLU="0;34" MAG="0;35" WHT="0;37"
 COLS=$(tput cols 2>/dev/null || echo 120)
 
@@ -83,22 +83,22 @@ build_bricks() {
 
 format_line1() {
   local bricks=$(build_bricks)
-  local pc
-  ((USED_PCT < 60)) && pc=$GRN || { ((USED_PCT < 85)) && pc=$YLW || pc=$RED; }
+  local pc dpc
+  ((USED_PCT < 60)) && pc=$GRN && dpc=$DG || { ((USED_PCT < 85)) && pc=$YLW && dpc=$DY || { pc=$RED; dpc=$DR; }; }
 
   local out="${E}${WHT}m$MODEL$R $bricks ${E}${pc}m${USED_PCT}%$R"
 
   if ((COLS >= 50)); then
     local uk=$(((CR_TOK + CC_TOK + IN_TOK) / 1000)) tk=$((TOTAL_TOK / 1000))
-    out+=" ${E}${WHT}m${uk}k${E}${DW}m/${E}${WHT}m${tk}k$R"
+    out+=" ${E}${dpc}m${uk}k/${tk}k$R"
   fi
   if ((COLS >= 55)); then
     local h=$((DURATION_MS / 3600000)) m=$(((DURATION_MS % 3600000) / 60000))
-    out+=" ${E}${MAG}m${h}h ${m}m$R"
+    out+=" ${E}${DM}m${h}h${m}m$R"
   fi
   if ((COLS >= 60)) && [[ "$COST_USD" != "0" && "$COST_USD" != "0.0" && -n "$COST_USD" ]]; then
     local cost=$(printf "%.2f" "$COST_USD" 2>/dev/null || echo "$COST_USD")
-    out+=" ${E}${YLW}m\$${cost}$R"
+    out+=" ${E}${DY}m\$${cost}$R"
   fi
   echo "$out"
 }
