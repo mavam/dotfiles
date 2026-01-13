@@ -27,7 +27,7 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "bunx -y ccstatusline@latest",
+    "command": "/Users/mavam/.claude/statusline.sh",
     "padding": 0
   },
   "enabledPlugins": {

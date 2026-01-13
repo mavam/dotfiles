@@ -1,3 +1,0 @@
-root:
-  target: "~/.config/ccstatusline"
-  mode: link
