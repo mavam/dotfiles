@@ -167,6 +167,7 @@ if status is-interactive
   abbr -g gplu 'git pull upstream'
   abbr -g gplum 'git pull upstream main'
   abbr -g gplr 'git pull --rebase'
+  abbr -g gpls 'git pull --recurse-submodules && git submodule update --init --recursive'
   abbr -g gr 'git remote -v'
   abbr -g gra 'git remote add'
   abbr -g grau 'git remote add upstream'
