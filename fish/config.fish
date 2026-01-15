@@ -292,13 +292,25 @@ if status is-interactive
 
   # Add a topic worktree
   function git_worktree_add_topic
-    if test (count $argv) -ne 1
-      echo "Usage: git_worktree_add_topic <branch-name>"
+    if test (count $argv) -lt 1 -o (count $argv) -gt 2
+      echo "Usage: git_worktree_add_topic <branch-name> [base-branch]"
       return 1
     end
     # Strip topic/ prefix if present to get the directory name
     set -l dir (string replace -r '^topic/' '' $argv[1])
     set -l branch topic/$dir
+    # Determine base branch (default: main branch via origin/HEAD or 'main')
+    set -l base
+    if test (count $argv) -eq 2
+      set base $argv[2]
+    else
+      set -l origin_head (git symbolic-ref --quiet refs/remotes/origin/HEAD 2>/dev/null)
+      if test -n "$origin_head"
+        set base (string replace -r '^refs/remotes/origin/' '' $origin_head)
+      else
+        set base main
+      end
+    end
     # Check if branch exists locally
     if git show-ref --verify --quiet refs/heads/$branch
       if git worktree add $dir $branch
@@ -307,7 +319,7 @@ if status is-interactive
         return $status
       end
     else
-      if git worktree add -b $branch $dir
+      if git worktree add -b $branch $dir $base
         __git_worktree_ensure_upstream $branch
       else
         return $status
