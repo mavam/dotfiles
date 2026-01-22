@@ -1,0 +1,9 @@
+# shellcheck shell=bash disable=SC1090
+
+# Source shared PATH setup
+[ -f ~/.path ] && . ~/.path
+
+# Starship prompt
+if command -v starship &> /dev/null; then
+  eval "$(starship init bash)"
+fi

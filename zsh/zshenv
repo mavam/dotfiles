@@ -1,28 +1,7 @@
-# shellcheck shell=bash disable=SC2206,SC2128
+# shellcheck shell=bash disable=SC1090,SC2034
 
-# Locale
-export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
+# Ensure unique PATH entries
+typeset -U path
 
-# PATH setup (mirrors Fish config)
-typeset -U path  # Ensure unique entries
-
-path=(
-  ~/.local/bin           # Home-dir installers (Claude Code)
-  ~/.cargo/bin           # Rust
-  ~/.go/bin              # Go (GOPATH)
-  ~/.bun/bin             # Bun
-  ~/.lmstudio/bin        # LM Studio
-  $path
-)
-
-# macOS-specific paths
-if [[ $(uname) == Darwin ]]; then
-  path=(
-    /opt/homebrew/bin
-    /opt/homebrew/sbin
-    /usr/X11R6/bin
-    /Library/TeX/texbin
-    $path
-  )
-fi
+# Source shared PATH setup
+[ -f ~/.path ] && . ~/.path
