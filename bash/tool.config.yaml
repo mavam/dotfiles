@@ -1,0 +1,5 @@
+entries:
+  - source: "bashrc"
+    target: "~/.bashrc"
+  - source: "bash_profile"
+    target: "~/.bash_profile"

@@ -1,0 +1,23 @@
+# shellcheck shell=sh
+
+# Shared PATH setup (sourced by bash and zsh)
+
+# Locale
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
+# User paths
+PATH="$HOME/.local/bin:$PATH"       # Home-dir installers (Claude Code)
+PATH="$HOME/.cargo/bin:$PATH"       # Rust
+PATH="$HOME/.go/bin:$PATH"          # Go (GOPATH)
+PATH="$HOME/.bun/bin:$PATH"         # Bun
+PATH="$HOME/.lmstudio/bin:$PATH"    # LM Studio
+
+# macOS-specific paths
+if [ "$(uname)" = Darwin ]; then
+  PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
+  PATH="/usr/X11R6/bin:$PATH"
+  PATH="/Library/TeX/texbin:$PATH"
+fi
+
+export PATH
