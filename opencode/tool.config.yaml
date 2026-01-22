@@ -1,7 +1,5 @@
 directories:
-  - path: "~/.local/state/opencode"
+  - path: "~/.config/opencode"
 entries:
-  - source: "kv.json"
-    target: "~/.local/state/opencode/kv.json"
-  - source: "model.json"
-    target: "~/.local/state/opencode/model.json"
+  - source: "opencode.jsonc"
+    target: "~/.config/opencode/opencode.json"
