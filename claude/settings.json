@@ -31,9 +31,7 @@
     "padding": 0
   },
   "enabledPlugins": {
-    "formatter@tenzir": true,
-    "git@tenzir": true,
-    "prose@tenzir": true
+    "dev@tenzir": true
   },
   "extraKnownMarketplaces": {
     "tenzir": {
