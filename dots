@@ -28,6 +28,7 @@ declare -a MANIFEST_ENTRY_MODE=()
 declare -a MANIFEST_ENTRY_PERM=()
 declare -a MANIFEST_DIR_PATH=()
 declare -a MANIFEST_DIR_PERM=()
+declare -a MANIFEST_POST_INSTALL=()
 MANIFEST_ROOT_TARGET=""
 MANIFEST_ROOT_MODE=""
 MANIFEST_ROOT_PERM=""
@@ -136,6 +137,7 @@ reset_manifest_state() {
   MANIFEST_ENTRY_PERM=()
   MANIFEST_DIR_PATH=()
   MANIFEST_DIR_PERM=()
+  MANIFEST_POST_INSTALL=()
   MANIFEST_ROOT_TARGET=""
   MANIFEST_ROOT_MODE=""
   MANIFEST_ROOT_PERM=""
@@ -294,6 +296,15 @@ parse_manifest() {
           esac
         else
           fail "Unable to parse directories line '$trimmed' in $tool/tool.config.yaml"
+        fi
+        ;;
+      post_install)
+        if [[ $trimmed =~ ^-[[:space:]]*(.+)$ ]]; then
+          value="${BASH_REMATCH[1]}"
+          value="$(strip_quotes "$(trim "$value")")"
+          MANIFEST_POST_INSTALL+=("$value")
+        else
+          fail "Unable to parse post_install line '$trimmed' in $tool/tool.config.yaml"
         fi
         ;;
       *)
@@ -621,6 +632,25 @@ command_list() {
 }
 
 
+run_post_install_hooks() {
+  local tool="$1"
+  local tool_path
+  tool_path="$(tool_path_for "$tool")" || return 0
+  local manifest="$tool_path/tool.config.yaml"
+  [[ -f $manifest ]] || return 0
+
+  reset_manifest_state
+  parse_manifest "$tool" "$manifest"
+
+  local cmd
+  for cmd in "${MANIFEST_POST_INSTALL[@]}"; do
+    log_action "running: $cmd"
+    if ! eval "$cmd"; then
+      log_warn "hook failed: $cmd"
+    fi
+  done
+}
+
 command_install() {
   local -a tools
   if [[ $# -eq 0 ]]; then
@@ -644,6 +674,7 @@ command_install() {
       IFS='|' read -r mode source target perm <<<"$line"
       apply_install_action "$mode" "$source" "$target" "$perm"
     done < <(plan_tool "$tool")
+    run_post_install_hooks "$tool"
   done
 }
 
