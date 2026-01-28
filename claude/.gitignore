@@ -5,9 +5,11 @@ history.jsonl
 plans/
 plugins/
 projects/
+reviews/
 shell-snapshots/
 statsig/
 stats-cache.json
+tasks/
 todos/
 cache/
 *-cache/

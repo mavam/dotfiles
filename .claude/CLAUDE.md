@@ -30,6 +30,22 @@ Personal configuration files managed via symlinks. Each top-level directory = on
 
 ## Structure
 
-- Use `tool.config.yaml` for symlink manifests and directory creation
+- Use `tool.config.yaml` for symlink manifests, directory creation, and post-install hooks
 - Use per-tool `.gitignore` files (not root `.gitignore`)
 - NEVER commit secrets, tokens, or SSH keys—use `.example` templates
+
+## tool.config.yaml
+
+Supports these sections:
+
+- `root`: target path, mode (`link`/`merge`), permissions
+- `entries`: individual file mappings with source/target/mode
+- `directories`: directories to create
+- `post_install`: list of shell commands to run after linking
+
+Example with post-install hook:
+
+```yaml
+post_install:
+  - "command -v wt >/dev/null && wt config shell install -y fish || true"
+```
