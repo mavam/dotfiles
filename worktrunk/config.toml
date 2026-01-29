@@ -1,5 +1,5 @@
 # Worktrunk user configuration
 # See https://worktrunk.dev/config/ for all options
 
-[post-start]
+[post-create]
 graft = "~/.config/worktrunk/scripts/graft.py {{ worktree_path }}"

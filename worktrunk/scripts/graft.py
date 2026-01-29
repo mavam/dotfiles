@@ -5,8 +5,8 @@
 """
 graft: Optimize a new git worktree by copying cached state from the primary worktree.
 
-Usage as worktrunk post-start hook:
-  [post-start]
+Usage as worktrunk post-create hook:
+  [post-create]
   graft = "~/.config/worktrunk/scripts/graft.py {{ worktree_path }}"
 
 What it does:
@@ -861,14 +861,15 @@ class BuildTask(Task):
     """Copy build directories from source to target and fix paths."""
 
     name = "build"
-    description = "Copying build directory"
+    description = "Processing build directory"
 
     def __init__(self) -> None:
-        self._build_dirs: list[tuple[Path, Path]] = []
+        self._build_dirs_to_copy: list[tuple[Path, Path]] = []
+        self._build_dirs_to_fix: list[Path] = []
 
     def should_run(self, source: Path, target: Path) -> bool:
         self._detect_build_dirs(source, target)
-        return len(self._build_dirs) > 0
+        return len(self._build_dirs_to_copy) > 0 or len(self._build_dirs_to_fix) > 0
 
     def get_subtasks(self) -> list[tuple[str, str]]:
         return [
@@ -878,24 +879,50 @@ class BuildTask(Task):
         ]
 
     def _detect_build_dirs(self, source: Path, target: Path) -> None:
-        """Detect build directories that should be copied."""
-        self._build_dirs = []
+        """Detect build directories to copy and existing directories to fix."""
+        self._build_dirs_to_copy = []
+        self._build_dirs_to_fix = []
 
         for pattern in BUILD_DIR_PATTERNS:
             if "*" in pattern:
-                # Glob pattern (e.g., "build/*")
+                # Check source dirs to copy
                 for src_dir in source.glob(pattern):
                     if src_dir.is_dir():
                         rel_path = src_dir.relative_to(source)
                         dst_dir = target / rel_path
                         if not dst_dir.exists():
-                            self._build_dirs.append((src_dir, dst_dir))
+                            self._build_dirs_to_copy.append((src_dir, dst_dir))
+                # Check target dirs to fix (including target-only dirs)
+                for dst_dir in target.glob(pattern):
+                    if dst_dir.is_dir() and dst_dir not in self._build_dirs_to_fix:
+                        self._build_dirs_to_fix.append(dst_dir)
             else:
-                # Exact path
                 src_dir = source / pattern
                 dst_dir = target / pattern
-                if src_dir.exists() and src_dir.is_dir() and not dst_dir.exists():
-                    self._build_dirs.append((src_dir, dst_dir))
+                if src_dir.is_dir() and not dst_dir.exists():
+                    self._build_dirs_to_copy.append((src_dir, dst_dir))
+                if dst_dir.is_dir() and dst_dir not in self._build_dirs_to_fix:
+                    self._build_dirs_to_fix.append(dst_dir)
+
+        # Remove parent directories if children are already in the lists
+        # (e.g., don't copy/fix "build" if "build/release" is already listed)
+        dst_paths = {dst for _, dst in self._build_dirs_to_copy}
+        self._build_dirs_to_copy = [
+            (src, dst)
+            for src, dst in self._build_dirs_to_copy
+            if not any(
+                other != dst and other.is_relative_to(dst) for other in dst_paths
+            )
+        ]
+
+        fix_paths = set(self._build_dirs_to_fix)
+        self._build_dirs_to_fix = [
+            dst
+            for dst in self._build_dirs_to_fix
+            if not any(
+                other != dst and other.is_relative_to(dst) for other in fix_paths
+            )
+        ]
 
     def run(self, source: Path, target: Path, spinner: Spinner) -> None:
         src_str = str(source)
@@ -908,17 +935,20 @@ class BuildTask(Task):
         copied_dirs = self._copy_build_dirs()
         spinner.complete_task(self.name)
 
-        if not copied_dirs:
+        # Fix paths in both copied and existing directories
+        all_dirs_to_fix = copied_dirs + self._build_dirs_to_fix
+
+        if not all_dirs_to_fix:
             spinner.complete_task("cmake_paths")
             spinner.complete_task("ninja_files")
             return
 
         spinner.start_task("cmake_paths")
-        self._fix_cmake_paths(copied_dirs, src_str, dst_str)
+        self._fix_cmake_paths(all_dirs_to_fix, src_str, dst_str)
         spinner.complete_task("cmake_paths")
 
         spinner.start_task("ninja_files")
-        self._fix_ninja_files(copied_dirs, src_str, dst_str)
+        self._fix_ninja_files(all_dirs_to_fix, src_str, dst_str)
         spinner.complete_task("ninja_files")
 
     def _symlink_cmake_presets(self, source: Path, target: Path) -> None:
@@ -931,7 +961,7 @@ class BuildTask(Task):
     def _copy_build_dirs(self) -> list[Path]:
         """Copy all detected build directories. Returns list of copied destination dirs."""
         copied = []
-        for src_build, dst_build in self._build_dirs:
+        for src_build, dst_build in self._build_dirs_to_copy:
             log(f"Copying {src_build.name}")
             for attempt in range(3):
                 try:
