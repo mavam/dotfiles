@@ -1162,9 +1162,13 @@ class TaskRunner:
         finally:
             s.stop()
 
-        # Print summary
+        # Print summary to stderr (stdout may be captured by hook runner)
         task_names = [t.name for t in applicable]
-        print(f"{GREEN}{CHECK}{RESET} Grafted: {', '.join(task_names)}")
+        print(
+            f"{GREEN}{CHECK}{RESET} Grafted: {', '.join(task_names)}",
+            file=sys.stderr,
+            flush=True,
+        )
 
 
 # =============================================================================
