@@ -1,6 +1,6 @@
 #!/usr/bin/env -S uv run
 # /// script
-# dependencies = ["rapidhash"]
+# dependencies = ["click", "rapidhash"]
 # ///
 """
 graft: Optimize a new git worktree by copying cached state from the primary worktree.
@@ -19,7 +19,6 @@ What it does:
 
 from __future__ import annotations
 
-import argparse
 import contextlib
 import fcntl
 import json
@@ -40,6 +39,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+import click
 import rapidhash
 
 if TYPE_CHECKING:
@@ -1206,54 +1206,43 @@ class TaskRunner:
 # =============================================================================
 
 
-def main() -> None:
+@click.command()
+@click.argument("worktree_path", type=click.Path(exists=True, resolve_path=True))
+@click.option(
+    "-s",
+    "--source",
+    type=click.Path(exists=True, resolve_path=True),
+    help="Source worktree path (default: auto-detect primary worktree)",
+)
+@click.option("-v", "--verbose", is_flag=True, help="Enable verbose output")
+def main(worktree_path: str, source: str | None, verbose: bool) -> None:
+    """Optimize a new git worktree by grafting cached state from the primary worktree."""
     global VERBOSE
+    VERBOSE = verbose
 
-    parser = argparse.ArgumentParser(
-        description="Optimize a new git worktree by grafting cached state from the primary worktree"
-    )
-    parser.add_argument(
-        "worktree_path",
-        help="Path to the new worktree (use {{ worktree_path }} in hooks)",
-    )
-    parser.add_argument(
-        "-s",
-        "--source",
-        help="Source worktree path (default: auto-detect primary worktree)",
-    )
-    parser.add_argument(
-        "-v", "--verbose", action="store_true", help="Enable verbose output"
-    )
-    args = parser.parse_args()
-
-    VERBOSE = args.verbose
-
-    target = Path(args.worktree_path).resolve()
-    if not target.exists():
-        print(f"{RED}{CROSS}{RESET} Worktree path does not exist: {target}")
-        sys.exit(1)
+    target = Path(worktree_path)
 
     # Find source worktree
-    if args.source:
-        source = Path(args.source).resolve()
+    if source:
+        source_path = Path(source)
     else:
-        source = find_primary_worktree(target)
+        source_path = find_primary_worktree(target)
 
-    if source is None:
+    if source_path is None:
         log("No source worktree found, nothing to graft")
         sys.exit(0)
 
     # Validate worktrees
-    validation_error = validate_worktrees(source, target)
+    validation_error = validate_worktrees(source_path, target)
     if validation_error:
         print(f"{RED}{CROSS}{RESET} {validation_error}")
         sys.exit(1)
 
-    log(f"Source: {source}")
+    log(f"Source: {source_path}")
     log(f"Target: {target}")
 
     # Run all applicable tasks
-    runner = TaskRunner(source=source, target=target)
+    runner = TaskRunner(source=source_path, target=target)
     runner.run()
 
 
