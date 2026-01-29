@@ -122,7 +122,7 @@ class Spinner:
             status = task["status"]
             msg = task["msg"]
             if status == "done":
-                lines.append(f"{GREEN}\u2713{RESET} {DIM}{msg}{RESET}")
+                lines.append(f"{GREEN}\u2714{RESET} {DIM}{msg}{RESET}")
             elif status == "active":
                 spinner_char = self.frames[self._frame % len(self.frames)]
                 lines.append(f"{BLUE}{spinner_char}{RESET} {msg}")
@@ -1152,7 +1152,7 @@ class TaskRunner:
                 if error:
                     s.stop()
                     task, exc = error
-                    print(f"{RED}\u2717{RESET} {task.description}")
+                    print(f"{RED}\u2718{RESET} {task.description}")
                     print(f"  {exc}")
                     sys.exit(1)
         finally:
@@ -1160,7 +1160,7 @@ class TaskRunner:
 
         # Print summary
         task_names = [t.name for t in applicable]
-        print(f"{GREEN}\u2713{RESET} Grafted: {', '.join(task_names)}")
+        print(f"{GREEN}\u2714{RESET} Grafted: {', '.join(task_names)}")
 
 
 # =============================================================================
@@ -1192,7 +1192,7 @@ def main() -> None:
 
     target = Path(args.worktree_path).resolve()
     if not target.exists():
-        print(f"{RED}\u2717{RESET} Worktree path does not exist: {target}")
+        print(f"{RED}\u2718{RESET} Worktree path does not exist: {target}")
         sys.exit(1)
 
     # Find source worktree
@@ -1208,7 +1208,7 @@ def main() -> None:
     # Validate worktrees
     validation_error = validate_worktrees(source, target)
     if validation_error:
-        print(f"{RED}\u2717{RESET} {validation_error}")
+        print(f"{RED}\u2718{RESET} {validation_error}")
         sys.exit(1)
 
     log(f"Source: {source}")
