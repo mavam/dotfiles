@@ -1,2 +1,6 @@
+root:
+  target: "~/.config/worktrunk"
+  mode: link
+
 post_install:
   - "command -v wt >/dev/null && wt config shell install -y fish || true"
