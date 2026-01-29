@@ -22,6 +22,7 @@ from __future__ import annotations
 import contextlib
 import fcntl
 import json
+import logging
 import os
 import pty
 import re
@@ -48,8 +49,6 @@ if TYPE_CHECKING:
 # =============================================================================
 # Configuration
 # =============================================================================
-
-VERBOSE = False
 
 # Build directory patterns to detect (relative to worktree root)
 BUILD_DIR_PATTERNS = [
@@ -82,6 +81,36 @@ SHOW_CURSOR = "\033[?25h"
 # Symbols
 CHECK = "\u2714"
 CROSS = "\u2718"
+CIRCLE = "\u25cb"
+
+
+# =============================================================================
+# Logging
+# =============================================================================
+
+
+class _GraftHandler(logging.Handler):
+    """Handler that integrates with the spinner."""
+
+    def emit(self, record: logging.LogRecord) -> None:
+        message = self.format(record)
+        if _active_spinner:
+            _active_spinner._clear_for_log()
+        if record.levelno >= logging.INFO:
+            print(f"{GREEN}{CHECK}{RESET} {message}", flush=True)
+        else:
+            print(f"{DIM}{CIRCLE} {message}{RESET}", flush=True)
+
+
+_LOGGER = logging.getLogger("graft")
+_LOGGER.addHandler(_GraftHandler())
+_LOGGER.propagate = False
+_LOGGER.setLevel(logging.INFO)
+
+
+def _is_verbose() -> bool:
+    """Check if verbose logging is enabled."""
+    return _LOGGER.isEnabledFor(logging.DEBUG)
 
 
 def strip_ansi(text: str) -> str:
@@ -90,15 +119,6 @@ def strip_ansi(text: str) -> str:
 
 
 _active_spinner: Spinner | None = None
-
-
-def log(msg: str) -> None:
-    """Log a message (only in verbose mode)."""
-    if VERBOSE:
-        # Clear spinner lines before logging, spinner will redraw
-        if _active_spinner:
-            _active_spinner._clear_for_log()
-        print(f"{DIM}[*] {msg}{RESET}", flush=True)
 
 
 class Spinner:
@@ -144,7 +164,7 @@ class Spinner:
 
     def _spin(self) -> None:
         while not self._stop.wait(0.12):
-            if VERBOSE:
+            if _is_verbose():
                 # In verbose mode, don't animate - just wait
                 continue
 
@@ -174,7 +194,7 @@ class Spinner:
     def start(self, msg: str = "") -> None:
         """Start the spinner with an optional initial single task."""
         global _active_spinner
-        if not VERBOSE:
+        if not _is_verbose():
             print(HIDE_CURSOR, end="", flush=True)
         if msg:
             self._tasks["main"] = {"status": "active", "msg": msg}
@@ -230,7 +250,7 @@ class Spinner:
         self.update_task(name, status="active")
 
     def stop(self) -> None:
-        """Stop the spinner and clear output (unless verbose mode)."""
+        """Stop the spinner and print final state."""
         global _active_spinner
         if self._stop.is_set():
             return  # Already stopped
@@ -238,14 +258,19 @@ class Spinner:
         if self._thread:
             self._thread.join()
         _active_spinner = None
-        # Clear all lines (skip if verbose to preserve log output)
-        if self._num_lines > 0 and not VERBOSE:
+        # Clear spinner lines
+        if self._num_lines > 0:
             print(f"\033[{self._num_lines}A", end="")
             for _ in range(self._num_lines):
                 print(f"{CLEAR_LINE}")
             print(f"\033[{self._num_lines}A", end="")
             self._num_lines = 0
         print(SHOW_CURSOR, end="", flush=True)
+        # Log completed tasks
+        for name in self._task_order:
+            task = self._tasks.get(name)
+            if task and task["status"] == "done":
+                _LOGGER.info(task["msg"])
 
 
 @contextlib.contextmanager
@@ -626,7 +651,7 @@ class TimestampTask(Task):
     """Copy file timestamps from source to target worktree."""
 
     name = "timestamps"
-    description = "Copying file timestamps"
+    description = "copying file timestamps"
 
     def should_run(self, source: Path, target: Path) -> bool:
         # Always run if source exists
@@ -654,7 +679,7 @@ class SubmoduleTask(Task):
     """Copy submodules from source to target worktree."""
 
     name = "submodules"
-    description = "Copying submodules"
+    description = "copying submodules"
 
     def __init__(self) -> None:
         self._submodules_to_copy: list[tuple[str, Path, Path]] = []
@@ -669,7 +694,7 @@ class SubmoduleTask(Task):
     def get_subtasks(self) -> list[tuple[str, str]]:
         return [
             (self.name, self.description),
-            ("submodules_update", "Updating submodules"),
+            ("submodules_update", "updating submodules"),
         ]
 
     def _prepare(self, source: Path, target: Path) -> None:
@@ -688,7 +713,9 @@ class SubmoduleTask(Task):
                 self._submodules_to_copy.append((info.path, src, dst))
             elif not src_populated and info.url:
                 # Submodule not initialized in source - will need to clone
-                log(f"Will clone {info.path} (name={info.name}) from {info.url}")
+                _LOGGER.debug(
+                    f"Will clone {info.path} (name={info.name}) from {info.url}"
+                )
                 self._submodules_to_init.append((info.path, info.url))
 
     def run(self, source: Path, target: Path, spinner: Spinner) -> None:
@@ -717,7 +744,7 @@ class SubmoduleTask(Task):
             )
             if dst.exists():
                 shutil.rmtree(dst)
-            log(f"Copying submodule {submodule_path}")
+            _LOGGER.debug(f"Copying submodule {submodule_path}")
 
             # Copy working tree files (exclude .git) with retry
             for attempt in range(3):
@@ -727,7 +754,7 @@ class SubmoduleTask(Task):
                 except shutil.Error as e:
                     if attempt == 2:
                         raise
-                    log(f"Retrying copy of {submodule_path}: {e}")
+                    _LOGGER.debug(f"Retrying copy of {submodule_path}: {e}")
                     if dst.exists():
                         shutil.rmtree(dst)
                     time.sleep(0.1)
@@ -744,7 +771,9 @@ class SubmoduleTask(Task):
                         except shutil.Error as e:
                             if attempt == 2:
                                 raise
-                            log(f"Retrying .git copy for {submodule_path}: {e}")
+                            _LOGGER.debug(
+                                f"Retrying .git copy for {submodule_path}: {e}"
+                            )
                             if dst_git_dir.exists():
                                 shutil.rmtree(dst_git_dir)
                             time.sleep(0.1)
@@ -805,7 +834,7 @@ class SubmoduleTask(Task):
     def _clone_missing_submodules(self, target: Path) -> None:
         """Clone submodules that weren't initialized in source."""
         for submodule_path, url in self._submodules_to_init:
-            log(f"Cloning submodule {submodule_path} from {url}")
+            _LOGGER.debug(f"Cloning submodule {submodule_path} from {url}")
             submodule_dir = target / submodule_path
 
             # Get expected commit for this submodule
@@ -816,14 +845,14 @@ class SubmoduleTask(Task):
                 text=True,
             )
             if commit_result.returncode != 0:
-                log(f"  ls-tree failed for {submodule_path}")
+                _LOGGER.debug(f"  ls-tree failed for {submodule_path}")
                 continue
             parts = commit_result.stdout.split()
             if len(parts) < 3 or parts[1] != "commit":
-                log(f"  not a commit entry: {commit_result.stdout}")
+                _LOGGER.debug(f"  not a commit entry: {commit_result.stdout}")
                 continue
             commit = parts[2]
-            log(f"  target commit: {commit}")
+            _LOGGER.debug(f"  target commit: {commit}")
 
             # Clone and checkout
             if submodule_dir.exists():
@@ -834,7 +863,7 @@ class SubmoduleTask(Task):
                 text=True,
             )
             if clone_result.returncode != 0:
-                log(f"  clone failed: {clone_result.stderr}")
+                _LOGGER.debug(f"  clone failed: {clone_result.stderr}")
                 continue
 
             # Fetch the specific commit if not on default branch
@@ -861,7 +890,7 @@ class BuildTask(Task):
     """Copy build directories from source to target and fix paths."""
 
     name = "build"
-    description = "Processing build directory"
+    description = "processing build directory"
 
     def __init__(self) -> None:
         self._build_dirs_to_copy: list[tuple[Path, Path]] = []
@@ -874,8 +903,8 @@ class BuildTask(Task):
     def get_subtasks(self) -> list[tuple[str, str]]:
         return [
             (self.name, self.description),
-            ("cmake_paths", "Fixing CMake paths"),
-            ("ninja_files", "Fixing ninja files"),
+            ("cmake_paths", "fixing CMake paths"),
+            ("ninja_files", "fixing ninja files"),
         ]
 
     def _detect_build_dirs(self, source: Path, target: Path) -> None:
@@ -962,7 +991,7 @@ class BuildTask(Task):
         """Copy all detected build directories. Returns list of copied destination dirs."""
         copied = []
         for src_build, dst_build in self._build_dirs_to_copy:
-            log(f"Copying {src_build.name}")
+            _LOGGER.debug(f"Copying {src_build.name}")
             for attempt in range(3):
                 try:
                     shutil.copytree(src_build, dst_build, symlinks=True)
@@ -971,7 +1000,7 @@ class BuildTask(Task):
                 except shutil.Error as e:
                     if attempt == 2:
                         raise
-                    log(f"Retrying build copy: {e}")
+                    _LOGGER.debug(f"Retrying build copy: {e}")
                     if dst_build.exists():
                         shutil.rmtree(dst_build)
                     time.sleep(0.1)
@@ -1023,7 +1052,7 @@ class ClaudeTrustTask(Task):
     """Trust Claude Code in the new worktree."""
 
     name = "trust"
-    description = "Trusting Claude"
+    description = "trusting Claude"
 
     def should_run(self, source: Path, target: Path) -> bool:
         # Only run if claude command exists
@@ -1035,7 +1064,7 @@ class ClaudeTrustTask(Task):
 
     def _trust_claude(self, cwd: Path) -> bool:
         """Launch Claude CLI and automatically confirm the trust dialog."""
-        log("Starting Claude CLI...")
+        _LOGGER.debug("Starting Claude CLI...")
 
         master_fd, slave_fd = pty.openpty()
         set_terminal_size(slave_fd, 24, 120)
@@ -1050,7 +1079,7 @@ class ClaudeTrustTask(Task):
             cwd=cwd,
         )
         os.close(slave_fd)
-        log(f"Claude started (pid: {proc.pid})")
+        _LOGGER.debug(f"Claude started (pid: {proc.pid})")
 
         buffer = b""
         trust_confirmed = False
@@ -1060,17 +1089,17 @@ class ClaudeTrustTask(Task):
                 ready, _, _ = select.select([master_fd], [], [], 5)
 
                 if not ready:
-                    log("Waiting for Claude output...")
+                    _LOGGER.debug("Waiting for Claude output...")
                     continue
 
                 try:
                     data = os.read(master_fd, 4096)
                 except OSError as e:
-                    log(f"Read error: {e}")
+                    _LOGGER.debug(f"Read error: {e}")
                     break
 
                 if not data:
-                    log("No more data from Claude")
+                    _LOGGER.debug("No more data from Claude")
                     break
 
                 buffer += data
@@ -1081,30 +1110,32 @@ class ClaudeTrustTask(Task):
                 if snippet:
                     if len(snippet) > 100:
                         snippet = snippet[:100] + "..."
-                    log(f"Received: {repr(snippet)}")
+                    _LOGGER.debug(f"Received: {repr(snippet)}")
 
                 if not trust_confirmed and "trust this folder" in text.lower():
-                    log("Trust dialog detected! Sending Enter to confirm...")
+                    _LOGGER.debug("Trust dialog detected! Sending Enter to confirm...")
                     time.sleep(0.1)
                     os.write(master_fd, b"\r")
                     trust_confirmed = True
-                    log("Trust confirmed. Waiting for Claude to initialize...")
+                    _LOGGER.debug(
+                        "Trust confirmed. Waiting for Claude to initialize..."
+                    )
                     set_terminal_size(master_fd, 24, 120)
                     continue
 
                 if "Claude Code v" in text:
                     if trust_confirmed:
-                        log("Claude initialized. Killing process...")
+                        _LOGGER.debug("Claude initialized. Killing process...")
                     else:
-                        log("Already trusted. Killing process...")
+                        _LOGGER.debug("Already trusted. Killing process...")
                     os.close(master_fd)
                     proc.kill()
                     proc.wait()
-                    log("Done!")
+                    _LOGGER.debug("Done!")
                     return True
 
         except KeyboardInterrupt:
-            log("Interrupted by user")
+            _LOGGER.debug("Interrupted by user")
         finally:
             try:
                 os.close(master_fd)
@@ -1113,7 +1144,7 @@ class ClaudeTrustTask(Task):
             proc.kill()
             proc.wait()
 
-        log("Could not detect Claude ready state.")
+        _LOGGER.debug("Could not detect Claude ready state.")
         return False
 
 
@@ -1147,7 +1178,7 @@ class TaskRunner:
         """Run all applicable tasks in parallel."""
         applicable = self.get_applicable_tasks()
         if not applicable:
-            log("No tasks to run")
+            _LOGGER.debug("No tasks to run")
             return
 
         # Collect all subtasks for spinner display
@@ -1192,14 +1223,6 @@ class TaskRunner:
         finally:
             s.stop()
 
-        # Print summary to stderr (stdout may be captured by hook runner)
-        task_names = [t.name for t in applicable]
-        print(
-            f"{GREEN}{CHECK}{RESET} Grafted: {', '.join(task_names)}",
-            file=sys.stderr,
-            flush=True,
-        )
-
 
 # =============================================================================
 # CLI
@@ -1217,8 +1240,7 @@ class TaskRunner:
 @click.option("-v", "--verbose", is_flag=True, help="Enable verbose output")
 def main(worktree_path: str, source: str | None, verbose: bool) -> None:
     """Optimize a new git worktree by grafting cached state from the primary worktree."""
-    global VERBOSE
-    VERBOSE = verbose
+    _LOGGER.setLevel(logging.DEBUG if verbose else logging.INFO)
 
     target = Path(worktree_path)
 
@@ -1229,7 +1251,7 @@ def main(worktree_path: str, source: str | None, verbose: bool) -> None:
         source_path = find_primary_worktree(target)
 
     if source_path is None:
-        log("No source worktree found, nothing to graft")
+        _LOGGER.debug("No source worktree found, nothing to graft")
         sys.exit(0)
 
     # Validate worktrees
@@ -1238,8 +1260,8 @@ def main(worktree_path: str, source: str | None, verbose: bool) -> None:
         print(f"{RED}{CROSS}{RESET} {validation_error}")
         sys.exit(1)
 
-    log(f"Source: {source_path}")
-    log(f"Target: {target}")
+    _LOGGER.debug(f"Source: {source_path}")
+    _LOGGER.debug(f"Target: {target}")
 
     # Run all applicable tasks
     runner = TaskRunner(source=source_path, target=target)
