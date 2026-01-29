@@ -1158,6 +1158,10 @@ class TaskRunner:
         finally:
             s.stop()
 
+        # Print summary
+        task_names = [t.name for t in applicable]
+        print(f"{GREEN}\u2713{RESET} Grafted: {', '.join(task_names)}")
+
 
 # =============================================================================
 # CLI
