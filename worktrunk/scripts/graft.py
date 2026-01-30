@@ -1048,6 +1048,29 @@ class BuildTask(Task):
                 fix_ninja_log(ninja_log, build_dir, output_to_command)
 
 
+class ClaudeSettingsTask(Task):
+    """Copy Claude Code settings to the new worktree."""
+
+    name = "claude_settings"
+    description = "copying Claude settings"
+
+    def should_run(self, source: Path, target: Path) -> bool:
+        settings_src = source / ".claude" / "settings.local.json"
+        return settings_src.exists()
+
+    def run(self, source: Path, target: Path, spinner: Spinner) -> None:
+        settings_src = source / ".claude" / "settings.local.json"
+        settings_dst = target / ".claude" / "settings.local.json"
+
+        # Create .claude directory if needed
+        settings_dst.parent.mkdir(parents=True, exist_ok=True)
+
+        # Copy the settings file
+        shutil.copy2(settings_src, settings_dst)
+
+        spinner.complete_task(self.name)
+
+
 class ClaudeTrustTask(Task):
     """Trust Claude Code in the new worktree."""
 
@@ -1167,6 +1190,7 @@ class TaskRunner:
             TimestampTask(),
             SubmoduleTask(),
             BuildTask(),
+            ClaudeSettingsTask(),
             ClaudeTrustTask(),
         ]
 
