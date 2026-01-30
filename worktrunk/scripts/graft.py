@@ -7,14 +7,18 @@ graft: Optimize a new git worktree by copying cached state from the primary work
 
 Usage as worktrunk post-create hook:
   [post-create]
-  graft = "~/.config/worktrunk/scripts/graft.py {{ worktree_path }}"
+  graft = "~/.config/worktrunk/scripts/graft.py {{ worktree_path }} --remote-url '{{ remote_url }}' --branch '{{ branch }}'"
 
 What it does:
   - Copies file timestamps (preserves build cache validity)
   - Copies submodules with their .git directories (avoids network fetches)
   - Copies CMake build directory and fixes embedded paths
   - Fixes ninja build files (.ninja_log hashes, .ninja_deps paths)
+  - Copies Claude Code settings and sets CLAUDE_CODE_TASK_LIST_ID
   - Trusts Claude Code in the new worktree
+
+The CLAUDE_CODE_TASK_LIST_ID is derived from the remote URL (org-repo) and branch name,
+enabling isolated task lists per worktree in Claude Code.
 """
 
 from __future__ import annotations
@@ -57,6 +61,61 @@ BUILD_DIR_PATTERNS = [
     ".build",  # Alternative convention
     "_build",  # Another alternative
 ]
+
+
+# =============================================================================
+# URL Parsing and Sanitization
+# =============================================================================
+
+
+def parse_org_repo_from_url(url: str) -> tuple[str, str] | None:
+    """Parse org and repo from a GitHub/GitLab remote URL.
+
+    Handles:
+      - HTTPS: https://github.com/owner/repo.git
+      - SSH: git@github.com:owner/repo.git
+      - GitLab nested: gitlab.com/group/subgroup/repo -> (subgroup, repo)
+
+    Returns (org, repo) tuple or None if URL format is unrecognized.
+    """
+    # Strip .git suffix
+    url = url.rstrip("/")
+    if url.endswith(".git"):
+        url = url[:-4]
+
+    # SSH format: git@host:path
+    ssh_match = re.match(r"^git@[^:]+:(.+)$", url)
+    if ssh_match:
+        path = ssh_match.group(1)
+        parts = path.split("/")
+        if len(parts) >= 2:
+            return (parts[-2], parts[-1])
+        return None
+
+    # HTTPS format: https://host/path
+    https_match = re.match(r"^https?://[^/]+/(.+)$", url)
+    if https_match:
+        path = https_match.group(1)
+        parts = path.split("/")
+        if len(parts) >= 2:
+            return (parts[-2], parts[-1])
+        return None
+
+    return None
+
+
+def sanitize_for_id(name: str) -> str:
+    """Sanitize a branch name for use in task list ID.
+
+    Replaces /, \\, :, #, ., and spaces with -.
+    Collapses multiple - into one and strips leading/trailing -.
+    """
+    # Replace problematic characters with -
+    result = re.sub(r"[/\\:#.\s]+", "-", name)
+    # Collapse multiple - into one
+    result = re.sub(r"-+", "-", result)
+    # Strip leading/trailing -
+    return result.strip("-")
 
 
 # =============================================================================
@@ -1049,14 +1108,21 @@ class BuildTask(Task):
 
 
 class ClaudeSettingsTask(Task):
-    """Copy Claude Code settings to the new worktree."""
+    """Copy Claude Code settings and set CLAUDE_CODE_TASK_LIST_ID."""
 
     name = "claude_settings"
-    description = "copying Claude settings"
+    description = "configuring Claude settings"
+
+    def __init__(
+        self, remote_url: str | None = None, branch: str | None = None
+    ) -> None:
+        self._remote_url = remote_url
+        self._branch = branch
 
     def should_run(self, source: Path, target: Path) -> bool:
         settings_src = source / ".claude" / "settings.local.json"
-        return settings_src.exists()
+        # Run if source settings exist OR if we can set task list ID
+        return settings_src.exists() or (self._remote_url and self._branch)
 
     def run(self, source: Path, target: Path, spinner: Spinner) -> None:
         settings_src = source / ".claude" / "settings.local.json"
@@ -1065,10 +1131,39 @@ class ClaudeSettingsTask(Task):
         # Create .claude directory if needed
         settings_dst.parent.mkdir(parents=True, exist_ok=True)
 
-        # Copy the settings file
-        shutil.copy2(settings_src, settings_dst)
+        # Start with existing settings or empty dict
+        settings: dict = {}
+        if settings_src.exists():
+            shutil.copy2(settings_src, settings_dst)
+            try:
+                settings = json.loads(settings_dst.read_text())
+            except (json.JSONDecodeError, OSError):
+                settings = {}
+
+        # Set task list ID if we have remote URL and branch
+        task_list_id = self._build_task_list_id()
+        if task_list_id:
+            if "env" not in settings:
+                settings["env"] = {}
+            settings["env"]["CLAUDE_CODE_TASK_LIST_ID"] = task_list_id
+            settings_dst.write_text(json.dumps(settings, indent=2) + "\n")
+            _LOGGER.debug(f"Set CLAUDE_CODE_TASK_LIST_ID={task_list_id}")
 
         spinner.complete_task(self.name)
+
+    def _build_task_list_id(self) -> str | None:
+        """Build task list ID from remote URL and branch."""
+        if not self._remote_url or not self._branch:
+            return None
+
+        parsed = parse_org_repo_from_url(self._remote_url)
+        if not parsed:
+            _LOGGER.debug(f"Could not parse org/repo from URL: {self._remote_url}")
+            return None
+
+        org, repo = parsed
+        sanitized_branch = sanitize_for_id(self._branch)
+        return f"{org}-{repo}-{sanitized_branch}"
 
 
 class ClaudeTrustTask(Task):
@@ -1182,6 +1277,8 @@ class TaskRunner:
 
     source: Path
     target: Path
+    remote_url: str | None = None
+    branch: str | None = None
     tasks: list[Task] = field(default_factory=list)
 
     def __post_init__(self) -> None:
@@ -1190,7 +1287,7 @@ class TaskRunner:
             TimestampTask(),
             SubmoduleTask(),
             BuildTask(),
-            ClaudeSettingsTask(),
+            ClaudeSettingsTask(remote_url=self.remote_url, branch=self.branch),
             ClaudeTrustTask(),
         ]
 
@@ -1253,6 +1350,32 @@ class TaskRunner:
 # =============================================================================
 
 
+def detect_remote_url(worktree_path: Path) -> str | None:
+    """Detect the remote URL from git origin."""
+    result = subprocess.run(
+        ["git", "remote", "get-url", "origin"],
+        cwd=worktree_path,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode == 0:
+        return result.stdout.strip()
+    return None
+
+
+def detect_branch(worktree_path: Path) -> str | None:
+    """Detect the current branch name."""
+    result = subprocess.run(
+        ["git", "branch", "--show-current"],
+        cwd=worktree_path,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode == 0 and result.stdout.strip():
+        return result.stdout.strip()
+    return None
+
+
 @click.command()
 @click.argument("worktree_path", type=click.Path(exists=True, resolve_path=True))
 @click.option(
@@ -1261,8 +1384,22 @@ class TaskRunner:
     type=click.Path(exists=True, resolve_path=True),
     help="Source worktree path (default: auto-detect primary worktree)",
 )
+@click.option(
+    "--remote-url",
+    help="Git remote URL (default: auto-detect from origin)",
+)
+@click.option(
+    "--branch",
+    help="Branch name (default: auto-detect current branch)",
+)
 @click.option("-v", "--verbose", is_flag=True, help="Enable verbose output")
-def main(worktree_path: str, source: str | None, verbose: bool) -> None:
+def main(
+    worktree_path: str,
+    source: str | None,
+    remote_url: str | None,
+    branch: str | None,
+    verbose: bool,
+) -> None:
     """Optimize a new git worktree by grafting cached state from the primary worktree."""
     _LOGGER.setLevel(logging.DEBUG if verbose else logging.INFO)
 
@@ -1284,11 +1421,32 @@ def main(worktree_path: str, source: str | None, verbose: bool) -> None:
         print(f"{RED}{CROSS}{RESET} {validation_error}")
         sys.exit(1)
 
+    # Auto-detect remote URL and branch if not provided
+    if not remote_url:
+        remote_url = detect_remote_url(target)
+        if not remote_url:
+            _LOGGER.debug("Could not detect remote URL, skipping task list ID setup")
+    if not branch:
+        branch = detect_branch(target)
+        if not branch:
+            _LOGGER.debug(
+                "Could not detect branch (detached HEAD?), skipping task list ID setup"
+            )
+
     _LOGGER.debug(f"Source: {source_path}")
     _LOGGER.debug(f"Target: {target}")
+    if remote_url:
+        _LOGGER.debug(f"Remote URL: {remote_url}")
+    if branch:
+        _LOGGER.debug(f"Branch: {branch}")
 
     # Run all applicable tasks
-    runner = TaskRunner(source=source_path, target=target)
+    runner = TaskRunner(
+        source=source_path,
+        target=target,
+        remote_url=remote_url,
+        branch=branch,
+    )
     runner.run()
 
 
