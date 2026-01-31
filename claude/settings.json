@@ -23,7 +23,7 @@
       "ExitPlanMode",
       "SlashCommand"
     ],
-    "defaultMode": "default"
+    "defaultMode": "plan"
   },
   "statusLine": {
     "type": "command",
