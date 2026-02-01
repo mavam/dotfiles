@@ -40,14 +40,20 @@ if command -sq bat
   set -x MANPAGER "sh -c 'col -bx | bat -l man -p'"
 end
 
-# Delta (git pager) light/dark mode detection for macOS.
+# Light/dark mode detection for macOS.
+# AppleInterfaceStyle key only exists in dark mode; absent means light mode.
 # OSC color queries are disabled in Ghostty to prevent escape sequence leaks,
-# so we detect system appearance manually and configure delta accordingly.
+# so we detect system appearance manually.
+set -g _is_light_mode false
 if test (uname) = Darwin
-  # AppleInterfaceStyle key only exists in dark mode; absent means light mode
   if not defaults read -g AppleInterfaceStyle &>/dev/null
-    set -gx DELTA_FEATURES light-mode
+    set -g _is_light_mode true
   end
+end
+
+# Delta (git pager)
+if $_is_light_mode
+  set -gx DELTA_FEATURES light-mode
 end
 
 # Homebrew
@@ -64,13 +70,15 @@ set -x CMAKE_CXX_COMPILER_LAUNCHER ccache
 # Docker
 set -x DOCKER_BUILDKIT 1
 
-set -x FZF_DEFAULT_OPTS \
+set -gx FZF_DEFAULT_OPTS \
   --bind=ctrl-k:up,ctrl-j:down,ctrl-h:page-up,ctrl-l:page-down \
   --bind=ctrl-p:half-page-up,ctrl-n:half-page-down \
   --bind=ctrl-e:preview-down,ctrl-y:preview-up \
   --bind=ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down \
   --bind=ctrl-b:preview-page-up,ctrl-f:preview-page-down \
   --preview-window=top
+# Disable fd colors in fzf so fzf controls all coloring
+set -g fzf_fd_opts --color=never
 
 # Interactive shells
 # ---------------------------------------------------------------------
@@ -92,7 +100,11 @@ if status is-interactive
   # CTRL+g for "g"it log.
   bind \cg _fzf_search_git_log
   bind -M insert \cg _fzf_search_git_log
+  # CTRL+s for git "s"tatus.
+  bind \cs _fzf_search_git_status
+  bind -M insert \cs _fzf_search_git_status
   # CTRL+b for "b"rocess, brother.
+  bind \cb _fzf_search_processes
   bind -M insert \cb _fzf_search_processes
   # CTRL+n/p for quick history traversal
   bind \cn history-prefix-search-forward
