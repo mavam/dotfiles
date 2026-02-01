@@ -92,6 +92,16 @@ if status is-interactive
 
   # Vi bindings.
   fish_vi_key_bindings
+  # Custom keybindings (active in both normal and insert mode unless noted):
+  #   Ctrl+E  - accept autosuggestion and execute (insert only)
+  #   Ctrl+O  - fzf: search files/directories
+  #   Ctrl+G  - fzf: search git log
+  #   Ctrl+S  - fzf: search git status
+  #   Ctrl+B  - fzf: search processes
+  #   Ctrl+R  - fzf: search history (fzf.fish default)
+  #   Ctrl+V  - fzf: search variables (fzf.fish default)
+  #   Ctrl+N  - history prefix search forward
+  #   Ctrl+P  - history prefix search backward
   # CTRL+e for "e"xecute auto-suggestion.
   bind -M insert \ce accept-autosuggestion execute
   # CTRL+o for "o"pen .
