@@ -70,14 +70,19 @@ set -x CMAKE_CXX_COMPILER_LAUNCHER ccache
 # Docker
 set -x DOCKER_BUILDKIT 1
 
+# fzf (fuzzy finder)
 set -gx FZF_DEFAULT_OPTS \
   --bind=ctrl-k:up,ctrl-j:down,ctrl-h:page-up,ctrl-l:page-down \
-  --bind=ctrl-p:half-page-up,ctrl-n:half-page-down \
   --bind=ctrl-e:preview-down,ctrl-y:preview-up \
   --bind=ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down \
   --bind=ctrl-b:preview-page-up,ctrl-f:preview-page-down \
   --preview-window=top
-# Disable fd colors in fzf so fzf controls all coloring
+if $_is_light_mode
+  set -gx FZF_DEFAULT_OPTS $FZF_DEFAULT_OPTS --color=light
+else
+  set -gx FZF_DEFAULT_OPTS $FZF_DEFAULT_OPTS --color=dark
+end
+# Disable fd colors so fzf controls all coloring
 set -g fzf_fd_opts --color=never
 
 # Interactive shells
@@ -92,31 +97,17 @@ if status is-interactive
 
   # Vi bindings.
   fish_vi_key_bindings
+
   # Custom keybindings (active in both normal and insert mode unless noted):
   #   Ctrl+E  - accept autosuggestion and execute (insert only)
-  #   Ctrl+O  - fzf: search files/directories
-  #   Ctrl+G  - fzf: search git log
-  #   Ctrl+S  - fzf: search git status
-  #   Ctrl+B  - fzf: search processes
-  #   Ctrl+R  - fzf: search history (fzf.fish default)
-  #   Ctrl+V  - fzf: search variables (fzf.fish default)
+  #   Ctrl+O  - fzf: search files (fzf.fish)
+  #   Ctrl+R  - fzf: search history (fzf.fish)
+  #   Ctrl+G  - fzf: search git log (fzf.fish)
+  #   Ctrl+S  - fzf: search git status (fzf.fish)
   #   Ctrl+N  - history prefix search forward
   #   Ctrl+P  - history prefix search backward
-  # CTRL+e for "e"xecute auto-suggestion.
   bind -M insert \ce accept-autosuggestion execute
-  # CTRL+o for "o"pen .
-  bind \co _fzf_search_directory
-  bind -M insert \co _fzf_search_directory
-  # CTRL+g for "g"it log.
-  bind \cg _fzf_search_git_log
-  bind -M insert \cg _fzf_search_git_log
-  # CTRL+s for git "s"tatus.
-  bind \cs _fzf_search_git_status
-  bind -M insert \cs _fzf_search_git_status
-  # CTRL+b for "b"rocess, brother.
-  bind \cb _fzf_search_processes
-  bind -M insert \cb _fzf_search_processes
-  # CTRL+n/p for quick history traversal
+  fzf_configure_bindings --directory=\co --history=\cr --git_log=\cg --git_status=\cs
   bind \cn history-prefix-search-forward
   bind -M insert \cn history-prefix-search-forward
   bind \cp history-prefix-search-backward
