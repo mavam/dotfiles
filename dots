@@ -642,13 +642,15 @@ run_post_install_hooks() {
   reset_manifest_state
   parse_manifest "$tool" "$manifest"
 
-  local cmd
-  for cmd in "${MANIFEST_POST_INSTALL[@]}"; do
-    log_action "running: $cmd"
-    if ! eval "$cmd"; then
-      log_warn "hook failed: $cmd"
-    fi
-  done
+  if [[ ${#MANIFEST_POST_INSTALL[@]} -gt 0 ]]; then
+    local cmd
+    for cmd in "${MANIFEST_POST_INSTALL[@]}"; do
+      log_action "running: $cmd"
+      if ! eval "$cmd"; then
+        log_warn "hook failed: $cmd"
+      fi
+    done
+  fi
 }
 
 command_install() {
@@ -658,7 +660,10 @@ command_install() {
   else
     tools=()
     while [[ $# -gt 0 ]]; do
-      tools+=("$(normalize_tool_name "$1")")
+      case "$1" in
+        -f|--force) FORCE=1 ;;
+        *) tools+=("$(normalize_tool_name "$1")") ;;
+      esac
       shift
     done
   fi
@@ -802,7 +807,7 @@ parse_global_opts() {
         PREFIX="${args[$((idx+1))]}"
         idx=$((idx+2))
         ;;
-      --force)
+      -f|--force)
         FORCE=1
         idx=$((idx+1))
         ;;
