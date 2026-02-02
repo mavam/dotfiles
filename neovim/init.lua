@@ -43,6 +43,12 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", {
   silent = true,
 })
 
+-- Window navigation (works in normal and terminal mode).
+vim.keymap.set({ 'n', 't' }, '<C-h>', '<cmd>wincmd h<cr>', { desc = 'Go to left window' })
+vim.keymap.set({ 'n', 't' }, '<C-j>', '<cmd>wincmd j<cr>', { desc = 'Go to down window' })
+vim.keymap.set({ 'n', 't' }, '<C-k>', '<cmd>wincmd k<cr>', { desc = 'Go to up window' })
+vim.keymap.set({ 'n', 't' }, '<C-l>', '<cmd>wincmd l<cr>', { desc = 'Go to right window' })
+
 -- Highlight on yank.
 vim.api.nvim_exec([[
     augroup YankHighlight
