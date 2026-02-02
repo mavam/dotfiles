@@ -133,7 +133,15 @@ return {
     end
   },
   { 'windwp/nvim-autopairs', config = function()
-    require('nvim-autopairs').setup {}
+    local npairs = require('nvim-autopairs')
+    local Rule = require('nvim-autopairs.rule')
+    local cond = require('nvim-autopairs.conds')
+
+    npairs.setup {}
+
+    -- Add triple-backtick support for mdx filetype (not included by default)
+    npairs.add_rule(Rule('```', '```', 'mdx'):with_pair(cond.not_before_char('`', 3)))
+    npairs.add_rule(Rule('```.*$', '```', 'mdx'):only_cr():use_regex(true))
   end
   },
 }
