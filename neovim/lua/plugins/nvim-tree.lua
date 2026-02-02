@@ -6,6 +6,6 @@ return {
     require'nvim-tree'.setup {
     }
     -- mnemonic: 't' for filesystem 'T'ree
-    vim.keymap.set('n', '<leader>t', ':NvimTreeToggle<Cr>', { silent = true })
+    vim.keymap.set('n', '<leader>t', ':NvimTreeToggle<Cr>', { silent = true, desc = 'Toggle file tree' })
   end
 }
