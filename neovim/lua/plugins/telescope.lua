@@ -17,15 +17,18 @@ return {
         },
       }
       local opts = { silent = true }
-      vim.keymap.set('n', '<Tab>', function() require('telescope.builtin').buffers({sort_lastused = true, require('telescope.themes').get_ivy({})}) end, opts)
-      vim.keymap.set('n', '<S-Tab>', function() require('telescope.builtin').git_files(require('telescope.themes').get_ivy({})) end, opts)
-      vim.keymap.set('n', '<leader>sf', function() require('telescope.builtin').find_files({previewer = false}) end, opts)
-      vim.keymap.set('n', '<leader>sb', function() require('telescope.builtin').current_buffer_fuzzy_find() end, opts)
-      vim.keymap.set('n', '<leader>sh', function() require('telescope.builtin').help_tags() end, opts)
-      vim.keymap.set('n', '<leader>st', function() require('telescope.builtin').tags() end, opts)
-      vim.keymap.set('n', '<leader>sd', function() require('telescope.builtin').grep_string() end, opts)
-      vim.keymap.set('n', '<leader>sp', function() require('telescope.builtin').live_grep() end, opts)
-      vim.keymap.set('n', '<leader>so', function() require('telescope.builtin').tags{ only_current_buffer = true } end, opts)
-      vim.keymap.set('n', '<leader>?', function() require('telescope.builtin').oldfiles() end, opts)
+      -- Navigation: restore jump list
+      vim.keymap.set('n', '<S-Tab>', '<C-o>', opts)
+      -- Core
+      vim.keymap.set('n', '<leader>f', function() require('telescope.builtin').find_files() end, opts)
+      vim.keymap.set('n', '<leader>b', function() require('telescope.builtin').buffers({ sort_lastused = true }) end, opts)
+      vim.keymap.set('n', '<leader>s', function() require('telescope.builtin').live_grep() end, opts)
+      vim.keymap.set('n', '<leader>h', function() require('telescope.builtin').help_tags() end, opts)
+      vim.keymap.set('n', '<leader>k', function() require('telescope.builtin').keymaps() end, opts)
+      -- Git
+      vim.keymap.set('n', '<leader>gf', function() require('telescope.builtin').git_files() end, opts)
+      vim.keymap.set('n', '<leader>gc', function() require('telescope.builtin').git_commits() end, opts)
+      vim.keymap.set('n', '<leader>gb', function() require('telescope.builtin').git_branches() end, opts)
+      vim.keymap.set('n', '<leader>gl', function() require('telescope.builtin').git_bcommits() end, opts)
     end
 }
