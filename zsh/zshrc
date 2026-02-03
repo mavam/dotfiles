@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 
-# Minimal zshrc - starship prompt only
+# Minimal zshrc - fish is the primary interactive shell.
 if command -v starship &> /dev/null; then
   eval "$(starship init zsh)"
 fi
