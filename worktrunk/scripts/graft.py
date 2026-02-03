@@ -727,7 +727,14 @@ class TimestampTask(Task):
                 except OSError:
                     pass  # Skip files that can't be stat'd or utime'd
 
-        files = [f for f in source.rglob("*") if f.is_file() and not f.is_symlink()]
+        def is_regular_file(p: Path) -> bool:
+            """Check if path is a regular file, handling stat errors gracefully."""
+            try:
+                return p.is_file() and not p.is_symlink()
+            except OSError:
+                return False
+
+        files = [f for f in source.rglob("*") if is_regular_file(f)]
         with ThreadPoolExecutor(max_workers=8) as executor:
             list(executor.map(copy_timestamp, files))
 
