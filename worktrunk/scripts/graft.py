@@ -519,6 +519,37 @@ def get_git_modules_dir(worktree_path: Path) -> Path | None:
     return (worktree_path / result.stdout.strip() / "modules").resolve()
 
 
+def get_worktree_git_dir(worktree_path: Path) -> Path | None:
+    """Get the .git directory for a worktree."""
+    result = subprocess.run(
+        ["git", "rev-parse", "--git-dir"],
+        cwd=worktree_path,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode == 0:
+        return (worktree_path / result.stdout.strip()).resolve()
+    return None
+
+
+def remove_stale_lock(worktree_path: Path) -> bool:
+    """Remove stale index.lock if older than 60 seconds."""
+    git_dir = get_worktree_git_dir(worktree_path)
+    if not git_dir:
+        return False
+
+    lock_file = git_dir / "index.lock"
+    if not lock_file.exists():
+        return False
+
+    lock_age = time.time() - lock_file.stat().st_mtime
+    if lock_age > 60:
+        _LOGGER.warning(f"Removing stale lock ({lock_age:.0f}s old): {lock_file}")
+        lock_file.unlink()
+        return True
+    return False
+
+
 # =============================================================================
 # Ninja Utilities
 # =============================================================================
@@ -1250,12 +1281,16 @@ class ClaudeTrustTask(Task):
 
                 if "Claude Code v" in text:
                     if trust_confirmed:
-                        _LOGGER.debug("Claude initialized. Killing process...")
+                        _LOGGER.debug("Claude initialized. Terminating process...")
                     else:
-                        _LOGGER.debug("Already trusted. Killing process...")
+                        _LOGGER.debug("Already trusted. Terminating process...")
                     os.close(master_fd)
-                    proc.kill()
-                    proc.wait()
+                    proc.terminate()  # SIGTERM - allows cleanup
+                    try:
+                        proc.wait(timeout=2)
+                    except subprocess.TimeoutExpired:
+                        proc.kill()
+                        proc.wait()
                     _LOGGER.debug("Done!")
                     return True
 
@@ -1266,8 +1301,12 @@ class ClaudeTrustTask(Task):
                 os.close(master_fd)
             except OSError:
                 pass
-            proc.kill()
-            proc.wait()
+            proc.terminate()  # SIGTERM - allows cleanup
+            try:
+                proc.wait(timeout=2)
+            except subprocess.TimeoutExpired:
+                proc.kill()
+                proc.wait()
 
         _LOGGER.debug("Could not detect Claude ready state.")
         return False
@@ -1304,6 +1343,9 @@ class TaskRunner:
 
     def run(self) -> None:
         """Run all applicable tasks in parallel."""
+        # Clean up stale index.lock from previous interrupted operations
+        remove_stale_lock(self.target)
+
         applicable = self.get_applicable_tasks()
         if not applicable:
             _LOGGER.debug("No tasks to run")
