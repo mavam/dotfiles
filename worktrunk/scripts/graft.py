@@ -15,7 +15,6 @@ What it does:
   - Copies CMake build directory and fixes embedded paths
   - Fixes ninja build files (.ninja_log hashes, .ninja_deps paths)
   - Copies Claude Code settings and sets CLAUDE_CODE_TASK_LIST_ID
-  - Trusts Claude Code in the new worktree
 
 The CLAUDE_CODE_TASK_LIST_ID is derived from the remote URL (org-repo) and branch name,
 enabling isolated task lists per worktree in Claude Code.
@@ -24,19 +23,13 @@ enabling isolated task lists per worktree in Claude Code.
 from __future__ import annotations
 
 import contextlib
-import fcntl
 import json
 import logging
 import os
-import pty
 import re
-import select
 import shutil
-import signal
-import struct
 import subprocess
 import sys
-import termios
 import threading
 import time
 from abc import ABC, abstractmethod
@@ -699,17 +692,6 @@ def fix_ninja_deps(ninja_deps_path: Path, src_str: str, dst_str: str) -> None:
 
 
 # =============================================================================
-# PTY Utilities (for Claude trust)
-# =============================================================================
-
-
-def set_terminal_size(fd: int, rows: int = 24, cols: int = 80) -> None:
-    """Set the terminal size for a PTY."""
-    winsize = struct.pack("HHHH", rows, cols, 0, 0)
-    fcntl.ioctl(fd, termios.TIOCSWINSZ, winsize)
-
-
-# =============================================================================
 # Task System
 # =============================================================================
 
@@ -1210,126 +1192,6 @@ class ClaudeSettingsTask(Task):
         return f"{org}-{repo}-{sanitized_branch}"
 
 
-class ClaudeTrustTask(Task):
-    """Trust Claude Code in the new worktree."""
-
-    name = "trust"
-    description = "trusting Claude"
-
-    def should_run(self, source: Path, target: Path) -> bool:
-        # Only run if claude command exists
-        return shutil.which("claude") is not None
-
-    def run(self, source: Path, target: Path, spinner: Spinner) -> None:
-        self._trust_claude(target)
-        spinner.complete_task(self.name)
-
-    def _trust_claude(self, cwd: Path) -> bool:
-        """Launch Claude CLI and automatically confirm the trust dialog."""
-        _LOGGER.debug("Starting Claude CLI...")
-
-        master_fd, slave_fd = pty.openpty()
-        set_terminal_size(slave_fd, 24, 120)
-
-        # Use subprocess instead of fork to avoid issues with threading
-        proc = subprocess.Popen(
-            ["claude"],
-            stdin=slave_fd,
-            stdout=slave_fd,
-            stderr=slave_fd,
-            start_new_session=True,
-            cwd=cwd,
-        )
-        os.close(slave_fd)
-        _LOGGER.debug(f"Claude started (pid: {proc.pid})")
-
-        buffer = b""
-        trust_confirmed = False
-
-        try:
-            while True:
-                ready, _, _ = select.select([master_fd], [], [], 5)
-
-                if not ready:
-                    _LOGGER.debug("Waiting for Claude output...")
-                    continue
-
-                try:
-                    data = os.read(master_fd, 4096)
-                except OSError as e:
-                    _LOGGER.debug(f"Read error: {e}")
-                    break
-
-                if not data:
-                    _LOGGER.debug("No more data from Claude")
-                    break
-
-                buffer += data
-                raw_text = buffer.decode("utf-8", errors="ignore")
-                text = strip_ansi(raw_text)
-
-                snippet = strip_ansi(data.decode("utf-8", errors="ignore")).strip()
-                if snippet:
-                    if len(snippet) > 100:
-                        snippet = snippet[:100] + "..."
-                    _LOGGER.debug(f"Received: {repr(snippet)}")
-
-                if not trust_confirmed and "trust this folder" in text.lower():
-                    _LOGGER.debug("Trust dialog detected! Sending Enter to confirm...")
-                    time.sleep(0.1)
-                    os.write(master_fd, b"\r")
-                    trust_confirmed = True
-                    _LOGGER.debug(
-                        "Trust confirmed. Waiting for Claude to initialize..."
-                    )
-                    set_terminal_size(master_fd, 24, 120)
-                    continue
-
-                if "Claude Code v" in text:
-                    if trust_confirmed:
-                        _LOGGER.debug("Claude initialized. Terminating process...")
-                    else:
-                        _LOGGER.debug("Already trusted. Terminating process...")
-                    os.close(master_fd)
-                    try:
-                        os.killpg(proc.pid, signal.SIGTERM)
-                    except ProcessLookupError:
-                        pass  # Process group already exited
-                    try:
-                        proc.wait(timeout=2)
-                    except subprocess.TimeoutExpired:
-                        try:
-                            os.killpg(proc.pid, signal.SIGKILL)
-                        except ProcessLookupError:
-                            pass
-                        proc.wait()
-                    _LOGGER.debug("Done!")
-                    return True
-
-        except KeyboardInterrupt:
-            _LOGGER.debug("Interrupted by user")
-        finally:
-            try:
-                os.close(master_fd)
-            except OSError:
-                pass
-            try:
-                os.killpg(proc.pid, signal.SIGTERM)
-            except ProcessLookupError:
-                pass  # Process group already exited
-            try:
-                proc.wait(timeout=2)
-            except subprocess.TimeoutExpired:
-                try:
-                    os.killpg(proc.pid, signal.SIGKILL)
-                except ProcessLookupError:
-                    pass
-                proc.wait()
-
-        _LOGGER.debug("Could not detect Claude ready state.")
-        return False
-
-
 # =============================================================================
 # Task Runner
 # =============================================================================
@@ -1352,7 +1214,6 @@ class TaskRunner:
             SubmoduleTask(),
             BuildTask(),
             ClaudeSettingsTask(remote_url=self.remote_url, branch=self.branch),
-            ClaudeTrustTask(),
         ]
 
     def get_applicable_tasks(self) -> list[Task]:
@@ -1389,7 +1250,7 @@ class TaskRunner:
             # - TimestampTask: existing tracked files only
             # - SubmoduleTask: <submodule>/ directories
             # - BuildTask: build/*/ directories
-            # - ClaudeTrustTask: external process, no file writes
+            # - ClaudeSettingsTask: .claude/ directory
             with ThreadPoolExecutor(max_workers=len(applicable)) as executor:
                 futures = {
                     executor.submit(task.run, self.source, self.target, s): task
