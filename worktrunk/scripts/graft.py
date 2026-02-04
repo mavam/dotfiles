@@ -1178,6 +1178,11 @@ class ClaudeSettingsTask(Task):
                 settings = json.loads(settings_dst.read_text())
             except (json.JSONDecodeError, OSError):
                 settings = {}
+        elif settings_dst.exists():
+            try:
+                settings = json.loads(settings_dst.read_text())
+            except (json.JSONDecodeError, OSError):
+                settings = {}
 
         # Set task list ID if we have remote URL and branch
         task_list_id = self._build_task_list_id()
