@@ -32,6 +32,7 @@ import pty
 import re
 import select
 import shutil
+import signal
 import struct
 import subprocess
 import sys
@@ -1285,11 +1286,17 @@ class ClaudeTrustTask(Task):
                     else:
                         _LOGGER.debug("Already trusted. Terminating process...")
                     os.close(master_fd)
-                    proc.terminate()  # SIGTERM - allows cleanup
+                    try:
+                        os.killpg(proc.pid, signal.SIGTERM)
+                    except ProcessLookupError:
+                        pass  # Process group already exited
                     try:
                         proc.wait(timeout=2)
                     except subprocess.TimeoutExpired:
-                        proc.kill()
+                        try:
+                            os.killpg(proc.pid, signal.SIGKILL)
+                        except ProcessLookupError:
+                            pass
                         proc.wait()
                     _LOGGER.debug("Done!")
                     return True
@@ -1301,11 +1308,17 @@ class ClaudeTrustTask(Task):
                 os.close(master_fd)
             except OSError:
                 pass
-            proc.terminate()  # SIGTERM - allows cleanup
+            try:
+                os.killpg(proc.pid, signal.SIGTERM)
+            except ProcessLookupError:
+                pass  # Process group already exited
             try:
                 proc.wait(timeout=2)
             except subprocess.TimeoutExpired:
-                proc.kill()
+                try:
+                    os.killpg(proc.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
                 proc.wait()
 
         _LOGGER.debug("Could not detect Claude ready state.")
