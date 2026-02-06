@@ -80,15 +80,15 @@ set -g fzf_fd_opts --color=never
 # Interactive shells
 # ---------------------------------------------------------------------
 if status is-interactive
+  # Vi bindings!
+  fish_vi_key_bindings
+
   # Disable terminal focus reporting (DECSET mode 1004). When enabled, terminals
   # send ESC[I/ESC[O on focus change. Claude Code's input handler doesn't filter
   # these, causing them to leak as visible text. This is a CC bug, not a terminal
   # or shell issue, but disabling the mode here works around it.
   # https://github.com/anthropics/claude-code/issues/10375
   printf '\e[?1004l'
-
-  # Vi bindings.
-  fish_vi_key_bindings
 
   # Custom keybindings (active in both normal and insert mode unless noted):
   #   Ctrl+E  - accept autosuggestion and execute (insert only)
