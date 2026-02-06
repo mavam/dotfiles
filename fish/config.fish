@@ -11,15 +11,7 @@ switch (uname)
     fish_add_path -g /opt/homebrew/bin    # Homebrew
     fish_add_path -g /opt/homebrew/sbin   # Homebrew
     fish_add_path -g /usr/X11R6/bin       # Apple's X11
-    fish_add_path -g /Library/TeX/texbin  # MacTeX
 end
-
-# Rust
-fish_add_path -g $HOME/.cargo/bin
-
-# Go
-set -x GOPATH $HOME/.go
-fish_add_path -g $GOPATH/bin
 
 # Editor
 if command -sq nvim
