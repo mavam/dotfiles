@@ -56,6 +56,14 @@ BUILD_DIR_PATTERNS = [
     "_build",  # Another alternative
 ]
 
+# Lock handling for transient git index contention.
+INDEX_LOCK_RETRY_ATTEMPTS = 8
+INDEX_LOCK_RETRY_DELAY_SECONDS = 0.25
+
+# Stale lock cleanup is opt-in to avoid deleting a lock owned by a live git process.
+STALE_LOCK_MAX_AGE_SECONDS = 15 * 60
+STALE_LOCK_CLEANUP_ENV = "GRAFT_REMOVE_STALE_INDEX_LOCK"
+
 
 # =============================================================================
 # URL Parsing and Sanitization
@@ -86,10 +94,10 @@ def parse_org_repo_from_url(url: str) -> tuple[str, str] | None:
             return (parts[-2], parts[-1])
         return None
 
-    # HTTPS format: https://host/path
-    https_match = re.match(r"^https?://[^/]+/(.+)$", url)
-    if https_match:
-        path = https_match.group(1)
+    # URL formats with explicit scheme: https://host/path, ssh://host/path, etc.
+    scheme_match = re.match(r"^[a-zA-Z][a-zA-Z0-9+.-]*://[^/]+/(.+)$", url)
+    if scheme_match:
+        path = scheme_match.group(1)
         parts = path.split("/")
         if len(parts) >= 2:
             return (parts[-2], parts[-1])
@@ -345,22 +353,12 @@ def spinner(msg: str):
 def find_primary_worktree(worktree_path: Path) -> Path | None:
     """Find the primary worktree (source) for a given worktree."""
     # Get the git common dir - this points to the shared .git directory
-    result = subprocess.run(
-        ["git", "rev-parse", "--git-common-dir"],
-        cwd=worktree_path,
-        capture_output=True,
-        text=True,
-    )
+    result = run_git(["rev-parse", "--git-common-dir"], cwd=worktree_path)
     if result.returncode != 0:
         return None
 
     # List all worktrees to find the primary one
-    result = subprocess.run(
-        ["git", "worktree", "list", "--porcelain"],
-        cwd=worktree_path,
-        capture_output=True,
-        text=True,
-    )
+    result = run_git(["worktree", "list", "--porcelain"], cwd=worktree_path)
     if result.returncode != 0:
         return None
 
@@ -400,23 +398,13 @@ def validate_worktrees(source: Path, target: Path) -> str | None:
 
     # Check both are git worktrees
     for path, name in [(source, "Source"), (target, "Target")]:
-        result = subprocess.run(
-            ["git", "rev-parse", "--git-dir"],
-            cwd=path,
-            capture_output=True,
-            text=True,
-        )
+        result = run_git(["rev-parse", "--git-dir"], cwd=path)
         if result.returncode != 0:
             return f"{name} is not a git repository: {path}"
 
     # Check they share the same git common dir (same repo)
     def get_common_dir(path: Path) -> Path | None:
-        result = subprocess.run(
-            ["git", "rev-parse", "--git-common-dir"],
-            cwd=path,
-            capture_output=True,
-            text=True,
-        )
+        result = run_git(["rev-parse", "--git-common-dir"], cwd=path)
         if result.returncode != 0:
             return None
         return (path / result.stdout.strip()).resolve()
@@ -443,20 +431,64 @@ class SubmoduleInfo:
     url: str | None = None
 
 
+_INDEX_LOCK_ERROR_RE = re.compile(
+    r"(index\.lock|Unable to create .*\.lock|Another git process seems to be running)",
+    re.IGNORECASE,
+)
+
+
+def _stderr_text(stderr: str | bytes | None) -> str:
+    """Normalize stderr from subprocess for error matching/logging."""
+    if stderr is None:
+        return ""
+    if isinstance(stderr, bytes):
+        return stderr.decode(errors="replace")
+    return stderr
+
+
+def run_git(
+    args: list[str],
+    *,
+    cwd: Path,
+    text: bool = True,
+    retry_on_index_lock: bool = False,
+) -> subprocess.CompletedProcess:
+    """Run a git command with optional retries on transient index.lock contention."""
+    cmd = ["git", *args]
+    attempts = INDEX_LOCK_RETRY_ATTEMPTS if retry_on_index_lock else 1
+    result: subprocess.CompletedProcess | None = None
+
+    for attempt in range(attempts):
+        result = subprocess.run(cmd, cwd=cwd, capture_output=True, text=text)
+        if result.returncode == 0:
+            return result
+
+        stderr = _stderr_text(result.stderr)
+        if not retry_on_index_lock or not _INDEX_LOCK_ERROR_RE.search(stderr):
+            return result
+
+        # Last attempt, return failure as-is.
+        if attempt == attempts - 1:
+            return result
+
+        delay = INDEX_LOCK_RETRY_DELAY_SECONDS * (attempt + 1)
+        _LOGGER.debug(
+            f"Retrying git command after index lock contention ({attempt + 1}/{attempts - 1}): "
+            f"`git {' '.join(args)}` in {cwd}"
+        )
+        time.sleep(delay)
+
+    # Should be unreachable, but keeps type-checkers satisfied.
+    if result is None:
+        raise RuntimeError(f"git command produced no result: {' '.join(cmd)}")
+    return result
+
+
 def get_submodule_info(worktree_path: Path) -> list[SubmoduleInfo]:
     """Parse .gitmodules and return submodule information."""
-    result = subprocess.run(
-        [
-            "git",
-            "config",
-            "--file",
-            ".gitmodules",
-            "--get-regexp",
-            r"^submodule\..*\.path$",
-        ],
+    result = run_git(
+        ["config", "--file", ".gitmodules", "--get-regexp", r"^submodule\..*\.path$"],
         cwd=worktree_path,
-        capture_output=True,
-        text=True,
     )
     if result.returncode != 0 or not result.stdout.strip():
         return []
@@ -471,18 +503,9 @@ def get_submodule_info(worktree_path: Path) -> list[SubmoduleInfo]:
         submodule_paths[name] = path
 
     # Get submodule URLs
-    url_result = subprocess.run(
-        [
-            "git",
-            "config",
-            "--file",
-            ".gitmodules",
-            "--get-regexp",
-            r"^submodule\..*\.url$",
-        ],
+    url_result = run_git(
+        ["config", "--file", ".gitmodules", "--get-regexp", r"^submodule\..*\.url$"],
         cwd=worktree_path,
-        capture_output=True,
-        text=True,
     )
     submodule_urls: dict[str, str] = {}
     if url_result.returncode == 0:
@@ -502,12 +525,7 @@ def get_submodule_info(worktree_path: Path) -> list[SubmoduleInfo]:
 
 def get_git_modules_dir(worktree_path: Path) -> Path | None:
     """Get the shared .git/modules directory for a worktree."""
-    result = subprocess.run(
-        ["git", "rev-parse", "--git-common-dir"],
-        cwd=worktree_path,
-        capture_output=True,
-        text=True,
-    )
+    result = run_git(["rev-parse", "--git-common-dir"], cwd=worktree_path)
     if result.returncode != 0:
         return None
     return (worktree_path / result.stdout.strip() / "modules").resolve()
@@ -515,19 +533,19 @@ def get_git_modules_dir(worktree_path: Path) -> Path | None:
 
 def get_worktree_git_dir(worktree_path: Path) -> Path | None:
     """Get the .git directory for a worktree."""
-    result = subprocess.run(
-        ["git", "rev-parse", "--git-dir"],
-        cwd=worktree_path,
-        capture_output=True,
-        text=True,
-    )
+    result = run_git(["rev-parse", "--git-dir"], cwd=worktree_path)
     if result.returncode == 0:
         return (worktree_path / result.stdout.strip()).resolve()
     return None
 
 
 def remove_stale_lock(worktree_path: Path) -> bool:
-    """Remove stale index.lock if older than 60 seconds."""
+    """Optionally remove stale index.lock.
+
+    Auto-removal is disabled by default because a long-running git process can
+    legitimately hold the lock. To enable cleanup for very old lock files, set
+    GRAFT_REMOVE_STALE_INDEX_LOCK=1.
+    """
     git_dir = get_worktree_git_dir(worktree_path)
     if not git_dir:
         return False
@@ -536,12 +554,50 @@ def remove_stale_lock(worktree_path: Path) -> bool:
     if not lock_file.exists():
         return False
 
-    lock_age = time.time() - lock_file.stat().st_mtime
-    if lock_age > 60:
-        _LOGGER.warning(f"Removing stale lock ({lock_age:.0f}s old): {lock_file}")
+    try:
+        lock_age = time.time() - lock_file.stat().st_mtime
+    except OSError as e:
+        _LOGGER.debug(f"Could not stat lock file {lock_file}: {e}")
+        return False
+
+    if lock_age < STALE_LOCK_MAX_AGE_SECONDS:
+        _LOGGER.debug(
+            f"Detected active/recent index.lock ({lock_age:.0f}s old): {lock_file}"
+        )
+        return False
+
+    if os.getenv(STALE_LOCK_CLEANUP_ENV) != "1":
+        _LOGGER.warning(
+            f"Found stale-looking index.lock ({lock_age:.0f}s old): {lock_file}. "
+            f"Skipping auto-removal. Set {STALE_LOCK_CLEANUP_ENV}=1 to enable cleanup."
+        )
+        return False
+
+    _LOGGER.warning(f"Removing stale index.lock ({lock_age:.0f}s old): {lock_file}")
+    try:
         lock_file.unlink()
-        return True
-    return False
+    except OSError as e:
+        _LOGGER.warning(f"Failed to remove lock file {lock_file}: {e}")
+        return False
+    return True
+
+
+def warn_if_index_lock_present(worktree_path: Path) -> None:
+    """Log a warning if the target worktree currently has an index.lock file."""
+    git_dir = get_worktree_git_dir(worktree_path)
+    if not git_dir:
+        return
+    lock_file = git_dir / "index.lock"
+    if not lock_file.exists():
+        return
+
+    age = "unknown"
+    with contextlib.suppress(OSError):
+        age = f"{time.time() - lock_file.stat().st_mtime:.0f}s"
+    _LOGGER.warning(f"index.lock present in target worktree ({age} old): {lock_file}")
+
+    # Best-effort cleanup for stale locks if explicitly enabled.
+    remove_stale_lock(worktree_path)
 
 
 # =============================================================================
@@ -573,8 +629,9 @@ def get_ninja_commands(build_dir: Path) -> dict[str, str]:
                     output = str(build_dir / output)
                 output_to_command[output] = command
                 # Also store relative path version
-                rel_output = str(Path(output).relative_to(build_dir))
-                output_to_command[rel_output] = command
+                with contextlib.suppress(ValueError):
+                    rel_output = str(Path(output).relative_to(build_dir))
+                    output_to_command[rel_output] = command
     except json.JSONDecodeError:
         pass
 
@@ -648,9 +705,15 @@ def fix_ninja_deps(ninja_deps_path: Path, src_str: str, dst_str: str) -> None:
     result = bytearray()
 
     # Copy header (first line + version)
-    header_end = content.index(b"\n") + 1 + 4
-    result.extend(content[:header_end])
-    i = header_end
+    with contextlib.suppress(ValueError):
+        header_end = content.index(b"\n") + 1 + 4
+        if header_end <= len(content):
+            result.extend(content[:header_end])
+            i = header_end
+        else:
+            return
+    if not result:
+        return
 
     while i + 4 <= len(content):
         # Read record length (includes string + null + padding + 4-byte ID)
@@ -783,11 +846,17 @@ class SubmoduleTask(Task):
         self._submodules_to_init = []
         self._git_modules_dir = get_git_modules_dir(source)
 
+        def has_entries(path: Path) -> bool:
+            try:
+                return path.is_dir() and any(path.iterdir())
+            except OSError:
+                return False
+
         for info in get_submodule_info(target):
             src = source / info.path
             dst = target / info.path
-            src_populated = src.exists() and any(src.iterdir())
-            dst_empty = not dst.exists() or not any(dst.iterdir())
+            src_populated = has_entries(src)
+            dst_empty = not has_entries(dst)
 
             if src_populated and dst_empty:
                 self._submodules_to_copy.append((info.path, src, dst))
@@ -819,9 +888,8 @@ class SubmoduleTask(Task):
         def copy_submodule(args: tuple[str, Path, Path]) -> None:
             submodule_path, src, dst = args
             # Safety check: never modify source directory
-            assert not dst.is_relative_to(source), (
-                f"dst {dst} is under source_root {source}"
-            )
+            if dst.is_relative_to(source):
+                raise RuntimeError(f"Refusing to copy into source tree: {dst}")
             if dst.exists():
                 shutil.rmtree(dst)
             _LOGGER.debug(f"Copying submodule {submodule_path}")
@@ -831,7 +899,7 @@ class SubmoduleTask(Task):
                 try:
                     shutil.copytree(src, dst, symlinks=True, ignore=ignore_git)
                     break
-                except shutil.Error as e:
+                except (shutil.Error, OSError) as e:
                     if attempt == 2:
                         raise
                     _LOGGER.debug(f"Retrying copy of {submodule_path}: {e}")
@@ -848,7 +916,7 @@ class SubmoduleTask(Task):
                         try:
                             shutil.copytree(src_git_dir, dst_git_dir, symlinks=True)
                             break
-                        except shutil.Error as e:
+                        except (shutil.Error, OSError) as e:
                             if attempt == 2:
                                 raise
                             _LOGGER.debug(
@@ -861,21 +929,20 @@ class SubmoduleTask(Task):
                     # Make all files writable (git pack files are read-only)
                     for f in dst_git_dir.rglob("*"):
                         if f.is_file():
-                            f.chmod(f.stat().st_mode | 0o200)
+                            with contextlib.suppress(OSError):
+                                f.chmod(f.stat().st_mode | 0o200)
 
                     # Remove core.worktree - not needed when .git is inside working tree
                     config_file = dst_git_dir / "config"
-                    subprocess.run(
-                        [
-                            "git",
-                            "config",
-                            "-f",
-                            str(config_file),
-                            "--unset",
-                            "core.worktree",
-                        ],
-                        capture_output=True,
+                    unset_result = run_git(
+                        ["config", "-f", str(config_file), "--unset", "core.worktree"],
+                        cwd=dst,
                     )
+                    if unset_result.returncode != 0:
+                        _LOGGER.debug(
+                            f"Could not unset core.worktree in {config_file}: "
+                            f"{_stderr_text(unset_result.stderr).strip()}"
+                        )
 
         with ThreadPoolExecutor(max_workers=4) as executor:
             list(executor.map(copy_submodule, self._submodules_to_copy))
@@ -886,30 +953,39 @@ class SubmoduleTask(Task):
         Uses ls-tree to get the commit the branch expects, not current state.
         Does not use `git submodule update` which modifies shared .git/modules config.
         """
-        result = subprocess.run(
-            ["git", "ls-tree", "-r", "HEAD"],
-            cwd=target,
-            capture_output=True,
-            text=True,
-        )
+        result = run_git(["ls-tree", "-rz", "HEAD"], cwd=target, text=False)
         if result.returncode != 0:
+            _LOGGER.debug(
+                f"Could not list submodule commits in {target}: "
+                f"{_stderr_text(result.stderr).strip()}"
+            )
             return
 
-        for line in result.stdout.strip().split("\n"):
-            if not line:
+        for entry in result.stdout.split(b"\x00"):
+            if not entry:
                 continue
-            # Format: <mode> <type> <commit>\t<path>
-            parts = line.split()
-            if len(parts) >= 4 and parts[1] == "commit":
-                commit = parts[2]
-                path = parts[3]
-                submodule_dir = target / path
-                if submodule_dir.exists():
-                    subprocess.run(
-                        ["git", "checkout", commit],
-                        cwd=submodule_dir,
-                        capture_output=True,
-                    )
+            # Format: <mode> <type> <object>\t<path>\0
+            if b"\t" not in entry:
+                continue
+            meta, path_bytes = entry.split(b"\t", 1)
+            parts = meta.decode(errors="replace").split()
+            if len(parts) < 3 or parts[1] != "commit":
+                continue
+            commit = parts[2]
+            path = path_bytes.decode(errors="surrogateescape")
+            submodule_dir = target / path
+            if not submodule_dir.exists():
+                continue
+            checkout_result = run_git(
+                ["checkout", "--detach", "--quiet", commit],
+                cwd=submodule_dir,
+                retry_on_index_lock=True,
+            )
+            if checkout_result.returncode != 0:
+                _LOGGER.warning(
+                    f"Failed to checkout submodule {path} at {commit}: "
+                    f"{_stderr_text(checkout_result.stderr).strip()}"
+                )
 
     def _clone_missing_submodules(self, target: Path) -> None:
         """Clone submodules that weren't initialized in source."""
@@ -918,11 +994,9 @@ class SubmoduleTask(Task):
             submodule_dir = target / submodule_path
 
             # Get expected commit for this submodule
-            commit_result = subprocess.run(
-                ["git", "ls-tree", "HEAD", submodule_path],
+            commit_result = run_git(
+                ["ls-tree", "HEAD", submodule_path],
                 cwd=target,
-                capture_output=True,
-                text=True,
             )
             if commit_result.returncode != 0:
                 _LOGGER.debug(f"  ls-tree failed for {submodule_path}")
@@ -937,33 +1011,45 @@ class SubmoduleTask(Task):
             # Clone and checkout
             if submodule_dir.exists():
                 shutil.rmtree(submodule_dir)
-            clone_result = subprocess.run(
-                ["git", "clone", url, str(submodule_dir)],
-                capture_output=True,
-                text=True,
+            clone_result = run_git(
+                ["clone", url, str(submodule_dir)],
+                cwd=target,
             )
             if clone_result.returncode != 0:
                 _LOGGER.debug(f"  clone failed: {clone_result.stderr}")
                 continue
 
             # Fetch the specific commit if not on default branch
-            subprocess.run(
-                ["git", "fetch", "origin", commit],
+            fetch_result = run_git(
+                ["fetch", "origin", commit],
                 cwd=submodule_dir,
-                capture_output=True,
+                retry_on_index_lock=True,
             )
-            subprocess.run(
-                ["git", "checkout", commit],
+            if fetch_result.returncode != 0:
+                _LOGGER.debug(
+                    f"  fetch failed for {submodule_path}@{commit}: "
+                    f"{_stderr_text(fetch_result.stderr).strip()}"
+                )
+
+            checkout_result = run_git(
+                ["checkout", "--detach", "--quiet", commit],
                 cwd=submodule_dir,
-                capture_output=True,
+                retry_on_index_lock=True,
             )
+            if checkout_result.returncode != 0:
+                _LOGGER.warning(
+                    f"Failed to checkout cloned submodule {submodule_path} at {commit}: "
+                    f"{_stderr_text(checkout_result.stderr).strip()}"
+                )
+                continue
 
             # Make all .git files writable (git pack files are read-only)
             git_dir = submodule_dir / ".git"
             if git_dir.is_dir():
                 for f in git_dir.rglob("*"):
                     if f.is_file():
-                        f.chmod(f.stat().st_mode | 0o200)
+                        with contextlib.suppress(OSError):
+                            f.chmod(f.stat().st_mode | 0o200)
 
 
 class BuildTask(Task):
@@ -1065,7 +1151,8 @@ class BuildTask(Task):
         user_presets_src = source.parent / "CMakeUserPresets.json"
         user_presets_dst = target / "CMakeUserPresets.json"
         if user_presets_src.exists() and not user_presets_dst.exists():
-            user_presets_dst.symlink_to(user_presets_src)
+            with contextlib.suppress(OSError):
+                user_presets_dst.symlink_to(user_presets_src)
 
     def _copy_build_dirs(self) -> list[Path]:
         """Copy all detected build directories. Returns list of copied destination dirs."""
@@ -1077,7 +1164,7 @@ class BuildTask(Task):
                     shutil.copytree(src_build, dst_build, symlinks=True)
                     copied.append(dst_build)
                     break
-                except shutil.Error as e:
+                except (shutil.Error, OSError) as e:
                     if attempt == 2:
                         raise
                     _LOGGER.debug(f"Retrying build copy: {e}")
@@ -1098,7 +1185,7 @@ class BuildTask(Task):
                     stat = path.stat()
                     path.write_text(content.replace(src_str, dst_str))
                     os.utime(path, (stat.st_atime, stat.st_mtime))
-            except (UnicodeDecodeError, PermissionError):
+            except (UnicodeDecodeError, OSError):
                 pass  # Skip binary files
 
         for build_dir in build_dirs:
@@ -1222,8 +1309,8 @@ class TaskRunner:
 
     def run(self) -> None:
         """Run all applicable tasks in parallel."""
-        # Clean up stale index.lock from previous interrupted operations
-        remove_stale_lock(self.target)
+        # Report lock state up front and optionally clean stale lock files.
+        warn_if_index_lock_present(self.target)
 
         applicable = self.get_applicable_tasks()
         if not applicable:
@@ -1280,12 +1367,7 @@ class TaskRunner:
 
 def detect_remote_url(worktree_path: Path) -> str | None:
     """Detect the remote URL from git origin."""
-    result = subprocess.run(
-        ["git", "remote", "get-url", "origin"],
-        cwd=worktree_path,
-        capture_output=True,
-        text=True,
-    )
+    result = run_git(["remote", "get-url", "origin"], cwd=worktree_path)
     if result.returncode == 0:
         return result.stdout.strip()
     return None
@@ -1293,12 +1375,7 @@ def detect_remote_url(worktree_path: Path) -> str | None:
 
 def detect_branch(worktree_path: Path) -> str | None:
     """Detect the current branch name."""
-    result = subprocess.run(
-        ["git", "branch", "--show-current"],
-        cwd=worktree_path,
-        capture_output=True,
-        text=True,
-    )
+    result = run_git(["branch", "--show-current"], cwd=worktree_path)
     if result.returncode == 0 and result.stdout.strip():
         return result.stdout.strip()
     return None
