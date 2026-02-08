@@ -1,11 +1,13 @@
-model = "gpt-5-codex"
-model_reasoning_effort = "medium"
-
-[features]
-web_search_request = true
+model = "gpt-5.3-codex"
+model_reasoning_effort = "xhigh"
+personality = "pragmatic"
+web_search = "live"
 
 [tui]
 notifications = true
 
 [projects."/Users/mavam/code/tenzir/tenzir"]
 trust_level = "trusted"
+
+[notice.model_migrations]
+gpt-5-codex = "gpt-5.2-codex"
