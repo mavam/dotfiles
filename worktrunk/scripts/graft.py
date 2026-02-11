@@ -196,6 +196,9 @@ class Spinner:
         self._tasks: dict[str, dict[str, str]] = {}
         self._task_order: list[str] = []
         self._num_lines = 0
+        # Tracks whether the cursor is positioned just below spinner output.
+        # Logging can clear spinner lines and leave the cursor at the top.
+        self._cursor_below_spinner = False
 
     def _render(self) -> list[str]:
         """Render all task lines."""
@@ -217,11 +220,14 @@ class Spinner:
 
     def _clear_for_log(self) -> None:
         """Clear all lines for logging output."""
-        if self._num_lines > 0:
-            # Move up and clear each line
-            for _ in range(self._num_lines):
-                print(f"{MOVE_UP}{CLEAR_LINE}", end="")
-            print("\r", end="", flush=True)
+        with self._lock:
+            if self._num_lines > 0 and self._cursor_below_spinner:
+                # Only clear when we know the cursor is below the spinner block.
+                # This prevents clearing unrelated scrollback lines.
+                for _ in range(self._num_lines):
+                    print(f"{MOVE_UP}{CLEAR_LINE}", end="")
+                print("\r", end="", flush=True)
+                self._cursor_below_spinner = False
 
     def _spin(self) -> None:
         while not self._stop.wait(0.12):
@@ -231,26 +237,29 @@ class Spinner:
 
             with self._lock:
                 lines = self._render()
+                prev_num_lines = self._num_lines
 
-            # Move cursor up to overwrite previous output
-            if self._num_lines > 0:
-                print(f"\033[{self._num_lines}A", end="")
+                # Move cursor up to overwrite previous output only when we are
+                # currently positioned below the spinner block.
+                if self._cursor_below_spinner and prev_num_lines > 0:
+                    print(f"\033[{prev_num_lines}A", end="")
 
-            # Print each line, clearing to end
-            for line in lines:
-                print(f"{CLEAR_LINE}{line}", flush=True)
+                # Print each line, clearing to end
+                for line in lines:
+                    print(f"{CLEAR_LINE}{line}", flush=True)
 
-            # Clear any extra lines from previous render
-            for _ in range(self._num_lines - len(lines)):
-                print(CLEAR_LINE, flush=True)
+                # Clear any extra lines from previous render
+                for _ in range(prev_num_lines - len(lines)):
+                    print(CLEAR_LINE, flush=True)
 
-            # Move cursor back up to end of current content
-            extra_lines = self._num_lines - len(lines)
-            if extra_lines > 0:
-                print(f"\033[{extra_lines}A", end="", flush=True)
+                # Move cursor back up to end of current content
+                extra_lines = prev_num_lines - len(lines)
+                if extra_lines > 0:
+                    print(f"\033[{extra_lines}A", end="", flush=True)
 
-            self._num_lines = len(lines)
-            self._frame += 1
+                self._num_lines = len(lines)
+                self._frame += 1
+                self._cursor_below_spinner = True
 
     def start(self, msg: str = "") -> None:
         """Start the spinner with an optional initial single task."""
@@ -261,6 +270,7 @@ class Spinner:
             self._tasks["main"] = {"status": "active", "msg": msg}
             self._task_order = ["main"]
         self._stop.clear()
+        self._cursor_below_spinner = False
         self._thread = threading.Thread(target=self._spin, daemon=True)
         self._thread.start()
         _active_spinner = self
@@ -319,13 +329,23 @@ class Spinner:
         if self._thread:
             self._thread.join()
         _active_spinner = None
+
+        with self._lock:
+            num_lines = self._num_lines
+            cursor_below_spinner = self._cursor_below_spinner
+
         # Clear spinner lines
-        if self._num_lines > 0:
-            print(f"\033[{self._num_lines}A", end="")
-            for _ in range(self._num_lines):
+        if num_lines > 0:
+            # If logging already cleared the spinner block, the cursor is already
+            # at the top of it and we must not move further up.
+            if cursor_below_spinner:
+                print(f"\033[{num_lines}A", end="")
+            for _ in range(num_lines):
                 print(f"{CLEAR_LINE}")
-            print(f"\033[{self._num_lines}A", end="")
-            self._num_lines = 0
+            print(f"\033[{num_lines}A", end="")
+            with self._lock:
+                self._num_lines = 0
+                self._cursor_below_spinner = False
         print(SHOW_CURSOR, end="", flush=True)
         # Log completed tasks
         for name in self._task_order:
