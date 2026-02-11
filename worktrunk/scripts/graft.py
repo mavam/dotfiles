@@ -954,9 +954,17 @@ class SubmoduleTask(Task):
 
                     # Remove core.worktree - not needed when .git is inside working tree
                     config_file = dst_git_dir / "config"
+                    # Run from a safe repo cwd. If core.worktree is stale, running
+                    # git commands from `dst` itself can fail before config editing.
                     unset_result = run_git(
-                        ["config", "-f", str(config_file), "--unset", "core.worktree"],
-                        cwd=dst,
+                        [
+                            "config",
+                            "-f",
+                            str(config_file),
+                            "--unset-all",
+                            "core.worktree",
+                        ],
+                        cwd=source,
                     )
                     if unset_result.returncode != 0:
                         _LOGGER.debug(
