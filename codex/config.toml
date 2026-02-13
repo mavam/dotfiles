@@ -9,5 +9,9 @@ notifications = true
 [projects."/Users/mavam/code/tenzir/tenzir"]
 trust_level = "trusted"
 
+[[prefix_rules]]
+pattern = ["git"]
+decision = "allow"
+
 [notice.model_migrations]
 gpt-5-codex = "gpt-5.2-codex"
