@@ -204,11 +204,6 @@ if status is-interactive
   abbr -g gswm 'git switch main'
   abbr -g gswt 'git switch topic/'
   abbr -g gts 'git tag -s'
-  abbr -g gw 'git worktree'
-  abbr -g gwc 'git_worktree_clone'
-  abbr -g gwa 'git_worktree_add_topic'
-  abbr -g gwr 'git_worktree_remove_topic'
-  abbr -g gws 'git_worktree_setup'
 
   # Abbreviations: worktrunk
   if command -sq wt
