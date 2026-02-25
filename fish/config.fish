@@ -210,6 +210,34 @@ if status is-interactive
   abbr -g gwr 'git_worktree_remove_topic'
   abbr -g gws 'git_worktree_setup'
 
+  # Abbreviations: worktrunk
+  if command -sq wt
+    # Switch (mirrors gsw/gswc/gswm)
+    abbr -g wsw 'wt switch'
+    abbr -g wswc 'wt switch -c'
+    abbr -g wswb 'wt switch --branches'
+    abbr -g wswr 'wt switch --remotes'
+    # List (mirrors gst for status)
+    abbr -g wl 'wt list'
+    abbr -g wlf 'wt list --full'
+    # Remove (mirrors gbd)
+    abbr -g wrm 'wt remove'
+    abbr -g wrmd 'wt remove -D'
+    # Merge (mirrors gm/gma)
+    abbr -g wm 'wt merge'
+    abbr -g wmy 'wt merge -y'
+    # Step operations (ws = wt step)
+    abbr -g wsc 'wt step commit'
+    abbr -g wsd 'wt step diff'
+    abbr -g wsp 'wt step push'
+    abbr -g wsrb 'wt step rebase'
+    abbr -g wssq 'wt step squash'
+    abbr -g wsfe 'wt step for-each --'
+    # Config (mirrors gcf)
+    abbr -g wcf 'wt config show'
+    abbr -g wcff 'wt config show --full'
+  end
+
   # Let vim fugitive creep into shell workflow.
   function G
     if git rev-parse --is-inside-work-tree > /dev/null 2>&1
