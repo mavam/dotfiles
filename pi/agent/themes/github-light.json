@@ -1,0 +1,86 @@
+{
+  "$schema": "https://raw.githubusercontent.com/badlogic/pi-mono/main/packages/coding-agent/src/modes/interactive/theme/theme-schema.json",
+  "name": "github-light",
+  "vars": {
+    "bg": "#ffffff",
+    "bgAlt": "#f6f8fa",
+    "bgCard": "#ffffff",
+    "border": "#d0d7de",
+    "text": "#1f2328",
+    "muted": "#656d76",
+    "dim": "#6e7781",
+    "blue": "#0969da",
+    "green": "#1a7f37",
+    "red": "#cf222e",
+    "yellow": "#bf8700",
+    "purple": "#8250df",
+    "cyan": "#0969da",
+    "orange": "#bc4c00",
+    "teal": "#0969da"
+  },
+  "colors": {
+    "accent": "blue",
+    "border": "border",
+    "borderAccent": "blue",
+    "borderMuted": "#d8dee4",
+
+    "success": "green",
+    "error": "red",
+    "warning": "yellow",
+    "muted": "muted",
+    "dim": "dim",
+    "text": "text",
+    "thinkingText": "muted",
+
+    "selectedBg": "#ddf4ff",
+    "userMessageBg": "#f6f8fa",
+    "userMessageText": "",
+    "customMessageBg": "#f4f0ff",
+    "customMessageText": "",
+    "customMessageLabel": "purple",
+    "toolPendingBg": "#f6f8fa",
+    "toolSuccessBg": "#dafbe1",
+    "toolErrorBg": "#ffebe9",
+    "toolTitle": "",
+    "toolOutput": "muted",
+
+    "mdHeading": "blue",
+    "mdLink": "blue",
+    "mdLinkUrl": "muted",
+    "mdCode": "purple",
+    "mdCodeBlock": "green",
+    "mdCodeBlockBorder": "border",
+    "mdQuote": "muted",
+    "mdQuoteBorder": "blue",
+    "mdHr": "border",
+    "mdListBullet": "green",
+
+    "toolDiffAdded": "green",
+    "toolDiffRemoved": "red",
+    "toolDiffContext": "muted",
+
+    "syntaxComment": "#6e7781",
+    "syntaxKeyword": "blue",
+    "syntaxFunction": "purple",
+    "syntaxVariable": "#0a3069",
+    "syntaxString": "orange",
+    "syntaxNumber": "yellow",
+    "syntaxType": "teal",
+    "syntaxOperator": "text",
+    "syntaxPunctuation": "muted",
+
+    "thinkingOff": "#9ea7b3",
+    "thinkingMinimal": "#8a9199",
+    "thinkingLow": "blue",
+    "thinkingMedium": "teal",
+    "thinkingHigh": "purple",
+    "thinkingXhigh": "red",
+
+    "bashMode": "green"
+  },
+  "export": {
+    "pageBg": "#f6f8fa",
+    "cardBg": "#ffffff",
+    "infoBg": "#fff8c5"
+  }
+}

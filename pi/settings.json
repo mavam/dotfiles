@@ -1,5 +1,13 @@
 {
+  "theme": "github-dark",
   "packages": [
     "npm:pi-system-theme"
-  ]
+  ],
+  "enabledModels": [
+    "openai-codex/gpt-5.3-codex",
+    "openai-codex/gpt-5.3-codex-spark"
+  ],
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.3-codex",
+  "quietStartup": true
 }

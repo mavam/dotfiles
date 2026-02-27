@@ -1,3 +1,13 @@
 entries:
   - source: "settings.json"
     target: "~/.pi/agent/settings.json"
+
+  - source: "agent/system-theme.json"
+    target: "~/.pi/agent/system-theme.json"
+  - source: "agent/themes/github-dark.json"
+    target: "~/.pi/agent/themes/github-dark.json"
+  - source: "agent/themes/github-light.json"
+    target: "~/.pi/agent/themes/github-light.json"
+
+  - source: "extensions/statusline.ts"
+    target: "~/.pi/agent/extensions/statusline.ts"
