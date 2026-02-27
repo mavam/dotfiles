@@ -73,7 +73,11 @@ function toNumber(value: unknown): number {
 function normalizePath(path: string): string {
   const home = process.env.HOME || process.env.USERPROFILE || "";
   if (!home) return path;
-  return path.startsWith(home) ? `~${path.slice(home.length)}` : path;
+  if (path === home) return "~";
+  if (path.startsWith(`${home}/`) || path.startsWith(`${home}\\`)) {
+    return `~${path.slice(home.length)}`;
+  }
+  return path;
 }
 
 function normalizeModel(model: string): string {
@@ -216,7 +220,8 @@ async function exec(
   try {
     const result = await pi.exec(command, args, { cwd, timeout: 2000 });
     if (result.code !== 0) return "";
-    return result.stdout.trim();
+    // Keep leading whitespace (git porcelain uses it), only drop trailing newlines.
+    return result.stdout.replace(/[\r\n]+$/, "");
   } catch {
     return "";
   }
@@ -378,40 +383,50 @@ function renderFooterLines(width: number, ctx: ExtensionContext, git: GitInfo): 
 }
 
 export default function (pi: ExtensionAPI) {
-  let currentGit: GitInfo = { ...EMPTY_GIT_INFO };
-  let refreshing = false;
-  let requestRender: (() => void) | undefined;
-
-  const refreshGit = async (ctx: ExtensionContext) => {
-    if (refreshing) return;
-    refreshing = true;
-    try {
-      currentGit = await collectGitInfo(pi, ctx.cwd);
-      requestRender?.();
-    } finally {
-      refreshing = false;
-    }
-  };
-
   const installFooter = (ctx: ExtensionContext) => {
     if (!ctx.hasUI) return;
 
     ctx.ui.setFooter((tui, _theme, footerData) => {
-      requestRender = () => tui.requestRender();
+      let currentGit: GitInfo = { ...EMPTY_GIT_INFO };
+      let refreshing = false;
+      let refreshQueued = false;
+      let disposed = false;
+
+      const refreshGit = async () => {
+        if (disposed) return;
+        if (refreshing) {
+          refreshQueued = true;
+          return;
+        }
+
+        refreshing = true;
+        try {
+          do {
+            refreshQueued = false;
+            const git = await collectGitInfo(pi, ctx.cwd);
+            if (disposed) return;
+            currentGit = git;
+            tui.requestRender();
+          } while (!disposed && refreshQueued);
+        } finally {
+          refreshing = false;
+        }
+      };
 
       const onBranchChange = footerData.onBranchChange(() => {
-        void refreshGit(ctx);
+        void refreshGit();
       });
 
       const interval = setInterval(() => {
-        void refreshGit(ctx);
+        void refreshGit();
       }, GIT_REFRESH_MS);
 
-      void refreshGit(ctx);
+      void refreshGit();
 
       return {
         invalidate() {},
         dispose() {
+          disposed = true;
           onBranchChange();
           clearInterval(interval);
         },
