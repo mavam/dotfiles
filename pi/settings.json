@@ -14,5 +14,5 @@
   "quietStartup": true,
   "lastChangelogVersion": "0.55.3",
   "defaultThinkingLevel": "xhigh",
-  "theme": "github-light"
+  "theme": "terminal"
 }
