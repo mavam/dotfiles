@@ -1,13 +1,18 @@
 {
-  "theme": "github-dark",
   "packages": [
-    "npm:pi-system-theme"
+    "npm:pi-terminal-theme",
+    "npm:pi-mcporter"
   ],
   "enabledModels": [
     "openai-codex/gpt-5.3-codex",
-    "openai-codex/gpt-5.3-codex-spark"
+    "openai-codex/gpt-5.3-codex-spark",
+    "google/gemini-3.1-pro-preview-customtools",
+    "anthropic/claude-opus-4-6"
   ],
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.3-codex",
-  "quietStartup": true
+  "quietStartup": true,
+  "lastChangelogVersion": "0.55.3",
+  "defaultThinkingLevel": "xhigh",
+  "theme": "github-light"
 }
