@@ -2,24 +2,6 @@ import type { AssistantMessage } from "@mariozechner/pi-ai";
 import type { ExtensionAPI, ExtensionContext, SessionEntry, Theme } from "@mariozechner/pi-coding-agent";
 import { truncateToWidth } from "@mariozechner/pi-tui";
 
-const ESC = "\x1b[";
-const RESET = "\x1b[0m";
-
-const GRN = "0;32";
-const YLW = "0;33";
-const RED = "0;31";
-
-const DG = "2;32";
-const DY = "2;33";
-const DR = "2;31";
-const DW = "2;37";
-const DC = "2;36";
-const DM = "2;35";
-
-const CYN = "0;36";
-const BLU = "0;34";
-const WHT = "0;37";
-
 type ThinkingLevel = "off" | "minimal" | "low" | "medium" | "high" | "xhigh";
 
 const THINKING_SYMBOLS: Record<ThinkingLevel, string> = {
@@ -71,10 +53,6 @@ const EMPTY_GIT_INFO: GitInfo = {
     behind: 0,
   },
 };
-
-function c(code: string, text: string): string {
-  return `${ESC}${code}m${text}${RESET}`;
-}
 
 function toNumber(value: unknown): number {
   const n = Number(value);
@@ -183,6 +161,7 @@ function buildBricks(
   totalTokens: number,
   inputTokens: number,
   cacheTokens: number,
+  theme: Theme,
 ): string {
   let n = 40;
   if (width < 100) n = 30;
@@ -201,43 +180,42 @@ function buildBricks(
   cached = Math.min(n, cached);
   fresh = Math.min(Math.max(0, n - cached), fresh);
 
+  const zoneColor = (i: number) => (i < t1 ? "success" : i < t2 ? "warning" : "error");
+
   let out = "";
 
   for (let i = 0; i < cached; i++) {
-    const color = i < t1 ? DG : i < t2 ? DY : DR;
-    out += c(color, "■");
+    out += theme.fg(zoneColor(i), "■");
   }
 
   for (let i = cached; i < cached + fresh; i++) {
-    const color = i < t1 ? GRN : i < t2 ? YLW : RED;
-    out += c(color, "■");
+    out += theme.fg(zoneColor(i), "■");
   }
 
   for (let i = cached + fresh; i < n; i++) {
-    const color = i < t1 ? DG : i < t2 ? DY : DR;
-    out += c(color, "□");
+    out += theme.fg(zoneColor(i), "□");
   }
 
   return out;
 }
 
-function buildGitStatus(counts: GitCounts): string {
+function buildGitStatus(counts: GitCounts, theme: Theme): string {
   const parts: string[] = [];
 
   if (counts.staged > 0) {
-    parts.push(`${c(DG, "●")}${c(DW, `${counts.staged}`)}`);
+    parts.push(`${theme.fg("success", "●")}${theme.fg("dim", `${counts.staged}`)}`);
   }
   if (counts.modified > 0) {
-    parts.push(`${c(DY, "●")}${c(DW, `${counts.modified}`)}`);
+    parts.push(`${theme.fg("warning", "●")}${theme.fg("dim", `${counts.modified}`)}`);
   }
   if (counts.untracked > 0) {
-    parts.push(`${c(DC, "○")}${c(DW, `${counts.untracked}`)}`);
+    parts.push(`${theme.fg("accent", "○")}${theme.fg("dim", `${counts.untracked}`)}`);
   }
   if (counts.ahead > 0) {
-    parts.push(`${c(CYN, "↑")}${c(DW, `${counts.ahead}`)}`);
+    parts.push(`${theme.fg("accent", "↑")}${theme.fg("dim", `${counts.ahead}`)}`);
   }
   if (counts.behind > 0) {
-    parts.push(`${c(CYN, "↓")}${c(DW, `${counts.behind}`)}`);
+    parts.push(`${theme.fg("accent", "↓")}${theme.fg("dim", `${counts.behind}`)}`);
   }
 
   return parts.join(" ");
@@ -372,53 +350,45 @@ function renderFooterLines(
     inputTokens += minUsedTokens - (inputTokens + cacheTokens);
   }
 
-  const bricks = buildBricks(width, totalTokens, inputTokens, cacheTokens);
+  const bricks = buildBricks(width, totalTokens, inputTokens, cacheTokens, theme);
 
-  let pctColor = GRN;
-  let dimPctColor = DG;
-  if (usedPct >= 60 && usedPct < 85) {
-    pctColor = YLW;
-    dimPctColor = DY;
-  } else if (usedPct >= 85) {
-    pctColor = RED;
-    dimPctColor = DR;
-  }
+  const pctColor = usedPct >= 85 ? "error" : usedPct >= 60 ? "warning" : "success";
 
   const model = normalizeModel(ctx.model?.name || ctx.model?.id || "Claude");
   const thinking = renderThinkingLevel(thinkingLevel, theme);
-  const modelSegment = thinking ? `${c(WHT, model)} ${thinking}` : c(WHT, model);
-  let line1 = `${modelSegment} ${bricks} ${c(pctColor, `${usedPct}%`)}`;
+  const modelSegment = thinking ? `${theme.fg("text", model)} ${thinking}` : theme.fg("text", model);
+  let line1 = `${modelSegment} ${bricks} ${theme.fg(pctColor, `${usedPct}%`)}`;
 
   if (width >= 50) {
     const usedK = Math.floor(Math.max(contextTokens, inputTokens + cacheTokens) / 1000);
     const totalK = Math.floor(totalTokens / 1000);
-    line1 += ` ${c(dimPctColor, `${usedK}k/${totalK}k`)}`;
+    line1 += ` ${theme.fg("dim", `${usedK}k/${totalK}k`)}`;
   }
 
   if (width >= 55) {
-    line1 += ` ${c(DM, formatElapsed(durationMs))}`;
+    line1 += ` ${theme.fg("muted", formatElapsed(durationMs))}`;
   }
 
   if (width >= 60 && totalCost > 0) {
-    line1 += ` ${c(DY, `$${totalCost.toFixed(2)}`)}`;
+    line1 += ` ${theme.fg("warning", `$${totalCost.toFixed(2)}`)}`;
   }
 
-  const location = git.repository ? c(CYN, git.repository) : c(DW, normalizePath(ctx.cwd));
+  const location = git.repository ? theme.fg("accent", git.repository) : theme.fg("dim", normalizePath(ctx.cwd));
   let line2 = `${location} `;
 
-  if (git.branch) line2 += c(BLU, git.branch);
-  if (git.commit) line2 += ` ${c(YLW, git.commit)}`;
+  if (git.branch) line2 += theme.fg("accent", git.branch);
+  if (git.commit) line2 += ` ${theme.fg("warning", git.commit)}`;
 
   if (git.added > 0 || git.removed > 0) {
-    line2 += ` ${c(GRN, `+${git.added}`)}/${c(RED, `-${git.removed}`)}`;
+    line2 += ` ${theme.fg("success", `+${git.added}`)}/${theme.fg("error", `-${git.removed}`)}`;
   }
 
-  const gitStatus = buildGitStatus(git.counts);
+  const gitStatus = buildGitStatus(git.counts, theme);
   if (gitStatus) line2 += ` ${gitStatus}`;
 
   return [
-    truncateToWidth(line1, width, c(DW, "...")),
-    truncateToWidth(line2.trimEnd(), width, c(DW, "...")),
+    truncateToWidth(line1, width, theme.fg("dim", "...")),
+    truncateToWidth(line2.trimEnd(), width, theme.fg("dim", "...")),
   ];
 }
 
