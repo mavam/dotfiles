@@ -1,3 +1,6 @@
+import { existsSync, readFileSync } from "node:fs";
+import { homedir } from "node:os";
+import { join } from "node:path";
 import type { AssistantMessage } from "@mariozechner/pi-ai";
 import type { ExtensionAPI, ExtensionContext, SessionEntry, Theme } from "@mariozechner/pi-coding-agent";
 import { truncateToWidth, visibleWidth } from "@mariozechner/pi-tui";
@@ -13,7 +16,46 @@ const THINKING_SYMBOLS: Record<ThinkingLevel, string> = {
   xhigh: "✹",
 };
 
+const THINKING_LABELS: Record<ThinkingLevel, string> = {
+  off: "",
+  minimal: "min",
+  low: "low",
+  medium: "med",
+  high: "hgh",
+  xhigh: "xhi",
+};
+
+const STATUSLINE_SYMBOLS = {
+  model: "",
+  path: "",
+  branch: "",
+  commit: "#",
+  contextUsed: "■",
+  contextFree: "□",
+  contextReserved: "▣",
+  contextCapacityMarker: "",
+  contextUsageMarker: "",
+  gitAhead: "",
+  gitBehind: "",
+  gitDiverged: "",
+  diffAdded: "↗",
+  diffRemoved: "↘",
+  currency: "$",
+} as const;
+
 const GIT_REFRESH_MS = 5000;
+
+interface CompactionSettingsSnapshot {
+  enabled: boolean;
+  reserveTokens: number;
+  keepRecentTokens: number;
+}
+
+const DEFAULT_COMPACTION_SETTINGS: CompactionSettingsSnapshot = {
+  enabled: true,
+  reserveTokens: 16_384,
+  keepRecentTokens: 20_000,
+};
 
 interface UsageSnapshot {
   input: number;
@@ -59,6 +101,66 @@ function toNumber(value: unknown): number {
   return Number.isFinite(n) ? n : 0;
 }
 
+function coerceCompactionSettings(
+  value: unknown,
+  fallback: CompactionSettingsSnapshot = DEFAULT_COMPACTION_SETTINGS,
+): CompactionSettingsSnapshot {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return { ...fallback };
+  }
+
+  const settings = value as Record<string, unknown>;
+  const reserveRaw = Number(settings.reserveTokens);
+  const keepRecentRaw = Number(settings.keepRecentTokens);
+
+  return {
+    enabled: typeof settings.enabled === "boolean" ? settings.enabled : fallback.enabled,
+    reserveTokens: Number.isFinite(reserveRaw) ? Math.max(0, Math.floor(reserveRaw)) : fallback.reserveTokens,
+    keepRecentTokens: Number.isFinite(keepRecentRaw)
+      ? Math.max(0, Math.floor(keepRecentRaw))
+      : fallback.keepRecentTokens,
+  };
+}
+
+function readJsonObject(filePath: string): Record<string, unknown> | undefined {
+  try {
+    if (!existsSync(filePath)) return undefined;
+    const content = readFileSync(filePath, "utf8");
+    const parsed = JSON.parse(content);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return undefined;
+    return parsed as Record<string, unknown>;
+  } catch {
+    return undefined;
+  }
+}
+
+function expandHome(pathValue: string): string {
+  if (pathValue === "~") return homedir();
+  if (pathValue.startsWith("~/") || pathValue.startsWith("~\\")) {
+    return join(homedir(), pathValue.slice(2));
+  }
+  return pathValue;
+}
+
+function loadCompactionSettings(cwd: string): CompactionSettingsSnapshot {
+  const agentDir = process.env.PI_CODING_AGENT_DIR
+    ? expandHome(process.env.PI_CODING_AGENT_DIR)
+    : join(homedir(), ".pi", "agent");
+
+  const globalSettings = readJsonObject(join(agentDir, "settings.json"));
+  const projectSettings = readJsonObject(join(cwd, ".pi", "settings.json"));
+
+  let resolved = { ...DEFAULT_COMPACTION_SETTINGS };
+  if (globalSettings?.compaction !== undefined) {
+    resolved = coerceCompactionSettings(globalSettings.compaction, resolved);
+  }
+  if (projectSettings?.compaction !== undefined) {
+    resolved = coerceCompactionSettings(projectSettings.compaction, resolved);
+  }
+
+  return resolved;
+}
+
 function normalizePath(path: string): string {
   const home = process.env.HOME || process.env.USERPROFILE || "";
   if (!home) return path;
@@ -92,8 +194,9 @@ function normalizeThinkingLevel(level: string): ThinkingLevel {
 function renderThinkingLevel(level: string, theme: Theme): string {
   const normalized = normalizeThinkingLevel(level);
   const symbol = THINKING_SYMBOLS[normalized];
-  if (!symbol) return "";
-  return theme.getThinkingBorderColor(normalized)(symbol);
+  const label = THINKING_LABELS[normalized];
+  if (!symbol || !label) return "";
+  return `${theme.getThinkingBorderColor(normalized)(symbol)}${theme.fg("dim", label)}`;
 }
 
 function parseGitHubRemote(url: string): string {
@@ -119,17 +222,9 @@ function parseNumstat(output: string): { added: number; removed: number } {
   return { added, removed };
 }
 
-function formatElapsed(ms: number): string {
-  const safeMs = Math.max(0, Math.floor(ms));
-  const h = Math.floor(safeMs / 3_600_000);
-  const m = Math.floor((safeMs % 3_600_000) / 60_000);
-  return `${h}h${m}m`;
-}
-
 function getUsageData(entries: SessionEntry[]): {
   latest: UsageSnapshot | undefined;
   totalCost: number;
-  durationMs: number;
 } {
   let latest: UsageSnapshot | undefined;
   let totalCost = 0;
@@ -150,74 +245,65 @@ function getUsageData(entries: SessionEntry[]): {
     totalCost += latest.cost;
   }
 
-  const startAt = entries[0]?.timestamp ? Date.parse(entries[0].timestamp) : Date.now();
-  const durationMs = Number.isFinite(startAt) ? Math.max(0, Date.now() - startAt) : 0;
-
-  return { latest, totalCost, durationMs };
+  return { latest, totalCost };
 }
 
 function buildBricks(
   cells: number,
   totalTokens: number,
-  inputTokens: number,
-  cacheTokens: number,
+  usedTokens: number,
+  settings: CompactionSettingsSnapshot,
   theme: Theme,
 ): string {
   const n = Math.max(0, Math.floor(cells));
   if (n === 0) return "";
 
-  const total = Math.max(1, totalTokens);
-  const t1 = Math.floor((n * 60) / 100);
-  const t2 = Math.floor((n * 85) / 100);
+  const total = Math.max(1, Math.floor(totalTokens));
+  const clampedUsedTokens = Math.max(0, Math.min(total, Math.floor(usedTokens)));
 
-  let cached = Math.floor((cacheTokens * n) / total);
-  let fresh = Math.floor((inputTokens * n) / total);
+  const reserveTokens = settings.enabled ? Math.max(0, Math.floor(settings.reserveTokens)) : 0;
+  const safeTokens = Math.max(0, Math.min(total, total - reserveTokens));
 
-  if (cacheTokens > 0 && cached === 0) cached = 1;
-  if (inputTokens > 0 && fresh === 0) fresh = 1;
+  let safeCells = Math.floor((safeTokens * n) / total);
+  safeCells = Math.max(0, Math.min(n, safeCells));
 
-  cached = Math.min(n, cached);
-  fresh = Math.min(Math.max(0, n - cached), fresh);
+  // Keep at least one reserved-tail cell visible when reserveTokens > 0 and the bar has room.
+  if (settings.enabled && reserveTokens > 0 && n > 1 && safeCells >= n) {
+    safeCells = n - 1;
+  }
 
-  const zoneColor = (i: number) => (i < t1 ? "success" : i < t2 ? "warning" : "error");
+  let usedCells = Math.floor((clampedUsedTokens * n) / total);
+  if (clampedUsedTokens > 0 && usedCells === 0) usedCells = 1;
+  usedCells = Math.max(0, Math.min(n, usedCells));
 
   let out = "";
 
-  for (let i = 0; i < cached; i++) {
-    out += theme.fg(zoneColor(i), "■");
+  for (let i = 0; i < usedCells; i++) {
+    out += theme.fg("dim", STATUSLINE_SYMBOLS.contextUsed);
   }
 
-  for (let i = cached; i < cached + fresh; i++) {
-    out += theme.fg(zoneColor(i), "■");
+  for (let i = usedCells; i < safeCells; i++) {
+    out += theme.fg("dim", STATUSLINE_SYMBOLS.contextFree);
   }
 
-  for (let i = cached + fresh; i < n; i++) {
-    out += theme.fg(zoneColor(i), "□");
+  for (let i = Math.max(usedCells, safeCells); i < n; i++) {
+    out += theme.fg("dim", STATUSLINE_SYMBOLS.contextReserved);
   }
 
   return out;
 }
 
 function buildGitStatus(counts: GitCounts, theme: Theme): string {
-  const parts: string[] = [];
-
-  if (counts.staged > 0) {
-    parts.push(`${theme.fg("success", "●")}${theme.fg("dim", `${counts.staged}`)}`);
-  }
-  if (counts.modified > 0) {
-    parts.push(`${theme.fg("warning", "●")}${theme.fg("dim", `${counts.modified}`)}`);
-  }
-  if (counts.untracked > 0) {
-    parts.push(`${theme.fg("accent", "○")}${theme.fg("dim", `${counts.untracked}`)}`);
+  if (counts.ahead > 0 && counts.behind > 0) {
+    return `${theme.fg("accent", STATUSLINE_SYMBOLS.gitDiverged)}${theme.fg("dim", `${counts.ahead}/${counts.behind}`)}`;
   }
   if (counts.ahead > 0) {
-    parts.push(`${theme.fg("accent", "↑")}${theme.fg("dim", `${counts.ahead}`)}`);
+    return `${theme.fg("accent", STATUSLINE_SYMBOLS.gitAhead)}${theme.fg("dim", `${counts.ahead}`)}`;
   }
   if (counts.behind > 0) {
-    parts.push(`${theme.fg("accent", "↓")}${theme.fg("dim", `${counts.behind}`)}`);
+    return `${theme.fg("warning", STATUSLINE_SYMBOLS.gitBehind)}${theme.fg("dim", `${counts.behind}`)}`;
   }
-
-  return parts.join(" ");
+  return "";
 }
 
 async function exec(
@@ -317,11 +403,12 @@ function renderFooterLines(
   git: GitInfo,
   thinkingLevel: string,
   theme: Theme,
+  compactionSettings: CompactionSettingsSnapshot,
 ): string[] {
   if (width <= 0) return ["", ""];
 
   const entries = ctx.sessionManager.getBranch();
-  const { latest, totalCost, durationMs } = getUsageData(entries);
+  const { latest, totalCost } = getUsageData(entries);
 
   const contextUsage = ctx.getContextUsage();
   const totalTokens = Math.max(
@@ -329,16 +416,15 @@ function renderFooterLines(
     Math.floor(toNumber(contextUsage?.contextWindow ?? ctx.model?.contextWindow ?? 200_000)),
   );
 
-  const contextTokens = Math.max(0, Math.floor(toNumber(contextUsage?.tokens)));
-  const usedRaw = toNumber(contextUsage?.percent);
+  const contextTokensRaw = contextUsage?.tokens;
+  const contextTokensKnown = typeof contextTokensRaw === "number" && Number.isFinite(contextTokensRaw);
+  const contextTokens = contextTokensKnown ? Math.max(0, Math.floor(contextTokensRaw)) : 0;
+
+  const usedRaw = Number(contextUsage?.percent);
+  const hasUsedPercent = Number.isFinite(usedRaw) && usedRaw >= 0;
   const usedPct = Math.max(
     0,
-    Math.min(
-      100,
-      Math.round(
-        Number.isFinite(usedRaw) && usedRaw > 0 ? usedRaw : (contextTokens * 100) / Math.max(1, totalTokens),
-      ),
-    ),
+    Math.min(100, Math.round(hasUsedPercent ? usedRaw : (contextTokens * 100) / Math.max(1, totalTokens))),
   );
 
   let inputTokens = latest ? latest.input : contextTokens;
@@ -349,24 +435,34 @@ function renderFooterLines(
     inputTokens += minUsedTokens - (inputTokens + cacheTokens);
   }
 
-  const pctColor = usedPct >= 85 ? "error" : usedPct >= 60 ? "warning" : "success";
+  const usageFromLatest = Math.max(0, Math.floor(inputTokens + cacheTokens));
+  const usageFromPercent = hasUsedPercent ? Math.floor((usedPct * totalTokens) / 100) : 0;
+  const usedTokensForBar = contextTokensKnown ? contextTokens : Math.max(usageFromPercent, usageFromLatest);
+
+  const reserveTokens = compactionSettings.enabled ? Math.max(0, compactionSettings.reserveTokens) : 0;
+  const compactAtTokens = Math.max(0, totalTokens - reserveTokens);
 
   const model = normalizeModel(ctx.model?.name || ctx.model?.id || "Claude");
   const thinking = renderThinkingLevel(thinkingLevel, theme);
-  const left = thinking ? `${theme.fg("text", model)} ${thinking}` : theme.fg("text", model);
+  const modelBase = `${theme.fg("accent", STATUSLINE_SYMBOLS.model)}${theme.fg("text", model)}`;
+  const modelSegment = thinking ? `${modelBase} ${thinking}` : modelBase;
 
-  const usedK = Math.floor(Math.max(contextTokens, inputTokens + cacheTokens) / 1000);
+  const usedK = Math.floor(usedTokensForBar / 1000);
   const totalK = Math.max(1, Math.floor(totalTokens / 1000));
 
-  const rightParts = [theme.fg(pctColor, `${usedPct}%`)];
-  if (width >= 50) {
-    rightParts.push(theme.fg("dim", `${usedK}k/${totalK}k`));
-  }
-  if (width >= 55) {
-    rightParts.push(theme.fg("muted", formatElapsed(durationMs)));
+  const totalWindowWidget = `${theme.fg("accent", STATUSLINE_SYMBOLS.contextCapacityMarker)}${theme.fg("dim", `${totalK}k`)}`;
+  const left = `${modelSegment} ${totalWindowWidget}`;
+
+  const usedWidget = `${theme.fg("accent", STATUSLINE_SYMBOLS.contextUsageMarker)}${theme.fg("dim", `${usedK}k`)}`;
+
+  const rightParts: string[] = [];
+  if (width >= 40) {
+    rightParts.push(usedWidget);
   }
   if (width >= 60 && totalCost > 0) {
-    rightParts.push(theme.fg("warning", `$${totalCost.toFixed(2)}`));
+    rightParts.push(
+      `${theme.fg("warning", STATUSLINE_SYMBOLS.currency)}${theme.fg("dim", totalCost.toFixed(2))}`,
+    );
   }
   const right = rightParts.join(" ");
 
@@ -374,21 +470,33 @@ function renderFooterLines(
   const minBar = width >= 100 ? 12 : width >= 70 ? 8 : 4;
   const availableForBar = width - visibleWidth(left) - visibleWidth(right) - 2;
   const barCells = Math.max(0, Math.min(maxBar, availableForBar));
-  const bricks = buildBricks(barCells >= minBar ? barCells : 0, totalTokens, inputTokens, cacheTokens, theme);
+  const bricks = buildBricks(barCells >= minBar ? barCells : 0, totalTokens, usedTokensForBar, compactionSettings, theme);
 
   const line1Parts = [left];
   if (bricks) line1Parts.push(bricks);
   if (right) line1Parts.push(right);
   const line1 = line1Parts.join(" ");
 
-  const location = theme.fg("dim", git.repository || normalizePath(ctx.cwd));
-  let line2 = `${location} `;
+  const locationText = git.repository || normalizePath(ctx.cwd);
+  const location = `${theme.fg("accent", STATUSLINE_SYMBOLS.path)}${theme.fg("dim", locationText)}`;
+  let line2 = location;
 
-  if (git.branch) line2 += theme.fg("syntaxPunctuation", git.branch);
-  if (git.commit) line2 += ` ${theme.fg("syntaxComment", git.commit)}`;
+  if (git.branch) {
+    line2 += ` ${theme.fg("accent", STATUSLINE_SYMBOLS.branch)}${theme.fg("dim", git.branch)}`;
+  }
+  if (git.commit) {
+    line2 += ` ${theme.fg("accent", STATUSLINE_SYMBOLS.commit)}${theme.fg("dim", git.commit)}`;
+  }
 
-  if (git.added > 0 || git.removed > 0) {
-    line2 += ` ${theme.fg("success", `+${git.added}`)}/${theme.fg("error", `-${git.removed}`)}`;
+  const diffParts: string[] = [];
+  if (git.added > 0) {
+    diffParts.push(`${theme.fg("success", STATUSLINE_SYMBOLS.diffAdded)}${theme.fg("dim", `${git.added}`)}`);
+  }
+  if (git.removed > 0) {
+    diffParts.push(`${theme.fg("error", STATUSLINE_SYMBOLS.diffRemoved)}${theme.fg("dim", `${git.removed}`)}`);
+  }
+  if (diffParts.length > 0) {
+    line2 += ` ${diffParts.join(" ")}`;
   }
 
   const gitStatus = buildGitStatus(git.counts, theme);
@@ -401,8 +509,12 @@ function renderFooterLines(
 }
 
 export default function (pi: ExtensionAPI) {
+  let compactionSettings: CompactionSettingsSnapshot = { ...DEFAULT_COMPACTION_SETTINGS };
+
   const installFooter = (ctx: ExtensionContext) => {
     if (!ctx.hasUI) return;
+
+    compactionSettings = loadCompactionSettings(ctx.cwd);
 
     ctx.ui.setFooter((tui, theme, footerData) => {
       let currentGit: GitInfo = { ...EMPTY_GIT_INFO };
@@ -421,6 +533,7 @@ export default function (pi: ExtensionAPI) {
         try {
           do {
             refreshQueued = false;
+            compactionSettings = loadCompactionSettings(ctx.cwd);
             const git = await collectGitInfo(pi, ctx.cwd);
             if (disposed) return;
             currentGit = git;
@@ -449,11 +562,15 @@ export default function (pi: ExtensionAPI) {
           clearInterval(interval);
         },
         render(width: number): string[] {
-          return renderFooterLines(width, ctx, currentGit, pi.getThinkingLevel(), theme);
+          return renderFooterLines(width, ctx, currentGit, pi.getThinkingLevel(), theme, compactionSettings);
         },
       };
     });
   };
+
+  pi.on("session_before_compact", async (event) => {
+    compactionSettings = coerceCompactionSettings(event.preparation.settings, compactionSettings);
+  });
 
   pi.on("session_start", async (_event, ctx) => {
     installFooter(ctx);
