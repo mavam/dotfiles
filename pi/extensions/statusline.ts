@@ -1,5 +1,5 @@
 import type { AssistantMessage } from "@mariozechner/pi-ai";
-import type { ExtensionAPI, ExtensionContext, SessionEntry } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext, SessionEntry, Theme } from "@mariozechner/pi-coding-agent";
 import { truncateToWidth } from "@mariozechner/pi-tui";
 
 const ESC = "\x1b[";
@@ -19,6 +19,17 @@ const DM = "2;35";
 const CYN = "0;36";
 const BLU = "0;34";
 const WHT = "0;37";
+
+type ThinkingLevel = "off" | "minimal" | "low" | "medium" | "high" | "xhigh";
+
+const THINKING_SYMBOLS: Record<ThinkingLevel, string> = {
+  off: "",
+  minimal: "✧",
+  low: "✦",
+  medium: "◆",
+  high: "❖",
+  xhigh: "✹",
+};
 
 const GIT_REFRESH_MS = 5000;
 
@@ -84,6 +95,27 @@ function normalizeModel(model: string): string {
   const trimmed = model.trim();
   if (!trimmed) return "Claude";
   return trimmed.replace(/^Claude\s+/i, "") || "Claude";
+}
+
+function normalizeThinkingLevel(level: string): ThinkingLevel {
+  switch (level) {
+    case "off":
+    case "minimal":
+    case "low":
+    case "medium":
+    case "high":
+    case "xhigh":
+      return level;
+    default:
+      return "off";
+  }
+}
+
+function renderThinkingLevel(level: string, theme: Theme): string {
+  const normalized = normalizeThinkingLevel(level);
+  const symbol = THINKING_SYMBOLS[normalized];
+  if (!symbol) return "";
+  return theme.getThinkingBorderColor(normalized)(symbol);
 }
 
 function parseGitHubRemote(url: string): string {
@@ -302,7 +334,13 @@ async function collectGitInfo(pi: ExtensionAPI, cwd: string): Promise<GitInfo> {
   };
 }
 
-function renderFooterLines(width: number, ctx: ExtensionContext, git: GitInfo): string[] {
+function renderFooterLines(
+  width: number,
+  ctx: ExtensionContext,
+  git: GitInfo,
+  thinkingLevel: string,
+  theme: Theme,
+): string[] {
   if (width <= 0) return ["", ""];
 
   const entries = ctx.sessionManager.getBranch();
@@ -347,7 +385,9 @@ function renderFooterLines(width: number, ctx: ExtensionContext, git: GitInfo): 
   }
 
   const model = normalizeModel(ctx.model?.name || ctx.model?.id || "Claude");
-  let line1 = `${c(WHT, model)} ${bricks} ${c(pctColor, `${usedPct}%`)}`;
+  const thinking = renderThinkingLevel(thinkingLevel, theme);
+  const modelSegment = thinking ? `${c(WHT, model)} ${thinking}` : c(WHT, model);
+  let line1 = `${modelSegment} ${bricks} ${c(pctColor, `${usedPct}%`)}`;
 
   if (width >= 50) {
     const usedK = Math.floor(Math.max(contextTokens, inputTokens + cacheTokens) / 1000);
@@ -386,7 +426,7 @@ export default function (pi: ExtensionAPI) {
   const installFooter = (ctx: ExtensionContext) => {
     if (!ctx.hasUI) return;
 
-    ctx.ui.setFooter((tui, _theme, footerData) => {
+    ctx.ui.setFooter((tui, theme, footerData) => {
       let currentGit: GitInfo = { ...EMPTY_GIT_INFO };
       let refreshing = false;
       let refreshQueued = false;
@@ -431,7 +471,7 @@ export default function (pi: ExtensionAPI) {
           clearInterval(interval);
         },
         render(width: number): string[] {
-          return renderFooterLines(width, ctx, currentGit);
+          return renderFooterLines(width, ctx, currentGit, pi.getThinkingLevel(), theme);
         },
       };
     });
