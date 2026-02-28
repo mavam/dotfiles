@@ -373,11 +373,11 @@ function renderFooterLines(
     line1 += ` ${theme.fg("warning", `$${totalCost.toFixed(2)}`)}`;
   }
 
-  const location = git.repository ? theme.fg("accent", git.repository) : theme.fg("dim", normalizePath(ctx.cwd));
+  const location = theme.fg("dim", git.repository || normalizePath(ctx.cwd));
   let line2 = `${location} `;
 
-  if (git.branch) line2 += theme.fg("accent", git.branch);
-  if (git.commit) line2 += ` ${theme.fg("warning", git.commit)}`;
+  if (git.branch) line2 += theme.fg("syntaxPunctuation", git.branch);
+  if (git.commit) line2 += ` ${theme.fg("syntaxComment", git.commit)}`;
 
   if (git.added > 0 || git.removed > 0) {
     line2 += ` ${theme.fg("success", `+${git.added}`)}/${theme.fg("error", `-${git.removed}`)}`;
