@@ -1,6 +1,6 @@
 import type { AssistantMessage } from "@mariozechner/pi-ai";
 import type { ExtensionAPI, ExtensionContext, SessionEntry, Theme } from "@mariozechner/pi-coding-agent";
-import { truncateToWidth } from "@mariozechner/pi-tui";
+import { truncateToWidth, visibleWidth } from "@mariozechner/pi-tui";
 
 type ThinkingLevel = "off" | "minimal" | "low" | "medium" | "high" | "xhigh";
 
@@ -157,15 +157,14 @@ function getUsageData(entries: SessionEntry[]): {
 }
 
 function buildBricks(
-  width: number,
+  cells: number,
   totalTokens: number,
   inputTokens: number,
   cacheTokens: number,
   theme: Theme,
 ): string {
-  let n = 40;
-  if (width < 100) n = 30;
-  if (width < 80) n = 20;
+  const n = Math.max(0, Math.floor(cells));
+  if (n === 0) return "";
 
   const total = Math.max(1, totalTokens);
   const t1 = Math.floor((n * 60) / 100);
@@ -350,28 +349,37 @@ function renderFooterLines(
     inputTokens += minUsedTokens - (inputTokens + cacheTokens);
   }
 
-  const bricks = buildBricks(width, totalTokens, inputTokens, cacheTokens, theme);
-
   const pctColor = usedPct >= 85 ? "error" : usedPct >= 60 ? "warning" : "success";
 
   const model = normalizeModel(ctx.model?.name || ctx.model?.id || "Claude");
   const thinking = renderThinkingLevel(thinkingLevel, theme);
-  const modelSegment = thinking ? `${theme.fg("text", model)} ${thinking}` : theme.fg("text", model);
-  let line1 = `${modelSegment} ${bricks} ${theme.fg(pctColor, `${usedPct}%`)}`;
+  const left = thinking ? `${theme.fg("text", model)} ${thinking}` : theme.fg("text", model);
 
+  const usedK = Math.floor(Math.max(contextTokens, inputTokens + cacheTokens) / 1000);
+  const totalK = Math.max(1, Math.floor(totalTokens / 1000));
+
+  const rightParts = [theme.fg(pctColor, `${usedPct}%`)];
   if (width >= 50) {
-    const usedK = Math.floor(Math.max(contextTokens, inputTokens + cacheTokens) / 1000);
-    const totalK = Math.floor(totalTokens / 1000);
-    line1 += ` ${theme.fg("dim", `${usedK}k/${totalK}k`)}`;
+    rightParts.push(theme.fg("dim", `${usedK}k/${totalK}k`));
   }
-
   if (width >= 55) {
-    line1 += ` ${theme.fg("muted", formatElapsed(durationMs))}`;
+    rightParts.push(theme.fg("muted", formatElapsed(durationMs)));
   }
-
   if (width >= 60 && totalCost > 0) {
-    line1 += ` ${theme.fg("warning", `$${totalCost.toFixed(2)}`)}`;
+    rightParts.push(theme.fg("warning", `$${totalCost.toFixed(2)}`));
   }
+  const right = rightParts.join(" ");
+
+  const maxBar = Math.max(0, Math.floor(width * 0.6));
+  const minBar = width >= 100 ? 12 : width >= 70 ? 8 : 4;
+  const availableForBar = width - visibleWidth(left) - visibleWidth(right) - 2;
+  const barCells = Math.max(0, Math.min(maxBar, availableForBar));
+  const bricks = buildBricks(barCells >= minBar ? barCells : 0, totalTokens, inputTokens, cacheTokens, theme);
+
+  const line1Parts = [left];
+  if (bricks) line1Parts.push(bricks);
+  if (right) line1Parts.push(right);
+  const line1 = line1Parts.join(" ");
 
   const location = theme.fg("dim", git.repository || normalizePath(ctx.cwd));
   let line2 = `${location} `;
