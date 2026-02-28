@@ -210,6 +210,7 @@ if status is-interactive
     # Switch (mirrors gsw/gswc/gswm)
     abbr -g wsw 'wt switch'
     abbr -g wswc 'wt switch -c'
+    abbr -g wswm 'wt switch main'
     abbr -g wswb 'wt switch --branches'
     abbr -g wswr 'wt switch --remotes'
     # List (mirrors gst for status)
