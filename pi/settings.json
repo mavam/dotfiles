@@ -1,7 +1,8 @@
 {
   "packages": [
     "npm:pi-terminal-theme",
-    "npm:pi-mcporter"
+    "npm:pi-mcporter",
+    "npm:pi-fancy-footer"
   ],
   "enabledModels": [
     "openai-codex/gpt-5.3-codex",
@@ -9,10 +10,10 @@
     "google/gemini-3.1-pro-preview-customtools",
     "anthropic/claude-opus-4-6"
   ],
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.3-codex",
+  "defaultProvider": "anthropic",
+  "defaultModel": "claude-opus-4-6",
   "quietStartup": true,
   "lastChangelogVersion": "0.55.3",
-  "defaultThinkingLevel": "xhigh",
+  "defaultThinkingLevel": "medium",
   "theme": "terminal"
 }
