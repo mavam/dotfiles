@@ -1,0 +1,27 @@
+{
+  "providers": {
+    "ollama": {
+      "api": "openai-completions",
+      "apiKey": "ollama",
+      "baseUrl": "http://127.0.0.1:11434/v1",
+      "models": [
+        {
+          "contextWindow": 262144,
+          "id": "qwen3-coder-next",
+          "input": [
+            "text"
+          ]
+        },
+        {
+          "contextWindow": 262144,
+          "id": "qwen3.5",
+          "input": [
+            "text",
+            "image"
+          ],
+          "reasoning": true
+        }
+      ]
+    }
+  }
+}

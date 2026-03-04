@@ -10,10 +10,10 @@
     "google/gemini-3.1-pro-preview-customtools",
     "anthropic/claude-opus-4-6"
   ],
-  "defaultProvider": "anthropic",
-  "defaultModel": "claude-opus-4-6",
+  "defaultProvider": "ollama",
+  "defaultModel": "qwen3.5:latest",
   "quietStartup": true,
-  "lastChangelogVersion": "0.55.3",
-  "defaultThinkingLevel": "medium",
+  "lastChangelogVersion": "0.55.4",
+  "defaultThinkingLevel": "off",
   "theme": "terminal"
 }
