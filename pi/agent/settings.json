@@ -13,10 +13,10 @@
     "google/gemini-3.1-pro-preview-customtools",
     "anthropic/claude-opus-4-6"
   ],
-  "defaultProvider": "ollama",
-  "defaultModel": "qwen3-coder-next",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.4",
   "quietStartup": true,
-  "lastChangelogVersion": "0.56.2",
-  "defaultThinkingLevel": "off",
+  "lastChangelogVersion": "0.56.3",
+  "defaultThinkingLevel": "high",
   "theme": "terminal"
 }
