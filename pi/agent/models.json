@@ -8,13 +8,15 @@
         {
           "contextWindow": 262144,
           "id": "qwen3-coder-next",
+          "name": "Qwen 3 Coder Next",
           "input": [
             "text"
           ]
         },
         {
           "contextWindow": 262144,
-          "id": "qwen3.5",
+          "id": "qwen3.5:35b",
+          "name": "Qwen 3.5 35B",
           "input": [
             "text",
             "image"
