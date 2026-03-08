@@ -2,7 +2,8 @@
   "packages": [
     "npm:pi-terminal-theme",
     "npm:pi-mcporter",
-    "npm:pi-fancy-footer"
+    "npm:pi-fancy-footer",
+    "npm:pi-subdir-context"
   ],
   "enabledModels": [
     "ollama/qwen3.5:35b",
