@@ -3,3 +3,5 @@ entries:
     target: "~/.pi/agent/settings.json"
   - source: "agent/models.json"
     target: "~/.pi/agent/models.json"
+  - source: "agent/keybindings.json"
+    target: "~/.pi/agent/keybindings.json"
