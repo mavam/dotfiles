@@ -1,5 +1,0 @@
-directories:
-  - path: "~/.config/opencode"
-entries:
-  - source: "opencode.jsonc"
-    target: "~/.config/opencode/opencode.json"
