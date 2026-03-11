@@ -46,7 +46,9 @@ To change pi configuration (settings, keybindings, models):
 3. Run `./dots install pi` to symlink.
 
 Do **not** edit `~/.pi/agent/` files directly or modify pi's source code for
-personal configuration.
+personal configuration. Refer to the
+[keybindings docs](https://github.com/nicholasgasior/pi-coding-agent/blob/main/docs/keybindings.md)
+for available actions and key format.
 
 ## Code Style
 
