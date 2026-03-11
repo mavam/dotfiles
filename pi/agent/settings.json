@@ -3,7 +3,8 @@
     "npm:pi-terminal-theme",
     "npm:pi-mcporter",
     "npm:pi-fancy-footer",
-    "npm:pi-subdir-context"
+    "npm:pi-subdir-context",
+    "npm:pi-web-providers"
   ],
   "enabledModels": [
     "ollama/qwen3.5:35b",
