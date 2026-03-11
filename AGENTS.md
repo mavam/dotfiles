@@ -1,77 +1,75 @@
 # Dotfiles Repository
 
 Personal configuration files managed via symlinks. Each top-level directory is
-one "tool" whose contents mirror `$HOME` paths (e.g., `neovim/.config/nvim` →
-`~/.config/nvim`).
+a "tool" (e.g., `git/`, `fish/`, `pi/`). The `dots` utility symlinks their
+contents into `$HOME`.
 
-## Commands
+## Golden Rule
 
-- `./dots install [tool…]` — symlink tools to `$HOME` (all if none specified)
-- `./dots install --force` — overwrite existing files
-- `./dots diff [tool…]` — preview changes before applying
-- `./dots remove [tool…]` — unlink managed symlinks
-- `./dots list` — show install status
-- `./dots doctor` — check environment health
+This repo is the source of truth. Never edit config files under `$HOME`
+directly—always edit here and let `dots` create the symlinks.
 
-## Changing Tool Configuration
+## How `dots` Works
 
-The source of truth for all config lives in this repo, never in `$HOME`
-directly. When modifying configuration for any tool:
+```
+./dots install [tool…]        # symlink (all tools if none given)
+./dots install --force        # overwrite existing files
+./dots diff [tool…]           # preview what would change
+./dots remove [tool…]         # unlink managed symlinks
+./dots list                   # show install status
+./dots doctor                 # check environment health
+```
 
-1. **Edit files inside the tool directory** (e.g., `pi/agent/settings.json`),
-   not the symlink target under `$HOME`.
-2. **Wire new files in `tool.config.yaml`** if the tool uses explicit `entries`
-   mappings. Add a new entry with `source` and `target`. If the tool uses a
-   `root` mapping, new files are picked up automatically.
-3. **Run `./dots install <tool>`** to create or update symlinks.
+## Tool Layout
 
-### pi (coding agent)
+Every tool directory has a `tool.config.yaml` that tells `dots` where files go.
+There are two mapping styles:
 
-pi configuration lives in `pi/agent/` and symlinks to `~/.pi/agent/`. The tool
-uses explicit `entries` in `pi/tool.config.yaml` (no `root` mapping), so every
-new file must be wired manually.
+### `root` — whole-directory link
 
-Current files:
+The entire tool directory maps to one target. New files are picked up
+automatically.
 
-| File | Purpose |
-|------|---------|
-| `agent/settings.json` | General settings |
-| `agent/models.json` | Model/provider configuration |
-| `agent/keybindings.json` | Custom keybindings |
+```yaml
+# fish/tool.config.yaml
+root:
+  target: "~/.config/fish"
+  mode: link
+```
 
-To change pi configuration (settings, keybindings, models):
+### `entries` — explicit file mappings
 
-1. Edit the file in `pi/agent/` in this repo.
-2. If adding a new file, add an entry to `pi/tool.config.yaml`.
-3. Run `./dots install pi` to symlink.
+Each file is mapped individually. New files must be wired by adding an entry.
 
-Do **not** edit `~/.pi/agent/` files directly or modify pi's source code for
-personal configuration. Refer to the
-[keybindings docs](https://github.com/nicholasgasior/pi-coding-agent/blob/main/docs/keybindings.md)
-for available actions and key format.
+```yaml
+# pi/tool.config.yaml
+entries:
+  - source: "agent/settings.json"
+    target: "~/.pi/agent/settings.json"
+  - source: "agent/models.json"
+    target: "~/.pi/agent/models.json"
+```
 
-## Code Style
+### Optional sections
 
-- **Shell scripts**: Bash 3.2+, `set -euo pipefail`, 2-space indent
-- **Filenames**: lowercase, use dots/hyphens (`init.fish`, `starship.toml`)
+- `directories` — pre-create paths (with optional permissions)
+- `post_install` — shell commands to run after linking
 
-## Commits
+## Changing Configuration
 
-- Imperative present tense, under 72 chars: `Add fish abbreviations for git`
-- Group changes by tool
+1. **Find the tool directory** for the application (e.g., `pi/` for the pi
+   coding agent, `git/` for git, `fish/` for the fish shell).
+2. **Edit or create the file** inside that directory.
+3. **If the tool uses `entries`**, add a mapping to `tool.config.yaml` for any
+   new file. Tools with a `root` mapping need no manifest change.
+4. **Run `./dots install <tool>`** to activate the symlink.
 
-## Structure
+## Conventions
 
-- Use `tool.config.yaml` for symlink manifests, directory creation, and
-  post-install hooks
-- Use per-tool `.gitignore` files (not root `.gitignore`)
-- NEVER commit secrets, tokens, or SSH keys—use `.example` templates
-
-## tool.config.yaml
-
-Supports these sections:
-
-- `root`: target path, mode (`link`/`merge`), permissions
-- `entries`: individual file mappings with source/target/mode
-- `directories`: directories to create
-- `post_install`: list of shell commands to run after linking
+- **Shell scripts**: Bash 3.2+, `set -euo pipefail`, 2-space indent.
+- **Filenames**: lowercase with dots or hyphens (`init.fish`, `starship.toml`).
+- **Commits**: imperative present tense, under 72 chars, grouped by tool.
+  Example: `Add fish abbreviations for git`
+- **Secrets**: never commit tokens, keys, or passwords. Use `.example`
+  templates.
+- **Ignores**: use per-tool `.gitignore` files, not a root-level one.
