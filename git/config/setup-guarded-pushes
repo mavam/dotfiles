@@ -171,12 +171,24 @@ sync_managed_branch_push_remotes() {
   git -C "$repo_root" config --local hooks.protectedPushManagedBranches "$(branches_config)"
 }
 
+restrict_ssh_remote_fetch() {
+  local repo_root="$1"
+  local ssh_remote="$2"
+  local branch
+
+  git -C "$repo_root" config --local --unset-all "remote.$ssh_remote.fetch" 2>/dev/null || true
+  for branch in "${branches[@]}"; do
+    git -C "$repo_root" config --local --add "remote.$ssh_remote.fetch" \
+      "+refs/heads/$branch:refs/remotes/$ssh_remote/$branch"
+  done
+}
+
 record_original_state_if_unmanaged() {
   local repo_root="$1"
   local remote_name="$2"
   local ssh_remote_name="$3"
   local current_remote_url="$4"
-  local git_dir hook_path original_push_default original_ssh_remote_url
+  local git_dir hook_path original_push_default original_ssh_remote_url original_ssh_fetch
 
   if git -C "$repo_root" config --local --get hooks.protectedPushPrimaryRemote >/dev/null 2>&1; then
     return 0
@@ -208,6 +220,13 @@ record_original_state_if_unmanaged() {
     git -C "$repo_root" config --local hooks.protectedPushOriginalSshRemoteUrl "$original_ssh_remote_url"
   else
     git -C "$repo_root" config --local hooks.protectedPushOriginalSshRemoteUrl '__missing__'
+  fi
+  original_ssh_fetch="$(git -C "$repo_root" config --local --get-all "remote.$ssh_remote_name.fetch" 2>/dev/null \
+    | tr '\n' '|' | sed 's/|$//' || true)"
+  if [ -n "$original_ssh_fetch" ]; then
+    git -C "$repo_root" config --local hooks.protectedPushOriginalSshFetch "$original_ssh_fetch"
+  else
+    git -C "$repo_root" config --local hooks.protectedPushOriginalSshFetch '__none__'
   fi
 }
 
@@ -280,6 +299,10 @@ if git -C "$repo_root" remote get-url "$ssh_remote_name" >/dev/null 2>&1; then
 else
   git -C "$repo_root" remote add "$ssh_remote_name" "$ssh_url"
 fi
+
+# Restrict origin-ssh to only fetch guarded branches so topic branches on
+# origin and origin-ssh don't create checkout ambiguity.
+restrict_ssh_remote_fetch "$repo_root" "$ssh_remote_name"
 
 git -C "$repo_root" config --local remote.pushDefault "$remote_name"
 git -C "$repo_root" config --local hooks.protectedBranches "$(branches_config)"

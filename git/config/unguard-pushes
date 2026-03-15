@@ -144,6 +144,7 @@ done
 original_remote_url="$(git -C "$repo_root" config --local --get hooks.protectedPushPrimaryRemoteOriginalUrl 2>/dev/null || true)"
 original_push_default="$(git -C "$repo_root" config --local --get hooks.protectedPushOriginalPushDefault 2>/dev/null || true)"
 original_ssh_remote_url="$(git -C "$repo_root" config --local --get hooks.protectedPushOriginalSshRemoteUrl 2>/dev/null || true)"
+original_ssh_fetch="$(git -C "$repo_root" config --local --get hooks.protectedPushOriginalSshFetch 2>/dev/null || true)"
 
 if [ -n "$original_remote_url" ] && git -C "$repo_root" remote get-url "$remote_name" >/dev/null 2>&1; then
   git -C "$repo_root" remote set-url "$remote_name" "$original_remote_url"
@@ -158,6 +159,20 @@ if git -C "$repo_root" remote get-url "$ssh_remote_name" >/dev/null 2>&1; then
       ;;
     *)
       git -C "$repo_root" remote set-url "$ssh_remote_name" "$original_ssh_remote_url"
+      git -C "$repo_root" config --local --unset-all "remote.$ssh_remote_name.fetch" 2>/dev/null || true
+      case "$original_ssh_fetch" in
+        ''|'__none__')
+          git -C "$repo_root" config --local "remote.$ssh_remote_name.fetch" \
+            "+refs/heads/*:refs/remotes/$ssh_remote_name/*"
+          ;;
+        *)
+          IFS='|' read -ra _fetch_specs <<< "$original_ssh_fetch"
+          for _spec in "${_fetch_specs[@]}"; do
+            [ -n "$_spec" ] && git -C "$repo_root" config --local --add \
+              "remote.$ssh_remote_name.fetch" "$_spec"
+          done
+          ;;
+      esac
       ;;
   esac
 fi
@@ -182,6 +197,7 @@ unset_if_set "$repo_root" hooks.protectedPushSshRemote
 unset_if_set "$repo_root" hooks.protectedPushPrimaryRemoteOriginalUrl
 unset_if_set "$repo_root" hooks.protectedPushOriginalPushDefault
 unset_if_set "$repo_root" hooks.protectedPushOriginalSshRemoteUrl
+unset_if_set "$repo_root" hooks.protectedPushOriginalSshFetch
 
 printf 'Removed guarded pushes from %s\n' "$repo_root"
 printf '  remote: %s\n' "$remote_name"
