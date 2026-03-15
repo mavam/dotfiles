@@ -1,0 +1,191 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+marker='installed-by=setup-guarded-pushes'
+legacy_marker='installed-by=setup-protected-pushes'
+remote_name=''
+ssh_remote_name=''
+repo='.'
+
+usage() {
+  cat <<'EOF'
+Usage: unguard-pushes [options] [repo]
+
+Remove the guarded-push setup from a repository.
+
+Options:
+  --remote <name>      Primary remote name (default: stored value or origin)
+  --ssh-remote <name>  SSH remote name (default: stored value or <remote>-ssh)
+  -h, --help           Show this help
+
+Examples:
+  unguard-pushes
+  unguard-pushes ~/code/tenzir/ship
+EOF
+}
+
+die() {
+  printf 'error: %s\n' "$*" >&2
+  exit 1
+}
+
+hook_is_managed() {
+  local hook_path="$1"
+
+  [ -e "$hook_path" ] || return 1
+  grep -Fq "$marker" "$hook_path" || grep -Fq "$legacy_marker" "$hook_path"
+}
+
+absolute_git_dir() {
+  local repo_root="$1"
+  local git_dir
+
+  git_dir="$(git -C "$repo_root" rev-parse --git-dir)"
+  case "$git_dir" in
+    /*)
+      printf '%s\n' "$git_dir"
+      ;;
+    *)
+      printf '%s\n' "$repo_root/$git_dir"
+      ;;
+  esac
+}
+
+restore_hook() {
+  local repo_root="$1"
+  local git_dir hook_path local_hook
+
+  git_dir="$(absolute_git_dir "$repo_root")"
+  hook_path="$git_dir/hooks/pre-push"
+  local_hook="$git_dir/hooks/pre-push.local"
+
+  if ! hook_is_managed "$hook_path"; then
+    return 0
+  fi
+
+  if [ -e "$local_hook" ]; then
+    mv "$local_hook" "$hook_path"
+    chmod +x "$hook_path"
+  else
+    rm -f "$hook_path"
+  fi
+}
+
+unset_if_set() {
+  local repo_root="$1"
+  local key="$2"
+  git -C "$repo_root" config --local --unset-all "$key" 2>/dev/null || true
+}
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --remote)
+      [ $# -ge 2 ] || die "--remote requires a value"
+      remote_name="$2"
+      shift 2
+      ;;
+    --ssh-remote)
+      [ $# -ge 2 ] || die "--ssh-remote requires a value"
+      ssh_remote_name="$2"
+      shift 2
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    --)
+      shift
+      break
+      ;;
+    -*)
+      die "unknown option: $1"
+      ;;
+    *)
+      if [ "$repo" != '.' ]; then
+        die "only one repository path may be provided"
+      fi
+      repo="$1"
+      shift
+      ;;
+  esac
+done
+
+[ $# -eq 0 ] || die "only one repository path may be provided"
+
+repo_root="$(git -C "$repo" rev-parse --show-toplevel 2>/dev/null || true)"
+[ -n "$repo_root" ] || die "$repo is not a Git repository"
+
+if [ -z "$remote_name" ]; then
+  remote_name="$(git -C "$repo_root" config --local --get hooks.protectedPushPrimaryRemote 2>/dev/null || true)"
+fi
+if [ -z "$remote_name" ]; then
+  remote_name='origin'
+fi
+
+if [ -z "$ssh_remote_name" ]; then
+  ssh_remote_name="$(git -C "$repo_root" config --local --get hooks.protectedPushSshRemote 2>/dev/null || true)"
+fi
+if [ -z "$ssh_remote_name" ]; then
+  ssh_remote_name="$remote_name-ssh"
+fi
+
+managed_branches="$(git -C "$repo_root" config --local --get hooks.protectedPushManagedBranches 2>/dev/null || true)"
+if [ -z "$managed_branches" ]; then
+  managed_branches="$(git -C "$repo_root" config --local --get hooks.protectedBranches 2>/dev/null || true)"
+fi
+
+for branch in $managed_branches; do
+  git -C "$repo_root" config --local --unset-all "branch.$branch.pushRemote" 2>/dev/null || true
+done
+
+original_remote_url="$(git -C "$repo_root" config --local --get hooks.protectedPushPrimaryRemoteOriginalUrl 2>/dev/null || true)"
+original_push_default="$(git -C "$repo_root" config --local --get hooks.protectedPushOriginalPushDefault 2>/dev/null || true)"
+original_ssh_remote_url="$(git -C "$repo_root" config --local --get hooks.protectedPushOriginalSshRemoteUrl 2>/dev/null || true)"
+
+if [ -n "$original_remote_url" ] && git -C "$repo_root" remote get-url "$remote_name" >/dev/null 2>&1; then
+  git -C "$repo_root" remote set-url "$remote_name" "$original_remote_url"
+fi
+
+if git -C "$repo_root" remote get-url "$ssh_remote_name" >/dev/null 2>&1; then
+  case "$original_ssh_remote_url" in
+    __missing__)
+      git -C "$repo_root" remote remove "$ssh_remote_name"
+      ;;
+    '')
+      ;;
+    *)
+      git -C "$repo_root" remote set-url "$ssh_remote_name" "$original_ssh_remote_url"
+      ;;
+  esac
+fi
+
+case "$original_push_default" in
+  __unset__)
+    unset_if_set "$repo_root" remote.pushDefault
+    ;;
+  '')
+    ;;
+  *)
+    git -C "$repo_root" config --local remote.pushDefault "$original_push_default"
+    ;;
+esac
+
+restore_hook "$repo_root"
+
+unset_if_set "$repo_root" hooks.protectedBranches
+unset_if_set "$repo_root" hooks.protectedPushManagedBranches
+unset_if_set "$repo_root" hooks.protectedPushPrimaryRemote
+unset_if_set "$repo_root" hooks.protectedPushSshRemote
+unset_if_set "$repo_root" hooks.protectedPushPrimaryRemoteOriginalUrl
+unset_if_set "$repo_root" hooks.protectedPushOriginalPushDefault
+unset_if_set "$repo_root" hooks.protectedPushOriginalSshRemoteUrl
+
+printf 'Removed guarded pushes from %s\n' "$repo_root"
+printf '  remote: %s\n' "$remote_name"
+printf '  ssh remote: %s\n' "$ssh_remote_name"
+if [ -n "$managed_branches" ]; then
+  printf '  unguarded branches: %s\n' "$managed_branches"
+fi
+if [ -z "$original_remote_url" ]; then
+  printf '  note: no stored original remote metadata was found; remote URLs were left as-is\n'
+fi

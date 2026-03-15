@@ -1,0 +1,115 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+remote_name="${1:-}"
+remote_url="${2:-}"
+protected_branches="${GIT_GUARDED_BRANCHES:-${GIT_PROTECTED_BRANCHES:-}}"
+allowed_url_pattern="${GIT_GUARDED_PUSH_URL_PATTERN:-${GIT_PROTECTED_PUSH_URL_PATTERN:-}}"
+
+if [ -z "$protected_branches" ]; then
+  protected_branches="$(git config --get hooks.protectedBranches 2>/dev/null || true)"
+fi
+
+if [ -z "$protected_branches" ]; then
+  protected_branches="main master"
+fi
+
+if [ -z "$allowed_url_pattern" ]; then
+  allowed_url_pattern="$(git config --get hooks.protectedPushUrlPattern 2>/dev/null || true)"
+fi
+
+if [ -z "$allowed_url_pattern" ]; then
+  allowed_url_pattern='^(git@|ssh://)'
+fi
+
+to_ssh_url() {
+  local url="$1"
+  local rest host path
+
+  case "$url" in
+    https://*/*|http://*/*)
+      rest="${url#*://}"
+      host="${rest%%/*}"
+      path="${rest#*/}"
+      printf 'git@%s:%s\n' "$host" "$path"
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+is_protected_branch() {
+  local branch="$1"
+  local pattern
+
+  for pattern in $protected_branches; do
+    case "$branch" in
+      $pattern)
+        return 0
+        ;;
+    esac
+  done
+
+  return 1
+}
+
+allowed_remote() {
+  local url="$1"
+  printf '%s\n' "$url" | grep -Eq "$allowed_url_pattern"
+}
+
+blocked_branches=""
+while read -r local_ref local_sha remote_ref remote_sha; do
+  case "$remote_ref" in
+    refs/heads/*)
+      branch="${remote_ref#refs/heads/}"
+      ;;
+    *)
+      continue
+      ;;
+  esac
+
+  if ! is_protected_branch "$branch"; then
+    continue
+  fi
+
+  if allowed_remote "$remote_url"; then
+    continue
+  fi
+
+  case " $blocked_branches " in
+    *" $branch "*)
+      ;;
+    *)
+      if [ -n "$blocked_branches" ]; then
+        blocked_branches="$blocked_branches $branch"
+      else
+        blocked_branches="$branch"
+      fi
+      ;;
+  esac
+done
+
+if [ -z "$blocked_branches" ]; then
+  exit 0
+fi
+
+printf 'error: refusing to push guarded branch(es) via a non-SSH remote\n' >&2
+printf '  branch(es): %s\n' "$blocked_branches" >&2
+printf '  remote:     %s\n' "${remote_name:-<unknown>}" >&2
+printf '  url:        %s\n' "${remote_url:-<unknown>}" >&2
+printf '\n' >&2
+printf 'This guard keeps guarded branches off HTTPS remotes so they still\n' >&2
+printf 'require your SSH agent (for example Secretive/Touch ID). Topic branch\n' >&2
+printf 'pushes are unaffected.\n' >&2
+
+if ssh_url="$(to_ssh_url "$remote_url" 2>/dev/null)"; then
+  printf '\nSuggested setup:\n' >&2
+  printf '  git remote add %s-ssh %s\n' "${remote_name:-origin}" "$ssh_url" >&2
+  for branch in $blocked_branches; do
+    printf '  git config branch.%s.pushRemote %s-ssh\n' "$branch" "${remote_name:-origin}" >&2
+  done
+fi
+
+exit 1

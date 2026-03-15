@@ -1,0 +1,286 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_dir="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+shared_hook="$script_dir/hooks/pre-push-guarded-branches"
+marker='installed-by=setup-guarded-pushes'
+legacy_marker='installed-by=setup-protected-pushes'
+remote_name='origin'
+ssh_remote_name=''
+repo='.'
+branches=(main)
+custom_branches=false
+
+usage() {
+  cat <<'EOF'
+Usage: setup-guarded-pushes [options] [repo]
+
+Configure a repository so topic branches push via HTTPS while guarded
+branches push via SSH.
+
+Options:
+  --branch <name>      Guard this branch (repeatable, default: main)
+  --remote <name>      Primary remote to use for fetch/topic pushes (default: origin)
+  --ssh-remote <name>  SSH remote for guarded pushes (default: <remote>-ssh)
+  -h, --help           Show this help
+
+Examples:
+  setup-guarded-pushes
+  setup-guarded-pushes ~/code/tenzir/ship
+  setup-guarded-pushes --branch main --branch release ~/code/tenzir/ship
+EOF
+}
+
+die() {
+  printf 'error: %s\n' "$*" >&2
+  exit 1
+}
+
+hook_is_managed() {
+  local hook_path="$1"
+
+  [ -e "$hook_path" ] || return 1
+  grep -Fq "$marker" "$hook_path" || grep -Fq "$legacy_marker" "$hook_path"
+}
+
+convert_remote_urls() {
+  local url="$1"
+  local rest host path
+
+  case "$url" in
+    https://*/*)
+      rest="${url#https://}"
+      host="${rest%%/*}"
+      path="${rest#*/}"
+      https_url="https://$host/$path"
+      ssh_url="git@$host:$path"
+      ;;
+    http://*/*)
+      rest="${url#http://}"
+      host="${rest%%/*}"
+      path="${rest#*/}"
+      https_url="https://$host/$path"
+      ssh_url="git@$host:$path"
+      ;;
+    git@*:*)
+      rest="${url#git@}"
+      host="${rest%%:*}"
+      path="${rest#*:}"
+      https_url="https://$host/$path"
+      ssh_url="$url"
+      ;;
+    ssh://git@*/*)
+      rest="${url#ssh://git@}"
+      host="${rest%%/*}"
+      path="${rest#*/}"
+      https_url="https://$host/$path"
+      ssh_url="git@$host:$path"
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+absolute_git_dir() {
+  local repo_root="$1"
+  local git_dir
+
+  git_dir="$(git -C "$repo_root" rev-parse --git-dir)"
+  case "$git_dir" in
+    /*)
+      printf '%s\n' "$git_dir"
+      ;;
+    *)
+      printf '%s\n' "$repo_root/$git_dir"
+      ;;
+  esac
+}
+
+install_hook() {
+  local repo_root="$1"
+  local git_dir hook_path hook_dir local_hook
+
+  git_dir="$(absolute_git_dir "$repo_root")"
+  hook_path="$git_dir/hooks/pre-push"
+  hook_dir="$(dirname "$hook_path")"
+  local_hook="$hook_dir/pre-push.local"
+
+  mkdir -p "$hook_dir"
+
+  if [ -e "$hook_path" ] && ! hook_is_managed "$hook_path"; then
+    if [ -e "$local_hook" ]; then
+      die "$repo_root already has both pre-push and pre-push.local; resolve manually"
+    fi
+    mv "$hook_path" "$local_hook"
+    chmod +x "$local_hook"
+  fi
+
+  cat > "$hook_path" <<EOF
+#!/usr/bin/env bash
+set -euo pipefail
+# $marker
+"$shared_hook" "\$@"
+if [ -x "$local_hook" ]; then
+  exec "$local_hook" "\$@"
+fi
+EOF
+  chmod +x "$hook_path"
+}
+
+branches_config() {
+  local joined=''
+  local branch
+
+  for branch in "${branches[@]}"; do
+    if [ -n "$joined" ]; then
+      joined="$joined $branch"
+    else
+      joined="$branch"
+    fi
+  done
+
+  printf '%s\n' "$joined"
+}
+
+sync_managed_branch_push_remotes() {
+  local repo_root="$1"
+  local push_remote="$2"
+  local previous_managed branch
+
+  previous_managed="$(git -C "$repo_root" config --local --get hooks.protectedPushManagedBranches 2>/dev/null || true)"
+  if [ -z "$previous_managed" ]; then
+    previous_managed="$(git -C "$repo_root" config --local --get hooks.protectedBranches 2>/dev/null || true)"
+  fi
+
+  for branch in $previous_managed; do
+    git -C "$repo_root" config --local --unset-all "branch.$branch.pushRemote" 2>/dev/null || true
+  done
+
+  for branch in "${branches[@]}"; do
+    git -C "$repo_root" config --local "branch.$branch.pushRemote" "$push_remote"
+  done
+
+  git -C "$repo_root" config --local hooks.protectedPushManagedBranches "$(branches_config)"
+}
+
+record_original_state_if_unmanaged() {
+  local repo_root="$1"
+  local remote_name="$2"
+  local ssh_remote_name="$3"
+  local current_remote_url="$4"
+  local git_dir hook_path original_push_default original_ssh_remote_url
+
+  if git -C "$repo_root" config --local --get hooks.protectedPushPrimaryRemote >/dev/null 2>&1; then
+    return 0
+  fi
+
+  if git -C "$repo_root" config --local --get hooks.protectedPushManagedBranches >/dev/null 2>&1 \
+    || git -C "$repo_root" config --local --get hooks.protectedBranches >/dev/null 2>&1; then
+    return 0
+  fi
+
+  git_dir="$(absolute_git_dir "$repo_root")"
+  hook_path="$git_dir/hooks/pre-push"
+  if hook_is_managed "$hook_path"; then
+    return 0
+  fi
+
+  original_push_default="$(git -C "$repo_root" config --local --get remote.pushDefault 2>/dev/null || true)"
+  original_ssh_remote_url="$(git -C "$repo_root" remote get-url "$ssh_remote_name" 2>/dev/null || true)"
+
+  git -C "$repo_root" config --local hooks.protectedPushPrimaryRemote "$remote_name"
+  git -C "$repo_root" config --local hooks.protectedPushSshRemote "$ssh_remote_name"
+  git -C "$repo_root" config --local hooks.protectedPushPrimaryRemoteOriginalUrl "$current_remote_url"
+  if [ -n "$original_push_default" ]; then
+    git -C "$repo_root" config --local hooks.protectedPushOriginalPushDefault "$original_push_default"
+  else
+    git -C "$repo_root" config --local hooks.protectedPushOriginalPushDefault '__unset__'
+  fi
+  if [ -n "$original_ssh_remote_url" ]; then
+    git -C "$repo_root" config --local hooks.protectedPushOriginalSshRemoteUrl "$original_ssh_remote_url"
+  else
+    git -C "$repo_root" config --local hooks.protectedPushOriginalSshRemoteUrl '__missing__'
+  fi
+}
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --branch)
+      [ $# -ge 2 ] || die "--branch requires a value"
+      if [ "$custom_branches" = false ]; then
+        branches=()
+        custom_branches=true
+      fi
+      branches+=("$2")
+      shift 2
+      ;;
+    --remote)
+      [ $# -ge 2 ] || die "--remote requires a value"
+      remote_name="$2"
+      shift 2
+      ;;
+    --ssh-remote)
+      [ $# -ge 2 ] || die "--ssh-remote requires a value"
+      ssh_remote_name="$2"
+      shift 2
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    --)
+      shift
+      break
+      ;;
+    -*)
+      die "unknown option: $1"
+      ;;
+    *)
+      if [ "$repo" != '.' ]; then
+        die "only one repository path may be provided"
+      fi
+      repo="$1"
+      shift
+      ;;
+  esac
+done
+
+[ $# -eq 0 ] || die "only one repository path may be provided"
+[ -x "$shared_hook" ] || die "missing shared hook: $shared_hook"
+
+if [ -z "$ssh_remote_name" ]; then
+  ssh_remote_name="$remote_name-ssh"
+fi
+
+repo_root="$(git -C "$repo" rev-parse --show-toplevel 2>/dev/null || true)"
+[ -n "$repo_root" ] || die "$repo is not a Git repository"
+
+origin_url="$(git -C "$repo_root" remote get-url "$remote_name" 2>/dev/null || true)"
+[ -n "$origin_url" ] || die "remote '$remote_name' does not exist in $repo_root"
+
+record_original_state_if_unmanaged "$repo_root" "$remote_name" "$ssh_remote_name" "$origin_url"
+convert_remote_urls "$origin_url" || die "cannot derive HTTPS/SSH URLs from: $origin_url"
+
+current_ssh_url="$(git -C "$repo_root" remote get-url "$ssh_remote_name" 2>/dev/null || true)"
+if [ -n "$current_ssh_url" ] && [ "$current_ssh_url" != "$ssh_url" ]; then
+  printf 'warning: updating %s from %s to %s\n' "$ssh_remote_name" "$current_ssh_url" "$ssh_url" >&2
+fi
+
+git -C "$repo_root" remote set-url "$remote_name" "$https_url"
+if git -C "$repo_root" remote get-url "$ssh_remote_name" >/dev/null 2>&1; then
+  git -C "$repo_root" remote set-url "$ssh_remote_name" "$ssh_url"
+else
+  git -C "$repo_root" remote add "$ssh_remote_name" "$ssh_url"
+fi
+
+git -C "$repo_root" config --local remote.pushDefault "$remote_name"
+git -C "$repo_root" config --local hooks.protectedBranches "$(branches_config)"
+sync_managed_branch_push_remotes "$repo_root" "$ssh_remote_name"
+
+install_hook "$repo_root"
+
+printf 'Configured guarded pushes for %s\n' "$repo_root"
+printf '  %s -> %s\n' "$remote_name" "$https_url"
+printf '  %s -> %s\n' "$ssh_remote_name" "$ssh_url"
+printf '  guarded branches: %s\n' "$(branches_config)"
