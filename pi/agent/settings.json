@@ -19,5 +19,7 @@
   "quietStartup": true,
   "lastChangelogVersion": "0.56.3",
   "defaultThinkingLevel": "high",
-  "theme": "terminal"
+  "theme": "terminal",
+  "steeringMode": "all",
+  "autocompleteMaxVisible": 10
 }
