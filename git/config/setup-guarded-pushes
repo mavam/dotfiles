@@ -146,6 +146,7 @@ branches_config() {
 sync_managed_branch_push_remotes() {
   local repo_root="$1"
   local push_remote="$2"
+  local primary_remote="$3"
   local previous_managed branch
 
   previous_managed="$(git -C "$repo_root" config --local --get hooks.protectedPushManagedBranches 2>/dev/null || true)"
@@ -155,10 +156,16 @@ sync_managed_branch_push_remotes() {
 
   for branch in $previous_managed; do
     git -C "$repo_root" config --local --unset-all "branch.$branch.pushRemote" 2>/dev/null || true
+    if git -C "$repo_root" config --local --get "branch.$branch.remote" >/dev/null 2>&1; then
+      git -C "$repo_root" config --local "branch.$branch.remote" "$primary_remote"
+    fi
   done
 
   for branch in "${branches[@]}"; do
     git -C "$repo_root" config --local "branch.$branch.pushRemote" "$push_remote"
+    if git -C "$repo_root" config --local --get "branch.$branch.remote" >/dev/null 2>&1; then
+      git -C "$repo_root" config --local "branch.$branch.remote" "$push_remote"
+    fi
   done
 
   git -C "$repo_root" config --local hooks.protectedPushManagedBranches "$(branches_config)"
@@ -276,7 +283,7 @@ fi
 
 git -C "$repo_root" config --local remote.pushDefault "$remote_name"
 git -C "$repo_root" config --local hooks.protectedBranches "$(branches_config)"
-sync_managed_branch_push_remotes "$repo_root" "$ssh_remote_name"
+sync_managed_branch_push_remotes "$repo_root" "$ssh_remote_name" "$remote_name"
 
 install_hook "$repo_root"
 

@@ -136,6 +136,9 @@ fi
 
 for branch in $managed_branches; do
   git -C "$repo_root" config --local --unset-all "branch.$branch.pushRemote" 2>/dev/null || true
+  if git -C "$repo_root" config --local --get "branch.$branch.remote" >/dev/null 2>&1; then
+    git -C "$repo_root" config --local "branch.$branch.remote" "$remote_name"
+  fi
 done
 
 original_remote_url="$(git -C "$repo_root" config --local --get hooks.protectedPushPrimaryRemoteOriginalUrl 2>/dev/null || true)"
