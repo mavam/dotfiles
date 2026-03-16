@@ -1,0 +1,12 @@
+{
+  "showPiBanner": true,
+  "iconFamily": "nerd",
+  "contextBarStyle": "stars",
+  "defaultTextColor": "dim",
+  "defaultIconColor": "warning",
+  "widgets": {
+    "context-bar": {
+      "icon": "hide"
+    }
+  }
+}

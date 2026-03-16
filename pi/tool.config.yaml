@@ -5,3 +5,5 @@ entries:
     target: "~/.pi/agent/models.json"
   - source: "agent/keybindings.json"
     target: "~/.pi/agent/keybindings.json"
+  - source: "agent/fancy-footer.json"
+    target: "~/.pi/agent/fancy-footer.json"
