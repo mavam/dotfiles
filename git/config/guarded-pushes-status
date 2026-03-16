@@ -1,0 +1,126 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo='.'
+
+usage() {
+  cat <<'EOF'
+Usage: guarded-pushes-status [repo]
+
+Show the effective guarded-push configuration for a repository.
+EOF
+}
+
+die() {
+  printf 'error: %s\n' "$*" >&2
+  exit 1
+}
+
+absolute_path_from_repo() {
+  local repo_root="$1"
+  local path="$2"
+
+  case "$path" in
+    /*)
+      printf '%s\n' "$path"
+      ;;
+    *)
+      printf '%s\n' "$repo_root/$path"
+      ;;
+  esac
+}
+
+git_common_dir() {
+  local repo_root="$1"
+  local path
+
+  path="$(git -C "$repo_root" rev-parse --git-common-dir)"
+  absolute_path_from_repo "$repo_root" "$path"
+}
+
+resolve_include_path() {
+  local repo_root="$1"
+  local include_path="$2"
+
+  if [ -z "$include_path" ]; then
+    return 0
+  fi
+
+  case "$include_path" in
+    /*)
+      printf '%s\n' "$include_path"
+      ;;
+    *)
+      printf '%s/%s\n' "$(git_common_dir "$repo_root")" "$include_path"
+      ;;
+  esac
+}
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    --)
+      shift
+      break
+      ;;
+    -*)
+      die "unknown option: $1"
+      ;;
+    *)
+      if [ "$repo" != '.' ]; then
+        die "only one repository path may be provided"
+      fi
+      repo="$1"
+      shift
+      ;;
+  esac
+done
+
+[ $# -eq 0 ] || die "only one repository path may be provided"
+
+repo_root="$(git -C "$repo" rev-parse --show-toplevel 2>/dev/null || true)"
+[ -n "$repo_root" ] || die "$repo is not a Git repository"
+
+remote_name="$(git -C "$repo_root" config --local --get hooks.protectedPushPrimaryRemote 2>/dev/null || true)"
+if [ -z "$remote_name" ]; then
+  remote_name='origin'
+fi
+
+guarded_branches="$(git -C "$repo_root" config --local --get hooks.protectedPushManagedBranches 2>/dev/null || true)"
+if [ -z "$guarded_branches" ]; then
+  guarded_branches="$(git -C "$repo_root" config --local --get hooks.protectedBranches 2>/dev/null || true)"
+fi
+
+fetch_url="$(git -C "$repo_root" remote get-url "$remote_name" 2>/dev/null || true)"
+effective_push_url="$(git -C "$repo_root" remote get-url --push "$remote_name" 2>/dev/null || true)"
+base_push_url="$(git -C "$repo_root" config --local --get "remote.$remote_name.pushurl" 2>/dev/null || true)"
+include_path="$(git -C "$repo_root" config --local --get hooks.protectedPushIncludePath 2>/dev/null || true)"
+resolved_include_path="$(resolve_include_path "$repo_root" "$include_path")"
+current_branch="$(git -C "$repo_root" symbolic-ref --quiet --short HEAD 2>/dev/null || true)"
+
+push_mode='unknown'
+case "$effective_push_url" in
+  git@*:*|ssh://git@*/*)
+    push_mode='SSH'
+    ;;
+  http://*|https://*)
+    push_mode='HTTPS'
+    ;;
+esac
+
+printf 'Guarded push config for %s\n' "$repo_root"
+printf '  remote: %s\n' "$remote_name"
+printf '  fetch url: %s\n' "${fetch_url:-<missing>}"
+printf '  base push url: %s\n' "${base_push_url:-<none>}"
+printf '  effective push url: %s\n' "${effective_push_url:-<missing>}"
+printf '  guarded branches: %s\n' "${guarded_branches:-<none>}"
+printf '  include path: %s\n' "${resolved_include_path:-<none>}"
+if [ -n "$current_branch" ]; then
+  printf '  current branch: %s\n' "$current_branch"
+else
+  printf '  current branch: <detached>\n'
+fi
+printf '  current push mode: %s\n' "$push_mode"

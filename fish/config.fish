@@ -142,6 +142,7 @@ if status is-interactive
   abbr -g gclg '__git_clone_guarded'
   abbr -g gguard 'git-guard-pushes'
   abbr -g gunguard 'git-unguard-pushes'
+  abbr -g gguardst 'git-guarded-push-status'
   abbr -g gcf 'git config --list'
   abbr -g gclean 'git clean -fd'
   abbr -g gcp 'git cherry-pick'

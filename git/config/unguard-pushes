@@ -15,7 +15,7 @@ Remove the guarded-push setup from a repository.
 
 Options:
   --remote <name>      Primary remote name (default: stored value or origin)
-  --ssh-remote <name>  SSH remote name (default: stored value or <remote>-ssh)
+  --ssh-remote <name>  Legacy SSH remote name (default: stored value or <remote>-ssh)
   -h, --help           Show this help
 
 Examples:
@@ -36,28 +36,68 @@ hook_is_managed() {
   grep -Fq "$marker" "$hook_path" || grep -Fq "$legacy_marker" "$hook_path"
 }
 
-absolute_git_dir() {
-  local repo_root="$1"
-  local git_dir
+config_file_is_managed() {
+  local path="$1"
 
-  git_dir="$(git -C "$repo_root" rev-parse --git-dir)"
-  case "$git_dir" in
+  [ -e "$path" ] || return 1
+  grep -Fq "$marker" "$path" || grep -Fq "$legacy_marker" "$path"
+}
+
+absolute_path_from_repo() {
+  local repo_root="$1"
+  local path="$2"
+
+  case "$path" in
     /*)
-      printf '%s\n' "$git_dir"
+      printf '%s\n' "$path"
       ;;
     *)
-      printf '%s\n' "$repo_root/$git_dir"
+      printf '%s\n' "$repo_root/$path"
+      ;;
+  esac
+}
+
+git_path() {
+  local repo_root="$1"
+  local relative_path="$2"
+  local path
+
+  path="$(git -C "$repo_root" rev-parse --git-path "$relative_path")"
+  absolute_path_from_repo "$repo_root" "$path"
+}
+
+git_common_dir() {
+  local repo_root="$1"
+  local path
+
+  path="$(git -C "$repo_root" rev-parse --git-common-dir)"
+  absolute_path_from_repo "$repo_root" "$path"
+}
+
+resolve_include_path() {
+  local repo_root="$1"
+  local include_path="$2"
+
+  if [ -z "$include_path" ]; then
+    return 0
+  fi
+
+  case "$include_path" in
+    /*)
+      printf '%s\n' "$include_path"
+      ;;
+    *)
+      printf '%s/%s\n' "$(git_common_dir "$repo_root")" "$include_path"
       ;;
   esac
 }
 
 restore_hook() {
   local repo_root="$1"
-  local git_dir hook_path local_hook
+  local hook_path local_hook
 
-  git_dir="$(absolute_git_dir "$repo_root")"
-  hook_path="$git_dir/hooks/pre-push"
-  local_hook="$git_dir/hooks/pre-push.local"
+  hook_path="$(git_path "$repo_root" hooks/pre-push)"
+  local_hook="$(dirname "$hook_path")/pre-push.local"
 
   if ! hook_is_managed "$hook_path"; then
     return 0
@@ -75,6 +115,144 @@ unset_if_set() {
   local repo_root="$1"
   local key="$2"
   git -C "$repo_root" config --local --unset-all "$key" 2>/dev/null || true
+}
+
+previous_managed_branches() {
+  local repo_root="$1"
+  local previous_managed
+
+  previous_managed="$(git -C "$repo_root" config --local --get hooks.protectedPushManagedBranches 2>/dev/null || true)"
+  if [ -z "$previous_managed" ]; then
+    previous_managed="$(git -C "$repo_root" config --local --get hooks.protectedBranches 2>/dev/null || true)"
+  fi
+
+  printf '%s\n' "$previous_managed"
+}
+
+get_recorded_branch_push_remote() {
+  local repo_root="$1"
+  local branch="$2"
+  local recorded_branch recorded_remote
+
+  while IFS=$'\t' read -r recorded_branch recorded_remote; do
+    if [ "$recorded_branch" = "$branch" ]; then
+      printf '%s\n' "$recorded_remote"
+      return 0
+    fi
+  done < <(git -C "$repo_root" config --local --get-all hooks.protectedPushOriginalBranchPushRemote 2>/dev/null || true)
+
+  return 1
+}
+
+restore_branch_push_remote() {
+  local repo_root="$1"
+  local branch="$2"
+  local original_remote current_remote
+
+  if original_remote="$(get_recorded_branch_push_remote "$repo_root" "$branch")"; then
+    if [ "$original_remote" = '__unset__' ]; then
+      git -C "$repo_root" config --local --unset-all "branch.$branch.pushRemote" 2>/dev/null || true
+    else
+      git -C "$repo_root" config --local "branch.$branch.pushRemote" "$original_remote"
+    fi
+    return 0
+  fi
+
+  current_remote="$(git -C "$repo_root" config --local --get "branch.$branch.pushRemote" 2>/dev/null || true)"
+  case "$current_remote" in
+    "$remote_name"|"$ssh_remote_name")
+      git -C "$repo_root" config --local --unset-all "branch.$branch.pushRemote" 2>/dev/null || true
+      ;;
+  esac
+}
+
+get_recorded_branch_remote() {
+  local repo_root="$1"
+  local branch="$2"
+  local recorded_branch recorded_remote
+
+  while IFS=$'\t' read -r recorded_branch recorded_remote; do
+    if [ "$recorded_branch" = "$branch" ]; then
+      printf '%s\n' "$recorded_remote"
+      return 0
+    fi
+  done < <(git -C "$repo_root" config --local --get-all hooks.protectedPushOriginalBranchRemote 2>/dev/null || true)
+
+  return 1
+}
+
+restore_branch_remote() {
+  local repo_root="$1"
+  local branch="$2"
+  local fallback_remote="$3"
+  local original_remote current_remote
+
+  if original_remote="$(get_recorded_branch_remote "$repo_root" "$branch")"; then
+    if [ "$original_remote" = '__unset__' ]; then
+      git -C "$repo_root" config --local --unset-all "branch.$branch.remote" 2>/dev/null || true
+    else
+      git -C "$repo_root" config --local "branch.$branch.remote" "$original_remote"
+    fi
+    return 0
+  fi
+
+  current_remote="$(git -C "$repo_root" config --local --get "branch.$branch.remote" 2>/dev/null || true)"
+  if [ -n "$fallback_remote" ] && [ "$current_remote" = "$ssh_remote_name" ]; then
+    git -C "$repo_root" config --local "branch.$branch.remote" "$fallback_remote"
+  fi
+}
+
+restore_ssh_remote_fetch() {
+  local repo_root="$1"
+  local ssh_remote_name="$2"
+  local recorded=false
+  local fetch_spec old_fetch_spec
+
+  git -C "$repo_root" config --local --unset-all "remote.$ssh_remote_name.fetch" 2>/dev/null || true
+
+  while IFS= read -r fetch_spec; do
+    recorded=true
+    case "$fetch_spec" in
+      __none__)
+        ;;
+      *'|'*)
+        IFS='|' read -ra _fetch_specs <<< "$fetch_spec"
+        for old_fetch_spec in "${_fetch_specs[@]}"; do
+          [ -n "$old_fetch_spec" ] && git -C "$repo_root" config --local --add \
+            "remote.$ssh_remote_name.fetch" "$old_fetch_spec"
+        done
+        ;;
+      *)
+        git -C "$repo_root" config --local --add "remote.$ssh_remote_name.fetch" "$fetch_spec"
+        ;;
+    esac
+  done < <(git -C "$repo_root" config --local --get-all hooks.protectedPushOriginalSshFetch 2>/dev/null || true)
+
+  if [ "$recorded" = false ]; then
+    git -C "$repo_root" config --local "remote.$ssh_remote_name.fetch" \
+      "+refs/heads/*:refs/remotes/$ssh_remote_name/*"
+  fi
+}
+
+remove_branch_includes() {
+  local repo_root="$1"
+  local previous_managed branch
+
+  previous_managed="$(previous_managed_branches "$repo_root")"
+  for branch in $previous_managed; do
+    git -C "$repo_root" config --local --unset-all "includeIf.onbranch:$branch.path" 2>/dev/null || true
+  done
+}
+
+remove_include_file() {
+  local repo_root="$1"
+  local include_path="$2"
+  local resolved_path
+
+  resolved_path="$(resolve_include_path "$repo_root" "$include_path")"
+  if [ -n "$resolved_path" ] && config_file_is_managed "$resolved_path"; then
+    rm -f "$resolved_path"
+  fi
 }
 
 while [ $# -gt 0 ]; do
@@ -129,26 +307,36 @@ if [ -z "$ssh_remote_name" ]; then
   ssh_remote_name="$remote_name-ssh"
 fi
 
-managed_branches="$(git -C "$repo_root" config --local --get hooks.protectedPushManagedBranches 2>/dev/null || true)"
-if [ -z "$managed_branches" ]; then
-  managed_branches="$(git -C "$repo_root" config --local --get hooks.protectedBranches 2>/dev/null || true)"
-fi
+managed_branches="$(previous_managed_branches "$repo_root")"
+include_path="$(git -C "$repo_root" config --local --get hooks.protectedPushIncludePath 2>/dev/null || true)"
 
 for branch in $managed_branches; do
-  git -C "$repo_root" config --local --unset-all "branch.$branch.pushRemote" 2>/dev/null || true
-  if git -C "$repo_root" config --local --get "branch.$branch.remote" >/dev/null 2>&1; then
-    git -C "$repo_root" config --local "branch.$branch.remote" "$remote_name"
-  fi
+  restore_branch_push_remote "$repo_root" "$branch"
+  restore_branch_remote "$repo_root" "$branch" "$remote_name"
 done
+
+remove_branch_includes "$repo_root"
+remove_include_file "$repo_root" "$include_path"
 
 original_remote_url="$(git -C "$repo_root" config --local --get hooks.protectedPushPrimaryRemoteOriginalUrl 2>/dev/null || true)"
 original_push_default="$(git -C "$repo_root" config --local --get hooks.protectedPushOriginalPushDefault 2>/dev/null || true)"
+original_push_url="$(git -C "$repo_root" config --local --get hooks.protectedPushOriginalPushUrl 2>/dev/null || true)"
 original_ssh_remote_url="$(git -C "$repo_root" config --local --get hooks.protectedPushOriginalSshRemoteUrl 2>/dev/null || true)"
-original_ssh_fetch="$(git -C "$repo_root" config --local --get hooks.protectedPushOriginalSshFetch 2>/dev/null || true)"
 
 if [ -n "$original_remote_url" ] && git -C "$repo_root" remote get-url "$remote_name" >/dev/null 2>&1; then
   git -C "$repo_root" remote set-url "$remote_name" "$original_remote_url"
 fi
+
+case "$original_push_url" in
+  __unset__)
+    git -C "$repo_root" config --local --unset-all "remote.$remote_name.pushurl" 2>/dev/null || true
+    ;;
+  '')
+    ;;
+  *)
+    git -C "$repo_root" config --local "remote.$remote_name.pushurl" "$original_push_url"
+    ;;
+esac
 
 if git -C "$repo_root" remote get-url "$ssh_remote_name" >/dev/null 2>&1; then
   case "$original_ssh_remote_url" in
@@ -159,20 +347,7 @@ if git -C "$repo_root" remote get-url "$ssh_remote_name" >/dev/null 2>&1; then
       ;;
     *)
       git -C "$repo_root" remote set-url "$ssh_remote_name" "$original_ssh_remote_url"
-      git -C "$repo_root" config --local --unset-all "remote.$ssh_remote_name.fetch" 2>/dev/null || true
-      case "$original_ssh_fetch" in
-        ''|'__none__')
-          git -C "$repo_root" config --local "remote.$ssh_remote_name.fetch" \
-            "+refs/heads/*:refs/remotes/$ssh_remote_name/*"
-          ;;
-        *)
-          IFS='|' read -ra _fetch_specs <<< "$original_ssh_fetch"
-          for _spec in "${_fetch_specs[@]}"; do
-            [ -n "$_spec" ] && git -C "$repo_root" config --local --add \
-              "remote.$ssh_remote_name.fetch" "$_spec"
-          done
-          ;;
-      esac
+      restore_ssh_remote_fetch "$repo_root" "$ssh_remote_name"
       ;;
   esac
 fi
@@ -196,12 +371,15 @@ unset_if_set "$repo_root" hooks.protectedPushPrimaryRemote
 unset_if_set "$repo_root" hooks.protectedPushSshRemote
 unset_if_set "$repo_root" hooks.protectedPushPrimaryRemoteOriginalUrl
 unset_if_set "$repo_root" hooks.protectedPushOriginalPushDefault
+unset_if_set "$repo_root" hooks.protectedPushOriginalPushUrl
 unset_if_set "$repo_root" hooks.protectedPushOriginalSshRemoteUrl
 unset_if_set "$repo_root" hooks.protectedPushOriginalSshFetch
+unset_if_set "$repo_root" hooks.protectedPushOriginalBranchRemote
+unset_if_set "$repo_root" hooks.protectedPushOriginalBranchPushRemote
+unset_if_set "$repo_root" hooks.protectedPushIncludePath
 
 printf 'Removed guarded pushes from %s\n' "$repo_root"
 printf '  remote: %s\n' "$remote_name"
-printf '  ssh remote: %s\n' "$ssh_remote_name"
 if [ -n "$managed_branches" ]; then
   printf '  unguarded branches: %s\n' "$managed_branches"
 fi

@@ -44,6 +44,7 @@ is_protected_branch() {
   local pattern
 
   for pattern in $protected_branches; do
+    # shellcheck disable=SC2254
     case "$branch" in
       $pattern)
         return 0
@@ -60,7 +61,7 @@ allowed_remote() {
 }
 
 blocked_branches=""
-while read -r local_ref local_sha remote_ref remote_sha; do
+while read -r _local_ref _local_sha remote_ref _remote_sha; do
   case "$remote_ref" in
     refs/heads/*)
       branch="${remote_ref#refs/heads/}"
@@ -100,15 +101,17 @@ printf '  branch(es): %s\n' "$blocked_branches" >&2
 printf '  remote:     %s\n' "${remote_name:-<unknown>}" >&2
 printf '  url:        %s\n' "${remote_url:-<unknown>}" >&2
 printf '\n' >&2
-printf 'This guard keeps guarded branches off HTTPS remotes so they still\n' >&2
-printf 'require your SSH agent (for example Secretive/Touch ID). Topic branch\n' >&2
-printf 'pushes are unaffected.\n' >&2
+printf 'This guard keeps guarded branches on SSH so pushes still require your\n' >&2
+printf 'SSH agent (for example Secretive/Touch ID). Topic branch pushes are\n' >&2
+printf 'still allowed over HTTPS.\n' >&2
+printf '\n' >&2
+printf 'If this repository is configured with guarded pushes, try:\n' >&2
+printf '  git checkout %s && git push\n' "${blocked_branches%% *}" >&2
 
 if ssh_url="$(to_ssh_url "$remote_url" 2>/dev/null)"; then
-  printf '\nSuggested setup:\n' >&2
-  printf '  git remote add %s-ssh %s\n' "${remote_name:-origin}" "$ssh_url" >&2
+  printf '\nOr push explicitly via SSH:\n' >&2
   for branch in $blocked_branches; do
-    printf '  git config branch.%s.pushRemote %s-ssh\n' "$branch" "${remote_name:-origin}" >&2
+    printf '  git push %s HEAD:%s\n' "$ssh_url" "$branch" >&2
   done
 fi
 
