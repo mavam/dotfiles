@@ -1,5 +1,10 @@
 {
   "providers": {
+    "google": {
+      "api": "google-generative-ai",
+      "apiKey": "!security find-generic-password -s gemini -w",
+      "baseUrl": "https://generativelanguage.googleapis.com/v1beta"
+    },
     "ollama": {
       "api": "openai-completions",
       "apiKey": "ollama",
