@@ -1,3 +1,6 @@
 {
-  "cycleModelBackward": ["shift+ctrl+p", "ctrl+n"]
+  "app.model.cycleBackward": [
+    "shift+ctrl+p",
+    "ctrl+n"
+  ]
 }
