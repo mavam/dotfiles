@@ -10,11 +10,11 @@
   ],
   "enabledModels": [
     "openai-codex/gpt-5.4",
-    "openai-codex/gpt-5.3-codex-spark",
     "google/gemini-3.1-pro-preview-customtools",
     "anthropic/claude-opus-4-6",
     "anthropic/claude-sonnet-4-6",
-    "anthropic/claude-haiku-4-5"
+    "anthropic/claude-haiku-4-5",
+    "ollama/qwen3.5:35b"
   ],
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.4",
