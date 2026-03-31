@@ -4,7 +4,9 @@
     "npm:pi-mcporter",
     "npm:pi-fancy-footer",
     "npm:pi-subdir-context",
-    "npm:pi-web-providers"
+    "npm:pi-web-providers",
+    "npm:pi-universal-view",
+    "npm:pi-banner"
   ],
   "enabledModels": [
     "openai-codex/gpt-5.4",
