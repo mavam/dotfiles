@@ -16,10 +16,10 @@
     "anthropic/claude-haiku-4-5",
     "ollama/qwen3.5:35b"
   ],
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.4",
+  "defaultProvider": "anthropic",
+  "defaultModel": "claude-sonnet-4-6",
   "quietStartup": true,
-  "lastChangelogVersion": "0.56.3",
+  "lastChangelogVersion": "0.64.0",
   "defaultThinkingLevel": "high",
   "theme": "terminal",
   "steeringMode": "all",
