@@ -226,6 +226,8 @@ if status is-interactive
     # Merge (mirrors gm/gma)
     abbr -g wm 'wt merge'
     abbr -g wmy 'wt merge -y'
+    # New worktree + Pi agent
+    abbr -g wswp 'wt switch --create --execute=pi'
     # Step operations (ws = wt step)
     abbr -g wsc 'wt step commit'
     abbr -g wsd 'wt step diff'
