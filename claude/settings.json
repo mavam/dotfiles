@@ -34,16 +34,9 @@
     "padding": 0
   },
   "enabledPlugins": {
-    "dev@tenzir": true,
     "worktrunk@worktrunk": true
   },
   "extraKnownMarketplaces": {
-    "tenzir": {
-      "source": {
-        "source": "github",
-        "repo": "tenzir/claude-plugins"
-      }
-    },
     "worktrunk": {
       "source": {
         "source": "github",
