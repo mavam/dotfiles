@@ -1,2 +1,3 @@
 __pycache__/
 approvals.toml
+approvals.toml.lock
