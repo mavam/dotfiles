@@ -3,17 +3,22 @@
 # dependencies = ["click", "rapidhash"]
 # ///
 """
-graft: Optimize a new git worktree by copying cached state from the primary worktree.
+graft: Optimize a new git worktree by reusing cached state from another worktree.
 
-Usage as worktrunk post-create hook:
-  [post-create]
-  graft = "~/.config/worktrunk/scripts/graft.py {{ worktree_path }}"
+Usage as a worktrunk pre-start hook:
+  pre-start = [
+    { copy_ignored = "wt step copy-ignored" },
+    { graft = "~/.config/worktrunk/scripts/graft.py {{ worktree_path }}" },
+  ]
 
 What it does:
-  - Copies file timestamps (preserves build cache validity)
+  - Copies tracked file timestamps (preserves build cache validity)
   - Copies submodules with their .git directories (avoids network fetches)
-  - Copies CMake build directory and fixes embedded paths
+  - Copies or fixes CMake build directories and repairs embedded paths
   - Fixes ninja build files (.ninja_log hashes, .ninja_deps paths)
+
+When a repo opts in via `.worktreeinclude`, pair this with
+`wt step copy-ignored` as a separate hook step before running graft.
 """
 
 from __future__ import annotations
@@ -392,6 +397,16 @@ class SubmoduleInfo:
     url: str | None = None
 
 
+@dataclass(frozen=True)
+class HookContext:
+    """Subset of worktrunk hook context used by graft."""
+
+    branch: str | None = None
+    base: str | None = None
+    base_worktree_path: Path | None = None
+    primary_worktree_path: Path | None = None
+
+
 _INDEX_LOCK_ERROR_RE = re.compile(
     r"(index\.lock|Unable to create .*\.lock|Another git process seems to be running)",
     re.IGNORECASE,
@@ -498,6 +513,93 @@ def get_worktree_git_dir(worktree_path: Path) -> Path | None:
     if result.returncode == 0:
         return (worktree_path / result.stdout.strip()).resolve()
     return None
+
+
+def _hook_context_str(value: object) -> str | None:
+    """Normalize optional string values from JSON hook context."""
+    return value if isinstance(value, str) and value else None
+
+
+def _hook_context_path(value: object) -> Path | None:
+    """Normalize optional path values from JSON hook context."""
+    text = _hook_context_str(value)
+    return Path(text).expanduser() if text else None
+
+
+def load_hook_context() -> HookContext | None:
+    """Load worktrunk hook context from stdin when available."""
+    if sys.stdin.isatty():
+        return None
+
+    try:
+        raw = sys.stdin.read()
+    except OSError as e:
+        _LOGGER.debug(f"Could not read hook context from stdin: {e}")
+        return None
+
+    if not raw.strip():
+        return None
+
+    try:
+        payload = json.loads(raw)
+    except json.JSONDecodeError:
+        _LOGGER.debug("stdin did not contain JSON hook context; continuing without it")
+        return None
+
+    if not isinstance(payload, dict):
+        _LOGGER.debug("hook context on stdin was not a JSON object")
+        return None
+
+    return HookContext(
+        branch=_hook_context_str(payload.get("branch")),
+        base=_hook_context_str(payload.get("base")),
+        base_worktree_path=_hook_context_path(payload.get("base_worktree_path")),
+        primary_worktree_path=_hook_context_path(payload.get("primary_worktree_path")),
+    )
+
+
+def resolve_source_worktree(
+    worktree_path: Path,
+    source: str | None,
+    hook_context: HookContext | None,
+) -> Path | None:
+    """Pick the best source worktree for grafting."""
+    if source:
+        return Path(source)
+
+    if hook_context:
+        for candidate in (
+            hook_context.base_worktree_path,
+            hook_context.primary_worktree_path,
+        ):
+            if (
+                candidate
+                and candidate.exists()
+                and candidate.resolve() != worktree_path.resolve()
+            ):
+                return candidate
+
+    return find_primary_worktree(worktree_path)
+
+
+def get_tracked_files(worktree_path: Path) -> list[Path]:
+    """Return tracked regular files for a worktree."""
+    result = run_git(["ls-files", "-z"], cwd=worktree_path, text=False)
+    if result.returncode != 0:
+        _LOGGER.debug(f"Could not list tracked files in {worktree_path}")
+        return []
+
+    tracked_files = []
+    for entry in result.stdout.split(b"\x00"):
+        if not entry:
+            continue
+        path = worktree_path / entry.decode(errors="surrogateescape")
+        try:
+            if path.is_file() and not path.is_symlink():
+                tracked_files.append(path)
+        except OSError:
+            continue
+    return tracked_files
 
 
 def remove_stale_lock(worktree_path: Path) -> bool:
@@ -765,14 +867,7 @@ class TimestampTask(Task):
                 except OSError:
                     pass  # Skip files that can't be stat'd or utime'd
 
-        def is_regular_file(p: Path) -> bool:
-            """Check if path is a regular file, handling stat errors gracefully."""
-            try:
-                return p.is_file() and not p.is_symlink()
-            except OSError:
-                return False
-
-        files = [f for f in source.rglob("*") if is_regular_file(f)]
+        files = get_tracked_files(source)
         with ThreadPoolExecutor(max_workers=8) as executor:
             list(executor.map(copy_timestamp, files))
 
@@ -1292,17 +1387,14 @@ def main(
     branch: str | None,
     verbose: bool,
 ) -> None:
-    """Optimize a new git worktree by grafting cached state from the primary worktree."""
+    """Optimize a new git worktree by grafting cached state from a source worktree."""
     _LOGGER.setLevel(logging.DEBUG if verbose else logging.INFO)
 
     target = Path(worktree_path)
+    hook_context = load_hook_context()
 
     # Find source worktree
-    if source:
-        source_path = Path(source)
-    else:
-        source_path = find_primary_worktree(target)
-
+    source_path = resolve_source_worktree(target, source, hook_context)
     if source_path is None:
         _LOGGER.debug("No source worktree found, nothing to graft")
         sys.exit(0)

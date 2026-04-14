@@ -1,5 +1,18 @@
 # Worktrunk user configuration
 # See https://worktrunk.dev/config/ for all options
 
-[pre-start]
+# Opt in to ignored-file warmup via `.worktreeinclude`, then run graft fixups.
+
+[[pre-start]]
+copy_ignored = '''
+if [ -f .worktreeinclude ]; then
+  {% if base_worktree_path %}
+    wt step copy-ignored --from {{ base }}
+  {% else %}
+    wt step copy-ignored
+  {% endif %}
+fi
+'''
+
+[[pre-start]]
 graft = "~/.config/worktrunk/scripts/graft.py {{ worktree_path }}"
