@@ -1,12 +1,13 @@
 {
   "packages": [
+    "npm:pi-banner",
+    "npm:pi-fancy-footer",
     "npm:pi-terminal-theme",
     "npm:pi-mcporter",
-    "npm:pi-fancy-footer",
-    "npm:pi-subdir-context",
     "npm:pi-web-providers",
+    "npm:pi-subdir-context",
     "npm:pi-universal-view",
-    "npm:pi-banner"
+    "npm:pi-worktrunk"
   ],
   "enabledModels": [
     "openai-codex/gpt-5.4",
@@ -16,8 +17,8 @@
     "anthropic/claude-haiku-4-5",
     "ollama/qwen3.5:35b"
   ],
-  "defaultProvider": "anthropic",
-  "defaultModel": "claude-sonnet-4-6",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.4",
   "quietStartup": true,
   "lastChangelogVersion": "0.64.0",
   "defaultThinkingLevel": "high",
