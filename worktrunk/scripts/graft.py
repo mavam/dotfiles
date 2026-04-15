@@ -58,6 +58,14 @@ BUILD_DIR_PATTERNS = [
     "_build",  # Another alternative
 ]
 
+# Precompiled headers embed absolute source paths, so copied artifacts must be
+# rebuilt locally in the target worktree. We restore their original mtimes after
+# rebuilding so dependent object files stay cache-valid.
+PRECOMPILED_HEADER_PATTERNS = [
+    "*.pch",
+    "*.gch",
+]
+
 # Lock handling for transient git index contention.
 INDEX_LOCK_RETRY_ATTEMPTS = 8
 INDEX_LOCK_RETRY_DELAY_SECONDS = 0.25
@@ -1246,6 +1254,7 @@ class BuildTask(Task):
             (self.name, self.description),
             ("cmake_paths", "fixing CMake paths"),
             ("ninja_files", "fixing ninja files"),
+            ("pch_files", "refreshing precompiled headers"),
         ]
 
     def _detect_build_dirs(self, source: Path, target: Path) -> None:
@@ -1311,6 +1320,7 @@ class BuildTask(Task):
         if not all_dirs_to_fix:
             spinner.complete_task("cmake_paths")
             spinner.complete_task("ninja_files")
+            spinner.complete_task("pch_files")
             return
 
         spinner.start_task("cmake_paths")
@@ -1320,6 +1330,10 @@ class BuildTask(Task):
         spinner.start_task("ninja_files")
         self._fix_ninja_files(all_dirs_to_fix, src_str, dst_str)
         spinner.complete_task("ninja_files")
+
+        spinner.start_task("pch_files")
+        self._refresh_precompiled_headers(all_dirs_to_fix)
+        spinner.complete_task("pch_files")
 
     def _symlink_cmake_presets(self, source: Path, target: Path) -> None:
         """Symlink CMakeUserPresets.json if it exists in source parent."""
@@ -1347,6 +1361,51 @@ class BuildTask(Task):
                         shutil.rmtree(dst_build)
                     time.sleep(0.1)
         return copied
+
+    def _refresh_precompiled_headers(self, build_dirs: list[Path]) -> None:
+        """Rebuild copied precompiled headers and restore their original mtimes."""
+        for build_dir in build_dirs:
+            for ninja_build_dir in discover_ninja_build_dirs(build_dir):
+                pch_outputs = sorted(
+                    {
+                        path
+                        for pattern in PRECOMPILED_HEADER_PATTERNS
+                        for path in ninja_build_dir.rglob(pattern)
+                        if path.is_file() and not path.is_symlink()
+                    }
+                )
+                if not pch_outputs:
+                    continue
+
+                backups: list[tuple[Path, Path, os.stat_result]] = []
+                for output in pch_outputs:
+                    backup = output.with_name(f"{output.name}.graft-backup")
+                    with contextlib.suppress(FileNotFoundError):
+                        backup.unlink()
+                    shutil.move(output, backup)
+                    backups.append((output, backup, backup.stat()))
+
+                try:
+                    command = [
+                        "ninja",
+                        *[str(output.relative_to(ninja_build_dir)) for output, _, _ in backups],
+                    ]
+                    kwargs: dict[str, object] = {"cwd": ninja_build_dir, "check": True}
+                    if not _is_verbose():
+                        kwargs["stdout"] = subprocess.DEVNULL
+                        kwargs["stderr"] = subprocess.PIPE
+                    subprocess.run(command, **kwargs)
+                except (OSError, subprocess.CalledProcessError):
+                    for output, backup, _ in backups:
+                        if backup.exists():
+                            with contextlib.suppress(OSError):
+                                shutil.move(backup, output)
+                    raise
+                else:
+                    for output, backup, stat in backups:
+                        os.utime(output, (stat.st_atime, stat.st_mtime))
+                        with contextlib.suppress(FileNotFoundError):
+                            backup.unlink()
 
     def _fix_cmake_paths(
         self, build_dirs: list[Path], src_str: str, dst_str: str
