@@ -708,8 +708,48 @@ def discover_ninja_build_dirs(root: Path) -> list[Path]:
     return sorted(result)
 
 
+def _record_ninja_command(
+    output_to_command: dict[str, str], build_dir: Path, output: str, command: str
+) -> None:
+    """Store command lookups for both relative and absolute output paths."""
+    output_to_command[output] = command
+    if not output.startswith("/"):
+        output_to_command[str(build_dir / output)] = command
+    with contextlib.suppress(ValueError):
+        rel_output = str(Path(output).relative_to(build_dir))
+        output_to_command[rel_output] = command
+
+
+def _read_ninja_logical_lines(path: Path) -> list[str]:
+    """Read build.ninja while folding Ninja line continuations."""
+    logical_lines: list[str] = []
+    current = ""
+    continuing = False
+
+    for raw_line in path.read_text().splitlines():
+        if continuing:
+            current += raw_line.lstrip()
+        else:
+            current = raw_line
+
+        if current.endswith("$"):
+            current = current[:-1]
+            continuing = True
+            continue
+
+        logical_lines.append(current)
+        continuing = False
+
+    if continuing:
+        logical_lines.append(current)
+    return logical_lines
+
+
 def get_ninja_commands(build_dir: Path) -> dict[str, str]:
-    """Get expanded commands from ninja using 'ninja -t compdb'."""
+    """Get expanded commands for compile and custom Ninja edges."""
+    output_to_command: dict[str, str] = {}
+
+    # First gather compile commands from Ninja's compilation database.
     result = subprocess.run(
         ["ninja", "-t", "compdb"],
         cwd=build_dir,
@@ -722,25 +762,53 @@ def get_ninja_commands(build_dir: Path) -> dict[str, str]:
             f"`ninja -t compdb` failed in {build_dir}: "
             f"{_stderr_text(result.stderr).strip()}"
         )
-        return {}
+    else:
+        try:
+            entries = json.loads(result.stdout)
+            for entry in entries:
+                output = entry.get("output", "")
+                command = entry.get("command", "")
+                if output and command:
+                    _record_ninja_command(output_to_command, build_dir, output, command)
+        except json.JSONDecodeError as e:
+            _LOGGER.debug(f"Could not parse `ninja -t compdb` output in {build_dir}: {e}")
 
-    output_to_command: dict[str, str] = {}
-    try:
-        entries = json.loads(result.stdout)
-        for entry in entries:
-            output = entry.get("output", "")
-            command = entry.get("command", "")
-            if output and command:
-                # compdb gives relative paths, convert to match .ninja_log format
-                if not output.startswith("/"):
-                    output = str(build_dir / output)
-                output_to_command[output] = command
-                # Also store relative path version
-                with contextlib.suppress(ValueError):
-                    rel_output = str(Path(output).relative_to(build_dir))
-                    output_to_command[rel_output] = command
-    except json.JSONDecodeError as e:
-        _LOGGER.debug(f"Could not parse `ninja -t compdb` output in {build_dir}: {e}")
+    # Then parse build.ninja for custom commands with an explicit COMMAND field.
+    ninja_file = build_dir / "build.ninja"
+    if not ninja_file.exists():
+        return output_to_command
+
+    lines = _read_ninja_logical_lines(ninja_file)
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        if not line.startswith("build "):
+            i += 1
+            continue
+
+        header = line[len("build ") :]
+        if ":" not in header:
+            i += 1
+            continue
+
+        outputs_part, _rest = header.split(":", 1)
+        outputs: list[str] = []
+        for token in outputs_part.split():
+            if token in {"|", "||"}:
+                break
+            outputs.append(token)
+
+        i += 1
+        command: str | None = None
+        while i < len(lines) and lines[i].startswith("  "):
+            variable = lines[i].strip()
+            if variable.startswith("COMMAND = "):
+                command = variable[len("COMMAND = ") :]
+            i += 1
+
+        if command:
+            for output in outputs:
+                _record_ninja_command(output_to_command, build_dir, output, command)
 
     return output_to_command
 
