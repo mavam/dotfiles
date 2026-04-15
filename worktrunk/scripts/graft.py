@@ -51,7 +51,8 @@ if TYPE_CHECKING:
 
 # Build directory patterns to detect (relative to worktree root)
 BUILD_DIR_PATTERNS = [
-    "build/*",  # CMake presets: build/release, build/debug, build/RelWithDebInfo
+    "build/*/*",  # Nested presets: build/xcode/release, build/clang/debug
+    "build/*",  # Flat presets: build/release, build/debug, build/RelWithDebInfo
     "build",  # Single build directory
     ".build",  # Alternative convention
     "_build",  # Another alternative
@@ -668,6 +669,45 @@ def warn_if_index_lock_present(worktree_path: Path) -> None:
 # =============================================================================
 
 
+def replace_path_once(content: str, src: str, dst: str) -> str:
+    """Replace source paths while keeping already-fixed target paths intact."""
+    if src == dst:
+        return content
+    placeholder = f"__GRAFT_TARGET_{rapidhash.rapidhash(dst.encode()):x}__"
+    while placeholder in content:
+        placeholder += "_"
+    return content.replace(dst, placeholder).replace(src, dst).replace(placeholder, dst)
+
+
+def replace_path_once_bytes(content: bytes, src: bytes, dst: bytes) -> bytes:
+    """Binary variant of replace_path_once."""
+    if src == dst:
+        return content
+    placeholder = f"__GRAFT_TARGET_{rapidhash.rapidhash(dst):x}__".encode()
+    while placeholder in content:
+        placeholder += b"_"
+    return content.replace(dst, placeholder).replace(src, dst).replace(placeholder, dst)
+
+
+def discover_ninja_build_dirs(root: Path) -> list[Path]:
+    """Return all Ninja build roots under a copied/fixed build directory."""
+    candidates = [root, *(path.parent for path in root.rglob("build.ninja"))]
+    seen: set[Path] = set()
+    result: list[Path] = []
+
+    for candidate in candidates:
+        marker = candidate / "build.ninja"
+        if not marker.is_file():
+            continue
+        resolved = candidate.resolve()
+        if resolved in seen:
+            continue
+        seen.add(resolved)
+        result.append(candidate)
+
+    return sorted(result)
+
+
 def get_ninja_commands(build_dir: Path) -> dict[str, str]:
     """Get expanded commands from ninja using 'ninja -t compdb'."""
     result = subprocess.run(
@@ -678,6 +718,10 @@ def get_ninja_commands(build_dir: Path) -> dict[str, str]:
     )
 
     if result.returncode != 0:
+        _LOGGER.debug(
+            f"`ninja -t compdb` failed in {build_dir}: "
+            f"{_stderr_text(result.stderr).strip()}"
+        )
         return {}
 
     output_to_command: dict[str, str] = {}
@@ -695,8 +739,8 @@ def get_ninja_commands(build_dir: Path) -> dict[str, str]:
                 with contextlib.suppress(ValueError):
                     rel_output = str(Path(output).relative_to(build_dir))
                     output_to_command[rel_output] = command
-    except json.JSONDecodeError:
-        pass
+    except json.JSONDecodeError as e:
+        _LOGGER.debug(f"Could not parse `ninja -t compdb` output in {build_dir}: {e}")
 
     return output_to_command
 
@@ -761,11 +805,9 @@ def fix_ninja_deps(ninja_deps_path: Path, src_str: str, dst_str: str) -> None:
 
     content = ninja_deps_path.read_bytes()
     src_bytes = src_str.encode()
-    if src_bytes not in content:
-        return
-
     dst_bytes = dst_str.encode()
     result = bytearray()
+    changed = False
 
     # Copy header (first line + version)
     with contextlib.suppress(ValueError):
@@ -797,10 +839,10 @@ def fix_ninja_deps(ninja_deps_path: Path, src_str: str, dst_str: str) -> None:
             i += 4 + rec_len
             continue
         old_str = str_part[:null_pos]
+        new_str = replace_path_once_bytes(old_str, src_bytes, dst_bytes)
 
-        # Replace path if needed
-        if src_bytes in old_str:
-            new_str = old_str.replace(src_bytes, dst_bytes)
+        if new_str != old_str:
+            changed = True
             new_str_padded_len = (
                 (len(new_str) + 1) + 3
             ) & ~3  # +1 for null, align to 4
@@ -814,7 +856,8 @@ def fix_ninja_deps(ninja_deps_path: Path, src_str: str, dst_str: str) -> None:
             result.extend(content[i : i + 4 + rec_len])
         i += 4 + rec_len
 
-    ninja_deps_path.write_bytes(bytes(result))
+    if changed:
+        ninja_deps_path.write_bytes(bytes(result))
 
 
 # =============================================================================
@@ -1245,9 +1288,10 @@ class BuildTask(Task):
         def fix_file(path: Path) -> None:
             try:
                 content = path.read_text()
-                if src_str in content:
+                new_content = replace_path_once(content, src_str, dst_str)
+                if new_content != content:
                     stat = path.stat()
-                    path.write_text(content.replace(src_str, dst_str))
+                    path.write_text(new_content)
                     os.utime(path, (stat.st_atime, stat.st_mtime))
             except (UnicodeDecodeError, OSError):
                 pass  # Skip binary files
@@ -1264,19 +1308,30 @@ class BuildTask(Task):
     ) -> None:
         """Fix ninja log hashes and deps paths in all build directories."""
         for build_dir in build_dirs:
-            # Run ninja_deps fixing and get_ninja_commands in parallel
-            with ThreadPoolExecutor(max_workers=2) as executor:
-                deps_future = executor.submit(
-                    fix_ninja_deps, build_dir / ".ninja_deps", src_str, dst_str
-                )
-                commands_future = executor.submit(get_ninja_commands, build_dir)
-                deps_future.result()
-                output_to_command = commands_future.result()
+            ninja_build_dirs = discover_ninja_build_dirs(build_dir)
+            if not ninja_build_dirs:
+                _LOGGER.debug(f"No Ninja build directories found under {build_dir}")
+                continue
 
-            # Recompute command hashes in .ninja_log
-            ninja_log = build_dir / ".ninja_log"
-            if ninja_log.exists():
-                fix_ninja_log(ninja_log, build_dir, output_to_command)
+            for ninja_build_dir in ninja_build_dirs:
+                # Run ninja_deps fixing and get_ninja_commands in parallel.
+                with ThreadPoolExecutor(max_workers=2) as executor:
+                    deps_future = executor.submit(
+                        fix_ninja_deps,
+                        ninja_build_dir / ".ninja_deps",
+                        src_str,
+                        dst_str,
+                    )
+                    commands_future = executor.submit(
+                        get_ninja_commands, ninja_build_dir
+                    )
+                    deps_future.result()
+                    output_to_command = commands_future.result()
+
+                # Recompute command hashes in .ninja_log.
+                ninja_log = ninja_build_dir / ".ninja_log"
+                if ninja_log.exists():
+                    fix_ninja_log(ninja_log, ninja_build_dir, output_to_command)
 
 
 # =============================================================================
