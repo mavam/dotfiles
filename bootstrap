@@ -109,8 +109,8 @@ setup_tmux() {
 }
 
 setup_neovim() {
-  log "updating NeoVim plugins via Packer"
-  nvim --headless -c "autocmd User PackerComplete quitall" -c "PackerSync"
+  log "updating NeoVim plugins via Lazy"
+  nvim --headless '+Lazy! sync' '+qa'
 }
 
 setup_fish() {
