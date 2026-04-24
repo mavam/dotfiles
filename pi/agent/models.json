@@ -20,8 +20,8 @@
         },
         {
           "contextWindow": 262144,
-          "id": "qwen3.5:35b",
-          "name": "Qwen 3.5 35B",
+          "id": "qwen3.6:35b",
+          "name": "Qwen 3.6 35B",
           "input": [
             "text",
             "image"
