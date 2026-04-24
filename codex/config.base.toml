@@ -1,8 +1,10 @@
-model = "gpt-5.4"
+model = "gpt-5.5"
 model_reasoning_effort = "medium"
 personality = "pragmatic"
 web_search = "live"
 service_tier = "fast"
+approval_policy = "never"
+sandbox_mode = "danger-full-access"
 
 [features]
 multi_agent = true
@@ -10,15 +12,12 @@ multi_agent = true
 [tui]
 notifications = true
 
+[tui.model_availability_nux]
+"gpt-5.5" = 2
+
 [[prefix_rules]]
 pattern = ["git"]
 decision = "allow"
-
-[projects."/Users/mavam/code/tenzir/tenzir"]
-trust_level = "trusted"
-
-[projects."/Users/mavam/code/mavam/pi-web-providers"]
-trust_level = "trusted"
 
 [notice.model_migrations]
 "gpt-5.3-codex" = "gpt-5.4"
