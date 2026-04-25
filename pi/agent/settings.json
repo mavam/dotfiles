@@ -7,7 +7,8 @@
     "npm:pi-web-providers",
     "npm:pi-subdir-context",
     "npm:pi-universal-view",
-    "npm:pi-worktrunk"
+    "npm:pi-worktrunk",
+    "npm:pi-service-tier"
   ],
   "enabledModels": [
     "openai-codex/gpt-5.5",
