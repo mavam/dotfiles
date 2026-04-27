@@ -19,7 +19,7 @@
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.5",
   "quietStartup": true,
-  "lastChangelogVersion": "0.67.2",
+  "lastChangelogVersion": "0.70.2",
   "defaultThinkingLevel": "xhigh",
   "theme": "terminal",
   "steeringMode": "all",
