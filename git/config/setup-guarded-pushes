@@ -304,6 +304,17 @@ EOF
   printf '%s\n' "$config_path"
 }
 
+is_already_guarded() {
+  local repo_root="$1"
+  local hook_path include_path
+
+  include_path="$(git -C "$repo_root" config --local --get hooks.protectedPushIncludePath 2>/dev/null || true)"
+  [ -n "$include_path" ] || return 1
+
+  hook_path="$(git_path "$repo_root" hooks/pre-push)"
+  hook_is_managed "$hook_path"
+}
+
 record_original_state_if_unmanaged() {
   local repo_root="$1"
   local remote_name="$2"
@@ -396,9 +407,18 @@ repo_root="$(git -C "$repo" rev-parse --show-toplevel 2>/dev/null || true)"
 origin_url="$(git -C "$repo_root" remote get-url "$remote_name" 2>/dev/null || true)"
 [ -n "$origin_url" ] || die "remote '$remote_name' does not exist in $repo_root"
 
+convert_remote_urls "$origin_url" || die "cannot derive HTTPS/SSH URLs from: $origin_url"
+
+if is_already_guarded "$repo_root"; then
+  printf 'Guarded pushes already configured for %s\n' "$repo_root"
+  printf '  %s fetch/topic pushes -> %s\n' "$remote_name" "$https_url"
+  printf '  %s guarded pushes -> %s\n' "$remote_name" "$ssh_url"
+  printf '  guarded branches: %s\n' "$(branches_config)"
+  exit 0
+fi
+
 record_original_state_if_unmanaged "$repo_root" "$remote_name" "$origin_url"
 record_original_branch_push_remotes "$repo_root"
-convert_remote_urls "$origin_url" || die "cannot derive HTTPS/SSH URLs from: $origin_url"
 include_path="$(write_guarded_push_include "$repo_root" "$remote_name" "$ssh_url")"
 
 sync_branch_includes "$repo_root" "$include_path"
