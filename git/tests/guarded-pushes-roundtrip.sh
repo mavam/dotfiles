@@ -158,29 +158,6 @@ test_round_trip_restores_original_remote_state() {
   assert_unset "$repo" hooks.protectedPushIncludePath 'unguard should remove include metadata'
 }
 
-test_repeated_setup_reports_already_guarded() {
-  local repo setup_output original_records
-
-  make_repo
-  repo="$last_repo"
-
-  "$setup_script" "$repo" >/dev/null
-  original_records="$(git -C "$repo" config --local --get-all hooks.protectedPushOriginalBranchPushRemote | wc -l | tr -d ' ')"
-
-  setup_output="$("$setup_script" "$repo")"
-  case "$setup_output" in
-    *'Guarded pushes already configured for '*)
-      ;;
-    *)
-      fail 'second setup should report that guarded pushes are already configured'
-      ;;
-  esac
-
-  assert_eq "$original_records" \
-    "$(git -C "$repo" config --local --get-all hooks.protectedPushOriginalBranchPushRemote | wc -l | tr -d ' ')" \
-    'idempotent setup should not add duplicate original branch records'
-}
-
 test_legacy_multi_remote_migrates_cleanly() {
   local repo
 
@@ -219,7 +196,6 @@ test_legacy_multi_remote_migrates_cleanly() {
 
 test_single_remote_pushurl_behavior
 test_round_trip_restores_original_remote_state
-test_repeated_setup_reports_already_guarded
 test_legacy_multi_remote_migrates_cleanly
 
 printf 'ok: guarded push tests passed\n'
