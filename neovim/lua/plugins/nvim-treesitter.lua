@@ -8,9 +8,12 @@ local parsers = {
   'json',
   'lua',
   'markdown',
+  'markdown_inline',
   'python',
   'r',
   'tql',
+  'typescript',
+  'tsx',
   'yaml',
 }
 
@@ -78,7 +81,7 @@ return {
     vim.api.nvim_create_autocmd('FileType', {
       pattern = {
         'bash', 'sh', 'c', 'cpp', 'fish', 'json', 'lua', 'markdown',
-        'python', 'r', 'tql', 'yaml',
+        'python', 'r', 'tql', 'typescript', 'typescriptreact', 'yaml',
       },
       callback = function()
         vim.treesitter.start()
