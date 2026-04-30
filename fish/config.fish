@@ -212,11 +212,11 @@ if status is-interactive
   # Abbreviations: worktrunk
   if command -sq wt
     # Switch (mirrors gsw/gswc/gswm)
-    abbr -g wsw 'wt switch'
-    abbr -g wswc 'wt switch -c'
-    abbr -g wswm 'wt switch main'
-    abbr -g wswb 'wt switch --branches'
-    abbr -g wswr 'wt switch --remotes'
+    abbr -g ws 'wt switch'
+    abbr -g wsc 'wt switch -c'
+    abbr -g wsm 'wt switch main'
+    abbr -g wsb 'wt switch --branches'
+    abbr -g wsr 'wt switch --remotes'
     # List (mirrors gst for status)
     abbr -g wl 'wt list'
     abbr -g wlf 'wt list --full'
@@ -227,14 +227,14 @@ if status is-interactive
     abbr -g wm 'wt merge'
     abbr -g wmy 'wt merge -y'
     # New worktree + Pi agent
-    abbr -g wswp 'wt switch --create --execute=pi'
-    # Step operations (ws = wt step)
-    abbr -g wsc 'wt step commit'
-    abbr -g wsd 'wt step diff'
-    abbr -g wsp 'wt step push'
-    abbr -g wsrb 'wt step rebase'
-    abbr -g wssq 'wt step squash'
-    abbr -g wsfe 'wt step for-each --'
+    abbr -g wsp 'wt switch --create --execute=pi'
+    # Step operations (wp = wt step)
+    abbr -g wpc 'wt step commit'
+    abbr -g wpd 'wt step diff'
+    abbr -g wpp 'wt step push'
+    abbr -g wprb 'wt step rebase'
+    abbr -g wpsq 'wt step squash'
+    abbr -g wpfe 'wt step for-each --'
     # Config (mirrors gcf)
     abbr -g wcf 'wt config show'
     abbr -g wcff 'wt config show --full'
