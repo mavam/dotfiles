@@ -19,8 +19,8 @@
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.5",
   "quietStartup": true,
-  "lastChangelogVersion": "0.70.2",
-  "defaultThinkingLevel": "xhigh",
+  "lastChangelogVersion": "0.70.6",
+  "defaultThinkingLevel": "low",
   "theme": "terminal",
   "steeringMode": "all",
   "autocompleteMaxVisible": 10
