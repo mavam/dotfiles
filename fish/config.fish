@@ -221,8 +221,8 @@ if status is-interactive
     abbr -g wl 'wt list'
     abbr -g wlf 'wt list --full'
     # Remove (mirrors gbd)
-    abbr -g wrm 'wt remove'
-    abbr -g wrmd 'wt remove -D'
+    abbr -g wr 'wt remove'
+    abbr -g wrf 'wt remove -f'
     # Merge (mirrors gm/gma)
     abbr -g wm 'wt merge'
     abbr -g wmy 'wt merge -y'
