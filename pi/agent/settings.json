@@ -8,7 +8,8 @@
     "npm:pi-subdir-context",
     "npm:pi-universal-view",
     "npm:pi-worktrunk",
-    "npm:pi-service-tier"
+    "npm:pi-service-tier",
+    "npm:@heyhuynhgiabuu/pi-diff"
   ],
   "enabledModels": [
     "openai-codex/gpt-5.5",
