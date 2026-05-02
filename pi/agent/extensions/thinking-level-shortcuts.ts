@@ -13,12 +13,6 @@ function cycleThinkingLevel(pi: ExtensionAPI, ctx: ExtensionContext, direction: 
   const levels = ctx.model ? getSupportedThinkingLevels(ctx.model) : ["off"];
 
   if (levels.length <= 1) {
-    ctx.ui.notify(
-      levels[0] === "off"
-        ? "Current model does not support thinking"
-        : `Only one thinking level available: ${levels[0]}`,
-      "warning",
-    );
     return;
   }
 
@@ -26,7 +20,6 @@ function cycleThinkingLevel(pi: ExtensionAPI, ctx: ExtensionContext, direction: 
   const nextLevel = levels[(currentIndex + direction + levels.length) % levels.length]!;
 
   pi.setThinkingLevel(nextLevel);
-  ctx.ui.notify(`Thinking level: ${pi.getThinkingLevel()}`, "info");
 }
 
 export default function (pi: ExtensionAPI) {
