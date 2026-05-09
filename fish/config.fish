@@ -195,7 +195,7 @@ if status is-interactive
   abbr -g grhu 'git reset --hard @{u}'
   abbr -g grhh 'git reset --hard HEAD'
   abbr -g grs 'git restore'
-  abbr -g gss 'git status'
+  abbr -g gss 'git status; git diff --shortstat HEAD'
   abbr -g gsss 'git status --short'
   abbr -g gsh 'git stash push'
   abbr -g gsha 'git stash apply'
