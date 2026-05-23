@@ -8,6 +8,7 @@ sandbox_mode = "danger-full-access"
 
 [features]
 multi_agent = true
+computer_use = true
 
 [tui]
 notifications = true
