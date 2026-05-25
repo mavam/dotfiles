@@ -7,16 +7,16 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "agent_servers": {
+    "codex-acp": {
+      "type": "registry"
+    },
+    "pi-acp": {
+      "type": "registry"
+    }
+  },
   "agent": {
     "always_allow_tool_actions": true,
-    "inline_assistant_model": {
-      "provider": "zed.dev",
-      "model": "claude-sonnet-4"
-    },
-    "default_model": {
-      "provider": "zed.dev",
-      "model": "claude-opus-4"
-    },
     "stream_edits": true,
     "enable_feedback": false,
     "single_file_review": false
