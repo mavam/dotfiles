@@ -9,7 +9,7 @@
     "npm:pi-universal-view",
     "npm:pi-worktrunk",
     "npm:pi-service-tier",
-    "npm:@heyhuynhgiabuu/pi-diff"
+    "npm:pi-context-usage"
   ],
   "enabledModels": [
     "openai-codex/gpt-5.5",
@@ -20,8 +20,8 @@
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.5",
   "quietStartup": true,
-  "lastChangelogVersion": "0.75.5",
-  "defaultThinkingLevel": "minimal",
+  "lastChangelogVersion": "0.77.0",
+  "defaultThinkingLevel": "low",
   "theme": "terminal",
   "steeringMode": "all",
   "autocompleteMaxVisible": 10
