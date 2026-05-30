@@ -9,6 +9,8 @@ sandbox_mode = "danger-full-access"
 [features]
 multi_agent = true
 computer_use = true
+prevent_idle_sleep = true
+goals = true
 
 [tui]
 notifications = true
