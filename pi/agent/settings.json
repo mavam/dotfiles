@@ -14,13 +14,13 @@
   "enabledModels": [
     "openai-codex/gpt-5.5",
     "google/gemini-3.5-flash",
-    "anthropic/claude-opus-4-7",
+    "anthropic/claude-opus-4-8",
     "ollama/qwen3.6:35b"
   ],
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.5",
   "quietStartup": true,
-  "lastChangelogVersion": "0.77.0",
+  "lastChangelogVersion": "0.78.0",
   "defaultThinkingLevel": "low",
   "theme": "terminal",
   "steeringMode": "all",
