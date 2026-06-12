@@ -16,7 +16,9 @@
     }
   },
   "agent": {
-    "always_allow_tool_actions": true,
+    "tool_permissions": {
+      "default": "allow"
+    },
     "stream_edits": true,
     "enable_feedback": false,
     "single_file_review": false
