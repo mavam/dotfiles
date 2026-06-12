@@ -28,7 +28,7 @@ return {
     })
 
     -- R
-    configure('r_language_server', {
+    configure('air', {
       on_attach = custom_on_attach
     })
 
