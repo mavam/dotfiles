@@ -1,11 +1,13 @@
 {
+  "refreshMs": 5000,
   "iconFamily": "nerd",
-  "contextBarStyle": "stars",
-  "defaultTextColor": "dim",
-  "defaultIconColor": "warning",
-  "widgets": {
-    "context-bar": {
-      "icon": "hide"
-    }
+  "gaugeStyle": "parallelograms",
+  "gaugeWidth": 5,
+  "defaultTextColor": "muted",
+  "defaultIconColor": "text",
+  "gaugeColors": {
+    "ok": "success",
+    "warning": "warning",
+    "error": "error"
   }
 }
