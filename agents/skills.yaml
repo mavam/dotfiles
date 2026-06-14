@@ -1,0 +1,45 @@
+sources:
+  anthropics/skills:
+    - skill-creator
+  cloudflare/skills:
+    - wrangler
+  downstairs-dawgs/clacks:
+    skills:
+      - clacks
+    install:
+      - uvx --from slack-clacks clacks skill --mode universal
+      - uvx --from slack-clacks clacks skill --mode claude
+  mattpocock/skills:
+    - caveman
+    - grill-me
+    - improve-codebase-architecture
+    - teach
+  mavam/quarto-brief:
+  mavam/skills:
+    - mavam
+  max-sixty/worktrunk:
+    - worktrunk
+  openclaw/gogcli:
+    - gog
+    - openhue
+  schpet/linear-cli:
+    - linear-cli
+  shadcn/ui:
+    - shadcn
+  tenzir/skills:
+    pin: main
+    skills:
+      - tenzir-asim
+      - tenzir-cim
+      - tenzir-ecs
+      - tenzir-ocsf
+      - tenzir-udm
+      - tenzir-commit-changes
+      - tenzir-create-pull-requests
+      - tenzir-design-system
+      - tenzir-docs
+      - tenzir-manage-packages
+      - tenzir-review-changes
+      - tenzir-ship
+      - tenzir-technical-writing
+      - tenzir-update-docs
