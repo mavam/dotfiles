@@ -1,0 +1,6 @@
+directories:
+  - path: "~/.agents"
+
+entries:
+  - source: "skills.yaml"
+    target: "~/.agents/.skill.yaml"
