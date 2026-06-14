@@ -1,29 +1,31 @@
 sources:
   anthropics/skills:
-    - skill-creator
+    - skill-creator@main
   cloudflare/skills:
-    - wrangler
+    - wrangler@main
   downstairs-dawgs/clacks:
     skills:
       - clacks
     install:
-      - uvx --from slack-clacks clacks skill --mode universal
-      - uvx --from slack-clacks clacks skill --mode claude
+      - uvx --from slack-clacks clacks skill --mode universal --force
   mattpocock/skills:
+    pin: main
+    skills:
     - caveman
     - grill-me
     - improve-codebase-architecture
     - teach
   mavam/quarto-brief:
   mavam/skills:
-    - mavam
+    - mavam@main
   max-sixty/worktrunk:
     - worktrunk
   openclaw/gogcli:
-    - gog
-    - openhue
+    - gog@main
+  openclaw/openclaw:
+    - openhue@main
   schpet/linear-cli:
-    - linear-cli
+    - linear-cli@main
   shadcn/ui:
     - shadcn
   tenzir/skills:
