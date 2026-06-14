@@ -82,10 +82,11 @@ return {
     vim.api.nvim_create_autocmd('FileType', {
       pattern = {
         'bash', 'sh', 'c', 'cpp', 'diff', 'fish', 'json', 'lua', 'markdown',
-        'python', 'r', 'tql', 'typescript', 'typescriptreact', 'yaml',
+        'python', 'quarto', 'r', 'tql', 'typescript', 'typescriptreact', 'yaml',
       },
       callback = function()
-        vim.treesitter.start()
+        local language = vim.bo.filetype == 'quarto' and 'markdown' or nil
+        vim.treesitter.start(nil, language)
       end,
     })
 
