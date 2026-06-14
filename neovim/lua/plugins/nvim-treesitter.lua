@@ -4,6 +4,7 @@ local parsers = {
   'c',
   'comment',
   'cpp',
+  'diff',
   'fish',
   'json',
   'lua',
@@ -80,7 +81,7 @@ return {
     -- Enable treesitter highlighting for supported filetypes.
     vim.api.nvim_create_autocmd('FileType', {
       pattern = {
-        'bash', 'sh', 'c', 'cpp', 'fish', 'json', 'lua', 'markdown',
+        'bash', 'sh', 'c', 'cpp', 'diff', 'fish', 'json', 'lua', 'markdown',
         'python', 'r', 'tql', 'typescript', 'typescriptreact', 'yaml',
       },
       callback = function()
