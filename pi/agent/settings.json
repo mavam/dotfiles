@@ -9,7 +9,8 @@
     "npm:pi-universal-view",
     "npm:pi-worktrunk",
     "npm:pi-service-tier",
-    "npm:pi-context-usage"
+    "npm:pi-context-usage",
+    "npm:@gotgenes/pi-anthropic-auth"
   ],
   "enabledModels": [
     "openai-codex/gpt-5.5",
@@ -17,12 +18,15 @@
     "anthropic/claude-opus-4-8",
     "ollama/qwen3.6:35b"
   ],
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.5",
+  "defaultProvider": "anthropic",
+  "defaultModel": "claude-opus-4-8",
   "quietStartup": true,
   "lastChangelogVersion": "0.79.4",
-  "defaultThinkingLevel": "low",
+  "defaultThinkingLevel": "medium",
   "theme": "terminal",
   "steeringMode": "all",
-  "autocompleteMaxVisible": 10
+  "autocompleteMaxVisible": 10,
+  "warnings": {
+    "anthropicExtraUsage": false
+  }
 }
