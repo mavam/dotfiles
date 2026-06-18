@@ -11,10 +11,9 @@ sources:
   mattpocock/skills:
     pin: main
     skills:
-    - caveman
-    - grill-me
-    - improve-codebase-architecture
-    - teach
+      - grill-me
+      - improve-codebase-architecture
+      - teach
   mavam/quarto-brief:
   mavam/skills:
     - mavam@main
@@ -45,3 +44,5 @@ sources:
       - tenzir-ship
       - tenzir-technical-writing
       - tenzir-update-docs
+  cli/cli:
+    - gh
