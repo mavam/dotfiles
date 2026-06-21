@@ -21,7 +21,7 @@
   "defaultProvider": "anthropic",
   "defaultModel": "claude-opus-4-8",
   "quietStartup": true,
-  "lastChangelogVersion": "0.79.4",
+  "lastChangelogVersion": "0.79.9",
   "defaultThinkingLevel": "medium",
   "theme": "terminal",
   "steeringMode": "all",
