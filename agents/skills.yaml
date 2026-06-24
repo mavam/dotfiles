@@ -25,8 +25,6 @@ sources:
     - openhue@main
   schpet/linear-cli:
     - linear-cli@main
-  shadcn/ui:
-    - shadcn
   tenzir/skills:
     pin: main
     skills:
