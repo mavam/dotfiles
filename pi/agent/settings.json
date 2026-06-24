@@ -18,10 +18,10 @@
     "anthropic/claude-opus-4-8",
     "ollama/qwen3.6:35b"
   ],
-  "defaultProvider": "anthropic",
-  "defaultModel": "claude-opus-4-8",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.5",
   "quietStartup": true,
-  "lastChangelogVersion": "0.79.9",
+  "lastChangelogVersion": "0.80.2",
   "defaultThinkingLevel": "medium",
   "theme": "terminal",
   "steeringMode": "all",
