@@ -21,7 +21,7 @@
   "quietStartup": true,
   "lastChangelogVersion": "0.80.2",
   "defaultThinkingLevel": "medium",
-  "theme": "terminal",
+  "theme": "github-light/github-dark",
   "steeringMode": "all",
   "autocompleteMaxVisible": 10,
   "warnings": {

@@ -5,6 +5,8 @@ entries:
     target: "~/.pi/agent/models.json"
   - source: "agent/keybindings.json"
     target: "~/.pi/agent/keybindings.json"
+  - source: "agent/themes"
+    target: "~/.pi/agent/themes"
   - source: "agent/extensions/thinking-level-shortcuts.ts"
     target: "~/.pi/agent/extensions/thinking-level-shortcuts.ts"
   - source: "agent/fancy-footer.json"
