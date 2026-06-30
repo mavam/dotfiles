@@ -2,7 +2,6 @@
   "packages": [
     "npm:pi-banner",
     "npm:pi-fancy-footer",
-    "npm:pi-terminal-theme",
     "npm:pi-mcporter",
     "npm:pi-web-providers",
     "npm:pi-subdir-context",

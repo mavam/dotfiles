@@ -4,7 +4,7 @@
   "gaugeStyle": "parallelograms",
   "gaugeWidth": 5,
   "defaultTextColor": "muted",
-  "defaultIconColor": "text",
+  "defaultIconColor": "dim",
   "gaugeColors": {
     "ok": "success",
     "warning": "warning",
