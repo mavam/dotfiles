@@ -13,13 +13,13 @@
   ],
   "enabledModels": [
     "openai-codex/gpt-5.5",
-    "google/gemini-3.5-flash",
+    "anthropic/claude-sonnet-5",
     "anthropic/claude-opus-4-8"
   ],
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.5",
   "quietStartup": true,
-  "lastChangelogVersion": "0.80.2",
+  "lastChangelogVersion": "0.80.3",
   "defaultThinkingLevel": "medium",
   "theme": "github-light/github-dark",
   "steeringMode": "all",
