@@ -26,6 +26,7 @@ sources:
   tenzir/skills:
     pin: main
     skills:
+      - tenzir
       - tenzir-asim
       - tenzir-cim
       - tenzir-ecs
@@ -34,7 +35,6 @@ sources:
       - tenzir-commit-changes
       - tenzir-create-pull-requests
       - tenzir-design-system
-      - tenzir-docs
       - tenzir-manage-packages
       - tenzir-review-changes
       - tenzir-ship
