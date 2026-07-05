@@ -14,7 +14,10 @@ sources:
       - teach
   mavam/quarto-brief:
   mavam/skills:
-    - mavam@main
+    pin: main
+    skills:
+      - code-review
+      - mavam
   max-sixty/worktrunk:
     - worktrunk
   openclaw/gogcli:
@@ -36,7 +39,6 @@ sources:
       - tenzir-create-pull-requests
       - tenzir-design-system
       - tenzir-manage-packages
-      - tenzir-review-changes
       - tenzir-ship
       - tenzir-technical-writing
       - tenzir-update-docs
