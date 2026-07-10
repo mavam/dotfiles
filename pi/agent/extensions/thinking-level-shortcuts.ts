@@ -1,5 +1,5 @@
-import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
-import { getSupportedThinkingLevels } from "@mariozechner/pi-ai";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
+import { getSupportedThinkingLevels } from "@earendil-works/pi-ai";
 
 enum Direction {
   Backward = -1,
