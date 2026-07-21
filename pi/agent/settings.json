@@ -1,5 +1,6 @@
 {
   "packages": [
+    "npm:pi-agents",
     "npm:pi-banner",
     "npm:pi-fancy-footer",
     "npm:pi-mcporter",
