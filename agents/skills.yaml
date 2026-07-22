@@ -24,8 +24,6 @@ sources:
     - gog@main
   openclaw/openclaw:
     - openhue@main
-  schpet/linear-cli:
-    - linear-cli@main
   tenzir/skills:
     pin: main
     skills:
