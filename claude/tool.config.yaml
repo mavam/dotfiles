@@ -1,0 +1,5 @@
+directories:
+  - path: "~/.claude"
+entries:
+  - source: "settings.json"
+    target: "~/.claude/settings.json"
