@@ -14,6 +14,11 @@
       }
     }
   },
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh",
+    "refreshInterval": 5
+  },
   "effortLevel": "high",
   "tui": "fullscreen",
   "theme": "light",

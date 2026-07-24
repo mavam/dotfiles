@@ -3,3 +3,5 @@ directories:
 entries:
   - source: "settings.json"
     target: "~/.claude/settings.json"
+  - source: "statusline.sh"
+    target: "~/.claude/statusline.sh"
