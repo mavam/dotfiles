@@ -9,5 +9,19 @@
     "ok": "success",
     "warning": "warning",
     "error": "error"
+  },
+  "extensionWidgets": {
+    "pi-agents.workflows": {
+      "enabled": true,
+      "row": 0,
+      "align": "left",
+      "position": 2
+    },
+    "pi-agents.agents": {
+      "enabled": true,
+      "row": 0,
+      "align": "left",
+      "position": 3
+    }
   }
 }
