@@ -1,8 +1,18 @@
 {
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  },
   "permissions": {
     "defaultMode": "auto"
   },
   "model": "opus[1m]",
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh",
+    "refreshInterval": 5
+  },
   "enabledPlugins": {
     "cloudflare@cloudflare": true
   },
@@ -14,19 +24,9 @@
       }
     }
   },
-  "statusLine": {
-    "type": "command",
-    "command": "~/.claude/statusline.sh",
-    "refreshInterval": 5
-  },
   "effortLevel": "high",
   "tui": "fullscreen",
   "theme": "light",
   "agentPushNotifEnabled": true,
-  "useAutoModeDuringPlan": true,
-  "attribution": {
-    "commit": "",
-    "pr": "",
-    "sessionUrl": false
-  }
+  "useAutoModeDuringPlan": true
 }
