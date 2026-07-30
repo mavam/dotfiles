@@ -1,4 +1,4 @@
-set -l tenzir_bin ~/code/tenzir/tenzir/build/*/release/bin
-if test -n "$tenzir_bin[1]" -a -d "$tenzir_bin[1]"
-    fish_add_path -g $tenzir_bin
+set -l bin ~/code/tenzir/mono/engine/build/*/release/bin
+if test -n "$bin[1]" -a -d "$bin[1]"
+    fish_add_path -g $bin
 end
