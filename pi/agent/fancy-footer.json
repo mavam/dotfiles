@@ -2,7 +2,7 @@
   "refreshMs": 5000,
   "iconFamily": "nerd",
   "gaugeStyle": "parallelograms",
-  "gaugeWidth": 5,
+  "gaugeWidth": 6,
   "defaultTextColor": "muted",
   "defaultIconColor": "text",
   "gaugeColors": {
