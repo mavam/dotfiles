@@ -1,0 +1,36 @@
+{
+  "mcpServers": {
+    "linear": {
+      "baseUrl": "https://mcp.linear.app/mcp",
+      "description": "Linear issue tracking: issues, projects, cycles, and documents"
+    },
+    "cloudflare-api": {
+      "baseUrl": "https://mcp.cloudflare.com/mcp",
+      "description": "Cloudflare API: 2500+ endpoints via search()/execute() Code Mode"
+    },
+    "cloudflare-docs": {
+      "baseUrl": "https://docs.mcp.cloudflare.com/mcp",
+      "description": "Up to date Cloudflare reference documentation"
+    },
+    "cloudflare-bindings": {
+      "baseUrl": "https://bindings.mcp.cloudflare.com/mcp",
+      "description": "Workers Bindings: storage, AI, and compute primitives"
+    },
+    "cloudflare-builds": {
+      "baseUrl": "https://builds.mcp.cloudflare.com/mcp",
+      "description": "Workers Builds insights and management"
+    },
+    "cloudflare-observability": {
+      "baseUrl": "https://observability.mcp.cloudflare.com/mcp",
+      "description": "Debug application logs and analytics"
+    },
+    "cloudflare-ai-gateway": {
+      "baseUrl": "https://ai-gateway.mcp.cloudflare.com/mcp",
+      "description": "AI Gateway logs, prompts, and responses (the 'workflows' gateway)"
+    },
+    "cloudflare-graphql": {
+      "baseUrl": "https://graphql.mcp.cloudflare.com/mcp",
+      "description": "Analytics data via Cloudflare's GraphQL API"
+    }
+  }
+}
