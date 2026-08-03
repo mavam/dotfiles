@@ -138,6 +138,11 @@ if status is-interactive
   # Use SSH key from Secure Enclave.
   set -x SSH_AUTH_SOCK ~/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh
 
+  # Abbreviations: pi
+  if command -sq caffeinate
+    abbr -g cpi 'caffeinate -i pi'
+  end
+
   # Abbreviations: git
   abbr -g g 'git'
   abbr -g ga 'git add'
