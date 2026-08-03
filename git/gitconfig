@@ -52,5 +52,6 @@
 	format = ssh
 
 [gpg "ssh"]
+	program = ssh-keygen-secretive
 	defaultKeyCommand = sh -c 'echo "key::$(ssh-add -L | grep -i signing)"'
 	allowedSignersFile = ~/.config/git/allowed_signers
