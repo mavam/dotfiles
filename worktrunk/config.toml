@@ -1,1 +1,27 @@
 skip-commit-generation-prompt = true
+
+[[aliases.land]]
+merge-pr = '''
+{% if args | length == 0 %}
+gh pr merge --squash --match-head-commit {{ commit }}
+{% elif args | length == 1 %}
+gh pr merge {{ args[0] }} --squash --match-head-commit "$(gh pr view {{ args[0] }} --json headRefOid --jq .headRefOid)"
+{% else %}
+echo "usage: wt land [PR]" >&2; exit 2
+{% endif %}
+'''
+
+[[aliases.land]]
+sync-main = "git -C {{ worktree_path_of_branch(default_branch) }} pull --ff-only --prune {{ remote }} {{ default_branch }}"
+
+[[aliases.land]]
+cleanup = '''
+{% if args | length == 0 %}
+wt remove {{ branch }}
+{% else %}
+branch="$(gh pr view {{ args[0] }} --json headRefName --jq .headRefName)"
+if git show-ref --verify --quiet "refs/heads/$branch"; then
+  wt remove "$branch"
+fi
+{% endif %}
+'''
