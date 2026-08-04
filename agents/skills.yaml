@@ -15,9 +15,6 @@ sources:
   mavam/quarto-brief:
   mavam/skills:
     pin: main
-    skills:
-      - code-review
-      - mavam
   max-sixty/worktrunk:
     - worktrunk
   openclaw/gogcli:
