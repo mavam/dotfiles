@@ -5,23 +5,41 @@ merge-pr = '''
 {% if args | length == 0 %}
 gh pr merge --squash --match-head-commit {{ commit }}
 {% elif args | length == 1 %}
-gh pr merge {{ args[0] }} --squash --match-head-commit "$(gh pr view {{ args[0] }} --json headRefOid --jq .headRefOid)"
+gh pr merge {{ args[0] }} --squash
 {% else %}
 echo "usage: wt land [PR]" >&2; exit 2
 {% endif %}
 '''
 
 [[aliases.land]]
-sync-main = "git -C {{ worktree_path_of_branch(default_branch) }} pull --ff-only --prune {{ remote }} {{ default_branch }}"
+verify = '''
+{% if args | length == 0 %}
+state=$(gh pr view --json state --jq .state)
+{% else %}
+state=$(gh pr view {{ args[0] }} --json state --jq .state)
+{% endif %}
+[ "$state" = MERGED ] || { echo "PR is $state, not MERGED - skipping cleanup" >&2; exit 1; }
+'''
+
+[[aliases.land]]
+sync-main = '''
+git fetch --prune {{ remote }} {{ default_branch }}
+main_wt="{{ worktree_path_of_branch(default_branch) }}"
+if [ -n "$main_wt" ]; then
+  git -C "$main_wt" merge --ff-only {{ remote }}/{{ default_branch }}
+fi
+'''
 
 [[aliases.land]]
 cleanup = '''
 {% if args | length == 0 %}
 wt remove {{ branch }}
 {% else %}
-branch="$(gh pr view {{ args[0] }} --json headRefName --jq .headRefName)"
-if git show-ref --verify --quiet "refs/heads/$branch"; then
-  wt remove "$branch"
+if [ "$(gh pr view {{ args[0] }} --json isCrossRepository --jq .isCrossRepository)" = false ]; then
+  branch=$(gh pr view {{ args[0] }} --json headRefName --jq .headRefName)
+  if git show-ref --verify --quiet "refs/heads/$branch"; then
+    wt remove "$branch"
+  fi
 fi
 {% endif %}
 '''
