@@ -22,7 +22,7 @@
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.6-sol",
   "quietStartup": true,
-  "defaultThinkingLevel": "low",
+  "defaultThinkingLevel": "high",
   "theme": "github-light/github-dark",
   "steeringMode": "one-at-a-time",
   "autocompleteMaxVisible": 10,
