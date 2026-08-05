@@ -3,9 +3,19 @@ skip-commit-generation-prompt = true
 [[aliases.land]]
 merge-pr = '''
 {% if args | length == 0 %}
-gh pr merge --squash --match-head-commit {{ commit }}
+state=$(gh pr view --json state --jq .state)
+if [ "$state" = MERGED ]; then
+  echo "PR is already merged - skipping merge"
+else
+  gh pr merge --squash --match-head-commit {{ commit }}
+fi
 {% elif args | length == 1 %}
-gh pr merge {{ args[0] }} --squash
+state=$(gh pr view {{ args[0] }} --json state --jq .state)
+if [ "$state" = MERGED ]; then
+  echo "PR is already merged - skipping merge"
+else
+  gh pr merge {{ args[0] }} --squash
+fi
 {% else %}
 echo "usage: wt land [PR]" >&2; exit 2
 {% endif %}
