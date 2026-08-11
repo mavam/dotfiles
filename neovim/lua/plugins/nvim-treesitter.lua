@@ -12,6 +12,7 @@ local parsers = {
   'markdown_inline',
   'python',
   'r',
+  'sql',
   'tql',
   'typescript',
   'tsx',
