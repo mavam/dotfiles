@@ -7,6 +7,7 @@ local parsers = {
   'diff',
   'fish',
   'json',
+  'latex',
   'lua',
   'markdown',
   'markdown_inline',
