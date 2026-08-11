@@ -20,7 +20,11 @@ sources:
   openclaw/gogcli:
     - gog@main
   openclaw/openclaw:
-    - openhue@main
+    pin: main
+    skills:
+    - apple-reminders
+    - openhue
+    - xurl
   tenzir/skills:
     pin: main
     skills:
