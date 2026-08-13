@@ -7,7 +7,7 @@
   "permissions": {
     "defaultMode": "auto"
   },
-  "model": "opus[1m]",
+  "model": "claude-fable-5[1m]",
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh",
@@ -24,7 +24,7 @@
       }
     }
   },
-  "effortLevel": "high",
+  "effortLevel": "low",
   "tui": "fullscreen",
   "theme": "light",
   "agentPushNotifEnabled": true,

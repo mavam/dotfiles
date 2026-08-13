@@ -6,12 +6,6 @@ sources:
       - clacks
     install:
       - uvx --from slack-clacks clacks skill --mode universal --force
-  mattpocock/skills:
-    pin: main
-    skills:
-      - grill-me
-      - improve-codebase-architecture
-      - teach
   mavam/quarto-brief:
   mavam/skills:
     pin: main
