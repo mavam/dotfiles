@@ -19,6 +19,17 @@ const turndown = new TurndownService({
   codeBlockStyle: "fenced",
 });
 turndown.use(gfm);
+turndown.addRule("github-priority-badge", {
+  filter: (node) => {
+    const image = node.nodeName === "A" ? node.firstChild : undefined;
+    return (
+      image?.nodeName === "IMG" &&
+      /^P\d+ Badge$/i.test(image.getAttribute?.("alt") ?? "")
+    );
+  },
+  replacement: (_content, node) =>
+    node.firstChild?.getAttribute?.("alt") ?? "",
+});
 
 const FEEDBACK_QUERY = [
   "query($owner: String!, $name: String!, $number: Int!) {",
@@ -66,9 +77,17 @@ interface ReviewFeedback {
   body: string;
   url: string;
   createdAt: string;
+  priority?: string;
+  title?: string;
   path?: string;
   line?: number;
   diffHunk?: string;
+}
+
+interface ReviewContent {
+  body: string;
+  priority?: string;
+  title?: string;
 }
 
 interface FeedbackSnapshot {
@@ -160,16 +179,35 @@ function timestampFrom(comment: GraphQlComment): string {
   );
 }
 
-function markdownFrom(comment: GraphQlComment): string {
+function normalizeReviewMarkdown(markdown: string): ReviewContent {
+  const withoutFooter = markdown
+    .replace(
+      /(?:^|\n{2,})Useful\?\s+React with\s+👍\s*\/\s*👎\.?\s*$/u,
+      "",
+    )
+    .trim();
+  const heading = /^\*\*(P\d+) Badge\s+([^\n]+)\*\*(?:\n{2,}|$)/u.exec(
+    withoutFooter,
+  );
+  if (!heading) return { body: withoutFooter };
+
+  return {
+    body: withoutFooter.slice(heading[0].length).trim(),
+    priority: heading[1]?.toUpperCase(),
+    title: heading[2]?.trim(),
+  };
+}
+
+function contentFrom(comment: GraphQlComment): ReviewContent {
   const html = cleanText(comment.bodyHTML);
   if (html) {
     try {
-      return cleanText(turndown.turndown(html));
+      return normalizeReviewMarkdown(cleanText(turndown.turndown(html)));
     } catch {
       // Fall back to GitHub's source Markdown if conversion unexpectedly fails.
     }
   }
-  return cleanText(comment.body);
+  return normalizeReviewMarkdown(cleanText(comment.body));
 }
 
 function parseComment(
@@ -178,9 +216,9 @@ function parseComment(
   fallbackLocation?: { path?: string; line?: number },
 ): ReviewFeedback | undefined {
   const id = cleanText(comment.id);
-  const body = markdownFrom(comment);
+  const content = contentFrom(comment);
   const url = cleanText(comment.url);
-  if (!id || !body || !url) return undefined;
+  if (!id || (!content.body && !content.title) || !url) return undefined;
 
   const path = cleanText(comment.path) || fallbackLocation?.path;
   const line =
@@ -193,9 +231,11 @@ function parseComment(
     id,
     kind,
     author: loginFrom(comment.author),
-    body,
+    body: content.body,
     url,
     createdAt: timestampFrom(comment),
+    ...(content.priority ? { priority: content.priority } : {}),
+    ...(content.title ? { title: content.title } : {}),
     ...(path ? { path } : {}),
     ...(line !== undefined ? { line } : {}),
     ...(diffHunk ? { diffHunk } : {}),
@@ -350,8 +390,14 @@ function formatModelMessage(target: PullRequestTarget, feedback: ReviewFeedback[
         `@${item.author}`,
         location,
       ].filter(Boolean);
+      const review = [
+        [item.priority, item.title].filter(Boolean).join(" "),
+        item.body,
+      ]
+        .filter(Boolean)
+        .join("\n\n");
       const diff = item.diffHunk ? `\n\nDiff context:\n${item.diffHunk}` : "";
-      return `${metadata.join(" · ")} ${item.url}\n\n${item.body}${diff}`;
+      return `${metadata.join(" · ")} ${item.url}\n\n${review}${diff}`;
     })
     .join("\n\n---\n\n");
 }
@@ -458,26 +504,55 @@ export default function (pi: ExtensionAPI) {
         quoteBorder: (text: string) => theme.fg("dim", text),
       };
 
-      details.feedback.forEach((item, index) => {
-        if (index > 0) box.addChild(new Spacer(1));
+      const separator = theme.fg("dim", " · ");
+      const targetLabel = `${details.target.owner}/${details.target.name}#${details.target.number}`;
+      const findingLabel =
+        details.feedback.length === 1
+          ? "1 finding"
+          : `${details.feedback.length} findings`;
+      let targetHeader = theme.fg("muted", targetLabel);
+      targetHeader += separator + theme.fg("dim", findingLabel);
+      targetHeader += ` ${hyperlink(
+        details.target.url,
+        theme.fg("accent", "↗"),
+      )}`;
+      box.addChild(new Text(targetHeader, 0, 0));
 
-        const separator = theme.fg("dim", " · ");
-        const location = formatLocation(item);
-        let header = theme.fg(
-          "muted",
-          `${details.target.owner}/${details.target.name}#${details.target.number}`,
-        );
-        header += separator + theme.fg("accent", `@${item.author}`);
-        if (location) header += separator + theme.fg("text", location);
-        header += ` ${hyperlink(item.url, theme.fg("accent", "↗"))}`;
-
-        box.addChild(new Text(header, 0, 0));
+      details.feedback.forEach((item) => {
         box.addChild(new Spacer(1));
-        box.addChild(
-          new Markdown(item.body, 0, 0, markdownTheme, {
-            color: (text) => theme.fg("customMessageText", text),
-          }),
-        );
+
+        const location = formatLocation(item);
+        let itemHeader = theme.fg("accent", `@${item.author}`);
+        if (location) itemHeader += separator + theme.fg("text", location);
+        itemHeader += ` ${hyperlink(item.url, theme.fg("accent", "↗"))}`;
+        box.addChild(new Text(itemHeader, 0, 0));
+
+        if (item.title) {
+          box.addChild(new Spacer(1));
+          let title = "";
+          if (item.priority) {
+            const label = `[${item.priority}]`;
+            if (item.priority === "P0" || item.priority === "P1") {
+              title = theme.fg("error", theme.bold(label));
+            } else if (item.priority === "P2") {
+              title = theme.fg("warning", theme.bold(label));
+            } else {
+              title = theme.fg("muted", theme.bold(label));
+            }
+            title += " ";
+          }
+          title += theme.fg("customMessageText", theme.bold(item.title));
+          box.addChild(new Text(title, 0, 0));
+        }
+
+        if (item.body) {
+          box.addChild(new Spacer(1));
+          box.addChild(
+            new Markdown(item.body, 0, 0, markdownTheme, {
+              color: (text) => theme.fg("customMessageText", text),
+            }),
+          );
+        }
       });
 
       return box;
