@@ -13,8 +13,12 @@ entries:
     target: "~/.pi/agent/extensions/settings-persistence.ts"
   - source: "agent/extensions/pr-watch.ts"
     target: "~/.pi/agent/extensions/pr-watch.ts"
+  - source: "agent/extensions/package.json"
+    target: "~/.pi/agent/extensions/package.json"
+  - source: "agent/extensions/package-lock.json"
+    target: "~/.pi/agent/extensions/package-lock.json"
   - source: "agent/fancy-footer.json"
     target: "~/.pi/agent/fancy-footer.json"
 
 post_install:
-  - 'npm ci --omit=dev --prefix "$DOTS_DIR/pi/agent/extensions"'
+  - 'npm ci --omit=dev --prefix "$PREFIX/.pi/agent/extensions"'
