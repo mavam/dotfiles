@@ -4,6 +4,8 @@ import type {
 } from "@earendil-works/pi-coding-agent";
 import { getMarkdownTheme } from "@earendil-works/pi-coding-agent";
 import { Box, Markdown, Spacer, Text } from "@earendil-works/pi-tui";
+import TurndownService from "turndown";
+import { gfm } from "turndown-plugin-gfm";
 
 const POLL_INTERVAL_MS = 30_000;
 const GITHUB_TIMEOUT_MS = 10_000;
@@ -11,6 +13,12 @@ const FEEDBACK_CHANNEL = "pr-watch:feedback";
 const FEEDBACK_PROTOCOL = 1;
 const MESSAGE_TYPE = "pr-review-feedback";
 const WATCH_WIDGET = "pr-watch:status";
+
+const turndown = new TurndownService({
+  bulletListMarker: "-",
+  codeBlockStyle: "fenced",
+});
+turndown.use(gfm);
 
 const FEEDBACK_QUERY = [
   "query($owner: String!, $name: String!, $number: Int!) {",
@@ -20,17 +28,17 @@ const FEEDBACK_QUERY = [
   "      state",
   "      url",
   "      comments(last: 100) {",
-  "        nodes { id body createdAt updatedAt url author { login } }",
+  "        nodes { id body bodyHTML createdAt updatedAt url author { login } }",
   "      }",
   "      reviews(last: 100) {",
-  "        nodes { id body submittedAt updatedAt url state author { login } }",
+  "        nodes { id body bodyHTML submittedAt updatedAt url state author { login } }",
   "      }",
   "      reviewThreads(last: 100) {",
   "        nodes {",
   "          id isResolved path line originalLine",
   "          comments(last: 100) {",
   "            nodes {",
-  "              id body createdAt updatedAt url path line originalLine diffHunk",
+  "              id body bodyHTML createdAt updatedAt url path line originalLine diffHunk",
   "              author { login }",
   "            }",
   "          }",
@@ -91,6 +99,7 @@ interface GraphQlAuthor {
 interface GraphQlComment {
   id?: unknown;
   body?: unknown;
+  bodyHTML?: unknown;
   createdAt?: unknown;
   submittedAt?: unknown;
   updatedAt?: unknown;
@@ -151,13 +160,25 @@ function timestampFrom(comment: GraphQlComment): string {
   );
 }
 
+function markdownFrom(comment: GraphQlComment): string {
+  const html = cleanText(comment.bodyHTML);
+  if (html) {
+    try {
+      return cleanText(turndown.turndown(html));
+    } catch {
+      // Fall back to GitHub's source Markdown if conversion unexpectedly fails.
+    }
+  }
+  return cleanText(comment.body);
+}
+
 function parseComment(
   comment: GraphQlComment,
   kind: FeedbackKind,
   fallbackLocation?: { path?: string; line?: number },
 ): ReviewFeedback | undefined {
   const id = cleanText(comment.id);
-  const body = cleanText(comment.body);
+  const body = markdownFrom(comment);
   const url = cleanText(comment.url);
   if (!id || !body || !url) return undefined;
 
@@ -340,10 +361,6 @@ function hyperlink(url: string, text: string): string {
   return `\u001b]8;;${url}\u0007${text}\u001b]8;;\u0007`;
 }
 
-function quoteMarkdown(body: string): string {
-  return body.split("\n").map((line) => `> ${line}`).join("\n");
-}
-
 function isFeedbackEvent(value: unknown): value is FeedbackEvent {
   if (typeof value !== "object" || value === null) return false;
   const event = value as Partial<FeedbackEvent>;
@@ -457,7 +474,7 @@ export default function (pi: ExtensionAPI) {
         box.addChild(new Text(header, 0, 0));
         box.addChild(new Spacer(1));
         box.addChild(
-          new Markdown(quoteMarkdown(item.body), 0, 0, markdownTheme, {
+          new Markdown(item.body, 0, 0, markdownTheme, {
             color: (text) => theme.fg("customMessageText", text),
           }),
         );

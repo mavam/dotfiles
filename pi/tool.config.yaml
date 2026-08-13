@@ -15,3 +15,6 @@ entries:
     target: "~/.pi/agent/extensions/pr-watch.ts"
   - source: "agent/fancy-footer.json"
     target: "~/.pi/agent/fancy-footer.json"
+
+post_install:
+  - 'npm ci --omit=dev --prefix "$DOTS_DIR/pi/agent/extensions"'
