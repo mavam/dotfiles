@@ -13,6 +13,7 @@ const FEEDBACK_CHANNEL = "pr-watch:feedback";
 const FEEDBACK_PROTOCOL = 1;
 const MESSAGE_TYPE = "pr-review-feedback";
 const WATCH_WIDGET = "pr-watch:status";
+const CODEX_REVIEW_AUTHOR = "chatgpt-codex-connector";
 
 const turndown = new TurndownService({
   bulletListMarker: "-",
@@ -42,7 +43,10 @@ const FEEDBACK_QUERY = [
   "        nodes { id body bodyHTML createdAt updatedAt url author { login } }",
   "      }",
   "      reviews(last: 100) {",
-  "        nodes { id body bodyHTML submittedAt updatedAt url state author { login } }",
+  "        nodes {",
+  "          id body bodyHTML submittedAt updatedAt url state author { login }",
+  "          commit { oid }",
+  "        }",
   "      }",
   "      reviewThreads(last: 100) {",
   "        nodes {",
@@ -51,6 +55,7 @@ const FEEDBACK_QUERY = [
   "            nodes {",
   "              id body bodyHTML createdAt updatedAt url path line originalLine diffHunk",
   "              author { login }",
+  "              pullRequestReview { commit { oid } }",
   "            }",
   "          }",
   "        }",
@@ -79,8 +84,10 @@ interface ReviewFeedback {
   createdAt: string;
   priority?: string;
   title?: string;
+  reviewedCommit?: string;
   path?: string;
   line?: number;
+  diffLine?: number;
   diffHunk?: string;
 }
 
@@ -115,6 +122,10 @@ interface GraphQlAuthor {
   login?: unknown;
 }
 
+interface GraphQlCommit {
+  oid?: unknown;
+}
+
 interface GraphQlComment {
   id?: unknown;
   body?: unknown;
@@ -128,6 +139,8 @@ interface GraphQlComment {
   originalLine?: unknown;
   diffHunk?: unknown;
   author?: GraphQlAuthor | null;
+  commit?: GraphQlCommit | null;
+  pullRequestReview?: { commit?: GraphQlCommit | null } | null;
 }
 
 interface GraphQlThread {
@@ -210,34 +223,63 @@ function contentFrom(comment: GraphQlComment): ReviewContent {
   return normalizeReviewMarkdown(cleanText(comment.body));
 }
 
+function stripCodexReviewBoilerplate(markdown: string): string {
+  if (!/^###\s+💡\s+Codex Review(?:\n|$)/u.test(markdown)) return markdown;
+
+  const withoutIntro = markdown
+    .replace(/^###\s+💡\s+Codex Review\s*/u, "")
+    .replace(
+      /^Here are some automated review suggestions for this pull request\.\s*/u,
+      "",
+    )
+    .replace(/^\*\*Reviewed commit:\*\*\s+`?[0-9a-f]{7,40}`?\s*/iu, "");
+  const aboutIndex = withoutIntro.search(
+    /(?:^|\n+)ℹ️\s+About Codex in GitHub[ \t]*(?:\n|$)/iu,
+  );
+  return (aboutIndex < 0 ? withoutIntro : withoutIntro.slice(0, aboutIndex)).trim();
+}
+
+function reviewedCommitFrom(comment: GraphQlComment): string {
+  return cleanText(comment.pullRequestReview?.commit?.oid) || cleanText(comment.commit?.oid);
+}
+
 function parseComment(
   comment: GraphQlComment,
   kind: FeedbackKind,
-  fallbackLocation?: { path?: string; line?: number },
+  fallbackLocation?: { path?: string; line?: number; originalLine?: number },
 ): ReviewFeedback | undefined {
   const id = cleanText(comment.id);
-  const content = contentFrom(comment);
+  const author = loginFrom(comment.author);
+  const parsedContent = contentFrom(comment);
+  const content =
+    kind === "review" && author === CODEX_REVIEW_AUTHOR
+      ? { ...parsedContent, body: stripCodexReviewBoilerplate(parsedContent.body) }
+      : parsedContent;
   const url = cleanText(comment.url);
   if (!id || (!content.body && !content.title) || !url) return undefined;
 
   const path = cleanText(comment.path) || fallbackLocation?.path;
+  const diffLine = numberFrom(comment.line) ?? fallbackLocation?.line;
   const line =
-    numberFrom(comment.line) ??
+    diffLine ??
     numberFrom(comment.originalLine) ??
-    fallbackLocation?.line;
+    fallbackLocation?.originalLine;
   const diffHunk = cleanText(comment.diffHunk);
+  const reviewedCommit = reviewedCommitFrom(comment);
 
   return {
     id,
     kind,
-    author: loginFrom(comment.author),
+    author,
     body: content.body,
     url,
     createdAt: timestampFrom(comment),
     ...(content.priority ? { priority: content.priority } : {}),
     ...(content.title ? { title: content.title } : {}),
+    ...(reviewedCommit ? { reviewedCommit } : {}),
     ...(path ? { path } : {}),
     ...(line !== undefined ? { line } : {}),
+    ...(diffLine !== undefined ? { diffLine } : {}),
     ...(diffHunk ? { diffHunk } : {}),
   };
 }
@@ -265,7 +307,8 @@ function parseSnapshot(response: GraphQlResponse): FeedbackSnapshot | undefined 
     if (!thread) continue;
     const fallbackLocation = {
       path: cleanText(thread.path) || undefined,
-      line: numberFrom(thread.line) ?? numberFrom(thread.originalLine),
+      line: numberFrom(thread.line),
+      originalLine: numberFrom(thread.originalLine),
     };
     for (const comment of thread.comments?.nodes ?? []) {
       if (!comment) continue;
@@ -381,25 +424,79 @@ function formatWatchStatus(target: PullRequestTarget): string {
   return `Watching ${target.owner}/${target.name}#${target.number}`;
 }
 
+function shortCommit(commit: string): string {
+  return commit.slice(0, 10);
+}
+
+function sharedValue(values: Array<string | undefined>): string | undefined {
+  if (values.length === 0 || values.some((value) => !value)) return undefined;
+  const first = values[0];
+  return values.every((value) => value === first) ? first : undefined;
+}
+
+function formatFindingCount(count: number): string {
+  return count === 1 ? "1 finding" : `${count} findings`;
+}
+
+function formatDiffContext(feedback: ReviewFeedback): string {
+  if (!feedback.diffHunk || feedback.diffLine === undefined) return "";
+
+  const lines = feedback.diffHunk.split("\n");
+  let newLine = 0;
+  let hunkHeader = -1;
+  let target = -1;
+  for (const [index, line] of lines.entries()) {
+    const header = /^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@/.exec(line);
+    if (header) {
+      newLine = Number.parseInt(header[1]!, 10);
+      hunkHeader = index;
+      continue;
+    }
+    if (hunkHeader < 0 || line.startsWith("\\")) continue;
+
+    const hasNewLine = line[0] !== "-";
+    if (hasNewLine && newLine === feedback.diffLine) {
+      target = index;
+      break;
+    }
+    if (hasNewLine) newLine += 1;
+  }
+  if (target < 0) return "";
+
+  const start = Math.max(hunkHeader + 1, target - 4);
+  const end = Math.min(lines.length, target + 5);
+  return `\n\nDiff context:\n${[lines[hunkHeader], ...lines.slice(start, end)].join("\n")}`;
+}
+
 function formatModelMessage(target: PullRequestTarget, feedback: ReviewFeedback[]): string {
-  return feedback
-    .map((item) => {
-      const location = formatLocation(item);
-      const metadata = [
-        `${target.owner}/${target.name}#${target.number}`,
-        `@${item.author}`,
-        location,
-      ].filter(Boolean);
-      const review = [
-        [item.priority, item.title].filter(Boolean).join(" "),
-        item.body,
-      ]
-        .filter(Boolean)
-        .join("\n\n");
-      const diff = item.diffHunk ? `\n\nDiff context:\n${item.diffHunk}` : "";
-      return `${metadata.join(" · ")} ${item.url}\n\n${review}${diff}`;
-    })
-    .join("\n\n---\n\n");
+  const sharedAuthor = sharedValue(feedback.map((item) => item.author));
+  const sharedCommit = sharedValue(feedback.map((item) => item.reviewedCommit));
+  const header = [
+    `${target.owner}/${target.name}#${target.number}`,
+    sharedCommit ? `commit ${shortCommit(sharedCommit)}` : "",
+    formatFindingCount(feedback.length),
+    sharedAuthor ? `@${sharedAuthor}` : "",
+  ].filter(Boolean);
+
+  const findings = feedback.map((item) => {
+    const finding = [
+      item.priority ? `[${item.priority}]` : "",
+      formatLocation(item),
+    ].filter(Boolean).join(" ");
+    const metadata = [
+      sharedAuthor ? "" : `@${item.author}`,
+      sharedCommit || !item.reviewedCommit
+        ? ""
+        : `commit ${shortCommit(item.reviewedCommit)}`,
+      finding,
+    ].filter(Boolean).join(" · ");
+    const title = item.title ? [metadata, item.title].filter(Boolean).join(" — ") : metadata;
+    const heading = [title, item.url].filter(Boolean).join(" ");
+    const review = [heading, item.body].filter(Boolean).join("\n\n");
+    return `${review}${formatDiffContext(item)}`;
+  });
+
+  return `${header.join(" · ")} ${target.url}\n\n${findings.join("\n\n---\n\n")}`;
 }
 
 function hyperlink(url: string, text: string): string {
@@ -505,13 +602,22 @@ export default function (pi: ExtensionAPI) {
       };
 
       const separator = theme.fg("dim", " · ");
+      const sharedAuthor = sharedValue(details.feedback.map((item) => item.author));
+      const sharedCommit = sharedValue(
+        details.feedback.map((item) => item.reviewedCommit),
+      );
       const targetLabel = `${details.target.owner}/${details.target.name}#${details.target.number}`;
-      const findingLabel =
-        details.feedback.length === 1
-          ? "1 finding"
-          : `${details.feedback.length} findings`;
       let targetHeader = theme.fg("muted", targetLabel);
-      targetHeader += separator + theme.fg("dim", findingLabel);
+      if (sharedCommit) {
+        targetHeader += separator + theme.fg("dim", `commit ${shortCommit(sharedCommit)}`);
+      }
+      targetHeader += separator + theme.fg(
+        "dim",
+        formatFindingCount(details.feedback.length),
+      );
+      if (sharedAuthor) {
+        targetHeader += separator + theme.fg("accent", `@${sharedAuthor}`);
+      }
       targetHeader += ` ${hyperlink(
         details.target.url,
         theme.fg("accent", "↗"),
@@ -522,9 +628,17 @@ export default function (pi: ExtensionAPI) {
         box.addChild(new Spacer(1));
 
         const location = formatLocation(item);
-        let itemHeader = theme.fg("accent", `@${item.author}`);
-        if (location) itemHeader += separator + theme.fg("text", location);
-        itemHeader += ` ${hyperlink(item.url, theme.fg("accent", "↗"))}`;
+        let itemHeader = sharedAuthor ? "" : theme.fg("accent", `@${item.author}`);
+        if (!sharedCommit && item.reviewedCommit) {
+          if (itemHeader) itemHeader += separator;
+          itemHeader += theme.fg("dim", `commit ${shortCommit(item.reviewedCommit)}`);
+        }
+        if (location) {
+          if (itemHeader) itemHeader += separator;
+          itemHeader += theme.fg("text", location);
+        }
+        if (itemHeader) itemHeader += " ";
+        itemHeader += hyperlink(item.url, theme.fg("accent", "↗"));
         box.addChild(new Text(itemHeader, 0, 0));
 
         if (item.title) {
