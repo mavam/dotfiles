@@ -99,24 +99,29 @@ if status is-interactive
   #   Ctrl+S  - fzf: search git status (fzf.fish)
   #   Ctrl+N  - history prefix search forward
   #   Ctrl+P  - history prefix search backward
-  function _fzf_search_total_tree --description 'Search files, including gitignored files. Replace the current token with the selected path.'
-    set -f token (commandline --current-token)
-    set -f selected (
-      fd --no-ignore --color=never --type f . 2>/dev/null |
-      _fzf_wrapper --prompt='Total tree> ' --query="$token" --preview='_fzf_preview_file {}'
-    )
+  bind -M insert \ce accept-autosuggestion execute
 
-    if test $status -eq 0
-      commandline --current-token --replace -- (string escape -- $selected)
+  # Fisher plugins may not be installed yet on a new machine.
+  if command -sq fd; and command -sq fzf; and type -q fzf_configure_bindings
+    function _fzf_search_total_tree --description 'Search files, including gitignored files. Replace the current token with the selected path.'
+      set -f token (commandline --current-token)
+      set -f selected (
+        fd --no-ignore --color=never --type f . 2>/dev/null |
+        _fzf_wrapper --prompt='Total tree> ' --query="$token" --preview='_fzf_preview_file {}'
+      )
+
+      if test $status -eq 0
+        commandline --current-token --replace -- (string escape -- $selected)
+      end
+
+      commandline --function repaint
     end
 
-    commandline --function repaint
+    fzf_configure_bindings --directory=\co --history=\cr --git_log=\cg --git_status=\cs
+    bind \ct _fzf_search_total_tree
+    bind -M insert \ct _fzf_search_total_tree
   end
 
-  bind -M insert \ce accept-autosuggestion execute
-  fzf_configure_bindings --directory=\co --history=\cr --git_log=\cg --git_status=\cs
-  bind \ct _fzf_search_total_tree
-  bind -M insert \ct _fzf_search_total_tree
   bind \cn history-prefix-search-forward
   bind -M insert \cn history-prefix-search-forward
   bind \cp history-prefix-search-backward
