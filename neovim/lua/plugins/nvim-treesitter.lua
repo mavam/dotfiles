@@ -6,6 +6,7 @@ local parsers = {
   'cpp',
   'diff',
   'fish',
+  'html',
   'json',
   'latex',
   'lua',
