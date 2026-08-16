@@ -690,8 +690,7 @@ export default async function (pi: ExtensionAPI) {
     description: "Watch the current pull request for review feedback",
     getArgumentCompletions: (prefix) => {
       const options = [
-        { value: "watch", label: "watch", description: "Watch for new feedback" },
-        { value: "watch backfill", label: "watch backfill", description: "Load open feedback and watch" },
+        { value: "watch", label: "watch", description: "Load open feedback and watch" },
         { value: "unwatch", label: "unwatch", description: "Stop watching" },
       ];
       const matches = options.filter((option) => option.value.startsWith(prefix));
@@ -705,7 +704,7 @@ export default async function (pi: ExtensionAPI) {
         if (watcher) {
           renderWatchStatus(watcher);
         } else {
-          ctx.ui.notify("Usage: /pr watch [backfill] | /pr unwatch", "info");
+          ctx.ui.notify("Usage: /pr watch | /pr unwatch", "info");
         }
         return;
       }
@@ -716,16 +715,10 @@ export default async function (pi: ExtensionAPI) {
         return;
       }
 
-      if (
-        action !== "watch" ||
-        words.length > 2 ||
-        (words.length === 2 && words[1] !== "backfill")
-      ) {
-        ctx.ui.notify("Usage: /pr watch [backfill] | /pr unwatch", "warning");
+      if (action !== "watch" || words.length !== 1) {
+        ctx.ui.notify("Usage: /pr watch | /pr unwatch", "warning");
         return;
       }
-
-      const backfill = words[1] === "backfill";
 
       try {
         const target = await resolveCurrentPullRequest(pi, ctx);
@@ -752,7 +745,7 @@ export default async function (pi: ExtensionAPI) {
           for (const item of snapshot.feedback) watcher.seen.add(item.id);
         }
 
-        if (backfill && snapshot.openFeedback.length > 0) {
+        if (snapshot.openFeedback.length > 0) {
           pi.events.emit(FEEDBACK_CHANNEL, {
             protocol: FEEDBACK_PROTOCOL,
             source: "pr-watch",
