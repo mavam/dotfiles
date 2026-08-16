@@ -1,6 +1,6 @@
 {
   "private": true,
-  "dependencies": {
+  "optionalDependencies": {
     "turndown": "^7.2.4",
     "turndown-plugin-gfm": "^1.0.2"
   }

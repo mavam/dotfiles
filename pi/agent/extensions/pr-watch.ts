@@ -4,8 +4,6 @@ import type {
 } from "@earendil-works/pi-coding-agent";
 import { getMarkdownTheme } from "@earendil-works/pi-coding-agent";
 import { Box, Markdown, Spacer, Text } from "@earendil-works/pi-tui";
-import TurndownService from "turndown";
-import { gfm } from "turndown-plugin-gfm";
 
 const POLL_INTERVAL_MS = 30_000;
 const GITHUB_TIMEOUT_MS = 10_000;
@@ -15,22 +13,35 @@ const MESSAGE_TYPE = "pr-review-feedback";
 const WATCH_WIDGET = "pr-watch:status";
 const CODEX_REVIEW_AUTHOR = "chatgpt-codex-connector";
 
-const turndown = new TurndownService({
-  bulletListMarker: "-",
-  codeBlockStyle: "fenced",
-});
-turndown.use(gfm);
-turndown.addRule("github-priority-badge", {
-  filter: (node) => {
-    const image = node.nodeName === "A" ? node.firstChild : undefined;
-    return (
-      image?.nodeName === "IMG" &&
-      /^P\d+ Badge$/i.test(image.getAttribute?.("alt") ?? "")
-    );
-  },
-  replacement: (_content, node) =>
-    node.firstChild?.getAttribute?.("alt") ?? "",
-});
+let markdownFromHtml: ((html: string) => string) | undefined;
+
+async function loadHtmlConverter(): Promise<void> {
+  try {
+    const [{ default: TurndownService }, { gfm }] = await Promise.all([
+      import("turndown"),
+      import("turndown-plugin-gfm"),
+    ]);
+    const turndown = new TurndownService({
+      bulletListMarker: "-",
+      codeBlockStyle: "fenced",
+    });
+    turndown.use(gfm);
+    turndown.addRule("github-priority-badge", {
+      filter: (node) => {
+        const image = node.nodeName === "A" ? node.firstChild : undefined;
+        return (
+          image?.nodeName === "IMG" &&
+          /^P\d+ Badge$/i.test(image.getAttribute?.("alt") ?? "")
+        );
+      },
+      replacement: (_content, node) =>
+        node.firstChild?.getAttribute?.("alt") ?? "",
+    });
+    markdownFromHtml = (html) => turndown.turndown(html);
+  } catch {
+    // GitHub's source Markdown remains usable without optional npm packages.
+  }
+}
 
 const FEEDBACK_QUERY = [
   "query($owner: String!, $name: String!, $number: Int!) {",
@@ -213,9 +224,9 @@ function normalizeReviewMarkdown(markdown: string): ReviewContent {
 
 function contentFrom(comment: GraphQlComment): ReviewContent {
   const html = cleanText(comment.bodyHTML);
-  if (html) {
+  if (html && markdownFromHtml) {
     try {
-      return normalizeReviewMarkdown(cleanText(turndown.turndown(html)));
+      return normalizeReviewMarkdown(cleanText(markdownFromHtml(html)));
     } catch {
       // Fall back to GitHub's source Markdown if conversion unexpectedly fails.
     }
@@ -516,7 +527,9 @@ function isFeedbackEvent(value: unknown): value is FeedbackEvent {
   );
 }
 
-export default function (pi: ExtensionAPI) {
+export default async function (pi: ExtensionAPI) {
+  await loadHtmlConverter();
+
   let watcher: ActiveWatcher | undefined;
   let generation = 0;
   let sessionActive = false;
