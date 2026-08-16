@@ -21,4 +21,4 @@ entries:
     target: "~/.pi/agent/fancy-footer.json"
 
 post_install:
-  - 'if command -v npm >/dev/null 2>&1; then npm ci --omit=dev --prefix "$PREFIX/.pi/agent/extensions"; else printf "npm not found; skipping Pi extension dependencies. Install Node.js, then rerun ./dots install pi.\n" >&2; fi'
+  - 'if command -v npm >/dev/null 2>&1; then npm ci --omit=dev --prefix "$PREFIX/.pi/agent/extensions" >/dev/null; else log_warn "npm not found; skipping Pi extension dependencies. Install Node.js, then rerun ./dots install pi"; fi'

@@ -3,4 +3,4 @@ root:
   mode: link
 
 post_install:
-  - "command -v wt >/dev/null && wt config shell install -y fish || true"
+  - 'if command -v wt >/dev/null 2>&1; then wt config shell install -y fish >/dev/null; fi'

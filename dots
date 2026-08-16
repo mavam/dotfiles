@@ -454,7 +454,6 @@ apply_install_action() {
         if [[ -n $dir_perm ]]; then
           chmod "$dir_perm" "$dir" 2>/dev/null || log_warn "chmod failed for ${dir/$PREFIX/~}"
         fi
-        log_success "exists ${dir/$PREFIX/~}"
         return
       fi
       if [[ -e $dir || -L $dir ]]; then
@@ -477,7 +476,6 @@ apply_install_action() {
       if [[ -L $target ]]; then
         local current="$(readlink "$target")"
         if [[ $current == "$abs_source" ]]; then
-          log_success "already linked ${target/$PREFIX/~}"
           return
         fi
         if [[ $FORCE -eq 1 ]]; then
@@ -656,9 +654,8 @@ run_pre_install_hooks() {
   if [[ ${#MANIFEST_PRE_INSTALL[@]} -gt 0 ]]; then
     local cmd
     for cmd in "${MANIFEST_PRE_INSTALL[@]}"; do
-      log_action "running: $cmd"
       if ! eval "$cmd"; then
-        log_warn "hook failed: $cmd"
+        log_warn "$tool pre-install hook failed"
       fi
     done
   fi
@@ -677,9 +674,8 @@ run_post_install_hooks() {
   if [[ ${#MANIFEST_POST_INSTALL[@]} -gt 0 ]]; then
     local cmd
     for cmd in "${MANIFEST_POST_INSTALL[@]}"; do
-      log_action "running: $cmd"
       if ! eval "$cmd"; then
-        log_warn "hook failed: $cmd"
+        log_warn "$tool post-install hook failed"
       fi
     done
   fi
@@ -706,7 +702,6 @@ command_install() {
       log_warn "unknown tool '$tool'"
       continue
     fi
-    log_section "Installing $tool"
     run_pre_install_hooks "$tool"
     while IFS= read -r line; do
       IFS='|' read -r mode source target perm <<<"$line"

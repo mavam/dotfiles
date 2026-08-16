@@ -38,6 +38,9 @@ Install everything:
 ./dots install
 ```
 
+The install command reports changes and warnings but omits paths that are
+already in sync.
+
 Install a subset (your shell expands globs before the script runs):
 
 ```sh

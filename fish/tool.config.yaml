@@ -3,4 +3,4 @@ root:
   mode: link
 
 post_install:
-  - 'if command -v fish >/dev/null 2>&1 && fish -c "type -q fisher"; then fish -c "fisher update"; else printf "fish or fisher not found; skipping Fish plugins.\n" >&2; fi'
+  - 'if command -v fish >/dev/null 2>&1 && fish -c "type -q fisher"; then fish -c "fisher update" >/dev/null; else log_warn "fish or fisher not found; skipping Fish plugins"; fi'
