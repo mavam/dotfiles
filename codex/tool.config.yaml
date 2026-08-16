@@ -4,5 +4,5 @@ entries:
   - source: "config.toml"
     target: "~/.codex/config.toml"
 
-post_install:
+pre_install:
   - 'bash "$DOTS_DIR/codex/build-config.sh"'

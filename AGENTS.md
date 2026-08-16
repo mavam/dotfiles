@@ -53,6 +53,7 @@ entries:
 ### Optional sections
 
 - `directories` — pre-create paths (with optional permissions)
+- `pre_install` — shell commands to run before linking
 - `post_install` — shell commands to run after linking
 
 ## Changing Configuration

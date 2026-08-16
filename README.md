@@ -78,4 +78,7 @@ directories:
     permissions: "700"
 ```
 
-`root` mirrors the tool directory under the given target so new files are picked up automatically, and the optional `directories` entries let you pre-create sensitive paths with the right permissions.
+`root` mirrors the tool directory under the given target, so new files are
+picked up automatically. The optional `directories` entries pre-create sensitive
+paths with the appropriate permissions. Use `pre_install` and `post_install`
+lists to run shell commands before or after linking.
