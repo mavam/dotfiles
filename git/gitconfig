@@ -57,3 +57,9 @@
 	allowedSignersFile = ~/.config/git/allowed_signers
 [hooks]
 	protectedPushUrlPattern = ^(git@|ssh://|file://|/)
+[credential "https://github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential

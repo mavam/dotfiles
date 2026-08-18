@@ -16,9 +16,9 @@ sources:
   openclaw/openclaw:
     pin: main
     skills:
-    - apple-reminders
-    - openhue
-    - xurl
+      - apple-reminders
+      - openhue
+      - xurl
   tenzir/skills:
     pin: main
     skills:
@@ -31,7 +31,6 @@ sources:
       - tenzir-commit-changes
       - tenzir-create-pull-requests
       - tenzir-design-system
-      - tenzir-manage-packages
       - tenzir-ship
       - tenzir-technical-writing
       - tenzir-update-docs
