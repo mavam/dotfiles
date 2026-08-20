@@ -12,6 +12,7 @@ PATH="$HOME/.cargo/bin:$PATH"       # Rust
 PATH="$HOME/.go/bin:$PATH"          # Go (GOPATH)
 PATH="$HOME/.bun/bin:$PATH"         # Bun
 PATH="$HOME/.lmstudio/bin:$PATH"    # LM Studio
+PATH="$HOME/.docker/bin:$PATH"      # Docker Desktop
 
 # macOS-specific paths
 if [ "$(uname)" = Darwin ]; then
