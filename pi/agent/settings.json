@@ -22,7 +22,7 @@
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.6-sol",
   "quietStartup": true,
-  "defaultThinkingLevel": "high",
+  "defaultThinkingLevel": "medium",
   "retry": {
     "maxRetries": 10
   },
