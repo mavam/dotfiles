@@ -36,3 +36,5 @@ sources:
       - tenzir-update-docs
   cli/cli:
     - gh
+  cursor/plugins:
+    - pstack/skills/unslop@main
