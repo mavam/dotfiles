@@ -5,16 +5,18 @@ import type { Api, Model, ModelThinkingLevel } from "@earendil-works/pi-ai";
 // Shortcuts that cycle the three axes of model selection independently:
 //
 //   ctrl+p   provider
-//   alt+m    model within the current provider
+//   ctrl+;   model within the current provider
 //   ctrl+,/. reasoning effort (thinking level)
 //
 // pi's built-in app.model.cycleForward/Backward walk the flat list of scoped
 // models, which mixes providers and models. Disable those in keybindings.json
 // so these shortcuts take over.
 //
-// Model cycling uses alt+m because terminals encode ctrl+m as carriage return,
-// and pi matches that legacy control character even under the Kitty protocol,
-// so a ctrl+m shortcut swallows Enter.
+// Avoid ctrl+letters that ASCII already claims: ctrl+m is carriage return,
+// ctrl+i tab, ctrl+j newline, ctrl+h backspace, ctrl+[ escape. pi matches those
+// control characters even under the Kitty protocol, so such a shortcut eats the
+// real key. Punctuation keys have no legacy encoding and arrive as Kitty CSI-u
+// sequences, which is why ctrl+; and ctrl+,/. are safe.
 
 enum Direction {
   Backward = -1,
@@ -139,7 +141,7 @@ export default function (pi: ExtensionAPI) {
     handler: (ctx) => cycleProvider(pi, ctx, Direction.Forward, memory),
   });
 
-  pi.registerShortcut("alt+m", {
+  pi.registerShortcut("ctrl+;", {
     description: "Cycle model within provider",
     handler: (ctx) => cycleModel(pi, ctx, Direction.Forward),
   });
