@@ -2,11 +2,12 @@ import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-a
 import { getSupportedThinkingLevels } from "@earendil-works/pi-ai";
 import type { Api, Model, ModelThinkingLevel } from "@earendil-works/pi-ai";
 
-// Shortcuts that cycle the three axes of model selection independently:
+// Shortcuts that cycle the three axes of model selection independently. Each
+// axis owns an adjacent key pair, left key backward and right key forward:
 //
-//   ctrl+p   provider
-//   ctrl+;   model within the current provider
-//   ctrl+,/. reasoning effort (thinking level)
+//   ctrl+p / ctrl+\   provider
+//   ctrl+; / ctrl+'   model within the current provider
+//   ctrl+, / ctrl+.   reasoning effort (thinking level)
 //
 // pi's built-in app.model.cycleForward/Backward walk the flat list of scoped
 // models, which mixes providers and models. Disable those in keybindings.json
@@ -137,22 +138,32 @@ export default function (pi: ExtensionAPI) {
   const memory: ProviderMemory = new Map();
 
   pi.registerShortcut("ctrl+p", {
-    description: "Cycle provider",
+    description: "Cycle provider backward",
+    handler: (ctx) => cycleProvider(pi, ctx, Direction.Backward, memory),
+  });
+
+  pi.registerShortcut("ctrl+\\", {
+    description: "Cycle provider forward",
     handler: (ctx) => cycleProvider(pi, ctx, Direction.Forward, memory),
   });
 
   pi.registerShortcut("ctrl+;", {
-    description: "Cycle model within provider",
-    handler: (ctx) => cycleModel(pi, ctx, Direction.Forward),
+    description: "Cycle model backward",
+    handler: (ctx) => cycleModel(pi, ctx, Direction.Backward),
   });
 
-  pi.registerShortcut("ctrl+.", {
-    description: "Cycle reasoning effort forward",
-    handler: (ctx) => cycleEffort(pi, ctx, Direction.Forward),
+  pi.registerShortcut("ctrl+'", {
+    description: "Cycle model forward",
+    handler: (ctx) => cycleModel(pi, ctx, Direction.Forward),
   });
 
   pi.registerShortcut("ctrl+,", {
     description: "Cycle reasoning effort backward",
     handler: (ctx) => cycleEffort(pi, ctx, Direction.Backward),
+  });
+
+  pi.registerShortcut("ctrl+.", {
+    description: "Cycle reasoning effort forward",
+    handler: (ctx) => cycleEffort(pi, ctx, Direction.Forward),
   });
 }
