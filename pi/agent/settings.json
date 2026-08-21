@@ -13,11 +13,13 @@
     "npm:@gotgenes/pi-anthropic-auth"
   ],
   "enabledModels": [
+    "anthropic/claude-sonnet-5",
     "anthropic/claude-opus-5",
     "anthropic/claude-fable-5",
     "openai-codex/gpt-5.6-luna",
     "openai-codex/gpt-5.6-terra",
-    "openai-codex/gpt-5.6-sol"
+    "openai-codex/gpt-5.6-sol",
+    "gemini-flash-latest"
   ],
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.6-sol",
@@ -31,5 +33,6 @@
   "autocompleteMaxVisible": 10,
   "warnings": {
     "anthropicExtraUsage": false
-  }
+  },
+  "lastChangelogVersion": "0.84.2"
 }
