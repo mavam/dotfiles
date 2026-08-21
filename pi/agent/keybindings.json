@@ -1,11 +1,6 @@
 {
   "tui.input.tab": [],
   "app.thinking.cycle": [],
-  "app.model.cycleForward": [
-    "ctrl+n"
-  ],
-  "app.model.cycleBackward": [
-    "shift+ctrl+p",
-    "ctrl+p"
-  ]
+  "app.model.cycleForward": [],
+  "app.model.cycleBackward": []
 }
