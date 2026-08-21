@@ -24,10 +24,6 @@ function modelKey(model: Model<Api>): string {
   return `${model.provider}/${model.id}`;
 }
 
-function modelLabel(model: Model<Api>): string {
-  return model.name || model.id;
-}
-
 /**
  * Selectable models in configured order: the session's scoped models
  * (`enabledModels`) when scoping applies, otherwise everything with auth.
@@ -61,15 +57,10 @@ async function switchModel(pi: ExtensionAPI, ctx: ExtensionContext, model: Model
     return;
   }
 
+  // The footer reflects the new selection, so only failures need a message.
   if (!(await pi.setModel(model))) {
     ctx.ui.notify(`No credentials for ${modelKey(model)}`, "error");
-    return;
   }
-
-  const level = pi.getThinkingLevel();
-  const effort = model.reasoning && level !== "off" ? ` (${level})` : "";
-
-  ctx.ui.notify(`${model.provider} · ${modelLabel(model)}${effort}`);
 }
 
 async function cycleProvider(
@@ -82,7 +73,6 @@ async function cycleProvider(
   const providers = providersOf(models);
 
   if (providers.length <= 1) {
-    ctx.ui.notify("Only one provider available", "warning");
     return;
   }
 
@@ -111,7 +101,6 @@ async function cycleModel(pi: ExtensionAPI, ctx: ExtensionContext, direction: Di
   const candidates = models.filter((model) => model.provider === provider);
 
   if (candidates.length <= 1) {
-    ctx.ui.notify(`Only one model for ${provider}`, "warning");
     return;
   }
 
