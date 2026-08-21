@@ -2,5 +2,11 @@
   "tui.input.tab": [],
   "app.thinking.cycle": [],
   "app.model.cycleForward": [],
-  "app.model.cycleBackward": []
+  "app.model.cycleBackward": [],
+  "app.models.toggleProvider": [
+    "alt+p"
+  ],
+  "app.session.togglePath": [
+    "alt+p"
+  ]
 }
