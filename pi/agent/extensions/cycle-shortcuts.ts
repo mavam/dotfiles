@@ -24,9 +24,6 @@ enum Direction {
   Forward = 1,
 }
 
-/** Model chosen last for a given provider, so returning to it feels sticky. */
-type ProviderMemory = Map<string, string>;
-
 function modelKey(model: Model<Api>): string {
   return `${model.provider}/${model.id}`;
 }
@@ -59,111 +56,140 @@ function step<T>(items: T[], currentIndex: number, direction: Direction): T {
   return items[(currentIndex + direction + items.length) % items.length]!;
 }
 
-async function switchModel(pi: ExtensionAPI, ctx: ExtensionContext, model: Model<Api>): Promise<void> {
-  if (ctx.model && modelKey(ctx.model) === modelKey(model)) {
-    return;
-  }
+function createCycler(pi: ExtensionAPI) {
+  // Model chosen last for a given provider, so returning to it feels sticky.
+  const lastModelPerProvider = new Map<string, string>();
 
-  // The footer reflects the new selection, so only failures need a message.
-  if (!(await pi.setModel(model))) {
-    ctx.ui.notify(`No credentials for ${modelKey(model)}`, "error");
-  }
-}
+  // pi snapshots ctx.model when the key is pressed and dispatches handlers
+  // without awaiting them, while applying a model awaits an auth check that can
+  // reach the network. A burst of keystrokes would therefore all step from the
+  // same stale model, making the selection stall or jump around. Track what we
+  // asked for and apply switches one after another so every press advances
+  // exactly one step.
+  let requested: Model<Api> | undefined;
+  let inFlight = 0;
+  let queue: Promise<unknown> = Promise.resolve();
 
-async function cycleProvider(
-  pi: ExtensionAPI,
-  ctx: ExtensionContext,
-  direction: Direction,
-  memory: ProviderMemory,
-): Promise<void> {
-  const models = selectableModels(ctx);
-  const providers = providersOf(models);
+  // The requested model outranks the snapshot only while switches are pending;
+  // afterwards the session is authoritative and reflects /model and restores.
+  const selected = (ctx: ExtensionContext): Model<Api> | undefined =>
+    inFlight > 0 ? requested : ctx.model;
 
-  if (providers.length <= 1) {
-    return;
-  }
+  function select(ctx: ExtensionContext, model: Model<Api>): void {
+    const current = selected(ctx);
 
-  if (ctx.model) {
-    memory.set(ctx.model.provider, ctx.model.id);
-  }
-
-  const provider = step(providers, ctx.model ? providers.indexOf(ctx.model.provider) : -1, direction);
-  const candidates = models.filter((model) => model.provider === provider);
-  const remembered = memory.get(provider);
-
-  await switchModel(pi, ctx, candidates.find((model) => model.id === remembered) ?? candidates[0]!);
-}
-
-async function cycleModel(pi: ExtensionAPI, ctx: ExtensionContext, direction: Direction): Promise<void> {
-  const models = selectableModels(ctx);
-
-  if (!ctx.model) {
-    if (models.length > 0) {
-      await switchModel(pi, ctx, models[0]!);
+    if (current && modelKey(current) === modelKey(model)) {
+      return;
     }
-    return;
+
+    requested = model;
+    inFlight += 1;
+    queue = queue
+      .then(async () => {
+        // The footer reflects the new selection, so only failures need a message.
+        if (!(await pi.setModel(model))) {
+          ctx.ui.notify(`No credentials for ${modelKey(model)}`, "error");
+        }
+      })
+      .catch((error: unknown) => {
+        ctx.ui.notify(error instanceof Error ? error.message : String(error), "error");
+      })
+      .finally(() => {
+        inFlight -= 1;
+      });
   }
 
-  const provider = ctx.model.provider;
-  const candidates = models.filter((model) => model.provider === provider);
+  function cycleProvider(ctx: ExtensionContext, direction: Direction): void {
+    const models = selectableModels(ctx);
+    const providers = providersOf(models);
 
-  if (candidates.length <= 1) {
-    return;
+    if (providers.length <= 1) {
+      return;
+    }
+
+    const current = selected(ctx);
+
+    if (current) {
+      lastModelPerProvider.set(current.provider, current.id);
+    }
+
+    const provider = step(providers, current ? providers.indexOf(current.provider) : -1, direction);
+    const candidates = models.filter((model) => model.provider === provider);
+    const remembered = lastModelPerProvider.get(provider);
+
+    select(ctx, candidates.find((model) => model.id === remembered) ?? candidates[0]!);
   }
 
-  const next = step(
-    candidates,
-    candidates.findIndex((model) => modelKey(model) === modelKey(ctx.model!)),
-    direction,
-  );
+  function cycleModel(ctx: ExtensionContext, direction: Direction): void {
+    const models = selectableModels(ctx);
+    const current = selected(ctx);
 
-  await switchModel(pi, ctx, next);
-}
+    if (!current) {
+      if (models.length > 0) {
+        select(ctx, models[0]!);
+      }
+      return;
+    }
 
-// pi only has a built-in app.thinking.cycle action that moves forward. Use
-// extension shortcuts to provide both directions, using the model's
-// thinkingLevelMap metadata to skip unsupported levels.
-function cycleEffort(pi: ExtensionAPI, ctx: ExtensionContext, direction: Direction): void {
-  const levels: ModelThinkingLevel[] = ctx.model ? getSupportedThinkingLevels(ctx.model) : ["off"];
+    const candidates = models.filter((model) => model.provider === current.provider);
 
-  if (levels.length <= 1) {
-    return;
+    if (candidates.length <= 1) {
+      return;
+    }
+
+    const index = candidates.findIndex((model) => modelKey(model) === modelKey(current));
+
+    select(ctx, step(candidates, index, direction));
   }
 
-  pi.setThinkingLevel(step(levels, levels.indexOf(pi.getThinkingLevel()), direction));
+  // pi only has a built-in app.thinking.cycle action that moves forward. Use
+  // extension shortcuts to provide both directions, using the model's
+  // thinkingLevelMap metadata to skip unsupported levels.
+  function cycleEffort(ctx: ExtensionContext, direction: Direction): void {
+    const model = selected(ctx);
+    const levels: ModelThinkingLevel[] = model ? getSupportedThinkingLevels(model) : ["off"];
+
+    if (levels.length <= 1) {
+      return;
+    }
+
+    pi.setThinkingLevel(step(levels, levels.indexOf(pi.getThinkingLevel()), direction));
+  }
+
+  return { cycleProvider, cycleModel, cycleEffort };
 }
 
 export default function (pi: ExtensionAPI) {
-  // Reset per process; /reload re-evaluates this module and clears the memory.
-  const memory: ProviderMemory = new Map();
+  // Reset per process; /reload re-evaluates this module and starts fresh.
+  const cycle = createCycler(pi);
 
   pi.registerShortcut("ctrl+p", {
     description: "Cycle provider backward",
-    handler: (ctx) => cycleProvider(pi, ctx, Direction.Backward, memory),
+    handler: (ctx) => cycle.cycleProvider(ctx, Direction.Backward),
   });
 
   pi.registerShortcut("ctrl+\\", {
     description: "Cycle provider forward",
-    handler: (ctx) => cycleProvider(pi, ctx, Direction.Forward, memory),
+    handler: (ctx) => cycle.cycleProvider(ctx, Direction.Forward),
   });
 
   pi.registerShortcut("ctrl+;", {
     description: "Cycle model backward",
-    handler: (ctx) => cycleModel(pi, ctx, Direction.Backward),
+    handler: (ctx) => cycle.cycleModel(ctx, Direction.Backward),
   });
 
   pi.registerShortcut("ctrl+'", {
     description: "Cycle model forward",
-    handler: (ctx) => cycleModel(pi, ctx, Direction.Forward),
+    handler: (ctx) => cycle.cycleModel(ctx, Direction.Forward),
   });
 
   pi.registerShortcut("ctrl+,", {
     description: "Cycle reasoning effort backward",
-    handler: (ctx) => cycleEffort(pi, ctx, Direction.Backward),
+    handler: (ctx) => cycle.cycleEffort(ctx, Direction.Backward),
   });
 
   pi.registerShortcut("ctrl+.", {
     description: "Cycle reasoning effort forward",
-    handler: (ctx) => cycleEffort(pi, ctx, Direction.Forward),
+    handler: (ctx) => cycle.cycleEffort(ctx, Direction.Forward),
   });
 }
