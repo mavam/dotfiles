@@ -24,7 +24,7 @@
       }
     }
   },
-  "effortLevel": "low",
+  "effortLevel": "medium",
   "tui": "fullscreen",
   "theme": "light",
   "agentPushNotifEnabled": true,
