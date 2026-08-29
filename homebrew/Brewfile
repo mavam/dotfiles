@@ -119,6 +119,7 @@ brew "yaml-cpp"
 #mas "keynote", id: 409183694
 #mas "pages", id: 409201541
 #mas "numbers", id: 409203825
+mas "CaffeinateBar", id: 6778513623
 mas "Wireguard", id: 1451685025
 mas "Slack", id: 803453959
 mas "XCode", id: 497799835
