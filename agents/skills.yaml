@@ -37,4 +37,7 @@ sources:
   cli/cli:
     - gh
   cursor/plugins:
-    - pstack/skills/unslop@main
+    skills:
+      - spec: pstack/skills/unslop@main
+        frontmatter:
+          disable-model-invocation: true
