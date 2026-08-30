@@ -19,21 +19,17 @@ sources:
       - apple-reminders
       - openhue
       - xurl
-  tenzir/skills:
+  tenzir/dev-skills:
     pin: main
     skills:
-      - tenzir
-      - tenzir-asim
-      - tenzir-cim
-      - tenzir-ecs
-      - tenzir-ocsf
-      - tenzir-udm
       - tenzir-commit-changes
       - tenzir-create-pull-requests
       - tenzir-design-system
       - tenzir-ship
       - tenzir-technical-writing
       - tenzir-update-docs
+  tenzir/skills:
+    pin: main
   cli/cli:
     - gh
   cursor/plugins:
