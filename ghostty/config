@@ -1,5 +1,6 @@
 # Shell
 shell-integration = fish
+shell-integration-features = sudo,ssh-env,ssh-terminfo
 clipboard-paste-protection = false
 
 # Disable OSC 10/11/12 color query responses. When enabled (default), programs
