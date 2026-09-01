@@ -25,9 +25,9 @@ sources:
       - tenzir-commit-changes
       - tenzir-create-pull-requests
       - tenzir-design-system
-      - tenzir-ship
       - tenzir-technical-writing
       - tenzir-update-docs
+  tenzir/ship:
   tenzir/skills:
     pin: main
   cli/cli:
