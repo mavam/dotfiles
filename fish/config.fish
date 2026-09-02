@@ -145,6 +145,7 @@ if status is-interactive
 
   # Abbreviations: pi
   abbr -g pim 'pi /skill:mavam'
+  abbr -g pit 'pi /skill:tenzir'
 
   # Abbreviations: git
   abbr -g g 'git'
