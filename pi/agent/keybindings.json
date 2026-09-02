@@ -6,6 +6,7 @@
   "app.models.toggleProvider": [
     "alt+p"
   ],
+  "app.message.followUp": "super+enter",
   "app.session.togglePath": [
     "alt+p"
   ]
