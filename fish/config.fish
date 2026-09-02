@@ -144,9 +144,7 @@ if status is-interactive
   set -x SSH_AUTH_SOCK ~/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh
 
   # Abbreviations: pi
-  if command -sq caffeinate
-    abbr -g cpi 'caffeinate -i pi'
-  end
+  abbr -g pim 'pi /skill:mavam'
 
   # Abbreviations: git
   abbr -g g 'git'
