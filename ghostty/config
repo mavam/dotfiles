@@ -26,6 +26,9 @@ font-family = FiraCode Nerd Font Mono
 font-size = 13
 adjust-cell-height = 15%
 
+# Keybindings.
+keybind = cmd+enter=unbind
+
 # Quick terminal.
 keybind = global:shift+ctrl+option+cmd+t=toggle_quick_terminal
 quick-terminal-animation-duration = 0.25
