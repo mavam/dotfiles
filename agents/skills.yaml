@@ -37,3 +37,8 @@ sources:
       - spec: pstack/skills/unslop@main
         frontmatter:
           disable-model-invocation: true
+  elevenlabs/skills:
+    pin: main
+    skills:
+      - spec: agents
+        name: elevenlabs-agents
