@@ -5,13 +5,13 @@
     "npm:pi-fancy-footer",
     "npm:pi-mcporter",
     "npm:pi-prs",
-    "npm:pi-web-providers",
     "npm:pi-subdir-context",
     "npm:pi-universal-view",
     "npm:pi-worktrunk",
     "npm:pi-service-tier",
     "npm:pi-context-usage",
-    "npm:@gotgenes/pi-anthropic-auth"
+    "npm:@gotgenes/pi-anthropic-auth",
+    "npm:webfox"
   ],
   "enabledModels": [
     "anthropic/claude-sonnet-5",
