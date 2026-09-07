@@ -3,7 +3,7 @@
     "npm:pi-agents",
     "npm:pi-banner",
     "npm:pi-fancy-footer",
-    "npm:pi-mcporter",
+    "npm:pi-mcp-client",
     "npm:pi-prs",
     "npm:pi-subdir-context",
     "npm:pi-universal-view",
