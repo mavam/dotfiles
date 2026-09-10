@@ -14,13 +14,11 @@
     "npm:webfox"
   ],
   "enabledModels": [
-    "anthropic/claude-sonnet-5",
     "anthropic/claude-opus-5",
     "anthropic/claude-fable-5-1",
     "openai-codex/gpt-5.6-luna",
     "openai-codex/gpt-5.6-sol",
-    "openai-codex/gpt-6-astra",
-    "gemini-flash-latest"
+    "openai-codex/gpt-6-astra"
   ],
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-6-astra",
