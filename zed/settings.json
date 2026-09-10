@@ -7,6 +7,7 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "proxy": "",
   "agent_servers": {
     "codex-acp": {
       "type": "registry"
@@ -16,6 +17,12 @@
     }
   },
   "agent": {
+    "default_model": {
+      "provider": "openai-subscribed",
+      "model": "gpt-6-astra",
+      "enable_thinking": true,
+      "effort": "medium"
+    },
     "tool_permissions": {
       "default": "allow"
     },
