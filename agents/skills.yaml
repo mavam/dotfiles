@@ -42,3 +42,8 @@ sources:
     skills:
       - spec: agents
         name: elevenlabs-agents
+  lukasmalkmus/moneymoney:
+    skills:
+      - spec: moneymoney
+        frontmatter:
+          disable-model-invocation: true
