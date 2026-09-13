@@ -13,6 +13,33 @@ switch (uname)
     fish_add_path -g /usr/X11R6/bin       # Apple's X11
 end
 
+# Bun
+set -gx BUN_INSTALL ~/.bun
+fish_add_path -g $BUN_INSTALL/bin
+
+# Docker
+fish_add_path -g ~/.docker/bin
+set -x DOCKER_BUILDKIT 1
+
+# Go
+set -gx GOPATH ~/.go
+fish_add_path -g $GOPATH/bin
+
+# MacTeX
+if test (uname) = Darwin
+  fish_add_path -g /Library/TeX/texbin
+end
+
+# Rust
+fish_add_path -g ~/.cargo/bin
+
+# Tenzir: prefer an available local release build.
+for bin in ~/code/tenzir/mono/engine/build/*/release/bin
+  if test -d "$bin"
+    fish_add_path -g "$bin"
+  end
+end
+
 # Editor
 if command -sq nvim
   set -x VISUAL nvim
@@ -59,9 +86,6 @@ set -x CMAKE_GENERATOR Ninja
 set -x CMAKE_C_COMPILER_LAUNCHER ccache
 set -x CMAKE_CXX_COMPILER_LAUNCHER ccache
 
-# Docker
-set -x DOCKER_BUILDKIT 1
-
 # fzf (fuzzy finder)
 set -gx FZF_DEFAULT_OPTS \
   --bind=ctrl-k:up,ctrl-j:down,ctrl-h:page-up,ctrl-l:page-down \
@@ -82,13 +106,6 @@ set -g fzf_fd_opts --color=never
 if status is-interactive
   # Vi bindings!
   fish_vi_key_bindings
-
-  # Disable terminal focus reporting (DECSET mode 1004). When enabled, terminals
-  # send ESC[I/ESC[O on focus change. Claude Code's input handler doesn't filter
-  # these, causing them to leak as visible text. This is a CC bug, not a terminal
-  # or shell issue, but disabling the mode here works around it.
-  # https://github.com/anthropics/claude-code/issues/10375
-  printf '\e[?1004l'
 
   # Custom keybindings (active in both normal and insert mode unless noted):
   #   Ctrl+E  - accept autosuggestion and execute (insert only)
@@ -141,11 +158,9 @@ if status is-interactive
   #gpgconf --launch gpg-agent
 
   # Use SSH key from Secure Enclave.
-  set -x SSH_AUTH_SOCK ~/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh
-
-  # Abbreviations: pi
-  abbr -g pim 'pi /skill:mavam'
-  abbr -g pit 'pi /skill:tenzir'
+  if test (uname) = Darwin
+    set -x SSH_AUTH_SOCK ~/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh
+  end
 
   # Abbreviations: git
   abbr -g g 'git'
@@ -166,10 +181,13 @@ if status is-interactive
   abbr -g gco 'git checkout'
   abbr -g gcof 'git checkout --force'
   abbr -g gcl 'git clone --recursive'
-  abbr -g gclg '__git_clone_guarded'
-  abbr -g gguard 'git-guard-pushes'
-  abbr -g gunguard 'git-unguard-pushes'
-  abbr -g gguardst 'git-guarded-push-status'
+  # Optional development helpers are not installed by the minimal Nix profile.
+  if type -q __git_clone_guarded
+    abbr -g gclg '__git_clone_guarded'
+    abbr -g gguard 'git-guard-pushes'
+    abbr -g gunguard 'git-unguard-pushes'
+    abbr -g gguardst 'git-guarded-push-status'
+  end
   abbr -g gcf 'git config --list'
   abbr -g gclean 'git clean --force -d'
   abbr -g gcp 'git cherry-pick'
@@ -417,9 +435,4 @@ if status is-interactive
       alias show-desktop 'defaults write com.apple.finder CreateDesktop -bool true \
         && killall Finder'
   end
-end
-
-# Source tool-specific configurations
-for file in ~/.config/fish/conf.tools/*
-  source $file
 end
