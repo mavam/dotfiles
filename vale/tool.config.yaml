@@ -1,3 +1,0 @@
-entries:
-  - source: "vale.ini"
-    target: "~/.vale.ini"
