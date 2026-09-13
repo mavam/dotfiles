@@ -1,6 +1,0 @@
-root:
-  target: "~/.config/worktrunk"
-  mode: link
-
-post_install:
-  - 'if command -v wt >/dev/null 2>&1; then wt config shell install -y fish >/dev/null; fi'
