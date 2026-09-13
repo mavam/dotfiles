@@ -1,3 +1,0 @@
-root:
-  target: "~/.config/bat"
-  mode: link
