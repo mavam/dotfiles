@@ -1,3 +1,0 @@
-root:
-  target: "~/.config/btop"
-  mode: link
