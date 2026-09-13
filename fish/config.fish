@@ -181,13 +181,6 @@ if status is-interactive
   abbr -g gco 'git checkout'
   abbr -g gcof 'git checkout --force'
   abbr -g gcl 'git clone --recursive'
-  # Optional development helpers are not installed by the minimal Nix profile.
-  if type -q __git_clone_guarded
-    abbr -g gclg '__git_clone_guarded'
-    abbr -g gguard 'git-guard-pushes'
-    abbr -g gunguard 'git-unguard-pushes'
-    abbr -g gguardst 'git-guarded-push-status'
-  end
   abbr -g gcf 'git config --list'
   abbr -g gclean 'git clean --force -d'
   abbr -g gcp 'git cherry-pick'

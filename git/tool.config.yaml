@@ -1,7 +1,0 @@
-entries:
-  - source: "gitconfig"
-    target: "~/.gitconfig"
-  - source: "config"
-    target: "~/.config/git"
-  - source: "config/ssh-keygen-secretive"
-    target: "~/.local/bin/ssh-keygen-secretive"
