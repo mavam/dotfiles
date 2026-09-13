@@ -6,8 +6,11 @@
   - Fish initializes Starship; Home Manager's extra shell integrations are disabled.
   - Git guard helpers and other development tooling are not included yet.
   - Universal variables, history, credentials, and other runtime state remain unmanaged.
-- Consumers pin this repository as a flake input with `flake = false` and import
-  `${dotfiles}/nix/profiles/minimal.nix` from their Home Manager configuration.
+- Consumers pin `github:mavam/dotfiles` as a flake input and import
+  `dotfiles.homeManagerModules.minimal` from their Home Manager configuration.
+  - `homeManagerModules.default` aliases `minimal`.
+  - `homeManagerModules.fish` and `homeManagerModules.starship` expose individual tools.
+  - The flake has no inputs; consumers choose and pin nixpkgs and Home Manager.
 - Keep usernames, home directories, `home.stateVersion`, authorized SSH keys,
   signing identities, and secret provisioning in the consuming infrastructure.
   - Never include plaintext secrets in Nix source files or build inputs.
