@@ -1,6 +1,0 @@
-root:
-  target: "~/.config/fish"
-  mode: link
-
-post_install:
-  - 'if command -v fish >/dev/null 2>&1 && fish -c "type -q fisher"; then fish -c "fisher update" >/dev/null; else log_warn "fish or fisher not found; skipping Fish plugins"; fi'
