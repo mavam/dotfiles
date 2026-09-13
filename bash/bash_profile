@@ -1,4 +1,0 @@
-# shellcheck shell=bash disable=SC1090
-
-# Source bashrc for login shells
-[[ -f ~/.bashrc ]] && source ~/.bashrc
