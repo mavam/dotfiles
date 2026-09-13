@@ -1,3 +1,0 @@
-entries:
-  - source: "mcporter.json"
-    target: "~/.mcporter/mcporter.json"
