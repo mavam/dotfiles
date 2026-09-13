@@ -1,7 +1,0 @@
-# shellcheck shell=bash disable=SC1090,SC2034
-
-# Ensure unique PATH entries
-typeset -U path
-
-# Source shared PATH setup
-[ -f ~/.path ] && . ~/.path

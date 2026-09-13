@@ -1,5 +1,0 @@
-entries:
-  - source: "zshrc"
-    target: "~/.zshrc"
-  - source: "zshenv"
-    target: "~/.zshenv"
