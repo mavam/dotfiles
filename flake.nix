@@ -6,7 +6,6 @@
       default = self.homeManagerModules.minimal;
       minimal = ./nix/profiles/minimal.nix;
       fish = ./nix/modules/fish.nix;
-      starship = ./nix/modules/starship.nix;
     };
   };
 }

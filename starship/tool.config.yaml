@@ -1,3 +1,0 @@
-entries:
-  - source: "starship.toml"
-    target: "~/.config/starship.toml"
