@@ -4,7 +4,6 @@
 
 - **Terminals**: [GhostTTY](https://ghostty.org/)
 - **Shell**: [Fish](https://fishshell.com/)
-- **Editor**: [NeoVim](https://neovim.io/)
 - **Colorscheme**: GitHub Light & Dark
 - **Font**: [Fira Code](https://github.com/tonsky/FiraCode)
   from [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts)
@@ -44,19 +43,19 @@ already in sync.
 Install a subset (your shell expands globs before the script runs):
 
 ```sh
-./dots install git gpg "neovim*"
+./dots install claude codex
 ```
 
 Preview the plan without touching the filesystem:
 
 ```sh
-./dots diff git
+./dots diff claude
 ```
 
 Remove previously linked files:
 
 ```sh
-./dots remove git
+./dots remove claude
 ```
 
 Inspect overall status or the current environment:

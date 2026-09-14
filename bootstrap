@@ -84,11 +84,6 @@ setup_tmux() {
   fi
 }
 
-setup_neovim() {
-  log "updating NeoVim plugins via Lazy"
-  nvim --headless '+Lazy! sync' '+qa'
-}
-
 setup_fish() {
   fish=$(which fish 2> /dev/null)
   if [ -z "$fish" ]; then
@@ -135,9 +130,6 @@ main() {
   esac
   if ask "setup fish?"; then
     setup_fish
-  fi
-  if ask "setup NeoVim?"; then
-    setup_neovim
   fi
   if ask "setup Tmux?"; then
     setup_tmux
