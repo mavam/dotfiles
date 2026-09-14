@@ -1,49 +1,5 @@
+# Home Manager owns shared skills; keep personal content outside the Nix store.
+# Do not prune the shared skills directories with Skeel.
 sources:
-  anthropics/skills:
-    - skill-creator@main
-  downstairs-dawgs/clacks:
-    skills:
-      - clacks
-    install:
-      - uvx --from slack-clacks clacks skill --mode universal --force
-  mavam/quarto-brief:
   mavam/skills:
     pin: main
-  max-sixty/worktrunk:
-    - worktrunk
-  openclaw/gogcli:
-    - gog@main
-  openclaw/openclaw:
-    pin: main
-    skills:
-      - apple-reminders
-      - openhue
-      - xurl
-  tenzir/dev-skills:
-    pin: main
-    skills:
-      - tenzir-commit-changes
-      - tenzir-create-pull-requests
-      - tenzir-design-system
-      - tenzir-technical-writing
-      - tenzir-update-docs
-  tenzir/ship:
-  tenzir/skills:
-    pin: main
-  cli/cli:
-    - gh
-  cursor/plugins:
-    skills:
-      - spec: pstack/skills/unslop@main
-        frontmatter:
-          disable-model-invocation: true
-  elevenlabs/skills:
-    pin: main
-    skills:
-      - spec: agents
-        name: elevenlabs-agents
-  lukasmalkmus/moneymoney:
-    skills:
-      - spec: moneymoney
-        frontmatter:
-          disable-model-invocation: true
