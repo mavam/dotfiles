@@ -85,18 +85,6 @@ setup_keyboard_layout() {
   log "  (2) Left Alt: when held"
 }
 
-setup_homebrew() {
-  # Make sure we look at least in the default install location.
-  if which brew > /dev/null 2>&1; then
-    log "upgrading existing Homebrew packages"
-    brew upgrade
-  else
-    log "installing Homebrew"
-    homebrew="Homebrew/install/HEAD/install.sh"
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/$homebrew)"
-  fi
-}
-
 setup_tmux() {
   if [ ! -d ~/.tmux/plugins/tpm ]; then
     log "installing Tmux plugins"
@@ -139,7 +127,6 @@ setup_fish() {
 }
 
 main() {
-  export PATH="/opt/homebrew/bin:$PATH"
   printf "$blue"
   echo '                __                        '
   echo ' _      _____  / /________  ____ ___  ___ '
@@ -153,13 +140,6 @@ main() {
   fi
   case "$(uname -s)" in
     Darwin)
-      if ask "setup homebrew?"; then
-        setup_homebrew
-      fi
-      if ask "install Hombrew bundle?"; then
-        log "installing bundled Homebrew packages"
-        brew bundle "--file=$(dirname "$0")/homebrew/.Brewfile" || true
-      fi
       if ask "tune macOS system settings?"; then
         setup_darwin
       fi
