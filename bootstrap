@@ -73,18 +73,6 @@ setup_darwin() {
   xcode-select --install || true
 }
 
-setup_keyboard_layout() {
-  enter_sudo_mode
-  log "copying custom layout to /Library/Keyboard Layouts"
-  sudo cp mavam.keylayout /Library/Keyboard\ Layouts/
-  log "enable the new keyboard:"
-  log "  (1) System Preferences → Keyboard → Input Sources"
-  log "  (2) Search and select 'mavam'"
-  log "remap Caps Lock with Karabiner Elements:"
-  log "  (1) Escape: when tapped"
-  log "  (2) Left Alt: when held"
-}
-
 setup_tmux() {
   if [ ! -d ~/.tmux/plugins/tpm ]; then
     log "installing Tmux plugins"
@@ -142,9 +130,6 @@ main() {
     Darwin)
       if ask "tune macOS system settings?"; then
         setup_darwin
-      fi
-      if ask "install keyboard layout?"; then
-        setup_keyboard_layout
       fi
       ;;
   esac
