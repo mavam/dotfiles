@@ -1,5 +1,0 @@
-# Home Manager owns shared skills; keep personal content outside the Nix store.
-# Do not prune the shared skills directories with Skeel.
-sources:
-  mavam/skills:
-    pin: main
