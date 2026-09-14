@@ -1,8 +1,0 @@
-directories:
-  - path: "~/.codex"
-entries:
-  - source: "config.toml"
-    target: "~/.codex/config.toml"
-
-pre_install:
-  - 'bash "$DOTS_DIR/codex/build-config.sh"'
