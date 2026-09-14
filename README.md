@@ -1,86 +1,17 @@
 # dotfiles
 
-> Proper dotfiles are the very heart of an efficient working environment.
-
-- **Terminals**: [GhostTTY](https://ghostty.org/)
-- **Shell**: [Fish](https://fishshell.com/)
-- **Colorscheme**: GitHub Light & Dark
-- **Font**: [Fira Code](https://github.com/tonsky/FiraCode)
-  from [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts)
-
-On macOS, [Homebrew](https://brew.sh) is the package manager.
-
-## Usage
-
-### Synopsis
-
-Clone this repository and optionally bootstrap your system:
-
-```sh
-git clone git@github.com:mavam/dotfiles.git ~/.dotfiles
-cd .dotfiles
-./bootstrap
+```text
+ _________________________________
+/ So long, and thanks for all the \
+\ dotfiles.                       /
+ ---------------------------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
 ```
 
-The bootstrap script will ask you whether you'd like to setup specific components.
+This repository is retired after migrating things to Nix. 
 
-### Dotfile Management
-
-The Bash utility [dots](dots) links configuration content from this repository
-into your prefix (default: `$HOME`), treating each top-level directory as a
-"tool" whose contents mirror the layout you want under `$HOME`. Add files to a
-tool directory and, with a `root` mapping, they will be picked up automatically.
-
-Install everything:
-
-```sh
-./dots install
-```
-
-The install command reports changes and warnings but omits paths that are
-already in sync.
-
-Install a subset (your shell expands globs before the script runs):
-
-```sh
-./dots install claude codex
-```
-
-Preview the plan without touching the filesystem:
-
-```sh
-./dots diff claude
-```
-
-Remove previously linked files:
-
-```sh
-./dots remove claude
-```
-
-Inspect overall status or the current environment:
-
-```sh
-./dots list
-./dots doctor
-```
-
-The script is careful about existing files unless you pass `--force`. Use the
-`--prefix DIR` flag to dry-run installs into an alternate location.
-
-To add a new tool, create a directory (e.g., `foo/`) and drop your config files
-inside. When you need custom targets or directory preparation, add a
-`foo/tool.config.yaml` manifest:
-
-```yaml
-root:
-  target: "~/.config/fish"
-directories:
-  - path: "~/.gnupg"
-    permissions: "700"
-```
-
-`root` mirrors the tool directory under the given target, so new files are
-picked up automatically. The optional `directories` entries pre-create sensitive
-paths with the appropriate permissions. Use `pre_install` and `post_install`
-lists to run shell commands before or after linking.
+Kept here for the history. Thanks for all the shells.
