@@ -1,3 +1,0 @@
-root:
-  target: "~/.gnupg"
-  permissions: "700"
