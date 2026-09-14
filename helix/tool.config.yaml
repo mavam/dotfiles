@@ -1,3 +1,0 @@
-root:
-  target: "~/.config/helix"
-  mode: link
